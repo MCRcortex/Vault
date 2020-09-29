@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:the_nether",
+  "generator": {
+    "type": "noise",
+    "settings": {
+      "layers:": [{
+        "height": 5,
+        "block": "minecraft:stone"
+      }],
+      "biome": "minecraft:crimson_forest"
+    }
+  }
+}
