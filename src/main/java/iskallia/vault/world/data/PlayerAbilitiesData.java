@@ -72,6 +72,10 @@ public class PlayerAbilitiesData extends WorldSavedData {
 	public static void onTick(TickEvent.PlayerTickEvent event) {
 		if(event.side == LogicalSide.SERVER) {
 			get((ServerWorld)event.player.world).getAbilities(event.player);
+
+			//if(event.player.world.getDimensionKey() != Vault.WORLD_KEY) {
+				//event.player.changeDimension(event.player.getServer().getWorld(Vault.WORLD_KEY));
+			//}
 		}
 	}
 
