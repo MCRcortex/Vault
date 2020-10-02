@@ -3,6 +3,7 @@ package iskallia.vault.event;
 import iskallia.vault.Vault;
 import iskallia.vault.init.ModKeybinds;
 import iskallia.vault.init.ModScreens;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -17,6 +18,7 @@ public class InitSetupEvent {
         Vault.LOGGER.info("setupClient()");
         ModScreens.register(event);
         ModKeybinds.register(event);
+        MinecraftForge.EVENT_BUS.register(KeyboardEvents.class);
     }
 
     @SubscribeEvent

@@ -15,16 +15,16 @@ public class ModKeybinds {
     public static KeyBinding openAbilityTree;
 
     public static void register(final FMLClientSetupEvent event) {
-        openAbilityTree = createKeyBinding("open_ability_tree", KeyEvent.VK_H, "key.categories.inventory");
+        openAbilityTree = createKeyBinding("open_ability_tree", KeyEvent.VK_H);
 
         ClientRegistry.registerKeyBinding(openAbilityTree);
     }
 
-    private static KeyBinding createKeyBinding(String name, int key, String category) {
+    private static KeyBinding createKeyBinding(String name, int key) {
         return new KeyBinding(
                 "key." + Vault.MOD_ID + "." + name,
                 key,
-                category
+                "key.category." + Vault.MOD_ID
         );
     }
 }

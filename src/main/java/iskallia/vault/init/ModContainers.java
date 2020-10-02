@@ -2,9 +2,9 @@ package iskallia.vault.init;
 
 import iskallia.vault.ability.AbilityTree;
 import iskallia.vault.container.AbilityTreeContainer;
-import iskallia.vault.util.lambda.ContainerFactoryLambda;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraftforge.fml.network.IContainerFactory;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.UUID;
@@ -19,13 +19,14 @@ public class ModContainers {
             UUID uniqueID = inventory.player.getUniqueID();
             return new AbilityTreeContainer(windowId, new AbilityTree(uniqueID));
         });
+
+        registry.registerAll(
+                abilityTree.setRegistryName("ability_tree")
+        );
     }
 
-    @SuppressWarnings("unchecked")
-    private static <T extends Container>
-    ContainerType<T>
-    createContainerType(ContainerFactoryLambda<T> lambda) {
-        return new ContainerType<T>((ContainerType.IFactory<T>) lambda);
+    private static <T extends Container> ContainerType<T> createContainerType(IContainerFactory<T> lambda) {
+        return new ContainerType<T>(lambda);
     }
 
 }
