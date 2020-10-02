@@ -1,6 +1,7 @@
-package iskallia.vault.ability;
+package iskallia.vault.ability.passive;
 
 import com.google.gson.annotations.Expose;
+import iskallia.vault.ability.PlayerAbility;
 import net.minecraft.block.Block;
 import net.minecraft.block.CropsBlock;
 import net.minecraft.block.SaplingBlock;

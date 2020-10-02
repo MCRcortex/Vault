@@ -1,6 +1,9 @@
-package iskallia.vault.ability;
+package iskallia.vault.ability.passive;
 
 import com.google.gson.annotations.Expose;
+import iskallia.vault.ability.AbilityNode;
+import iskallia.vault.ability.AbilityTree;
+import iskallia.vault.ability.PlayerAbility;
 import iskallia.vault.world.data.PlayerAbilitiesData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;

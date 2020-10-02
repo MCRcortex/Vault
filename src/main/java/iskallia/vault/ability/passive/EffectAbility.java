@@ -1,6 +1,7 @@
-package iskallia.vault.ability;
+package iskallia.vault.ability.passive;
 
 import com.google.gson.annotations.Expose;
+import iskallia.vault.ability.PlayerAbility;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;

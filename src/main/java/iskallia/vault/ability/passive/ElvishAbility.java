@@ -1,5 +1,6 @@
-package iskallia.vault.ability;
+package iskallia.vault.ability.passive;
 
+import iskallia.vault.ability.PlayerAbility;
 import net.minecraft.entity.player.PlayerEntity;
 
 public class ElvishAbility extends PlayerAbility {

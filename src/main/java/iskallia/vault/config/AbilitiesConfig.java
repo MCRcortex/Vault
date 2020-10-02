@@ -2,6 +2,7 @@ package iskallia.vault.config;
 
 import com.google.gson.annotations.Expose;
 import iskallia.vault.ability.*;
+import iskallia.vault.ability.passive.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.potion.Effects;

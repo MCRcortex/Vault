@@ -3,6 +3,8 @@ package iskallia.vault.ability;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.annotations.Expose;
+import iskallia.vault.ability.passive.AttributeAbility;
+import iskallia.vault.ability.passive.EffectAbility;
 import iskallia.vault.util.RomanNumber;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -58,15 +60,15 @@ public class AbilityGroup<T extends PlayerAbility> {
 	}
 
 	public static AbilityGroup<EffectAbility> ofEffect(String name, Effect effect, EffectAbility.Type type, int levels,
-															IntUnaryOperator cost) {
+                                                       IntUnaryOperator cost) {
 		EffectAbility[] abilities = IntStream.range(0, levels)
 				.mapToObj(i -> new EffectAbility(cost.applyAsInt(i + 1), effect, i, type)).toArray(EffectAbility[]::new);
 		return new AbilityGroup<>(name, abilities);
 	}
 
 	public static AbilityGroup<AttributeAbility> ofAttribute(String name, Attribute attribute, String modifierName,
-	                                                         int levels, IntUnaryOperator cost, IntToDoubleFunction amount,
-	                                                         IntFunction<AttributeModifier.Operation> operation) {
+                                                             int levels, IntUnaryOperator cost, IntToDoubleFunction amount,
+                                                             IntFunction<AttributeModifier.Operation> operation) {
 		AttributeAbility[] abilities = IntStream.range(0, levels)
 				.mapToObj(i -> new AttributeAbility(cost.applyAsInt(i + 1), attribute, new AttributeAbility.Modifier(
 						modifierName + " " + RomanNumber.toRoman(i + 1),
