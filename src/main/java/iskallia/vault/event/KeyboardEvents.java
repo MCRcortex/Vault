@@ -1,6 +1,8 @@
 package iskallia.vault.event;
 
 import iskallia.vault.init.ModKeybinds;
+import iskallia.vault.network.ModNetwork;
+import iskallia.vault.network.message.OpenAbilityTreeMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -14,7 +16,7 @@ public class KeyboardEvents {
     public static void onKey(InputEvent.KeyInputEvent event) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.currentScreen == null && ModKeybinds.openAbilityTree.isPressed()) {
-//            TODO: Open AbilityTree GUI
+            ModNetwork.channel.sendToServer(new OpenAbilityTreeMessage());
         }
     }
 
