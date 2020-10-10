@@ -9,6 +9,7 @@ import iskallia.vault.util.Rectangle;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -23,14 +24,14 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
     private static final ResourceLocation BACKGROUNDS_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-tree-bgs.png");
 
     private Vector2f viewportTranslation;
-    private float viewportZoomLevel;
+    private float viewportScale;
     private boolean dragging;
     private Vector2f grabbedPos;
 
     public AbilityTreeScreen(AbilityTreeContainer container, PlayerInventory inventory, ITextComponent title) {
         super(container, inventory, new StringTextComponent("Ability Tree Screen!"));
         this.viewportTranslation = new Vector2f(0, 0);
-        this.viewportZoomLevel = 1f;
+        this.viewportScale = 1f;
         this.dragging = false;
         this.grabbedPos = new Vector2f(0, 0);
     }
@@ -67,8 +68,8 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
     @Override
     public void mouseMoved(double mouseX, double mouseY) {
         if (dragging) {
-            float dx = (float) (mouseX - grabbedPos.x) / viewportZoomLevel;
-            float dy = (float) (mouseY - grabbedPos.y) / viewportZoomLevel;
+            float dx = (float) (mouseX - grabbedPos.x) / viewportScale;
+            float dy = (float) (mouseY - grabbedPos.y) / viewportScale;
             this.viewportTranslation = new Vector2f(
                     viewportTranslation.x + dx,
                     viewportTranslation.y + dy);
@@ -78,12 +79,27 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        int wheel = (int) delta;
-        if (wheel < 0 && viewportZoomLevel > 0.5) {
-            viewportZoomLevel /= 2;
-        } else if (wheel > 0 && viewportZoomLevel < 4) {
-            viewportZoomLevel *= 2;
+        Rectangle containerBounds = getContainerBounds();
+
+        if (containerBounds.contains((int) mouseX, (int) mouseY)) {
+            Vector2f midpoint = containerBounds.midpoint();
+            double zoomingX = (mouseX - containerBounds.x0) - midpoint.x;
+            double zoomingY = (mouseY - containerBounds.y0) - midpoint.y;
+
+            int wheel = delta < 0 ? -1 : 1;
+
+            double zoomTargetX = (zoomingX - viewportTranslation.x) / viewportScale;
+            double zoomTargetY = (zoomingY - viewportTranslation.y) / viewportScale;
+
+            viewportScale += 0.1 * wheel * viewportScale;
+            viewportScale = (float) MathHelper.clamp(viewportScale, 0.5, 5);
+
+            viewportTranslation = new Vector2f(
+                    (float) (-zoomTargetX * viewportScale + zoomingX),
+                    (float) (-zoomTargetY * viewportScale + zoomingY)
+            );
         }
+
         return super.mouseScrolled(mouseX, mouseY, delta);
     }
 
@@ -235,7 +251,7 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
 
         matrixStack.push();
         matrixStack.translate(midpoint.x, midpoint.y, 0);
-        matrixStack.scale(viewportZoomLevel, viewportZoomLevel, 1);
+        matrixStack.scale(viewportScale, viewportScale, 1);
         matrixStack.translate(viewportTranslation.x, viewportTranslation.y, 0);
 
         // TODO: Nuke those hardcoded boissss
