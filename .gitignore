@@ -1,3 +1,6 @@
+# media project stuff
+/media
+
 # eclipse
 bin
 *.launch

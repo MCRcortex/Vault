@@ -2,6 +2,7 @@ package iskallia.vault.gui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import iskallia.vault.Vault;
 import iskallia.vault.container.AbilityTreeContainer;
 import iskallia.vault.gui.widget.AbilityWidget;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -17,8 +18,7 @@ import org.lwjgl.opengl.GL11;
 @OnlyIn(Dist.CLIENT)
 public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
 
-    private static final ResourceLocation WINDOW = new ResourceLocation("textures/gui/advancements/window.png");
-    private static final ResourceLocation TABS = new ResourceLocation("textures/gui/advancements/tabs.png");
+    private static final ResourceLocation WINDOW_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-tree.png");
 
     private Vector2f viewportTranslation;
     private float viewportZoomLevel;
@@ -81,7 +81,7 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
 
         int x0 = 30; // px
-        int y0 = 40; // px
+        int y0 = 60; // px
         int x1 = (int) (width * 0.7);
         int y1 = height - 30;
 
@@ -96,13 +96,7 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         fill(matrixStack, x1, y1, x0, y0, 0x91_709FB0);
         RenderSystem.depthFunc(GL11.GL_LEQUAL);
 
-        matrixStack.push();
-        matrixStack.translate(width / 2f, height / 2f, 0);
-        matrixStack.scale(viewportZoomLevel, viewportZoomLevel, 1);
-        matrixStack.translate(viewportTranslation.x, viewportTranslation.y, 0);
-        testSkillBadge.render(matrixStack, mouseX, mouseY, partialTicks);
-        testSkillBadge2.render(matrixStack, mouseX, mouseY, partialTicks);
-        matrixStack.pop();
+        renderSkillTree(matrixStack, mouseX, mouseY, partialTicks);
 
         RenderSystem.depthFunc(GL11.GL_GEQUAL);
         matrixStack.translate(0, 0, -950);
@@ -112,6 +106,64 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         matrixStack.translate(0, 0, 950);
         RenderSystem.depthFunc(GL11.GL_LEQUAL);
         RenderSystem.disableDepthTest();
+        matrixStack.pop();
+
+        renderWindow(matrixStack);
+    }
+
+    private void
+    renderWindow(MatrixStack matrixStack) {
+        assert this.minecraft != null;
+        this.minecraft.getTextureManager().bindTexture(WINDOW_RESOURCE);
+
+        int x0 = 30; // px
+        int y0 = 60; // px
+        int x1 = (int) (width * 0.7);
+        int y1 = height - 30;
+
+        RenderSystem.enableBlend();
+
+        blit(matrixStack, x0 - 9, y0 - 18,
+                0, 0, 15, 24);
+        blit(matrixStack, x1 - 7, y0 - 18,
+                18, 0, 15, 24);
+        blit(matrixStack, x0 - 9, y1 - 7,
+                0, 27, 15, 16);
+        blit(matrixStack, x1 - 7, y1 - 7,
+                18, 27, 15, 16);
+
+        matrixStack.push();
+        matrixStack.translate(x0 + 6, y0 - 18, 0);
+        matrixStack.scale(x1 - x0 - 13, 1, 1);
+        blit(matrixStack, 0, 0,
+                16, 0, 1, 24);
+        matrixStack.translate(0, y1 - y0 + 11, 0);
+        blit(matrixStack, 0, 0,
+                16, 27, 1, 16);
+        matrixStack.pop();
+
+        matrixStack.push();
+        matrixStack.translate(x0 - 9, y0 + 6, 0);
+        matrixStack.scale(1, y1 - y0 - 13, 1);
+        blit(matrixStack, 0, 0,
+                0, 25, 15, 1);
+        matrixStack.translate(x1 - x0 + 2, 0, 0);
+        blit(matrixStack, 0, 0,
+                18, 25, 15, 1);
+        matrixStack.pop();
+
+        // TODO: Draw Tabs
+        // TODO: Draw Background
+    }
+
+    private void
+    renderSkillTree(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        matrixStack.push();
+        matrixStack.translate(width / 2f, height / 2f, 0);
+        matrixStack.scale(viewportZoomLevel, viewportZoomLevel, 1);
+        matrixStack.translate(viewportTranslation.x, viewportTranslation.y, 0);
+        testSkillBadge.render(matrixStack, mouseX, mouseY, partialTicks);
+        testSkillBadge2.render(matrixStack, mouseX, mouseY, partialTicks);
         matrixStack.pop();
     }
 
