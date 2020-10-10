@@ -3,12 +3,16 @@ package iskallia.vault.world.data;
 import iskallia.vault.Vault;
 import iskallia.vault.ability.AbilityNode;
 import iskallia.vault.ability.AbilityTree;
+import iskallia.vault.init.ModFeatures;
+import iskallia.vault.mixin.ChunkGeneratorMixin;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.biome.BiomeRegistry;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
@@ -17,13 +21,11 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@ParametersAreNonnullByDefault
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class PlayerAbilitiesData extends WorldSavedData {
 
 	protected static final String DATA_NAME = Vault.MOD_ID + "_PlayerAbilities";
@@ -68,14 +70,34 @@ public class PlayerAbilitiesData extends WorldSavedData {
 		}
 	}
 
+	public static boolean generated = false;
+
 	@SubscribeEvent
 	public static void onTick(TickEvent.PlayerTickEvent event) {
 		if(event.side == LogicalSide.SERVER) {
 			get((ServerWorld)event.player.world).getAbilities(event.player);
 
+			//todo: remove
 			//if(event.player.world.getDimensionKey() != Vault.WORLD_KEY) {
-				//event.player.changeDimension(event.player.getServer().getWorld(Vault.WORLD_KEY));
-			//}
+			//	ServerWorld world = event.player.getServer().getWorld(Vault.WORLD_KEY);
+			//	event.player.changeDimension(world);
+
+				/*
+				DimensionStructuresSettings.field_236191_b_ = ImmutableMap.<Structure<?>, StructureSeparationSettings>builder()
+						.putAll(DimensionStructuresSettings.field_236191_b_)
+						.put(VAULT, new StructureSeparationSettings(1, 0, -1)).build();
+
+				world.getChunkProvider().getChunkGenerator().func_235957_b_().func_236195_a_().put(ModStructures.VAULT,
+						new StructureSeparationSettings(1, 0, -1));*/
+			/*
+			if(generated)return;
+			generated = true;
+			ServerWorld world = (ServerWorld)event.player.world;
+
+				((IChunkGeneratorAccessor)world.getChunkProvider().getChunkGenerator()).callFunc_242705_a(ModFeatures.VAULT_FEATURE,
+						world.func_241828_r(), world.func_241112_a_(), world.getChunk(100, 100),
+						world.getStructureTemplateManager(), world.getSeed(), new ChunkPos(100, 100), BiomeRegistry.PLAINS);
+			//}*/
 		}
 	}
 
