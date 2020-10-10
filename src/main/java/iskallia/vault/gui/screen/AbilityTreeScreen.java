@@ -18,7 +18,8 @@ import org.lwjgl.opengl.GL11;
 @OnlyIn(Dist.CLIENT)
 public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
 
-    private static final ResourceLocation WINDOW_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-tree.png");
+    private static final ResourceLocation UI_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-tree.png");
+    private static final ResourceLocation BACKGROUNDS_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-tree-bgs.png");
 
     private Vector2f viewportTranslation;
     private float viewportZoomLevel;
@@ -80,11 +81,6 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
     render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
 
-        int x0 = 30; // px
-        int y0 = 60; // px
-        int x1 = (int) (width * 0.7);
-        int y1 = height - 30;
-
         matrixStack.push();
         RenderSystem.enableDepthTest();
         matrixStack.translate(0, 0, 950);
@@ -93,7 +89,7 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         RenderSystem.colorMask(true, true, true, true);
         matrixStack.translate(0, 0, -950);
         RenderSystem.depthFunc(GL11.GL_GEQUAL);
-        fill(matrixStack, x1, y1, x0, y0, 0x91_709FB0);
+        renderContainerBackground(matrixStack);
         RenderSystem.depthFunc(GL11.GL_LEQUAL);
 
         renderSkillTree(matrixStack, mouseX, mouseY, partialTicks);
@@ -108,13 +104,13 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         RenderSystem.disableDepthTest();
         matrixStack.pop();
 
-        renderWindow(matrixStack);
+        renderContainerBorders(matrixStack);
     }
 
     private void
-    renderWindow(MatrixStack matrixStack) {
+    renderContainerBorders(MatrixStack matrixStack) {
         assert this.minecraft != null;
-        this.minecraft.getTextureManager().bindTexture(WINDOW_RESOURCE);
+        this.minecraft.getTextureManager().bindTexture(UI_RESOURCE);
 
         int x0 = 30; // px
         int y0 = 60; // px
@@ -154,6 +150,42 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
 
         // TODO: Draw Tabs
         // TODO: Draw Background
+    }
+
+    private void
+    renderContainerBackground(MatrixStack matrixStack) {
+        assert this.minecraft != null;
+        this.minecraft.getTextureManager().bindTexture(BACKGROUNDS_RESOURCE);
+
+        int x0 = 30; // px
+        int y0 = 60; // px
+        int x1 = (int) (width * 0.7);
+        int y1 = height - 30;
+
+        // TODO: Include scale param
+        int textureSize = 16;
+        int currentX = x0;
+        int currentY = y0;
+        int uncoveredWidth = (x1 - x0);
+        int uncoveredHeight = (y1 - y0);
+        while (uncoveredWidth > 0) {
+            while (uncoveredHeight > 0) {
+                blit(matrixStack, currentX, currentY,
+                        16 * 2, 16,
+                        Math.min(textureSize, uncoveredWidth),
+                        Math.min(textureSize, uncoveredHeight));
+                uncoveredHeight -= textureSize;
+                currentY += textureSize;
+            }
+
+            // Decrement
+            uncoveredWidth -= textureSize;
+            currentX += textureSize;
+
+            // Reset
+            uncoveredHeight = y1 - y0;
+            currentY = y0;
+        }
     }
 
     private void
