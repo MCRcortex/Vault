@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
 import iskallia.vault.container.AbilityTreeContainer;
 import iskallia.vault.gui.widget.AbilityWidget;
+import iskallia.vault.util.Rectangle;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
@@ -26,24 +27,34 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
     private boolean dragging;
     private Vector2f grabbedPos;
 
-    private AbilityWidget testSkillBadge;
-    private AbilityWidget testSkillBadge2;
-
     public AbilityTreeScreen(AbilityTreeContainer container, PlayerInventory inventory, ITextComponent title) {
         super(container, inventory, new StringTextComponent("Ability Tree Screen!"));
         this.viewportTranslation = new Vector2f(0, 0);
         this.viewportZoomLevel = 1f;
         this.dragging = false;
         this.grabbedPos = new Vector2f(0, 0);
-
-        this.testSkillBadge = new AbilityWidget(100, 100, 7, 12, AbilityWidget.AbilityFrame.RECTANGULAR);
-        this.testSkillBadge2 = new AbilityWidget(-10, -50, 2, 3, AbilityWidget.AbilityFrame.STAR);
     }
+
+    public Rectangle getContainerBounds() {
+        Rectangle bounds = new Rectangle();
+        bounds.x0 = 30; //px
+        bounds.y0 = 60; //px
+        bounds.x1 = (int) (width * 0.7); // Responsiveness ayyyyy
+        bounds.y1 = height - 30;
+        return bounds;
+    }
+
+    /* --------------------------------------------------- */
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        this.dragging = true;
-        this.grabbedPos = new Vector2f((float) mouseX, (float) mouseY);
+        Rectangle containerBounds = getContainerBounds();
+
+        if (containerBounds.contains((int) mouseX, (int) mouseY)) {
+            this.dragging = true;
+            this.grabbedPos = new Vector2f((float) mouseX, (float) mouseY);
+        }
+
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
@@ -74,6 +85,24 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
             viewportZoomLevel *= 2;
         }
         return super.mouseScrolled(mouseX, mouseY, delta);
+    }
+
+    /* --------------------------------------------------- */
+
+    @Override
+    protected void
+    drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
+        renderBackground(matrixStack);
+    }
+
+    @Override
+    protected void
+    drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+        // For some reason, without this it won't render :V
+        this.font.func_243248_b(matrixStack,
+                new StringTextComponent(""),
+                (float) this.titleX, (float) this.titleY,
+                4210752);
     }
 
     @Override
@@ -110,14 +139,15 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
 
     private void
     renderContainerTabs(MatrixStack matrixStack) {
-        int x0 = 30; // px
-        int y0 = 60; // px
+        Rectangle containerBounds = getContainerBounds();
 
         int tabWidth = 28;
         int gap = 3; // px
 
         for (int i = 0; i < 3; i++) {
-            blit(matrixStack, x0 + 5 + i * (tabWidth + gap), y0 - 25 - 17,
+            blit(matrixStack,
+                    containerBounds.x0 + 5 + i * (tabWidth + gap),
+                    containerBounds.y0 - 25 - 17,
                     63, 0, tabWidth, 25);
         }
     }
@@ -127,38 +157,35 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         assert this.minecraft != null;
         this.minecraft.getTextureManager().bindTexture(UI_RESOURCE);
 
-        int x0 = 30; // px
-        int y0 = 60; // px
-        int x1 = (int) (width * 0.7);
-        int y1 = height - 30;
+        Rectangle containerBounds = getContainerBounds();
 
         RenderSystem.enableBlend();
 
-        blit(matrixStack, x0 - 9, y0 - 18,
+        blit(matrixStack, containerBounds.x0 - 9, containerBounds.y0 - 18,
                 0, 0, 15, 24);
-        blit(matrixStack, x1 - 7, y0 - 18,
+        blit(matrixStack, containerBounds.x1 - 7, containerBounds.y0 - 18,
                 18, 0, 15, 24);
-        blit(matrixStack, x0 - 9, y1 - 7,
+        blit(matrixStack, containerBounds.x0 - 9, containerBounds.y1 - 7,
                 0, 27, 15, 16);
-        blit(matrixStack, x1 - 7, y1 - 7,
+        blit(matrixStack, containerBounds.x1 - 7, containerBounds.y1 - 7,
                 18, 27, 15, 16);
 
         matrixStack.push();
-        matrixStack.translate(x0 + 6, y0 - 18, 0);
-        matrixStack.scale(x1 - x0 - 13, 1, 1);
+        matrixStack.translate(containerBounds.x0 + 6, containerBounds.y0 - 18, 0);
+        matrixStack.scale(containerBounds.x1 - containerBounds.x0 - 13, 1, 1);
         blit(matrixStack, 0, 0,
                 16, 0, 1, 24);
-        matrixStack.translate(0, y1 - y0 + 11, 0);
+        matrixStack.translate(0, containerBounds.y1 - containerBounds.y0 + 11, 0);
         blit(matrixStack, 0, 0,
                 16, 27, 1, 16);
         matrixStack.pop();
 
         matrixStack.push();
-        matrixStack.translate(x0 - 9, y0 + 6, 0);
-        matrixStack.scale(1, y1 - y0 - 13, 1);
+        matrixStack.translate(containerBounds.x0 - 9, containerBounds.y0 + 6, 0);
+        matrixStack.scale(1, containerBounds.y1 - containerBounds.y0 - 13, 1);
         blit(matrixStack, 0, 0,
                 0, 25, 15, 1);
-        matrixStack.translate(x1 - x0 + 2, 0, 0);
+        matrixStack.translate(containerBounds.x1 - containerBounds.x0 + 2, 0, 0);
         blit(matrixStack, 0, 0,
                 18, 25, 15, 1);
         matrixStack.pop();
@@ -167,26 +194,25 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
     private void
     renderContainerBackground(MatrixStack matrixStack) {
         assert this.minecraft != null;
+
         this.minecraft.getTextureManager().bindTexture(BACKGROUNDS_RESOURCE);
 
-        int x0 = 30; // px
-        int y0 = 60; // px
-        int x1 = (int) (width * 0.7);
-        int y1 = height - 30;
+        Rectangle containerBounds = getContainerBounds();
 
         // TODO: Support alpha blending
         // TODO: Include scale param
         int textureSize = 16;
-        int currentX = x0;
-        int currentY = y0;
-        int uncoveredWidth = (x1 - x0);
-        int uncoveredHeight = (y1 - y0);
+        int currentX = containerBounds.x0;
+        int currentY = containerBounds.y0;
+        int uncoveredWidth = containerBounds.getWidth();
+        int uncoveredHeight = containerBounds.getHeight();
         while (uncoveredWidth > 0) {
             while (uncoveredHeight > 0) {
                 blit(matrixStack, currentX, currentY,
-                        16 * 0, 0, // TODO: <-- depends on tab
+                        16 * 5, 0, // TODO: <-- depends on tab
                         Math.min(textureSize, uncoveredWidth),
-                        Math.min(textureSize, uncoveredHeight));
+                        Math.min(textureSize, uncoveredHeight)
+                );
                 uncoveredHeight -= textureSize;
                 currentY += textureSize;
             }
@@ -196,8 +222,8 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
             currentX += textureSize;
 
             // Reset
-            uncoveredHeight = y1 - y0;
-            currentY = y0;
+            uncoveredHeight = containerBounds.getHeight();
+            currentY = containerBounds.y0;
         }
     }
 
@@ -205,32 +231,24 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
     renderSkillTree(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         RenderSystem.enableBlend();
 
+        Vector2f midpoint = getContainerBounds().midpoint();
+
         matrixStack.push();
-        matrixStack.translate(width / 2f, height / 2f, 0);
+        matrixStack.translate(midpoint.x, midpoint.y, 0);
         matrixStack.scale(viewportZoomLevel, viewportZoomLevel, 1);
         matrixStack.translate(viewportTranslation.x, viewportTranslation.y, 0);
-        testSkillBadge.render(matrixStack, mouseX, mouseY, partialTicks);
-        testSkillBadge2.render(matrixStack, mouseX, mouseY, partialTicks);
+
+        // TODO: Nuke those hardcoded boissss
+        new AbilityWidget(100, 100, 7, 12, AbilityWidget.AbilityFrame.RECTANGULAR)
+                .render(matrixStack, mouseX, mouseY, partialTicks);
+
+        new AbilityWidget(-10, -50, 2, 3, AbilityWidget.AbilityFrame.STAR)
+                .render(matrixStack, mouseX, mouseY, partialTicks);
 
         new AbilityWidget(-15, 30, 0, 1, AbilityWidget.AbilityFrame.RECTANGULAR)
                 .render(matrixStack, mouseX, mouseY, partialTicks);
 
         matrixStack.pop();
-    }
-
-    @Override
-    protected void
-    drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
-        renderBackground(matrixStack);
-    }
-
-    @Override
-    protected void
-    drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
-        this.font.func_243248_b(matrixStack,
-                new StringTextComponent(""),
-                (float) this.titleX, (float) this.titleY,
-                4210752);
     }
 
 }

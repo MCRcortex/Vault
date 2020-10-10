@@ -13,11 +13,12 @@ import net.minecraft.util.text.StringTextComponent;
 public class AbilityWidget extends Widget {
 
     private static final int PIP_SIZE = 8; //px
-    private static final int GAP_SIZE = 5; //px
+    private static final int GAP_SIZE = 2; //px
     private static final int ICON_SIZE = 30; // px
     private static final int MAX_PIP_INLINE = 5;
 
     private static final ResourceLocation RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-widget.png");
+    private static final ResourceLocation ABILITIES_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/abilities.png");
 
     int maxLevel, level;
     AbilityFrame frame;
@@ -42,13 +43,21 @@ public class AbilityWidget extends Widget {
     public void
     renderIcon(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         ResourceBoundary resourceBoundary = frame.resourceBoundary;
-        Minecraft.getInstance().textureManager.bindTexture(resourceBoundary.getResource());
 
         matrixStack.push();
         matrixStack.translate(-ICON_SIZE / 2f, -ICON_SIZE / 2f, 0);
+        Minecraft.getInstance().textureManager.bindTexture(resourceBoundary.getResource());
         blit(matrixStack, this.x, this.y,
                 resourceBoundary.getU(), resourceBoundary.getV(),
                 resourceBoundary.getW(), resourceBoundary.getH());
+        matrixStack.pop();
+
+        matrixStack.push();
+        matrixStack.translate(-16 / 2f, -16 / 2f, 0);
+        Minecraft.getInstance().textureManager.bindTexture(ABILITIES_RESOURCE);
+        blit(matrixStack, this.x, this.y,
+                16 * 4, 0,
+                16, 16);
         matrixStack.pop();
     }
 
@@ -62,7 +71,7 @@ public class AbilityWidget extends Widget {
         for (int r = 0; r < rowCount; r++) {
             renderPipLine(matrixStack,
                     x,
-                    y + (ICON_SIZE / 2) + 9 + r * (GAP_SIZE + PIP_SIZE),
+                    y + (ICON_SIZE / 2) + 4 + r * (GAP_SIZE + PIP_SIZE),
                     Math.min(MAX_PIP_INLINE, remainingPips),
                     Math.min(MAX_PIP_INLINE, remainingFilledPips)
             );
