@@ -1,7 +1,12 @@
 package iskallia.vault.gui.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import iskallia.vault.Vault;
+import iskallia.vault.util.ResourceBoundary;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 
 // TODO: Replace fill() calls with necessary blit() calls
@@ -9,18 +14,22 @@ public class AbilityWidget extends Widget {
 
     private static final int PIP_SIZE = 8; //px
     private static final int GAP_SIZE = 5; //px
-    private static final int ICON_SIZE = 32; // px
+    private static final int ICON_SIZE = 30; // px
     private static final int MAX_PIP_INLINE = 5;
 
-    int maxLevel, level;
+    private static final ResourceLocation RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-widget.png");
 
-    public AbilityWidget(int x, int y, int level, int maxLevel) {
+    int maxLevel, level;
+    AbilityFrame frame;
+
+    public AbilityWidget(int x, int y, int level, int maxLevel, AbilityFrame frame) {
         super(x, y,
                 5 * PIP_SIZE + 4 * GAP_SIZE,
                 pipRowCount(level) * (PIP_SIZE + GAP_SIZE) - GAP_SIZE,
                 new StringTextComponent("the_vault.widgets.talent"));
         this.level = level;
         this.maxLevel = maxLevel;
+        this.frame = frame;
     }
 
     @Override
@@ -32,14 +41,21 @@ public class AbilityWidget extends Widget {
 
     public void
     renderIcon(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        ResourceBoundary resourceBoundary = frame.resourceBoundary;
+        Minecraft.getInstance().textureManager.bindTexture(resourceBoundary.getResource());
+
         matrixStack.push();
         matrixStack.translate(-ICON_SIZE / 2f, -ICON_SIZE / 2f, 0);
-        fill(matrixStack, x, y, x + ICON_SIZE, y + ICON_SIZE, 0xFF_FFFFFF);
+        blit(matrixStack, this.x, this.y,
+                resourceBoundary.getU(), resourceBoundary.getV(),
+                resourceBoundary.getW(), resourceBoundary.getH());
         matrixStack.pop();
     }
 
     public void
     renderPips(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        Minecraft.getInstance().textureManager.bindTexture(RESOURCE);
+
         int rowCount = pipRowCount(this.maxLevel);
         int remainingPips = this.maxLevel;
         int remainingFilledPips = this.level;
@@ -66,11 +82,13 @@ public class AbilityWidget extends Widget {
 
         for (int i = 0; i < count; i++) {
             if (remainingFilled > 0) {
-                fill(matrixStack, 0, 0, PIP_SIZE, PIP_SIZE, 0xFF_FFFF00);
+                blit(matrixStack, 0, 0,
+                        1, 102, 8, 8);
                 remainingFilled--;
 
             } else {
-                fill(matrixStack, 0, 0, PIP_SIZE, PIP_SIZE, 0xFF_FF0000);
+                blit(matrixStack, 0, 0,
+                        1, 93, 8, 8);
             }
             matrixStack.translate(PIP_SIZE + GAP_SIZE, 0, 0);
         }
@@ -81,6 +99,22 @@ public class AbilityWidget extends Widget {
     public static int
     pipRowCount(int level) {
         return (int) Math.ceil((float) level / MAX_PIP_INLINE);
+    }
+
+    public enum AbilityFrame {
+        STAR(new ResourceBoundary(RESOURCE, 0, 31, ICON_SIZE, ICON_SIZE)),
+        RECTANGULAR(new ResourceBoundary(RESOURCE, 30, 31, ICON_SIZE, ICON_SIZE)),
+        ;
+
+        ResourceBoundary resourceBoundary;
+
+        AbilityFrame(ResourceBoundary resourceBoundary) {
+            this.resourceBoundary = resourceBoundary;
+        }
+
+        public ResourceBoundary getResourceBoundary() {
+            return resourceBoundary;
+        }
     }
 
 }

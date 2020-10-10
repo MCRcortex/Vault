@@ -36,8 +36,8 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         this.dragging = false;
         this.grabbedPos = new Vector2f(0, 0);
 
-        this.testSkillBadge = new AbilityWidget(100, 100, 7, 12);
-        this.testSkillBadge2 = new AbilityWidget(-10, -50, 2, 3);
+        this.testSkillBadge = new AbilityWidget(100, 100, 7, 12, AbilityWidget.AbilityFrame.RECTANGULAR);
+        this.testSkillBadge2 = new AbilityWidget(-10, -50, 2, 3, AbilityWidget.AbilityFrame.STAR);
     }
 
     @Override
@@ -68,10 +68,10 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         int wheel = (int) delta;
-        if (wheel < 0 && viewportZoomLevel > 0.1) {
-            viewportZoomLevel -= 0.1;
-        } else if (wheel > 0 && viewportZoomLevel < 2) {
-            viewportZoomLevel += 0.1;
+        if (wheel < 0 && viewportZoomLevel > 0.5) {
+            viewportZoomLevel /= 2;
+        } else if (wheel > 0 && viewportZoomLevel < 4) {
+            viewportZoomLevel *= 2;
         }
         return super.mouseScrolled(mouseX, mouseY, delta);
     }
@@ -105,6 +105,21 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         matrixStack.pop();
 
         renderContainerBorders(matrixStack);
+        renderContainerTabs(matrixStack);
+    }
+
+    private void
+    renderContainerTabs(MatrixStack matrixStack) {
+        int x0 = 30; // px
+        int y0 = 60; // px
+
+        int tabWidth = 28;
+        int gap = 3; // px
+
+        for (int i = 0; i < 3; i++) {
+            blit(matrixStack, x0 + 5 + i * (tabWidth + gap), y0 - 25 - 17,
+                    63, 0, tabWidth, 25);
+        }
     }
 
     private void
@@ -147,9 +162,6 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         blit(matrixStack, 0, 0,
                 18, 25, 15, 1);
         matrixStack.pop();
-
-        // TODO: Draw Tabs
-        // TODO: Draw Background
     }
 
     private void
@@ -162,6 +174,7 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         int x1 = (int) (width * 0.7);
         int y1 = height - 30;
 
+        // TODO: Support alpha blending
         // TODO: Include scale param
         int textureSize = 16;
         int currentX = x0;
@@ -171,7 +184,7 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         while (uncoveredWidth > 0) {
             while (uncoveredHeight > 0) {
                 blit(matrixStack, currentX, currentY,
-                        16 * 2, 16,
+                        16 * 0, 0, // TODO: <-- depends on tab
                         Math.min(textureSize, uncoveredWidth),
                         Math.min(textureSize, uncoveredHeight));
                 uncoveredHeight -= textureSize;
@@ -190,12 +203,18 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
 
     private void
     renderSkillTree(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        RenderSystem.enableBlend();
+
         matrixStack.push();
         matrixStack.translate(width / 2f, height / 2f, 0);
         matrixStack.scale(viewportZoomLevel, viewportZoomLevel, 1);
         matrixStack.translate(viewportTranslation.x, viewportTranslation.y, 0);
         testSkillBadge.render(matrixStack, mouseX, mouseY, partialTicks);
         testSkillBadge2.render(matrixStack, mouseX, mouseY, partialTicks);
+
+        new AbilityWidget(-15, 30, 0, 1, AbilityWidget.AbilityFrame.RECTANGULAR)
+                .render(matrixStack, mouseX, mouseY, partialTicks);
+
         matrixStack.pop();
     }
 
