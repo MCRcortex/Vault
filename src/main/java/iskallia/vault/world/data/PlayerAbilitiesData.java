@@ -3,16 +3,12 @@ package iskallia.vault.world.data;
 import iskallia.vault.Vault;
 import iskallia.vault.ability.AbilityNode;
 import iskallia.vault.ability.AbilityTree;
-import iskallia.vault.init.ModFeatures;
-import iskallia.vault.mixin.ChunkGeneratorMixin;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.biome.BiomeRegistry;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
@@ -79,7 +75,7 @@ public class PlayerAbilitiesData extends WorldSavedData {
 
 			//todo: remove
 			//if(event.player.world.getDimensionKey() != Vault.WORLD_KEY) {
-			//	ServerWorld world = event.player.getServer().getWorld(Vault.WORLD_KEY);
+				//ServerWorld world = event.player.getServer().getWorld(Vault.WORLD_KEY);
 			//	event.player.changeDimension(world);
 
 				/*
@@ -98,6 +94,28 @@ public class PlayerAbilitiesData extends WorldSavedData {
 						world.func_241828_r(), world.func_241112_a_(), world.getChunk(100, 100),
 						world.getStructureTemplateManager(), world.getSeed(), new ChunkPos(100, 100), BiomeRegistry.PLAINS);
 			//}*/
+
+			/*
+			if(event.player.world.getDimensionKey() != Vault.WORLD_KEY) {
+				ServerWorld world = event.player.getServer().getWorld(Vault.WORLD_KEY);
+				event.player.changeDimension(world);
+
+				IChunk chunk = world.getChunk(100, 100);
+				StructureStart<?> structurestart = world.func_241112_a_().func_235013_a_(
+						SectionPos.from(chunk.getPos(), 0), ModFeatures.VAULT_FEATURE.field_236268_b_, chunk);
+
+				System.out.println("generating");
+
+				int i = structurestart != null ? structurestart.getRefCount() : 0;
+				StructureSeparationSettings structureseparationsettings = new StructureSeparationSettings(1, 0, -1);
+				StructureStart<?> structurestart1 = ModFeatures.VAULT_FEATURE.func_242771_a(world.func_241828_r(),
+						world.getChunkProvider().generator, world.getChunkProvider().generator.getBiomeProvider(),
+						world.getStructureTemplateManager(), world.getSeed(), new ChunkPos(100, 100),
+						BiomeRegistry.PLAINS, i, structureseparationsettings);
+				world.func_241112_a_().func_235014_a_(
+						SectionPos.from(chunk.getPos(), 0),
+						ModFeatures.VAULT_FEATURE.field_236268_b_, structurestart1, chunk);
+			}*/
 		}
 	}
 

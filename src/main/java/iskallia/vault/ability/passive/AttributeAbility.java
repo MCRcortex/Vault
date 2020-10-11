@@ -1,7 +1,6 @@
 package iskallia.vault.ability.passive;
 
 import com.google.gson.annotations.Expose;
-import io.netty.util.internal.ThreadLocalRandom;
 import iskallia.vault.ability.PlayerAbility;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;

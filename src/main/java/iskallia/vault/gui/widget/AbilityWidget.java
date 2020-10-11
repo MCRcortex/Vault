@@ -4,7 +4,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import iskallia.vault.Vault;
 import iskallia.vault.gui.helper.Rectangle;
 import iskallia.vault.util.ResourceBoundary;
-import javafx.scene.input.MouseButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.ResourceLocation;

@@ -1,7 +1,6 @@
 package iskallia.vault.world.data;
 
 import iskallia.vault.Vault;
-import iskallia.vault.world.data.PlayerAbilitiesData;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldSavedData;
