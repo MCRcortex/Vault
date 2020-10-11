@@ -2,6 +2,7 @@ package iskallia.vault.gui.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import iskallia.vault.Vault;
+import iskallia.vault.gui.helper.Rectangle;
 import iskallia.vault.util.ResourceBoundary;
 import javafx.scene.input.MouseButton;
 import net.minecraft.client.Minecraft;
@@ -39,18 +40,30 @@ public class AbilityWidget extends Widget {
     }
 
     public int getClickableWidth() {
+        int onlyIconWidth = ICON_SIZE + 2 * GAP_SIZE;
+        int pipLineWidth = Math.min(maxLevel, MAX_PIPs_INLINE) * (PIP_SIZE + GAP_SIZE);
         return hasPips()
-                ? 5 * PIP_SIZE + 4 * GAP_SIZE
-                : ICON_SIZE + 2 * GAP_SIZE;
+                ? Math.max(pipLineWidth, onlyIconWidth)
+                : onlyIconWidth;
     }
 
     public int getClickableHeight() {
         int height = 2 * GAP_SIZE + ICON_SIZE;
         if (hasPips()) {
-            int lines = pipRowCount(level);
-            height += lines * (PIP_SIZE + GAP_SIZE) - GAP_SIZE;
+            int lines = pipRowCount(maxLevel);
+            height += GAP_SIZE;
+            height += lines * PIP_SIZE + (lines - 1) * GAP_SIZE;
         }
         return height;
+    }
+
+    public Rectangle getClickableBounds() {
+        Rectangle bounds = new Rectangle();
+        bounds.x0 = x - getClickableWidth() / 2;
+        bounds.y0 = y - (ICON_SIZE / 2) - GAP_SIZE;
+        bounds.x1 = bounds.x0 + getClickableWidth();
+        bounds.y1 = bounds.y0 + getClickableHeight();
+        return bounds;
     }
 
     public boolean hasPips() {
@@ -59,12 +72,9 @@ public class AbilityWidget extends Widget {
 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
-        int x0 = x - (ICON_SIZE / 2) - 2 * GAP_SIZE;
-        int y0 = y - (ICON_SIZE / 2) - 2 * GAP_SIZE;
-        int x1 = x0 + getClickableWidth();
-        int y1 = y0 + getClickableHeight();
-        return x0 <= mouseX && mouseX <= x1
-                && y0 <= mouseY && mouseY <= y1;
+        Rectangle clickableBounds = getClickableBounds();
+        return clickableBounds.x0 <= mouseX && mouseX <= clickableBounds.x1
+                && clickableBounds.y0 <= mouseY && mouseY <= clickableBounds.y1;
     }
 
     @Override
@@ -97,12 +107,21 @@ public class AbilityWidget extends Widget {
     renderIcon(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         ResourceBoundary resourceBoundary = frame.resourceBoundary;
 
+//        // DEBUG for clickable bounds
+//        Rectangle clickableBounds = getClickableBounds();
+//        fill(matrixStack, clickableBounds.x0, clickableBounds.y0,
+//                clickableBounds.x1, clickableBounds.y1, 0xFF_FFFFFF);
+
         matrixStack.push();
         matrixStack.translate(-ICON_SIZE / 2f, -ICON_SIZE / 2f, 0);
         Minecraft.getInstance().textureManager.bindTexture(resourceBoundary.getResource());
+
+        int vOffset = locked ? 62
+                : isMouseOver(mouseX, mouseY) ? -31
+                : level >= 1 ? 31 : 0;
         blit(matrixStack, this.x, this.y,
                 resourceBoundary.getU(),
-                resourceBoundary.getV() + (locked ? +62 : level >= 1 ? 31 : 0),
+                resourceBoundary.getV() + vOffset,
                 resourceBoundary.getW(),
                 resourceBoundary.getH());
         matrixStack.pop();

@@ -254,18 +254,21 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         matrixStack.scale(viewportScale, viewportScale, 1);
         matrixStack.translate(viewportTranslation.x, viewportTranslation.y, 0);
 
+        int containerMouseX = (int) ((mouseX - midpoint.x) / viewportScale - viewportTranslation.x);
+        int containerMouseY = (int) ((mouseY - midpoint.y) / viewportScale - viewportTranslation.y);
+
         // TODO: Nuke those hardcoded boissss
         new AbilityWidget(100, 100, 7, 12, false, AbilityWidget.AbilityFrame.RECTANGULAR)
-                .render(matrixStack, mouseX, mouseY, partialTicks);
+                .render(matrixStack, containerMouseX, containerMouseY, partialTicks);
 
         new AbilityWidget(-10, -50, 2, 3, false, AbilityWidget.AbilityFrame.STAR)
-                .render(matrixStack, mouseX, mouseY, partialTicks);
+                .render(matrixStack, containerMouseX, containerMouseY, partialTicks);
 
         new AbilityWidget(-15, 30, 0, 1, false, AbilityWidget.AbilityFrame.RECTANGULAR)
-                .render(matrixStack, mouseX, mouseY, partialTicks);
+                .render(matrixStack, containerMouseX, containerMouseY, partialTicks);
 
         new AbilityWidget(50, 15, 0, 3, true, AbilityWidget.AbilityFrame.RECTANGULAR)
-                .render(matrixStack, mouseX, mouseY, partialTicks);
+                .render(matrixStack, containerMouseX, containerMouseY, partialTicks);
 
         matrixStack.pop();
     }
