@@ -49,11 +49,9 @@ public class VaultRaidData extends WorldSavedData {
 		));
 
 		ServerWorld world = player.getServer().getWorld(Vault.WORLD_KEY);
-		player.changeDimension(world);
+		player.teleport(world, raid.box.minX, 256, raid.box.minZ, player.rotationYaw, player.rotationPitch);
 
 		player.getServer().runAsync(() -> {
-			player.teleportKeepLoaded(raid.box.minX, 256, raid.box.minZ);
-
 			ChunkPos chunkPos = new ChunkPos(raid.box.minX >> 4, raid.box.minZ >> 4);
 			IChunk chunk = world.getChunk(chunkPos.x, chunkPos.z);
 			StructureStart<?> start = world.func_241112_a_().func_235013_a_(SectionPos.from(chunk.getPos(), 0), ModFeatures.VAULT_FEATURE.field_236268_b_, chunk);
