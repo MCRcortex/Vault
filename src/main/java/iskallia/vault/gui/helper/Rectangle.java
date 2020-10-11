@@ -1,4 +1,4 @@
-package iskallia.vault.util;
+package iskallia.vault.gui.helper;
 
 import net.minecraft.util.math.vector.Vector2f;
 

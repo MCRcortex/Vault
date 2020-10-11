@@ -5,7 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
 import iskallia.vault.container.AbilityTreeContainer;
 import iskallia.vault.gui.widget.AbilityWidget;
-import iskallia.vault.util.Rectangle;
+import iskallia.vault.gui.helper.Rectangle;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
@@ -83,8 +83,8 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
 
         if (containerBounds.contains((int) mouseX, (int) mouseY)) {
             Vector2f midpoint = containerBounds.midpoint();
-            double zoomingX = (mouseX - containerBounds.x0) - midpoint.x;
-            double zoomingY = (mouseY - containerBounds.y0) - midpoint.y;
+            double zoomingX = (mouseX - midpoint.x) / viewportScale + viewportTranslation.x;
+            double zoomingY = (mouseY - midpoint.y) / viewportScale + viewportTranslation.y;
 
             int wheel = delta < 0 ? -1 : 1;
 
@@ -255,13 +255,16 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         matrixStack.translate(viewportTranslation.x, viewportTranslation.y, 0);
 
         // TODO: Nuke those hardcoded boissss
-        new AbilityWidget(100, 100, 7, 12, AbilityWidget.AbilityFrame.RECTANGULAR)
+        new AbilityWidget(100, 100, 7, 12, false, AbilityWidget.AbilityFrame.RECTANGULAR)
                 .render(matrixStack, mouseX, mouseY, partialTicks);
 
-        new AbilityWidget(-10, -50, 2, 3, AbilityWidget.AbilityFrame.STAR)
+        new AbilityWidget(-10, -50, 2, 3, false, AbilityWidget.AbilityFrame.STAR)
                 .render(matrixStack, mouseX, mouseY, partialTicks);
 
-        new AbilityWidget(-15, 30, 0, 1, AbilityWidget.AbilityFrame.RECTANGULAR)
+        new AbilityWidget(-15, 30, 0, 1, false, AbilityWidget.AbilityFrame.RECTANGULAR)
+                .render(matrixStack, mouseX, mouseY, partialTicks);
+
+        new AbilityWidget(50, 15, 0, 3, true, AbilityWidget.AbilityFrame.RECTANGULAR)
                 .render(matrixStack, mouseX, mouseY, partialTicks);
 
         matrixStack.pop();
