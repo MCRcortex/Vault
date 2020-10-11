@@ -3,9 +3,14 @@ package iskallia.vault.gui.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
+import iskallia.vault.ability.AbilityGroup;
+import iskallia.vault.ability.AbilityNode;
+import iskallia.vault.ability.AbilityTree;
+import iskallia.vault.config.AbilitiesGUIConfig;
 import iskallia.vault.container.AbilityTreeContainer;
 import iskallia.vault.gui.helper.Rectangle;
 import iskallia.vault.gui.widget.AbilityWidget;
+import iskallia.vault.init.ModConfigs;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
@@ -91,7 +96,7 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
             double zoomTargetX = (zoomingX - viewportTranslation.x) / viewportScale;
             double zoomTargetY = (zoomingY - viewportTranslation.y) / viewportScale;
 
-            viewportScale += 0.1 * wheel * viewportScale;
+            viewportScale += 0.25 * wheel * viewportScale;
             viewportScale = (float) MathHelper.clamp(viewportScale, 0.5, 5);
 
             viewportTranslation = new Vector2f(
@@ -215,7 +220,6 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
 
         Rectangle containerBounds = getContainerBounds();
 
-        // TODO: Support alpha blending
         // TODO: Include scale param
         int textureSize = 16;
         int currentX = containerBounds.x0;
@@ -257,18 +261,13 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         int containerMouseX = (int) ((mouseX - midpoint.x) / viewportScale - viewportTranslation.x);
         int containerMouseY = (int) ((mouseY - midpoint.y) / viewportScale - viewportTranslation.y);
 
-        // TODO: Nuke those hardcoded boissss
-        new AbilityWidget(100, 100, 7, 12, false, AbilityWidget.AbilityFrame.RECTANGULAR)
-                .render(matrixStack, containerMouseX, containerMouseY, partialTicks);
-
-        new AbilityWidget(-10, -50, 2, 3, false, AbilityWidget.AbilityFrame.STAR)
-                .render(matrixStack, containerMouseX, containerMouseY, partialTicks);
-
-        new AbilityWidget(-15, 30, 0, 1, false, AbilityWidget.AbilityFrame.RECTANGULAR)
-                .render(matrixStack, containerMouseX, containerMouseY, partialTicks);
-
-        new AbilityWidget(50, 15, 0, 3, true, AbilityWidget.AbilityFrame.RECTANGULAR)
-                .render(matrixStack, containerMouseX, containerMouseY, partialTicks);
+        AbilityTree abilityTree = getContainer().getAbilityTree();
+        ModConfigs.ABILITIES_GUI.getStyles().forEach((abilityName, style) -> {
+            AbilityGroup<?> ability = ModConfigs.ABILITIES.getByName(abilityName);
+            AbilityNode<?> playerAbility = abilityTree.getNodeByName(abilityName);
+            new AbilityWidget(playerAbility.getLevel(), ability.getLevels(), false, style)
+                    .render(matrixStack, containerMouseX, containerMouseY, partialTicks);
+        });
 
         matrixStack.pop();
     }

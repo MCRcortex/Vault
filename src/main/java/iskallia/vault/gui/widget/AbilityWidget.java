@@ -2,6 +2,7 @@ package iskallia.vault.gui.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import iskallia.vault.Vault;
+import iskallia.vault.config.AbilitiesGUIConfig;
 import iskallia.vault.gui.helper.Rectangle;
 import iskallia.vault.util.ResourceBoundary;
 import net.minecraft.client.Minecraft;
@@ -9,7 +10,6 @@ import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 
-// TODO: Replace fill() calls with necessary blit() calls
 public class AbilityWidget extends Widget {
 
     private static final int PIP_SIZE = 8; //px
@@ -22,18 +22,18 @@ public class AbilityWidget extends Widget {
 
     int maxLevel, level;
     boolean locked;
-    AbilityFrame frame;
+    AbilitiesGUIConfig.AbilityStyle style;
 
     boolean selected;
 
-    public AbilityWidget(int x, int y, int level, int maxLevel, boolean locked, AbilityFrame frame) {
-        super(x, y,
+    public AbilityWidget(int level, int maxLevel, boolean locked, AbilitiesGUIConfig.AbilityStyle style) {
+        super(style.x, style.y,
                 5 * PIP_SIZE + 4 * GAP_SIZE,
                 pipRowCount(level) * (PIP_SIZE + GAP_SIZE) - GAP_SIZE,
                 new StringTextComponent("the_vault.widgets.talent"));
         this.level = level;
         this.maxLevel = maxLevel;
-        this.frame = frame;
+        this.style = style;
         this.locked = locked;
         this.selected = false;
     }
@@ -68,6 +68,8 @@ public class AbilityWidget extends Widget {
     public boolean hasPips() {
         return !locked && maxLevel > 1;
     }
+
+    /* ----------------------------------------- */
 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
@@ -104,7 +106,7 @@ public class AbilityWidget extends Widget {
 
     public void
     renderIcon(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        ResourceBoundary resourceBoundary = frame.resourceBoundary;
+        ResourceBoundary resourceBoundary = style.frameType.resourceBoundary;
 
 //        // DEBUG for clickable bounds
 //        Rectangle clickableBounds = getClickableBounds();
@@ -134,7 +136,7 @@ public class AbilityWidget extends Widget {
 
         } else {
             blit(matrixStack, this.x, this.y,
-                    16 * 4, 0,
+                    style.u, style.v,
                     16, 16);
         }
         matrixStack.pop();
