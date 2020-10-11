@@ -66,56 +66,10 @@ public class PlayerAbilitiesData extends WorldSavedData {
 		}
 	}
 
-	public static boolean generated = false;
-
 	@SubscribeEvent
 	public static void onTick(TickEvent.PlayerTickEvent event) {
 		if(event.side == LogicalSide.SERVER) {
 			get((ServerWorld)event.player.world).getAbilities(event.player);
-
-			//todo: remove
-			//if(event.player.world.getDimensionKey() != Vault.WORLD_KEY) {
-				//ServerWorld world = event.player.getServer().getWorld(Vault.WORLD_KEY);
-			//	event.player.changeDimension(world);
-
-				/*
-				DimensionStructuresSettings.field_236191_b_ = ImmutableMap.<Structure<?>, StructureSeparationSettings>builder()
-						.putAll(DimensionStructuresSettings.field_236191_b_)
-						.put(VAULT, new StructureSeparationSettings(1, 0, -1)).build();
-
-				world.getChunkProvider().getChunkGenerator().func_235957_b_().func_236195_a_().put(ModStructures.VAULT,
-						new StructureSeparationSettings(1, 0, -1));*/
-			/*
-			if(generated)return;
-			generated = true;
-			ServerWorld world = (ServerWorld)event.player.world;
-
-				((IChunkGeneratorAccessor)world.getChunkProvider().getChunkGenerator()).callFunc_242705_a(ModFeatures.VAULT_FEATURE,
-						world.func_241828_r(), world.func_241112_a_(), world.getChunk(100, 100),
-						world.getStructureTemplateManager(), world.getSeed(), new ChunkPos(100, 100), BiomeRegistry.PLAINS);
-			//}*/
-
-			/*
-			if(event.player.world.getDimensionKey() != Vault.WORLD_KEY) {
-				ServerWorld world = event.player.getServer().getWorld(Vault.WORLD_KEY);
-				event.player.changeDimension(world);
-
-				IChunk chunk = world.getChunk(100, 100);
-				StructureStart<?> structurestart = world.func_241112_a_().func_235013_a_(
-						SectionPos.from(chunk.getPos(), 0), ModFeatures.VAULT_FEATURE.field_236268_b_, chunk);
-
-				System.out.println("generating");
-
-				int i = structurestart != null ? structurestart.getRefCount() : 0;
-				StructureSeparationSettings structureseparationsettings = new StructureSeparationSettings(1, 0, -1);
-				StructureStart<?> structurestart1 = ModFeatures.VAULT_FEATURE.func_242771_a(world.func_241828_r(),
-						world.getChunkProvider().generator, world.getChunkProvider().generator.getBiomeProvider(),
-						world.getStructureTemplateManager(), world.getSeed(), new ChunkPos(100, 100),
-						BiomeRegistry.PLAINS, i, structureseparationsettings);
-				world.func_241112_a_().func_235014_a_(
-						SectionPos.from(chunk.getPos(), 0),
-						ModFeatures.VAULT_FEATURE.field_236268_b_, structurestart1, chunk);
-			}*/
 		}
 	}
 
