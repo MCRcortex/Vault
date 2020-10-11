@@ -1,4 +1,4 @@
-package iskallia.vault.gui.screen;
+package iskallia.vault.client.gui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -6,10 +6,9 @@ import iskallia.vault.Vault;
 import iskallia.vault.ability.AbilityGroup;
 import iskallia.vault.ability.AbilityNode;
 import iskallia.vault.ability.AbilityTree;
-import iskallia.vault.config.AbilitiesGUIConfig;
 import iskallia.vault.container.AbilityTreeContainer;
-import iskallia.vault.gui.helper.Rectangle;
-import iskallia.vault.gui.widget.AbilityWidget;
+import iskallia.vault.client.gui.helper.Rectangle;
+import iskallia.vault.client.gui.widget.AbilityWidget;
 import iskallia.vault.init.ModConfigs;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;

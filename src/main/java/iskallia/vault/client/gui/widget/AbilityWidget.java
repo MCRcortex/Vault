@@ -1,9 +1,9 @@
-package iskallia.vault.gui.widget;
+package iskallia.vault.client.gui.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import iskallia.vault.Vault;
 import iskallia.vault.config.AbilitiesGUIConfig;
-import iskallia.vault.gui.helper.Rectangle;
+import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.util.ResourceBoundary;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;
