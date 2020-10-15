@@ -5,7 +5,8 @@ import iskallia.vault.init.ModFeatures;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.nbt.StringNBT;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.util.math.SectionPos;
@@ -21,7 +22,11 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class VaultRaidData extends WorldSavedData {
@@ -29,6 +34,7 @@ public class VaultRaidData extends WorldSavedData {
 	protected static final String DATA_NAME = Vault.MOD_ID + "_VaultRaid";
 
 	private Map<UUID, VaultRaid> activeRaids = new HashMap<>();
+	private Map<UUID, Integer> playerLevels = new HashMap<>();
 	private int xOffset = 0;
 
 	public VaultRaidData() {
@@ -39,20 +45,29 @@ public class VaultRaidData extends WorldSavedData {
 		super(name);
 	}
 
+	public VaultRaid getAt(BlockPos pos) {
+		return this.activeRaids.values().stream().filter(raid -> raid.box.isVecInside(pos)).findFirst().orElse(null);
+	}
+
 	public VaultRaid getActiveFor(ServerPlayerEntity player) {
 		return this.activeRaids.get(player.getUniqueID());
+	}
+
+	public int getLevel(ServerPlayerEntity player) {
+		return this.playerLevels.computeIfAbsent(player.getUniqueID(), uuid -> 0);
 	}
 
 	public VaultRaid startNew(ServerPlayerEntity player) {
 		VaultRaid raid = new VaultRaid(player.getUniqueID(), new MutableBoundingBox(
 				this.xOffset, 0, 0, this.xOffset += 2000, 256, 2000
-		));
+		), this.getLevel(player));
 
 		ServerWorld world = player.getServer().getWorld(Vault.WORLD_KEY);
-		player.teleport(world, raid.box.minX, 256, raid.box.minZ, player.rotationYaw, player.rotationPitch);
+		player.teleport(world, raid.box.minX + raid.box.getXSize() / 2.0F, 256,
+				raid.box.minZ + raid.box.getZSize() / 2.0F, player.rotationYaw, player.rotationPitch);
 
 		player.getServer().runAsync(() -> {
-			ChunkPos chunkPos = new ChunkPos(raid.box.minX >> 4, raid.box.minZ >> 4);
+			ChunkPos chunkPos = new ChunkPos((raid.box.minX + raid.box.getXSize() / 2) >> 4, (raid.box.minZ + raid.box.getZSize() / 2)  >> 4);
 			IChunk chunk = world.getChunk(chunkPos.x, chunkPos.z);
 			StructureStart<?> start = world.func_241112_a_().func_235013_a_(SectionPos.from(chunk.getPos(), 0), ModFeatures.VAULT_FEATURE.field_236268_b_, chunk);
 			int i = start != null ? start.getRefCount() : 0;
@@ -95,10 +110,16 @@ public class VaultRaidData extends WorldSavedData {
 	@Override
 	public void read(CompoundNBT nbt) {
 		this.activeRaids.clear();
+		this.playerLevels.clear();
 
 		nbt.getList("ActiveRaids", Constants.NBT.TAG_COMPOUND).forEach(raidNBT -> {
 			VaultRaid raid = VaultRaid.fromNBT((CompoundNBT)raidNBT);
 			this.activeRaids.put(raid.getPlayerId(), raid);
+		});
+
+		nbt.getList("PlayerLevels", Constants.NBT.TAG_STRING).forEach(levelNBT -> {
+			String[] data = levelNBT.getString().split(Pattern.quote("@"));
+			this.playerLevels.put(UUID.fromString(data[0]), Integer.parseInt(data[1]));
 		});
 
 		this.xOffset = nbt.getInt("XOffset");
@@ -109,6 +130,11 @@ public class VaultRaidData extends WorldSavedData {
 		ListNBT raidsList = new ListNBT();
 		this.activeRaids.values().forEach(raid -> raidsList.add(raid.serializeNBT()));
 		nbt.put("ActiveRaids", raidsList);
+
+		ListNBT levelsList = new ListNBT();
+		this.playerLevels.forEach((uuid, level) -> levelsList.add(StringNBT.valueOf(uuid.toString() + "@" + level)));
+		nbt.put("PlayerLevels", levelsList);
+
 		nbt.putInt("XOffset", this.xOffset);
 		return nbt;
 	}

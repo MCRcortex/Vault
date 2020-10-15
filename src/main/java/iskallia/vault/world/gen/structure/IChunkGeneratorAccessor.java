@@ -1,4 +1,4 @@
-package iskallia.vault.world.structure;
+package iskallia.vault.world.gen.structure;
 
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.DynamicRegistries;

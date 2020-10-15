@@ -1,4 +1,4 @@
-package iskallia.vault.world.structure;
+package iskallia.vault.world.gen.structure;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;

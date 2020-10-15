@@ -10,15 +10,17 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 
 	private UUID playerId;
 	public MutableBoundingBox box;
+	public int level;
 	public int ticksLeft = 20 * 60 * 20;
 
-	private VaultRaid() {
+	protected VaultRaid() {
 
 	}
 
-	public VaultRaid(UUID playerId, MutableBoundingBox box) {
+	public VaultRaid(UUID playerId, MutableBoundingBox box, int level) {
 		this.playerId = playerId;
 		this.box = box;
+		this.level = level;
 	}
 
 	public UUID getPlayerId() {
@@ -38,6 +40,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 		CompoundNBT nbt = new CompoundNBT();
 		nbt.putUniqueId("PlayerId", this.playerId);
 		nbt.put("Box", this.box.toNBTTagIntArray());
+		nbt.putInt("Level", this.level);
 		nbt.putInt("TicksLeft", this.ticksLeft);
 		return nbt;
 	}
@@ -46,6 +49,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 	public void deserializeNBT(CompoundNBT nbt) {
 		this.playerId = nbt.getUniqueId("PlayerId");
 		this.box = new MutableBoundingBox(nbt.getIntArray("Box"));
+		this.level = nbt.getInt("Level");
 		this.ticksLeft = nbt.getInt("TicksLeft");
 	}
 

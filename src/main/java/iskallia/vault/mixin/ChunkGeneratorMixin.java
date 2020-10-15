@@ -1,7 +1,7 @@
 package iskallia.vault.mixin;
 
 import iskallia.vault.init.ModStructures;
-import iskallia.vault.world.structure.IChunkGeneratorAccessor;
+import iskallia.vault.world.gen.structure.IChunkGeneratorAccessor;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.world.biome.Biome;

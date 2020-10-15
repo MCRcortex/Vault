@@ -8,8 +8,10 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.GenerationStage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
@@ -28,11 +30,17 @@ public class Vault {
 	    ModStructures.register();
 	    ModFeatures.register();
 	    MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, this::onCommandRegister);
+	    MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onBiomeLoad);
     }
-
 
 	public void onCommandRegister(RegisterCommandsEvent event) {
 		ModCommands.registerCommands(event.getDispatcher(), event.getEnvironment());
+	}
+
+	public void onBiomeLoad(BiomeLoadingEvent event) {
+    	if(event.getName().getNamespace().equals(MOD_ID)) {
+    		ModFeatures.FEATURES.forEach(feature -> event.getGeneration().withFeature(GenerationStage.Decoration.UNDERGROUND_DECORATION, feature));
+	    }
 	}
 
 	public static String sId(String name) {

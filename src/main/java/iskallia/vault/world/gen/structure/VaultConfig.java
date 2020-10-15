@@ -1,4 +1,4 @@
-package iskallia.vault.world.structure;
+package iskallia.vault.world.gen.structure;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
