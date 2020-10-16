@@ -22,12 +22,12 @@ public class ModFeatures {
 
 	public static void register() {
 		VAULT_FEATURE = register("vault", ModStructures.VAULT.func_236391_a_(new VaultConfig(() -> VaultPools.START, 8)));
-		COAL = registerOre("vault_coal_ore", Blocks.COAL_ORE.getDefaultState(), 8, 20);
-		IRON = registerOre("vault_iron_ore", Blocks.IRON_ORE.getDefaultState(), 8, 20);
-		GOLD = registerOre("vault_gold_ore", Blocks.GOLD_ORE.getDefaultState(), 8, 20);
-		REDSTONE = registerOre("vault_redstone_ore", Blocks.REDSTONE_ORE.getDefaultState(), 8, 20);
-		LAPIS = registerOre("vault_lapis_ore", Blocks.LAPIS_ORE.getDefaultState(), 8, 20);
-		DIAMOND = registerOre("vault_diamond_ore", Blocks.DIAMOND_ORE.getDefaultState(), 8, 20);
+		COAL = registerOre("vault_coal_ore", Blocks.COAL_ORE.getDefaultState(), 8, 30);
+		IRON = registerOre("vault_iron_ore", Blocks.IRON_ORE.getDefaultState(), 8, 30);
+		GOLD = registerOre("vault_gold_ore", Blocks.GOLD_ORE.getDefaultState(), 8, 30);
+		REDSTONE = registerOre("vault_redstone_ore", Blocks.REDSTONE_ORE.getDefaultState(), 8, 30);
+		LAPIS = registerOre("vault_lapis_ore", Blocks.LAPIS_ORE.getDefaultState(), 8, 30);
+		DIAMOND = registerOre("vault_diamond_ore", Blocks.DIAMOND_ORE.getDefaultState(), 8, 30);
 	}
 
 	public static ConfiguredFeature<?, ?> registerOre(String name, BlockState ore, int size, int tries) {

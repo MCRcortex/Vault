@@ -15,9 +15,7 @@ import net.minecraft.world.gen.feature.template.TemplateManager;
 
 public class VaultStructure extends Structure<VaultConfig> {
 
-    private final int startY = 128;
-    private final boolean idk = false;
-    private final boolean surface = false;
+    public static final int START_Y = 128;
 
     public VaultStructure(Codec<VaultConfig> config) {
         super(config);
@@ -40,9 +38,9 @@ public class VaultStructure extends Structure<VaultConfig> {
         }
 
         public void func_230364_a_(DynamicRegistries registry, ChunkGenerator gen, TemplateManager manager, int chunkX, int chunkZ, Biome biome, VaultConfig config) {
-            BlockPos blockpos = new BlockPos(chunkX * 16, this.structure.startY, chunkZ * 16);
+            BlockPos blockpos = new BlockPos(chunkX * 16, START_Y, chunkZ * 16);
             VaultPools.init();
-            JigsawManager.func_242837_a(registry, config.toVillageConfig(), AbstractVillagePiece::new, gen, manager, blockpos, this.components, this.rand, this.structure.idk, this.structure.surface);
+            JigsawManager.func_242837_a(registry, config.toVillageConfig(), AbstractVillagePiece::new, gen, manager, blockpos, this.components, this.rand, false, false);
             this.recalculateStructureSize();
         }
     }

@@ -2,6 +2,7 @@ package iskallia.vault.world.data;
 
 import iskallia.vault.Vault;
 import iskallia.vault.init.ModFeatures;
+import iskallia.vault.init.ModStructures;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -11,6 +12,7 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.util.math.SectionPos;
 import net.minecraft.world.biome.BiomeRegistry;
+import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.gen.feature.structure.StructureStart;
 import net.minecraft.world.gen.settings.StructureSeparationSettings;
@@ -62,25 +64,34 @@ public class VaultRaidData extends WorldSavedData {
 				this.xOffset, 0, 0, this.xOffset += 2000, 256, 2000
 		), this.getLevel(player));
 
-		ServerWorld world = player.getServer().getWorld(Vault.WORLD_KEY);
-		player.teleport(world, raid.box.minX + raid.box.getXSize() / 2.0F, 256,
-				raid.box.minZ + raid.box.getZSize() / 2.0F, player.rotationYaw, player.rotationPitch);
-
 		player.getServer().runAsync(() -> {
-			ChunkPos chunkPos = new ChunkPos((raid.box.minX + raid.box.getXSize() / 2) >> 4, (raid.box.minZ + raid.box.getZSize() / 2)  >> 4);
-			IChunk chunk = world.getChunk(chunkPos.x, chunkPos.z);
-			StructureStart<?> start = world.func_241112_a_().func_235013_a_(SectionPos.from(chunk.getPos(), 0), ModFeatures.VAULT_FEATURE.field_236268_b_, chunk);
-			int i = start != null ? start.getRefCount() : 0;
+			try {
+				ServerWorld world = player.getServer().getWorld(Vault.WORLD_KEY);
 
-			StructureSeparationSettings settings = new StructureSeparationSettings(1, 0, -1);
+				ChunkPos chunkPos = new ChunkPos((raid.box.minX + raid.box.getXSize() / 2) >> 4, (raid.box.minZ + raid.box.getZSize() / 2) >> 4);
+				IChunk chunk = world.getChunk(chunkPos.x, chunkPos.z, ChunkStatus.EMPTY, true);
 
-			start = ModFeatures.VAULT_FEATURE.func_242771_a(world.func_241828_r(),
-					world.getChunkProvider().generator, world.getChunkProvider().generator.getBiomeProvider(),
-					world.getStructureTemplateManager(), world.getSeed(), chunkPos,
-					BiomeRegistry.PLAINS, i, settings);
+				StructureSeparationSettings settings = new StructureSeparationSettings(1, 0, -1);
 
-			start.func_230366_a_(world, world.func_241112_a_(), world.getChunkProvider().generator, new Random(),
-					MutableBoundingBox.func_236990_b_(), chunkPos);
+				StructureStart<?> start = ModFeatures.VAULT_FEATURE.func_242771_a(world.func_241828_r(),
+						world.getChunkProvider().generator, world.getChunkProvider().generator.getBiomeProvider(),
+						world.getStructureTemplateManager(), world.getSeed(), chunkPos,
+						BiomeRegistry.PLAINS, 0, settings);
+
+				chunk.func_230344_a_(ModStructures.VAULT, start);
+
+				//TODO: maybe fix this hack xD
+				//start.func_230366_a_(world, world.func_241112_a_(), world.getChunkProvider().generator, new Random(),
+				//		new MutableBoundingBox(
+				//				chunkPos.x << 4, 0, chunkPos.z << 4,
+				//				(chunkPos.x << 4) + 15, 255, (chunkPos.z << 4) + 15
+				//		), chunkPos);
+
+				raid.searchForStart(world, chunkPos);
+				raid.teleportToStart(world, player);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 		});
 
 		if(this.activeRaids.containsKey(player.getUniqueID())) {

@@ -1,7 +1,14 @@
 package iskallia.vault.world.data;
 
+import iskallia.vault.world.gen.structure.VaultStructure;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.UUID;
@@ -12,6 +19,9 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 	public MutableBoundingBox box;
 	public int level;
 	public int ticksLeft = 20 * 60 * 20;
+
+	public BlockPos start;
+	public Direction facing;
 
 	protected VaultRaid() {
 
@@ -57,6 +67,38 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 		VaultRaid raid = new VaultRaid();
 		raid.deserializeNBT(nbt);
 		return raid;
+	}
+
+	public void teleportToStart(ServerWorld world, ServerPlayerEntity player) {
+		if(this.start == null) {
+			System.err.println("No vault start was found.");
+			player.teleport(world, this.box.minX + this.box.getXSize() / 2.0F, 256,
+					this.box.minZ + this.box.getZSize() / 2.0F, player.rotationYaw, player.rotationPitch);
+			return;
+		}
+
+		player.teleport(world, this.start.getX(), this.start.getY(), this.start.getZ(),
+				this.facing == null ? world.getRandom().nextFloat() * 360.0F : this.facing.getHorizontalAngle(), 0.0F);
+	}
+
+	public void searchForStart(ServerWorld world, ChunkPos chunkPos) {
+		for(int x = -48; x < 48; x++) {
+			for(int z = -48; z < 48; z++) {
+				for(int y = 0; y < 48; y++) {
+					BlockPos pos = chunkPos.asBlockPos().add(x, VaultStructure.START_Y + y, z);
+					if(world.getBlockState(pos).getBlock() != Blocks.CRIMSON_PRESSURE_PLATE)continue;
+					this.start = pos;
+
+					Direction.Plane.HORIZONTAL.forEach(direction -> {
+						if(world.getBlockState(pos.offset(direction)).getBlock() == Blocks.WARPED_PRESSURE_PLATE) {
+							this.facing = direction;
+						}
+					});
+
+					return;
+				}
+			}
+		}
 	}
 
 }

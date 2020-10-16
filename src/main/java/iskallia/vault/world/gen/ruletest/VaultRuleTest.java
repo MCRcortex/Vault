@@ -1,24 +1,32 @@
 package iskallia.vault.world.gen.ruletest;
 
-import net.minecraft.block.Block;
+import com.mojang.serialization.Codec;
+import iskallia.vault.Vault;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
-import net.minecraft.world.gen.feature.template.BlockMatchRuleTest;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.gen.feature.template.*;
 
 import java.util.Random;
 
-public class VaultRuleTest extends BlockMatchRuleTest {
+public class VaultRuleTest extends RuleTest {
 
-	public static final VaultRuleTest INSTANCE = new VaultRuleTest(Blocks.BEDROCK);
-
-	public VaultRuleTest(Block block) {
-		super(block);
-	}
+	public static final VaultRuleTest INSTANCE = new VaultRuleTest();
+	public static final Codec<VaultRuleTest> CODEC = Codec.unit(() -> INSTANCE);
+	public static final IRuleTestType<VaultRuleTest> TYPE = register("vault_stone_match", CODEC);
 
 	@Override
 	public boolean test(BlockState state, Random random) {
 		return state.getMaterial() == Material.ROCK && state.isSolid();
+	}
+
+	@Override
+	protected IRuleTestType<?> getType() {
+		return TYPE;
+	}
+
+	static <P extends RuleTest> IRuleTestType<P> register(String name, Codec<P> codec) {
+		return Registry.register(Registry.RULE_TEST, Vault.id(name), () -> codec);
 	}
 
 }

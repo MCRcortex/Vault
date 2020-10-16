@@ -5,7 +5,7 @@
     "seed": 0,
     "settings": {
       "biome": "the_vault:spoopy",
-      "features": false,
+      "features": true,
       "layers": [
         {
           "block": "minecraft:bedrock",
