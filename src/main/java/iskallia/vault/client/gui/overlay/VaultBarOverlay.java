@@ -5,12 +5,19 @@ import iskallia.vault.Vault;
 import iskallia.vault.client.gui.helper.FontHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+@OnlyIn(Dist.CLIENT)
 public class VaultBarOverlay {
 
     public static final ResourceLocation RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/vault-hud.png");
+
+    public static int vaultLevel;
+    public static int vaultExp, tnl;
+    public static int unspentSkillPoints; // <-- TODO: "Has unspent points!" indicator
 
     @SubscribeEvent
     public static void
@@ -27,11 +34,11 @@ public class VaultBarOverlay {
         int midX = minecraft.getMainWindow().getScaledWidth() / 2;
         int bottom = minecraft.getMainWindow().getScaledHeight();
 
-        String text = "123"; // TODO: <-- Fetch from actual AbilityTree
+        String text = String.valueOf(vaultLevel);
         int textX = midX + 50 - (minecraft.fontRenderer.getStringWidth(text) / 2);
         int textY = bottom - 54;
         int barWidth = 85;
-        float expPercentage = 0.4f;// TODO: <-- Fetch from actual AbilityTree
+        float expPercentage = (float) vaultExp / tnl;
 
         minecraft.getProfiler().startSection("vaultBar");
         minecraft.getTextureManager().bindTexture(RESOURCE);

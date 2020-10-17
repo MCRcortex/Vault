@@ -1,12 +1,16 @@
 package iskallia.vault.ability;
 
 import iskallia.vault.init.ModConfigs;
+import iskallia.vault.network.ModNetwork;
+import iskallia.vault.network.message.VaultLevelMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.network.NetworkDirection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +21,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
 
     private final UUID uuid;
     private int vaultLevel;
-    private int exp, tnl;
+    private int exp;
     private int unspentSkillPts;
     private List<AbilityNode<?>> nodes = new ArrayList<>();
 
@@ -37,7 +41,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
     }
 
     public int getTnl() {
-        return tnl;
+        return ModConfigs.LEVELS_META.getLevelMeta(this.vaultLevel).tnl;
     }
 
     public int getUnspentSkillPts() {
@@ -64,18 +68,26 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         return this;
     }
 
-    public AbilityTree addExp(MinecraftServer server, int exp) {
-        this.runIfPresent(server, player -> {
-            this.exp += exp;
+    public AbilityTree setLevel(MinecraftServer server, int level) {
+        this.vaultLevel = level;
+        this.exp = 0;
 
-            if (this.exp >= tnl) {
-                this.vaultLevel++;
-                this.unspentSkillPts++;
-                this.exp -= tnl; // Carry extra exp to next level!
-                // TODO: Update TNL to the new level
-                // TODO: Notify onLevelUp callback or smth?
-            }
-        });
+        syncLevelInfo(server);
+
+        return this;
+    }
+
+    public AbilityTree addExp(MinecraftServer server, int exp) {
+        int tnl;
+        this.exp += exp;
+
+        while (this.exp >= (tnl = getTnl())) {
+            this.vaultLevel++;
+            this.unspentSkillPts++;
+            this.exp -= tnl; // Carry extra exp to next level!
+        }
+
+        syncLevelInfo(server);
 
         return this;
     }
@@ -106,6 +118,16 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
 
     /* ------------------------------------ */
 
+    public void syncLevelInfo(MinecraftServer server) {
+        runIfPresent(server, player -> {
+            ModNetwork.channel.sendTo(
+                    new VaultLevelMessage(this.vaultLevel, this.exp, this.getTnl()),
+                    player.connection.netManager,
+                    NetworkDirection.PLAY_TO_CLIENT
+            );
+        });
+    }
+
     @Override
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
@@ -113,12 +135,11 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         nbt.putInt("vaultLevel", vaultLevel);
 
         nbt.putInt("exp", exp);
-        nbt.putInt("tnl", tnl);
 
         nbt.putInt("unspentSkillPts", unspentSkillPts);
 
         ListNBT list = new ListNBT();
-        this.nodes.stream().map(AbilityNode::toNBT).forEach(list::add);
+        this.nodes.stream().map(AbilityNode::serializeNBT).forEach(list::add);
         nbt.put("Nodes", list);
 
         return nbt;
@@ -129,7 +150,6 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         this.vaultLevel = nbt.getInt("vaultLevel");
 
         this.exp = nbt.getInt("exp");
-        this.tnl = nbt.getInt("tnl");
 
         this.unspentSkillPts = nbt.getInt("unspentSkillPts");
 

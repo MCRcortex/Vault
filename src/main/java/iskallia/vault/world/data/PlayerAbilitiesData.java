@@ -24,86 +24,99 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class PlayerAbilitiesData extends WorldSavedData {
 
-	protected static final String DATA_NAME = Vault.MOD_ID + "_PlayerAbilities";
+    protected static final String DATA_NAME = Vault.MOD_ID + "_PlayerAbilities";
 
-	private Map<UUID, AbilityTree> playerMap = new HashMap<>();
+    private Map<UUID, AbilityTree> playerMap = new HashMap<>();
 
-	public PlayerAbilitiesData() {
-		this(DATA_NAME);
-	}
+    public PlayerAbilitiesData() {
+        this(DATA_NAME);
+    }
 
-	public PlayerAbilitiesData(String name) {
-		super(name);
-	}
+    public PlayerAbilitiesData(String name) {
+        super(name);
+    }
 
-	public AbilityTree getAbilities(PlayerEntity player) {
-		return this.getAbilities(player.getUniqueID());
-	}
+    public AbilityTree getAbilities(PlayerEntity player) {
+        return this.getAbilities(player.getUniqueID());
+    }
 
-	public AbilityTree getAbilities(UUID uuid) {
-		return this.playerMap.computeIfAbsent(uuid, AbilityTree::new);
-	}
+    public AbilityTree getAbilities(UUID uuid) {
+        return this.playerMap.computeIfAbsent(uuid, AbilityTree::new);
+    }
 
-	public PlayerAbilitiesData add(ServerPlayerEntity player, AbilityNode<?>... nodes) {
-		this.getAbilities(player).add(player.getServer(), nodes);
-		return this;
-	}
+    public PlayerAbilitiesData add(ServerPlayerEntity player, AbilityNode<?>... nodes) {
+        this.getAbilities(player).add(player.getServer(), nodes);
+        return this;
+    }
 
-	public PlayerAbilitiesData remove(ServerPlayerEntity player, AbilityNode<?>... nodes) {
-		this.getAbilities(player).remove(player.getServer(), nodes);
-		return this;
-	}
+    public PlayerAbilitiesData setLevel(ServerPlayerEntity player, int level) {
+        this.getAbilities(player).setLevel(player.getServer(), level);
+        return this;
+    }
 
-	public PlayerAbilitiesData tick(MinecraftServer server) {
-		this.playerMap.values().forEach(abilityTree -> abilityTree.tick(server));
-		return this;
-	}
+    public PlayerAbilitiesData addExp(ServerPlayerEntity player, int exp) {
+        this.getAbilities(player).addExp(player.getServer(), exp);
+        markDirty();
+        return this;
+    }
 
-	@SubscribeEvent
-	public static void onTick(TickEvent.WorldTickEvent event) {
-		if(event.side == LogicalSide.SERVER) {
-			get((ServerWorld)event.world).tick(((ServerWorld)event.world).getServer());
-		}
-	}
+    public PlayerAbilitiesData remove(ServerPlayerEntity player, AbilityNode<?>... nodes) {
+        this.getAbilities(player).remove(player.getServer(), nodes);
+        return this;
+    }
 
-	@SubscribeEvent
-	public static void onTick(TickEvent.PlayerTickEvent event) {
-		if(event.side == LogicalSide.SERVER) {
-			get((ServerWorld)event.player.world).getAbilities(event.player);
-		}
-	}
+    public PlayerAbilitiesData tick(MinecraftServer server) {
+        this.playerMap.values().forEach(abilityTree -> abilityTree.tick(server));
+        return this;
+    }
 
-	@Override
-	public void read(CompoundNBT nbt) {
-		ListNBT playerList = nbt.getList("PlayerEntries", Constants.NBT.TAG_STRING);
-		ListNBT abilityList = nbt.getList("AbilityEntries", Constants.NBT.TAG_COMPOUND);
+    @SubscribeEvent
+    public static void onTick(TickEvent.WorldTickEvent event) {
+        if (event.side == LogicalSide.SERVER) {
+            get((ServerWorld) event.world).tick(((ServerWorld) event.world).getServer());
+        }
+    }
 
-		if(playerList.size() != abilityList.size()) {
-			throw new IllegalStateException("Map doesn't have the same amount of keys as values");
-		}
+    @SubscribeEvent
+    public static void onTick(TickEvent.PlayerTickEvent event) {
+        if (event.side == LogicalSide.SERVER) {
+            get((ServerWorld) event.player.world).getAbilities(event.player);
+        }
+    }
 
-		for(int i = 0; i < playerList.size(); i++) {
-			this.getAbilities(UUID.fromString(playerList.getString(i))).deserializeNBT(abilityList.getCompound(i));
-		}
-	}
+    @Override
+    public void read(CompoundNBT nbt) {
+        ListNBT playerList = nbt.getList("PlayerEntries", Constants.NBT.TAG_STRING);
+        ListNBT abilityList = nbt.getList("AbilityEntries", Constants.NBT.TAG_COMPOUND);
 
-	@Override
-	public CompoundNBT write(CompoundNBT nbt) {
-		ListNBT playerList = new ListNBT();
-		ListNBT abilityList = new ListNBT();
+        if (playerList.size() != abilityList.size()) {
+            throw new IllegalStateException("Map doesn't have the same amount of keys as values");
+        }
 
-		this.playerMap.forEach((uuid, abilityTree) -> {
-			playerList.add(StringNBT.valueOf(uuid.toString()));
-			abilityList.add(abilityTree.serializeNBT());
-		});
+        for (int i = 0; i < playerList.size(); i++) {
+            this.getAbilities(UUID.fromString(playerList.getString(i))).deserializeNBT(abilityList.getCompound(i));
+        }
+    }
 
-		nbt.put("PlayerEntries", playerList);
-		nbt.put("AbilityEntries", abilityList);
-		return nbt;
-	}
+    @Override
+    public CompoundNBT write(CompoundNBT nbt) {
+        ListNBT playerList = new ListNBT();
+        ListNBT abilityList = new ListNBT();
 
-	public static PlayerAbilitiesData get(ServerWorld world) {
-		return world.getServer().func_241755_D_().getSavedData().getOrCreate(PlayerAbilitiesData::new, DATA_NAME);
-	}
+        this.playerMap.forEach((uuid, abilityTree) -> {
+            playerList.add(StringNBT.valueOf(uuid.toString()));
+            abilityList.add(abilityTree.serializeNBT());
+        });
+
+        nbt.put("PlayerEntries", playerList);
+        nbt.put("AbilityEntries", abilityList);
+
+        return nbt;
+    }
+
+    public static PlayerAbilitiesData get(ServerWorld world) {
+        PlayerAbilitiesData data = world.getServer().func_241755_D_().getSavedData().getOrCreate(PlayerAbilitiesData::new, DATA_NAME);
+        return data;
+    }
 
 }
