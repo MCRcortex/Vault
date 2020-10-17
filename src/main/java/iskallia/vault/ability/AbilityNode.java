@@ -31,6 +31,10 @@ public class AbilityNode<T extends PlayerAbility> implements INBTSerializable<Co
         return this.getGroup().getName(this.getLevel());
     }
 
+    public boolean isLearned() {
+        return this.level != 0;
+    }
+
     @Override
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();

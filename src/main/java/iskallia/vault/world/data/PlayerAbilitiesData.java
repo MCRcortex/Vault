@@ -49,13 +49,14 @@ public class PlayerAbilitiesData extends WorldSavedData {
         return this;
     }
 
-    public PlayerAbilitiesData setLevel(ServerPlayerEntity player, int level) {
-        this.getAbilities(player).setLevel(player.getServer(), level);
+    public PlayerAbilitiesData setVaultLevel(ServerPlayerEntity player, int level) {
+        this.getAbilities(player).setVaultLevel(player.getServer(), level);
+        markDirty();
         return this;
     }
 
-    public PlayerAbilitiesData addExp(ServerPlayerEntity player, int exp) {
-        this.getAbilities(player).addExp(player.getServer(), exp);
+    public PlayerAbilitiesData addVaultExp(ServerPlayerEntity player, int exp) {
+        this.getAbilities(player).addVaultExp(player.getServer(), exp);
         markDirty();
         return this;
     }
@@ -94,7 +95,8 @@ public class PlayerAbilitiesData extends WorldSavedData {
         }
 
         for (int i = 0; i < playerList.size(); i++) {
-            this.getAbilities(UUID.fromString(playerList.getString(i))).deserializeNBT(abilityList.getCompound(i));
+            UUID playerUUID = UUID.fromString(playerList.getString(i));
+            this.getAbilities(playerUUID).deserializeNBT(abilityList.getCompound(i));
         }
     }
 
@@ -115,8 +117,8 @@ public class PlayerAbilitiesData extends WorldSavedData {
     }
 
     public static PlayerAbilitiesData get(ServerWorld world) {
-        PlayerAbilitiesData data = world.getServer().func_241755_D_().getSavedData().getOrCreate(PlayerAbilitiesData::new, DATA_NAME);
-        return data;
+        return world.getServer().func_241755_D_()
+                .getSavedData().getOrCreate(PlayerAbilitiesData::new, DATA_NAME);
     }
 
 }

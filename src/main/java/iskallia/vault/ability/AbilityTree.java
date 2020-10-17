@@ -6,7 +6,6 @@ import iskallia.vault.network.message.VaultLevelMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -28,7 +27,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
     public AbilityTree(UUID uuid) {
         this.uuid = uuid;
         this.add(null, ModConfigs.ABILITIES.getAll().stream()
-                .map(abilityGroup -> new AbilityNode<>(abilityGroup, abilityGroup.getLevels() - 1))
+                .map(abilityGroup -> new AbilityNode<>(abilityGroup, 0))
                 .toArray(AbilityNode<?>[]::new));
     }
 
@@ -68,7 +67,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         return this;
     }
 
-    public AbilityTree setLevel(MinecraftServer server, int level) {
+    public AbilityTree setVaultLevel(MinecraftServer server, int level) {
         this.vaultLevel = level;
         this.exp = 0;
 
@@ -77,7 +76,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         return this;
     }
 
-    public AbilityTree addExp(MinecraftServer server, int exp) {
+    public AbilityTree addVaultExp(MinecraftServer server, int exp) {
         int tnl;
         this.exp += exp;
 
@@ -95,7 +94,10 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
     /* ------------------------------------ */
 
     public AbilityTree tick(MinecraftServer server) {
-        this.runIfPresent(server, player -> this.nodes.forEach(node -> node.getAbility().tick(player)));
+        this.runIfPresent(server, player -> {
+            this.nodes.stream().filter(AbilityNode::isLearned)
+                    .forEach(node -> node.getAbility().tick(player));
+        });
         return this;
     }
 

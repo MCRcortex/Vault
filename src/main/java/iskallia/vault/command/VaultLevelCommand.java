@@ -43,14 +43,14 @@ public class VaultLevelCommand extends Command {
     private int setLevel(CommandContext<CommandSource> context) throws CommandSyntaxException {
         int level = IntegerArgumentType.getInteger(context, "level");
         CommandSource source = context.getSource();
-        PlayerAbilitiesData.get(source.getWorld()).setLevel(source.asPlayer(), level);
+        PlayerAbilitiesData.get(source.getWorld()).setVaultLevel(source.asPlayer(), level);
         return 0;
     }
 
     private int addExp(CommandContext<CommandSource> context) throws CommandSyntaxException {
         int exp = IntegerArgumentType.getInteger(context, "exp");
         CommandSource source = context.getSource();
-        PlayerAbilitiesData.get(source.getWorld()).addExp(source.asPlayer(), exp);
+        PlayerAbilitiesData.get(source.getWorld()).addVaultExp(source.asPlayer(), exp);
         return 0;
     }
 

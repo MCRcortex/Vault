@@ -6,6 +6,7 @@ import iskallia.vault.Vault;
 import iskallia.vault.ability.AbilityGroup;
 import iskallia.vault.ability.AbilityNode;
 import iskallia.vault.ability.AbilityTree;
+import iskallia.vault.client.gui.component.AbilityDialog;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.client.gui.widget.AbilityWidget;
 import iskallia.vault.container.AbilityTreeContainer;
@@ -24,8 +25,8 @@ import org.lwjgl.opengl.GL11;
 @OnlyIn(Dist.CLIENT)
 public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
 
-    private static final ResourceLocation UI_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-tree.png");
-    private static final ResourceLocation BACKGROUNDS_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-tree-bgs.png");
+    public static final ResourceLocation UI_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-tree.png");
+    public static final ResourceLocation BACKGROUNDS_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-tree-bgs.png");
 
     private Vector2f viewportTranslation;
     private float viewportScale;
@@ -155,6 +156,17 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
 
         renderContainerBorders(matrixStack);
         renderContainerTabs(matrixStack);
+
+        Rectangle containerBounds = getContainerBounds();
+        Rectangle dialogBounds = new Rectangle();
+        dialogBounds.x0 = containerBounds.x1 + 15;
+        dialogBounds.y0 = containerBounds.y0 - 18;
+        dialogBounds.x1 = width - 21;
+        dialogBounds.y1 = height - 21;
+
+        new AbilityDialog(ModConfigs.ABILITIES.VAMPIRISM, getContainer().getAbilityTree())
+                .setBounds(dialogBounds)
+                .render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
     private void
@@ -264,7 +276,7 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         ModConfigs.ABILITIES_GUI.getStyles().forEach((abilityName, style) -> {
             AbilityGroup<?> ability = ModConfigs.ABILITIES.getByName(abilityName);
             AbilityNode<?> playerAbility = abilityTree.getNodeByName(abilityName);
-            new AbilityWidget(playerAbility.getLevel(), ability.getLevels(), false, style)
+            new AbilityWidget(playerAbility.getLevel(), ability.getMaxLevel(), false, style)
                     .render(matrixStack, containerMouseX, containerMouseY, partialTicks);
         });
 
