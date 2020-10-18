@@ -2,7 +2,6 @@ package iskallia.vault.client.gui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.serialization.Lifecycle;
 import iskallia.vault.Vault;
 import iskallia.vault.ability.AbilityTree;
 import iskallia.vault.client.gui.component.AbilityDialog;
@@ -11,6 +10,7 @@ import iskallia.vault.client.gui.helper.UIHelper;
 import iskallia.vault.client.gui.widget.AbilityWidget;
 import iskallia.vault.container.AbilityTreeContainer;
 import iskallia.vault.init.ModConfigs;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
@@ -20,7 +20,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.lwjgl.opengl.GL11;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -181,6 +180,11 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
                 this::renderContainerBackground,
                 ms -> this.renderSkillTree(ms, mouseX, mouseY, partialTicks));
 
+        AbilityTree abilityTree = getContainer().getAbilityTree();
+        renderLabel(matrixStack, "Vault Level: " + abilityTree.getVaultLevel(), 20);
+        if (abilityTree.getUnspentSkillPts() > 0) {
+            renderLabel(matrixStack, abilityTree.getUnspentSkillPts() + " unspent skill point(s)", 50);
+        }
         renderContainerBorders(matrixStack);
         renderContainerTabs(matrixStack);
 
@@ -247,6 +251,40 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         matrixStack.translate(containerBounds.x1 - containerBounds.x0 + 2, 0, 0);
         blit(matrixStack, 0, 0,
                 18, 25, 15, 1);
+        matrixStack.pop();
+    }
+
+    private void
+    renderLabel(MatrixStack matrixStack, String text, int yLevel) {
+        assert this.minecraft != null;
+        this.minecraft.getTextureManager().bindTexture(UI_RESOURCE);
+
+        FontRenderer fontRenderer = minecraft.fontRenderer;
+
+        Rectangle containerBounds = getContainerBounds();
+        int textWidth = fontRenderer.getStringWidth(text);
+
+        matrixStack.push();
+        matrixStack.translate(containerBounds.x1, containerBounds.y0, 0);
+
+        matrixStack.translate(-9, yLevel, 0);
+        blit(matrixStack, 0, 0, 143, 36, 9, 24);
+
+        int gap = 5;
+        int remainingWidth = textWidth + 2 * gap;
+        matrixStack.translate(-remainingWidth, 0, 0);
+        while (remainingWidth > 0) {
+            blit(matrixStack, 0, 0, 136, 36, 6, 24);
+            remainingWidth -= 6;
+            matrixStack.translate(Math.min(6, remainingWidth), 0, 0);
+        }
+
+        matrixStack.translate(-textWidth - 2 * gap - 6, 0, 0);
+        blit(matrixStack, 0, 0, 121, 36, 14, 24);
+
+        fontRenderer.drawString(matrixStack, text,
+                14 + gap, 9, 0xFF_443a1b);
+
         matrixStack.pop();
     }
 

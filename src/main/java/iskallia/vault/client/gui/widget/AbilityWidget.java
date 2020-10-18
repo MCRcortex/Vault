@@ -95,6 +95,8 @@ public class AbilityWidget extends Widget {
 //        if (button == 1) return false;
         if (locked) return false;
         if (selected) return false;
+
+        this.playDownSound(Minecraft.getInstance().getSoundHandler());
         return true;
     }
 

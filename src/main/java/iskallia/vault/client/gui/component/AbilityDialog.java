@@ -46,17 +46,22 @@ public class AbilityDialog extends AbstractGui {
 
             AbilityNode<?> abilityNode = abilityTree.getNodeOf(abilityGroup);
 
+            String buttonText = !abilityNode.isLearned() ? "Learn" :
+                    abilityNode.getLevel() >= abilityGroup.getMaxLevel() ? "Maxed Out"
+                            : "Upgrade";
+
             this.abilityUpgradeButton = new Button(
                     10, bounds.getHeight() - 40,
                     100, 20,
-                    new StringTextComponent(abilityNode.isLearned() ? "Upgrade" : "Learn"),
+                    new StringTextComponent(buttonText),
                     (button) -> { upgradeAbility(); },
                     (button, matrixStack, x, y) -> { }
             );
 
             PlayerAbility ability = abilityNode.getAbility();
             int cost = ability == null ? abilityGroup.learningCost() : ability.getCost();
-            this.abilityUpgradeButton.active = cost <= abilityTree.getUnspentSkillPts();
+            this.abilityUpgradeButton.active = cost <= abilityTree.getUnspentSkillPts()
+                    && abilityNode.getLevel() < abilityGroup.getMaxLevel();
         }
     }
 
@@ -115,6 +120,7 @@ public class AbilityDialog extends AbstractGui {
             return;
 
         abilityTree.upgradeAbility(null, abilityNode);
+        refreshWidgets();
 
         ModNetwork.channel.sendToServer(new AbilityUpgradeMessage(this.abilityGroup.getParentName()));
     }
@@ -211,19 +217,19 @@ public class AbilityDialog extends AbstractGui {
         FontHelper.drawStringWithBorder(matrixStack,
                 abilityName,
                 abilityBounds.getWidth() + gap, 24,
-                abilityNode.getLevel() == 0 ? 0xFF_FFFFFF : 0xFF_c6b11e,
+                abilityNode.getLevel() == 0 ? 0xFF_FFFFFF : 0xFF_fff8c7,
                 abilityNode.getLevel() == 0 ? 0xFF_000000 : 0xFF_3b3300);
 
         FontHelper.drawStringWithBorder(matrixStack,
                 subText,
                 abilityBounds.getWidth() + gap, 34,
-                abilityNode.getLevel() == 0 ? 0xFF_FFFFFF : 0xFF_c6b11e,
+                abilityNode.getLevel() == 0 ? 0xFF_FFFFFF : 0xFF_fff8c7,
                 abilityNode.getLevel() == 0 ? 0xFF_000000 : 0xFF_3b3300);
 
         FontHelper.drawStringWithBorder(matrixStack,
                 abilityGroup.getMaxLevel() + " Max Level(s)",
                 abilityBounds.getWidth() + gap, 54,
-                abilityNode.getLevel() == 0 ? 0xFF_FFFFFF : 0xFF_c6b11e,
+                abilityNode.getLevel() == 0 ? 0xFF_FFFFFF : 0xFF_fff8c7,
                 abilityNode.getLevel() == 0 ? 0xFF_000000 : 0xFF_3b3300);
 
         matrixStack.translate(-abilityStyle.x, -abilityStyle.y, 0); // Nullify the viewport style
@@ -252,6 +258,16 @@ public class AbilityDialog extends AbstractGui {
         int containerY = mouseY - bounds.y0;
 
         this.abilityUpgradeButton.render(matrixStack, containerX, containerY, partialTicks);
+
+        Minecraft.getInstance().getTextureManager().bindTexture(AbilityTreeScreen.UI_RESOURCE);
+
+        AbilityNode<?> abilityNode = abilityTree.getNodeOf(abilityGroup);
+
+        if (abilityNode.isLearned() && abilityNode.getLevel() < abilityGroup.getMaxLevel()) {
+            blit(matrixStack,
+                    13, bounds.getHeight() - 40 - 2,
+                    121, 0, 15, 23);
+        }
     }
 
 }
