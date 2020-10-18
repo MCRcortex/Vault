@@ -180,15 +180,17 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
                 this::renderContainerBackground,
                 ms -> this.renderSkillTree(ms, mouseX, mouseY, partialTicks));
 
+        Rectangle containerBounds = getContainerBounds();
+
         AbilityTree abilityTree = getContainer().getAbilityTree();
-        renderLabel(matrixStack, "Vault Level: " + abilityTree.getVaultLevel(), 20);
+        renderLabel(matrixStack, "Vault Level: " + abilityTree.getVaultLevel(), 15);
         if (abilityTree.getUnspentSkillPts() > 0) {
-            renderLabel(matrixStack, abilityTree.getUnspentSkillPts() + " unspent skill point(s)", 50);
+            renderLabel(matrixStack,
+                    abilityTree.getUnspentSkillPts() + " unspent skill point(s)",
+                    containerBounds.getHeight() - 40);
         }
         renderContainerBorders(matrixStack);
         renderContainerTabs(matrixStack);
-
-        Rectangle containerBounds = getContainerBounds();
         Rectangle dialogBounds = new Rectangle();
         dialogBounds.x0 = containerBounds.x1 + 15;
         dialogBounds.y0 = containerBounds.y0 - 18;
