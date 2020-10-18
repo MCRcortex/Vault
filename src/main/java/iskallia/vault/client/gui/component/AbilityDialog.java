@@ -12,6 +12,8 @@ import iskallia.vault.client.gui.screen.AbilityTreeScreen;
 import iskallia.vault.client.gui.widget.AbilityWidget;
 import iskallia.vault.config.AbilitiesGUIConfig;
 import iskallia.vault.init.ModConfigs;
+import iskallia.vault.network.ModNetwork;
+import iskallia.vault.network.message.AbilityUpgradeMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
@@ -107,7 +109,14 @@ public class AbilityDialog extends AbstractGui {
     }
 
     public void upgradeAbility() {
-        System.out.println("Request upgrade for " + abilityGroup.getParentName());
+        AbilityNode<?> abilityNode = this.abilityTree.getNodeOf(abilityGroup);
+
+        if (abilityNode.getLevel() >= abilityGroup.getMaxLevel())
+            return;
+
+        abilityTree.upgradeAbility(null, abilityNode);
+
+        ModNetwork.channel.sendToServer(new AbilityUpgradeMessage(this.abilityGroup.getParentName()));
     }
 
     public void

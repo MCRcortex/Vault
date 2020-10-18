@@ -1,8 +1,10 @@
 package iskallia.vault.world.data;
 
 import iskallia.vault.Vault;
+import iskallia.vault.ability.AbilityGroup;
 import iskallia.vault.ability.AbilityNode;
 import iskallia.vault.ability.AbilityTree;
+import iskallia.vault.init.ModConfigs;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -44,25 +46,49 @@ public class PlayerAbilitiesData extends WorldSavedData {
         return this.playerMap.computeIfAbsent(uuid, AbilityTree::new);
     }
 
-    public PlayerAbilitiesData add(ServerPlayerEntity player, AbilityNode<?>... nodes) {
-        this.getAbilities(player).add(player.getServer(), nodes);
+    public PlayerAbilitiesData resetAbilityTree(ServerPlayerEntity player) {
+        UUID uniqueID = player.getUniqueID();
+        AbilityTree abilityTree = new AbilityTree(uniqueID);
+        this.playerMap.put(uniqueID, abilityTree);
+
+        abilityTree.syncLevelInfo(player.getServer());
+
+        markDirty();
         return this;
     }
 
     public PlayerAbilitiesData setVaultLevel(ServerPlayerEntity player, int level) {
         this.getAbilities(player).setVaultLevel(player.getServer(), level);
+
         markDirty();
         return this;
     }
 
     public PlayerAbilitiesData addVaultExp(ServerPlayerEntity player, int exp) {
         this.getAbilities(player).addVaultExp(player.getServer(), exp);
+
+        markDirty();
+        return this;
+    }
+
+    public PlayerAbilitiesData add(ServerPlayerEntity player, AbilityNode<?>... nodes) {
+        this.getAbilities(player).add(player.getServer(), nodes);
+
         markDirty();
         return this;
     }
 
     public PlayerAbilitiesData remove(ServerPlayerEntity player, AbilityNode<?>... nodes) {
         this.getAbilities(player).remove(player.getServer(), nodes);
+
+        markDirty();
+        return this;
+    }
+
+    public PlayerAbilitiesData upgradeAbility(ServerPlayerEntity player, AbilityNode<?> abilityNode) {
+        this.getAbilities(player).upgradeAbility(player.getServer(), abilityNode);
+
+        markDirty();
         return this;
     }
 

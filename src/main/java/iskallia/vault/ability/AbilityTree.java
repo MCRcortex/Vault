@@ -64,7 +64,11 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
 
     public AbilityTree add(MinecraftServer server, AbilityNode<?>... nodes) {
         for (AbilityNode<?> node : nodes) {
-            this.runIfPresent(server, player -> node.getAbility().onAdded(player));
+            this.runIfPresent(server, player -> {
+                if (node.isLearned()) {
+                    node.getAbility().onAdded(player);
+                }
+            });
             this.nodes.add(node);
         }
 
@@ -95,6 +99,23 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         return this;
     }
 
+    public AbilityTree spendSkillPoints(int amount) {
+        this.unspentSkillPts -= amount;
+        return this;
+    }
+
+    public AbilityTree upgradeAbility(MinecraftServer server, AbilityNode<?> abilityNode) {
+        this.remove(server, abilityNode);
+
+        AbilityGroup<?> abilityGroup = ModConfigs.ABILITIES.getByName(abilityNode.getGroup().getParentName());
+        AbilityNode<?> upgradedAbilityNode = new AbilityNode<>(abilityGroup, abilityNode.getLevel() + 1);
+        this.add(server, upgradedAbilityNode);
+
+        this.spendSkillPoints(upgradedAbilityNode.getAbility().getCost());
+
+        return this;
+    }
+
     /* ------------------------------------ */
 
     public AbilityTree tick(MinecraftServer server) {
@@ -107,7 +128,11 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
 
     public AbilityTree remove(MinecraftServer server, AbilityNode<?>... nodes) {
         for (AbilityNode<?> node : nodes) {
-            this.runIfPresent(server, player -> node.getAbility().onRemoved(player));
+            this.runIfPresent(server, player -> {
+                if (node.isLearned()) {
+                    node.getAbility().onRemoved(player);
+                }
+            });
             this.nodes.remove(node);
         }
 
@@ -162,6 +187,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         this.vaultLevel = nbt.getInt("vaultLevel");
 
         ListNBT list = nbt.getList("Nodes", Constants.NBT.TAG_COMPOUND);
+        this.nodes.clear();
         for (int i = 0; i < list.size(); i++) {
             this.add(null, AbilityNode.fromNBT(list.getCompound(i), PlayerAbility.class));
         }

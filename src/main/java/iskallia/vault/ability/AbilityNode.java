@@ -5,6 +5,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
+import java.util.Objects;
+
 public class AbilityNode<T extends PlayerAbility> implements INBTSerializable<CompoundNBT> {
 
     private AbilityGroup<T> group;
@@ -50,6 +52,17 @@ public class AbilityNode<T extends PlayerAbility> implements INBTSerializable<Co
         String groupName = nbt.getString("Name");
         this.group = (AbilityGroup<T>) ModConfigs.ABILITIES.getByName(groupName);
         this.level = nbt.getInt("Level");
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+
+        AbilityNode<?> that = (AbilityNode<?>) other;
+
+        return this.level == that.level &&
+                this.group.getParentName().equals(that.group.getParentName());
     }
 
     public static <T extends PlayerAbility> AbilityNode<T> fromNBT(CompoundNBT nbt, Class<T> clazz) {

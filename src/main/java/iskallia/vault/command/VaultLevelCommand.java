@@ -38,6 +38,11 @@ public class VaultLevelCommand extends Command {
                         .then(Commands.argument("level", IntegerArgumentType.integer())
                                 .executes(this::setLevel))
         );
+
+        builder.then(
+                Commands.literal("reset_all")
+                        .executes(this::resetAll)
+        );
     }
 
     private int setLevel(CommandContext<CommandSource> context) throws CommandSyntaxException {
@@ -51,6 +56,12 @@ public class VaultLevelCommand extends Command {
         int exp = IntegerArgumentType.getInteger(context, "exp");
         CommandSource source = context.getSource();
         PlayerAbilitiesData.get(source.getWorld()).addVaultExp(source.asPlayer(), exp);
+        return 0;
+    }
+
+    private int resetAll(CommandContext<CommandSource> context) throws CommandSyntaxException {
+        CommandSource source = context.getSource();
+        PlayerAbilitiesData.get(source.getWorld()).resetAbilityTree(source.asPlayer());
         return 0;
     }
 
