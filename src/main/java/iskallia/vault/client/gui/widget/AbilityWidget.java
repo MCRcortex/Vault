@@ -2,6 +2,9 @@ package iskallia.vault.client.gui.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import iskallia.vault.Vault;
+import iskallia.vault.ability.AbilityGroup;
+import iskallia.vault.ability.AbilityNode;
+import iskallia.vault.ability.AbilityTree;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.config.AbilitiesGUIConfig;
 import iskallia.vault.util.ResourceBoundary;
@@ -20,27 +23,36 @@ public class AbilityWidget extends Widget {
     private static final ResourceLocation RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-widget.png");
     private static final ResourceLocation ABILITIES_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/abilities.png");
 
-    int maxLevel, level;
+    AbilityGroup<?> abilityGroup;
+    AbilityTree abilityTree;
     boolean locked;
     AbilitiesGUIConfig.AbilityStyle style;
 
     boolean selected;
 
-    public AbilityWidget(int level, int maxLevel, boolean locked, AbilitiesGUIConfig.AbilityStyle style) {
+    public AbilityWidget(AbilityGroup<?> abilityGroup, AbilityTree abilityTree, AbilitiesGUIConfig.AbilityStyle style) {
         super(style.x, style.y,
                 5 * PIP_SIZE + 4 * GAP_SIZE,
-                pipRowCount(level) * (PIP_SIZE + GAP_SIZE) - GAP_SIZE,
+                pipRowCount(abilityTree.getNodeOf(abilityGroup).getLevel()) * (PIP_SIZE + GAP_SIZE) - GAP_SIZE,
                 new StringTextComponent("the_vault.widgets.talent"));
-        this.level = level;
-        this.maxLevel = maxLevel;
         this.style = style;
-        this.locked = locked;
+        this.abilityGroup = abilityGroup;
+        this.abilityTree = abilityTree;
+        this.locked = false; // TODO: <-- Implement once skill dependencies are a thing
         this.selected = false;
+    }
+
+    public AbilityGroup<?> getAbilityGroup() {
+        return abilityGroup;
+    }
+
+    public AbilityTree getAbilityTree() {
+        return abilityTree;
     }
 
     public int getClickableWidth() {
         int onlyIconWidth = ICON_SIZE + 2 * GAP_SIZE;
-        int pipLineWidth = Math.min(maxLevel, MAX_PIPs_INLINE) * (PIP_SIZE + GAP_SIZE);
+        int pipLineWidth = Math.min(abilityGroup.getMaxLevel(), MAX_PIPs_INLINE) * (PIP_SIZE + GAP_SIZE);
         return hasPips()
                 ? Math.max(pipLineWidth, onlyIconWidth)
                 : onlyIconWidth;
@@ -49,7 +61,7 @@ public class AbilityWidget extends Widget {
     public int getClickableHeight() {
         int height = 2 * GAP_SIZE + ICON_SIZE;
         if (hasPips()) {
-            int lines = pipRowCount(maxLevel);
+            int lines = pipRowCount(abilityGroup.getMaxLevel());
             height += GAP_SIZE;
             height += lines * PIP_SIZE + (lines - 1) * GAP_SIZE;
         }
@@ -66,7 +78,7 @@ public class AbilityWidget extends Widget {
     }
 
     public boolean hasPips() {
-        return !locked && maxLevel > 1;
+        return !locked && abilityGroup.getMaxLevel() > 1;
     }
 
     /* ----------------------------------------- */
@@ -83,7 +95,6 @@ public class AbilityWidget extends Widget {
 //        if (button == 1) return false;
         if (locked) return false;
         if (selected) return false;
-        select();
         return true;
     }
 
@@ -118,8 +129,8 @@ public class AbilityWidget extends Widget {
         Minecraft.getInstance().textureManager.bindTexture(resourceBoundary.getResource());
 
         int vOffset = locked ? 62
-                : isMouseOver(mouseX, mouseY) ? -31
-                : level >= 1 ? 31 : 0;
+                : selected || isMouseOver(mouseX, mouseY) ? -31
+                : abilityTree.getNodeOf(abilityGroup).getLevel() >= 1 ? 31 : 0;
         blit(matrixStack, this.x, this.y,
                 resourceBoundary.getU(),
                 resourceBoundary.getV() + vOffset,
@@ -146,9 +157,9 @@ public class AbilityWidget extends Widget {
     renderPips(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         Minecraft.getInstance().textureManager.bindTexture(RESOURCE);
 
-        int rowCount = pipRowCount(this.maxLevel);
-        int remainingPips = this.maxLevel;
-        int remainingFilledPips = this.level;
+        int rowCount = pipRowCount(abilityGroup.getMaxLevel());
+        int remainingPips = abilityGroup.getMaxLevel();
+        int remainingFilledPips = abilityTree.getNodeOf(abilityGroup).getLevel();
         for (int r = 0; r < rowCount; r++) {
             renderPipLine(matrixStack,
                     x,

@@ -33,20 +33,28 @@ public class OpenAbilityTreeMessage {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
             ServerPlayerEntity sender = context.getSender();
-            NetworkHooks.openGui(sender, new INamedContainerProvider() {
-                @Override
-                public ITextComponent getDisplayName() {
-                    return new TranslationTextComponent("container.vault.ability_tree");
-                }
 
-                @Nullable
-                @Override
-                public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-                    PlayerAbilitiesData playerAbilitiesData = PlayerAbilitiesData.get((ServerWorld) playerEntity.world);
-                    AbilityTree abilities = playerAbilitiesData.getAbilities(sender.getUniqueID());
-                    return new AbilityTreeContainer(i, abilities);
-                }
-            });
+            if (sender == null) return;
+
+            PlayerAbilitiesData playerAbilitiesData = PlayerAbilitiesData.get((ServerWorld) sender.world);
+            AbilityTree abilities = playerAbilitiesData.getAbilities(sender.getUniqueID());
+
+            NetworkHooks.openGui(
+                    sender,
+                    new INamedContainerProvider() {
+                        @Override
+                        public ITextComponent getDisplayName() {
+                            return new TranslationTextComponent("container.vault.ability_tree");
+                        }
+
+                        @Nullable
+                        @Override
+                        public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+                            return new AbilityTreeContainer(i, abilities);
+                        }
+                    },
+                    (buffer) -> buffer.writeCompoundTag(abilities.serializeNBT())
+            );
         });
         context.setPacketHandled(true);
     }

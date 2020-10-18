@@ -2,12 +2,12 @@ package iskallia.vault.client.gui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.serialization.Lifecycle;
 import iskallia.vault.Vault;
-import iskallia.vault.ability.AbilityGroup;
-import iskallia.vault.ability.AbilityNode;
 import iskallia.vault.ability.AbilityTree;
 import iskallia.vault.client.gui.component.AbilityDialog;
 import iskallia.vault.client.gui.helper.Rectangle;
+import iskallia.vault.client.gui.helper.UIHelper;
 import iskallia.vault.client.gui.widget.AbilityWidget;
 import iskallia.vault.container.AbilityTreeContainer;
 import iskallia.vault.init.ModConfigs;
@@ -22,6 +22,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.GL11;
 
+import java.util.LinkedList;
+import java.util.List;
+
 @OnlyIn(Dist.CLIENT)
 public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
 
@@ -33,12 +36,35 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
     private boolean dragging;
     private Vector2f grabbedPos;
 
+    private List<AbilityWidget> abilityWidgets;
+    private AbilityWidget selectedWidget;
+    private AbilityDialog abilityDialog;
+
     public AbilityTreeScreen(AbilityTreeContainer container, PlayerInventory inventory, ITextComponent title) {
         super(container, inventory, new StringTextComponent("Ability Tree Screen!"));
         this.viewportTranslation = new Vector2f(0, 0);
         this.viewportScale = 1f;
         this.dragging = false;
         this.grabbedPos = new Vector2f(0, 0);
+
+        this.selectedWidget = null;
+        this.abilityWidgets = new LinkedList<>();
+        refreshWidgets();
+    }
+
+    public void refreshWidgets() {
+        this.abilityWidgets.clear();
+
+        AbilityTree abilityTree = getContainer().getAbilityTree();
+        ModConfigs.ABILITIES_GUI.getStyles().forEach((abilityName, style) -> {
+            this.abilityWidgets.add(new AbilityWidget(
+                    ModConfigs.ABILITIES.getByName(abilityName),
+                    abilityTree,
+                    style
+            ));
+        });
+
+        this.abilityDialog = new AbilityDialog(abilityTree);
     }
 
     public Rectangle getContainerBounds() {
@@ -59,6 +85,23 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         if (containerBounds.contains((int) mouseX, (int) mouseY)) {
             this.dragging = true;
             this.grabbedPos = new Vector2f((float) mouseX, (float) mouseY);
+
+            Vector2f midpoint = getContainerBounds().midpoint();
+            int containerMouseX = (int) ((mouseX - midpoint.x) / viewportScale - viewportTranslation.x);
+            int containerMouseY = (int) ((mouseY - midpoint.y) / viewportScale - viewportTranslation.y);
+            for (AbilityWidget abilityWidget : abilityWidgets) {
+                if (abilityWidget.isMouseOver(containerMouseX, containerMouseY)
+                        && abilityWidget.mouseClicked(containerMouseX, containerMouseY, button)) {
+                    if (this.selectedWidget != null) this.selectedWidget.deselect();
+                    this.selectedWidget = abilityWidget;
+                    this.selectedWidget.select();
+                    this.abilityDialog.setAbilityGroup(this.selectedWidget.getAbilityGroup());
+                    break;
+                }
+            }
+
+        } else {
+            this.abilityDialog.mouseClicked((int) mouseX, (int) mouseY, button);
         }
 
         return super.mouseClicked(mouseX, mouseY, button);
@@ -79,6 +122,9 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
                     viewportTranslation.x + dx,
                     viewportTranslation.y + dy);
             this.grabbedPos = new Vector2f((float) mouseX, (float) mouseY);
+
+        } else {
+            this.abilityDialog.mouseMoved((int) mouseX, (int) mouseY);
         }
     }
 
@@ -131,28 +177,9 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
     render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
 
-        matrixStack.push();
-        RenderSystem.enableDepthTest();
-        matrixStack.translate(0, 0, 950);
-        RenderSystem.colorMask(false, false, false, false);
-        fill(matrixStack, 4680, 2260, -4680, -2260, -16777216);
-        RenderSystem.colorMask(true, true, true, true);
-        matrixStack.translate(0, 0, -950);
-        RenderSystem.depthFunc(GL11.GL_GEQUAL);
-        renderContainerBackground(matrixStack);
-        RenderSystem.depthFunc(GL11.GL_LEQUAL);
-
-        renderSkillTree(matrixStack, mouseX, mouseY, partialTicks);
-
-        RenderSystem.depthFunc(GL11.GL_GEQUAL);
-        matrixStack.translate(0, 0, -950);
-        RenderSystem.colorMask(false, false, false, false);
-        fill(matrixStack, 4680, 2260, -4680, -2260, -16777216);
-        RenderSystem.colorMask(true, true, true, true);
-        matrixStack.translate(0, 0, 950);
-        RenderSystem.depthFunc(GL11.GL_LEQUAL);
-        RenderSystem.disableDepthTest();
-        matrixStack.pop();
+        UIHelper.renderOverflowHidden(matrixStack,
+                this::renderContainerBackground,
+                ms -> this.renderSkillTree(ms, mouseX, mouseY, partialTicks));
 
         renderContainerBorders(matrixStack);
         renderContainerTabs(matrixStack);
@@ -164,7 +191,7 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         dialogBounds.x1 = width - 21;
         dialogBounds.y1 = height - 21;
 
-        new AbilityDialog(ModConfigs.ABILITIES.VAMPIRISM, getContainer().getAbilityTree())
+        abilityDialog
                 .setBounds(dialogBounds)
                 .render(matrixStack, mouseX, mouseY, partialTicks);
     }
@@ -272,13 +299,9 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         int containerMouseX = (int) ((mouseX - midpoint.x) / viewportScale - viewportTranslation.x);
         int containerMouseY = (int) ((mouseY - midpoint.y) / viewportScale - viewportTranslation.y);
 
-        AbilityTree abilityTree = getContainer().getAbilityTree();
-        ModConfigs.ABILITIES_GUI.getStyles().forEach((abilityName, style) -> {
-            AbilityGroup<?> ability = ModConfigs.ABILITIES.getByName(abilityName);
-            AbilityNode<?> playerAbility = abilityTree.getNodeByName(abilityName);
-            new AbilityWidget(playerAbility.getLevel(), ability.getMaxLevel(), false, style)
-                    .render(matrixStack, containerMouseX, containerMouseY, partialTicks);
-        });
+        for (AbilityWidget abilityWidget : abilityWidgets) {
+            abilityWidget.render(matrixStack, containerMouseX, containerMouseY, partialTicks);
+        }
 
         matrixStack.pop();
     }

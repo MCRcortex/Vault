@@ -5,6 +5,8 @@ import iskallia.vault.init.ModContainers;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
 
+// Wutax calls this iskall-proofing
+// I call that my stupidity XD --iGoodie
 public class AbilityTreeContainer extends Container {
 
     private AbilityTree abilityTree;

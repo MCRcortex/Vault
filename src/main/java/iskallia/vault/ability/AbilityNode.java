@@ -24,6 +24,7 @@ public class AbilityNode<T extends PlayerAbility> implements INBTSerializable<Co
     }
 
     public T getAbility() {
+        if (!isLearned()) return null;
         return this.getGroup().getAbility(this.getLevel());
     }
 

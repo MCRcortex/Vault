@@ -1,9 +1,58 @@
 package iskallia.vault.client.gui.helper;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.AbstractGui;
+import org.lwjgl.opengl.GL11;
+
+import java.util.function.Consumer;
 
 public class UIHelper {
+
+    public static void
+    renderOverflowHidden(MatrixStack matrixStack,
+                         Consumer<MatrixStack> backgroundRenderer,
+                         Consumer<MatrixStack> innerRenderer) {
+        matrixStack.push();
+        RenderSystem.enableDepthTest();
+        matrixStack.translate(0, 0, 950);
+        RenderSystem.colorMask(false, false, false, false);
+        AbstractGui.fill(matrixStack, 4680, 2260, -4680, -2260, 0xff_000000);
+        RenderSystem.colorMask(true, true, true, true);
+        matrixStack.translate(0, 0, -950);
+        RenderSystem.depthFunc(GL11.GL_GEQUAL);
+        backgroundRenderer.accept(matrixStack);
+        RenderSystem.depthFunc(GL11.GL_LEQUAL);
+
+        innerRenderer.accept(matrixStack);
+
+        RenderSystem.depthFunc(GL11.GL_GEQUAL);
+        matrixStack.translate(0, 0, -950);
+        RenderSystem.colorMask(false, false, false, false);
+        AbstractGui.fill(matrixStack, 4680, 2260, -4680, -2260, 0xff_000000);
+        RenderSystem.colorMask(true, true, true, true);
+        matrixStack.translate(0, 0, 950);
+        RenderSystem.depthFunc(GL11.GL_LEQUAL);
+        RenderSystem.disableDepthTest();
+        matrixStack.pop();
+    }
+
+    public static void
+    renderContainerBorder(AbstractGui gui, MatrixStack matrixStack,
+                          Rectangle screenBounds,
+                          int u, int v,
+                          int lw, int rw, int th, int bh,
+                          int contentColor) {
+        int width = screenBounds.getWidth();
+        int height = screenBounds.getHeight();
+        renderContainerBorder(gui, matrixStack,
+                screenBounds.x0,
+                screenBounds.y0,
+                width, height,
+                u, v,
+                lw, rw, th, bh,
+                contentColor);
+    }
 
     public static void
     renderContainerBorder(AbstractGui gui, MatrixStack matrixStack,

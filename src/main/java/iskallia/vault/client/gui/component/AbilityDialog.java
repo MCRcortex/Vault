@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import iskallia.vault.ability.AbilityGroup;
 import iskallia.vault.ability.AbilityNode;
 import iskallia.vault.ability.AbilityTree;
+import iskallia.vault.ability.PlayerAbility;
 import iskallia.vault.client.gui.helper.FontHelper;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.client.gui.helper.UIHelper;
@@ -14,6 +15,11 @@ import iskallia.vault.init.ModConfigs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.screen.StatsScreen;
+import net.minecraft.client.gui.screen.VideoSettingsScreen;
+import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.text.StringTextComponent;
 
 public class AbilityDialog extends AbstractGui {
 
@@ -21,14 +27,87 @@ public class AbilityDialog extends AbstractGui {
     private AbilityGroup<?> abilityGroup;
     private AbilityTree abilityTree;
 
-    public AbilityDialog(AbilityGroup<?> abilityGroup, AbilityTree abilityTree) {
-        this.abilityGroup = abilityGroup;
+    private AbilityWidget abilityWidget;
+    private Button abilityUpgradeButton;
+
+    public AbilityDialog(AbilityTree abilityTree) {
+        this.abilityGroup = null;
         this.abilityTree = abilityTree;
+        refreshWidgets();
+    }
+
+    public void refreshWidgets() {
+        if (this.abilityGroup != null) {
+            AbilitiesGUIConfig.AbilityStyle abilityStyle = ModConfigs.ABILITIES_GUI.getStyles()
+                    .get(abilityGroup.getParentName());
+            this.abilityWidget = new AbilityWidget(abilityGroup, abilityTree, abilityStyle);
+
+            AbilityNode<?> abilityNode = abilityTree.getNodeOf(abilityGroup);
+
+            this.abilityUpgradeButton = new Button(
+                    10, bounds.getHeight() - 40,
+                    100, 20,
+                    new StringTextComponent(abilityNode.isLearned() ? "Upgrade" : "Learn"),
+                    (button) -> { upgradeAbility(); },
+                    (button, matrixStack, x, y) -> { }
+            );
+
+            PlayerAbility ability = abilityNode.getAbility();
+            int cost = ability == null ? abilityGroup.learningCost() : ability.getCost();
+            this.abilityUpgradeButton.active = cost <= abilityTree.getUnspentSkillPts();
+        }
+    }
+
+    public void setAbilityGroup(AbilityGroup<?> abilityGroup) {
+        this.abilityGroup = abilityGroup;
+        refreshWidgets();
     }
 
     public AbilityDialog setBounds(Rectangle bounds) {
         this.bounds = bounds;
         return this;
+    }
+
+    public Rectangle getHeadingBounds() {
+        Rectangle abilityBounds = abilityWidget.getClickableBounds();
+        Rectangle headingBounds = new Rectangle();
+        headingBounds.x0 = 5;
+        headingBounds.y0 = 12;
+        headingBounds.x1 = headingBounds.x0 + bounds.getWidth() - 20;
+        headingBounds.y1 = headingBounds.y0 + Math.max(60, abilityBounds.getHeight() + 18);
+        return headingBounds;
+    }
+
+    public Rectangle getDescriptionsBounds() {
+        Rectangle headingBounds = getHeadingBounds();
+        Rectangle descriptionsBounds = new Rectangle();
+        descriptionsBounds.x0 = headingBounds.x0;
+        descriptionsBounds.y0 = headingBounds.y1 + 10;
+        descriptionsBounds.x1 = headingBounds.x1;
+        descriptionsBounds.y1 = (bounds.y1 - 150);
+        return descriptionsBounds;
+    }
+
+    public void mouseMoved(int screenX, int screenY) {
+        int containerX = screenX - bounds.x0;
+        int containerY = screenY - bounds.y0;
+
+        if (this.abilityUpgradeButton != null) {
+            this.abilityUpgradeButton.mouseMoved(containerX, containerY);
+        }
+    }
+
+    public void mouseClicked(int screenX, int screenY, int button) {
+        int containerX = screenX - bounds.x0;
+        int containerY = screenY - bounds.y0;
+
+        if (this.abilityUpgradeButton != null) {
+            this.abilityUpgradeButton.mouseClicked(containerX, containerY, button);
+        }
+    }
+
+    public void upgradeAbility() {
+        System.out.println("Request upgrade for " + abilityGroup.getParentName());
     }
 
     public void
@@ -37,9 +116,11 @@ public class AbilityDialog extends AbstractGui {
 
         renderBackground(matrixStack, mouseX, mouseY, partialTicks);
 
+        if (abilityGroup == null) return;
+
         matrixStack.translate(bounds.x0 + 5, bounds.y0 + 5, 0);
         renderHeading(matrixStack, mouseX, mouseY, partialTicks);
-        renderContent(matrixStack, mouseX, mouseY, partialTicks);
+        renderDescriptions(matrixStack, mouseX, mouseY, partialTicks);
         renderFooter(matrixStack, mouseX, mouseY, partialTicks);
         matrixStack.push();
     }
@@ -88,23 +169,18 @@ public class AbilityDialog extends AbstractGui {
 
     private void
     renderHeading(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        Minecraft.getInstance().getTextureManager().bindTexture(AbilityTreeScreen.UI_RESOURCE);
+
         FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
         AbilitiesGUIConfig.AbilityStyle abilityStyle = ModConfigs.ABILITIES_GUI.getStyles()
                 .get(abilityGroup.getParentName());
 
         AbilityNode<?> abilityNode = abilityTree.getNodeByName(abilityGroup.getParentName());
 
-        AbilityWidget abilityWidget = new AbilityWidget(abilityNode.getLevel(),
-                abilityGroup.getMaxLevel(),
-                false,
-                abilityStyle);
-
         Rectangle abilityBounds = abilityWidget.getClickableBounds();
 
         UIHelper.renderContainerBorder(this, matrixStack,
-                5, 12,
-                bounds.getWidth() - 20,
-                abilityBounds.getHeight() + 18,
+                getHeadingBounds(),
                 14, 44,
                 2, 2, 2, 2,
                 0xFF_8B8B8B);
@@ -142,20 +218,31 @@ public class AbilityDialog extends AbstractGui {
                 abilityNode.getLevel() == 0 ? 0xFF_000000 : 0xFF_3b3300);
 
         matrixStack.translate(-abilityStyle.x, -abilityStyle.y, 0); // Nullify the viewport style
-        matrixStack.translate(abilityBounds.getWidth() / 2f, abilityBounds.getHeight() / 2f, 0);
-        matrixStack.translate(0, 16, 0);
+        matrixStack.translate(abilityBounds.getWidth() / 2f, 0, 0);
+        matrixStack.translate(0, 35, 0);
         abilityWidget.render(matrixStack, mouseX, mouseY, partialTicks);
         matrixStack.pop();
     }
 
     private void
-    renderContent(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    renderDescriptions(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        Minecraft.getInstance().getTextureManager().bindTexture(AbilityTreeScreen.UI_RESOURCE);
 
+        UIHelper.renderContainerBorder(this, matrixStack,
+                getDescriptionsBounds(),
+                14, 44,
+                2, 2, 2, 2,
+                0xFF_8B8B8B);
+
+        // TODO: Description spans
     }
 
     private void
     renderFooter(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        int containerX = mouseX - bounds.x0;
+        int containerY = mouseY - bounds.y0;
 
+        this.abilityUpgradeButton.render(matrixStack, containerX, containerY, partialTicks);
     }
 
 }

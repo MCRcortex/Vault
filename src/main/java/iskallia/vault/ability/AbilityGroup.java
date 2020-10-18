@@ -45,6 +45,10 @@ public class AbilityGroup<T extends PlayerAbility> {
         return this.levels[level - 1];
     }
 
+    public int learningCost() {
+        return this.levels[0].getCost();
+    }
+
     public BiMap<String, T> getRegistry() {
         if (this.registry == null) {
             this.registry = HashBiMap.create(this.getMaxLevel());

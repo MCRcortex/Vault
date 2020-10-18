@@ -51,6 +51,10 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         return this.nodes;
     }
 
+    public AbilityNode<?> getNodeOf(AbilityGroup<?> abilityGroup) {
+        return getNodeByName(abilityGroup.getParentName());
+    }
+
     public AbilityNode<?> getNodeByName(String name) {
         return this.nodes.stream().filter(node -> node.getGroup().getParentName().equals(name))
                 .findFirst().orElseThrow(() -> new IllegalArgumentException("Unknown ability name -> " + name));
