@@ -7,7 +7,6 @@ import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.jigsaw.JigsawManager;
 import net.minecraft.world.gen.feature.structure.AbstractVillagePiece;
 import net.minecraft.world.gen.feature.structure.MarginedStructureStart;
 import net.minecraft.world.gen.feature.structure.Structure;
@@ -40,7 +39,7 @@ public class VaultStructure extends Structure<VaultConfig> {
         public void func_230364_a_(DynamicRegistries registry, ChunkGenerator gen, TemplateManager manager, int chunkX, int chunkZ, Biome biome, VaultConfig config) {
             BlockPos blockpos = new BlockPos(chunkX * 16, START_Y, chunkZ * 16);
             VaultPools.init();
-            JigsawManager.func_242837_a(registry, config.toVillageConfig(), AbstractVillagePiece::new, gen, manager, blockpos, this.components, this.rand, false, false);
+            JigsawGenerator.func_242837_a(registry, config.toVillageConfig(), AbstractVillagePiece::new, gen, manager, blockpos, this.components, this.rand, false, false);
             this.recalculateStructureSize();
         }
     }

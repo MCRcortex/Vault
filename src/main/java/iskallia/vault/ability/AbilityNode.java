@@ -2,10 +2,7 @@ package iskallia.vault.ability;
 
 import iskallia.vault.init.ModConfigs;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
 import net.minecraftforge.common.util.INBTSerializable;
-
-import java.util.Objects;
 
 public class AbilityNode<T extends PlayerAbility> implements INBTSerializable<CompoundNBT> {
 

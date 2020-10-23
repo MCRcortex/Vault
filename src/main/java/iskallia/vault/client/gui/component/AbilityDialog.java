@@ -17,9 +17,6 @@ import iskallia.vault.network.message.AbilityUpgradeMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.StatsScreen;
-import net.minecraft.client.gui.screen.VideoSettingsScreen;
-import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.StringTextComponent;
 

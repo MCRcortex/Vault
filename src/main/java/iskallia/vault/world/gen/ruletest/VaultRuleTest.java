@@ -5,7 +5,8 @@ import iskallia.vault.Vault;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.gen.feature.template.*;
+import net.minecraft.world.gen.feature.template.IRuleTestType;
+import net.minecraft.world.gen.feature.template.RuleTest;
 
 import java.util.Random;
 

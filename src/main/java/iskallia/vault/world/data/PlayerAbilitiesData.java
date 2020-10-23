@@ -1,10 +1,8 @@
 package iskallia.vault.world.data;
 
 import iskallia.vault.Vault;
-import iskallia.vault.ability.AbilityGroup;
 import iskallia.vault.ability.AbilityNode;
 import iskallia.vault.ability.AbilityTree;
-import iskallia.vault.init.ModConfigs;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;

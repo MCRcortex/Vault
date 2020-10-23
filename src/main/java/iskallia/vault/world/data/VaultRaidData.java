@@ -10,7 +10,6 @@ import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
-import net.minecraft.util.math.SectionPos;
 import net.minecraft.world.biome.BiomeRegistry;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.IChunk;
@@ -26,7 +25,6 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 import java.util.regex.Pattern;
 

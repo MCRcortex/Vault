@@ -53,7 +53,6 @@ public class Vault {
 		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
 		ServerWorld serverWorld = player.getServerWorld();
 		MinecraftServer server = player.getServer();
-
 		PlayerAbilitiesData.get(serverWorld).getAbilities(player).syncLevelInfo(server);
 	}
 
@@ -64,5 +63,5 @@ public class Vault {
 	public static ResourceLocation id(String name) {
 		return new ResourceLocation(MOD_ID, name);
 	}
-
+	
 }
