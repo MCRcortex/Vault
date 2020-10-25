@@ -5,6 +5,8 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import iskallia.vault.world.data.VaultRaidData;
 import net.minecraft.command.CommandSource;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 
 import static net.minecraft.command.Commands.literal;
 
@@ -27,6 +29,7 @@ public class RaidCommand extends Command {
 
 	private int startRaid(CommandContext<CommandSource> context) throws CommandSyntaxException {
 		VaultRaidData.get(context.getSource().getWorld()).startNew(context.getSource().asPlayer());
+		context.getSource().sendFeedback(new StringTextComponent( "Generating vault, please wait...").mergeStyle(TextFormatting.GREEN), true);
 		return 0;
 	}
 

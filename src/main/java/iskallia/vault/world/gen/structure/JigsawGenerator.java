@@ -2,6 +2,8 @@ package iskallia.vault.world.gen.structure;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
+import iskallia.vault.Vault;
+import iskallia.vault.world.data.VaultRaid;
 import net.minecraft.block.JigsawBlock;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -24,14 +26,10 @@ import net.minecraft.world.gen.feature.structure.VillageConfig;
 import net.minecraft.world.gen.feature.template.Template;
 import net.minecraft.world.gen.feature.template.TemplateManager;
 import org.apache.commons.lang3.mutable.MutableObject;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
 public class JigsawGenerator {
-
-	private static final Logger LOGGER = LogManager.getLogger();
 
 	public static void func_242837_a(DynamicRegistries p_242837_0_, VillageConfig p_242837_1_, JigsawManager.IPieceFactory p_242837_2_, ChunkGenerator p_242837_3_, TemplateManager p_242837_4_, BlockPos p_242837_5_, List<? super AbstractVillagePiece> p_242837_6_, Random p_242837_7_, boolean p_242837_8_, boolean p_242837_9_) {
 		Structure.func_236397_g_();
@@ -54,8 +52,10 @@ public class JigsawGenerator {
 		abstractvillagepiece.offset(0, k - l, 0);
 		p_242837_6_.add(abstractvillagepiece);
 		if (p_242837_1_.func_236534_a_() > 0) {
-			int maxRange = 400;
-			AxisAlignedBB axisalignedbb = new AxisAlignedBB((double)(i - maxRange), (double)(k - maxRange), (double)(j - maxRange), (double)(i + maxRange + 1), (double)(k + maxRange + 1), (double)(j + maxRange + 1));
+			int maxRange = VaultRaid.REGION_SIZE / 2;
+
+			AxisAlignedBB axisalignedbb = new AxisAlignedBB(i - maxRange, k - maxRange, j - maxRange,
+					i + maxRange + 1, k + maxRange + 1, j + maxRange + 1);
 			Assembler jigsawmanager$assembler = new Assembler(mutableregistry, p_242837_1_.func_236534_a_(), p_242837_2_, p_242837_3_, p_242837_4_, p_242837_6_, p_242837_7_);
 			jigsawmanager$assembler.availablePieces.addLast(new Entry(abstractvillagepiece, new MutableObject<>(VoxelShapes.combineAndSimplify(VoxelShapes.create(axisalignedbb), VoxelShapes.create(AxisAlignedBB.toImmutable(mutableboundingbox)), IBooleanFunction.ONLY_FIRST)), k + maxRange, 0));
 
@@ -65,18 +65,6 @@ public class JigsawGenerator {
 			}
 
 		}
-	}
-
-	public static void func_242838_a(DynamicRegistries p_242838_0_, AbstractVillagePiece p_242838_1_, int p_242838_2_, JigsawManager.IPieceFactory p_242838_3_, ChunkGenerator p_242838_4_, TemplateManager p_242838_5_, List<? super AbstractVillagePiece> p_242838_6_, Random p_242838_7_) {
-		MutableRegistry<JigsawPattern> mutableregistry = p_242838_0_.getRegistry(Registry.JIGSAW_POOL_KEY);
-		Assembler jigsawmanager$assembler = new Assembler(mutableregistry, p_242838_2_, p_242838_3_, p_242838_4_, p_242838_5_, p_242838_6_, p_242838_7_);
-		jigsawmanager$assembler.availablePieces.addLast(new Entry(p_242838_1_, new MutableObject<>(VoxelShapes.INFINITY), 0, 0));
-
-		while(!jigsawmanager$assembler.availablePieces.isEmpty()) {
-			Entry jigsawmanager$entry = jigsawmanager$assembler.availablePieces.removeFirst();
-			jigsawmanager$assembler.func_236831_a_(jigsawmanager$entry.villagePiece, jigsawmanager$entry.free, jigsawmanager$entry.boundsTop, jigsawmanager$entry.depth, false);
-		}
-
 	}
 
 	static final class Assembler {
@@ -241,10 +229,10 @@ public class JigsawGenerator {
 							}
 						}
 					} else {
-						LOGGER.warn("Empty or none existent fallback pool: {}", (Object)resourcelocation1);
+						Vault.LOGGER.warn("Empty or none existent fallback pool: {}", (Object)resourcelocation1);
 					}
 				} else {
-					LOGGER.warn("Empty or none existent pool: {}", (Object)resourcelocation);
+					Vault.LOGGER.warn("Empty or none existent pool: {}", (Object)resourcelocation);
 				}
 			}
 
@@ -263,10 +251,6 @@ public class JigsawGenerator {
 			this.boundsTop = p_i232042_3_;
 			this.depth = p_i232042_4_;
 		}
-	}
-
-	public interface IPieceFactory {
-		AbstractVillagePiece create(TemplateManager p_create_1_, JigsawPiece p_create_2_, BlockPos p_create_3_, int p_create_4_, Rotation p_create_5_, MutableBoundingBox p_create_6_);
 	}
 
 }

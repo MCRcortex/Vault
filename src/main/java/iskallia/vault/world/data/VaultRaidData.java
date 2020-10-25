@@ -12,7 +12,6 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.biome.BiomeRegistry;
 import net.minecraft.world.chunk.ChunkStatus;
-import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.gen.feature.structure.StructureStart;
 import net.minecraft.world.gen.settings.StructureSeparationSettings;
 import net.minecraft.world.server.ServerWorld;
@@ -59,15 +58,20 @@ public class VaultRaidData extends WorldSavedData {
 
 	public VaultRaid startNew(ServerPlayerEntity player) {
 		VaultRaid raid = new VaultRaid(player.getUniqueID(), new MutableBoundingBox(
-				this.xOffset, 0, 0, this.xOffset += 2000, 256, 2000
-		), this.getLevel(player));
+				this.xOffset, 0, 0, this.xOffset += VaultRaid.REGION_SIZE, 256, VaultRaid.REGION_SIZE
+		), PlayerAbilitiesData.get(player.getServerWorld()).getAbilities(player).getVaultLevel());
+
+		if(this.activeRaids.containsKey(player.getUniqueID())) {
+			this.activeRaids.get(player.getUniqueID()).ticksLeft = 0;
+		}
+
+		this.activeRaids.put(raid.getPlayerId(), raid);
+		this.markDirty();
 
 		player.getServer().runAsync(() -> {
 			try {
 				ServerWorld world = player.getServer().getWorld(Vault.WORLD_KEY);
-
 				ChunkPos chunkPos = new ChunkPos((raid.box.minX + raid.box.getXSize() / 2) >> 4, (raid.box.minZ + raid.box.getZSize() / 2) >> 4);
-				IChunk chunk = world.getChunk(chunkPos.x, chunkPos.z, ChunkStatus.EMPTY, true);
 
 				StructureSeparationSettings settings = new StructureSeparationSettings(1, 0, -1);
 
@@ -76,14 +80,15 @@ public class VaultRaidData extends WorldSavedData {
 						world.getStructureTemplateManager(), world.getSeed(), chunkPos,
 						BiomeRegistry.PLAINS, 0, settings);
 
-				chunk.func_230344_a_(ModStructures.VAULT, start);
 
-				//TODO: maybe fix this hack xD
-				//start.func_230366_a_(world, world.func_241112_a_(), world.getChunkProvider().generator, new Random(),
-				//		new MutableBoundingBox(
-				//				chunkPos.x << 4, 0, chunkPos.z << 4,
-				//				(chunkPos.x << 4) + 15, 255, (chunkPos.z << 4) + 15
-				//		), chunkPos);
+				//This is some cursed calculations, don't ask me how it works.
+				int chunkRadius  = VaultRaid.REGION_SIZE >> 5;
+
+				for(int x = -chunkRadius; x <= chunkRadius; x += 17) {
+					for(int z = -chunkRadius; z <= chunkRadius; z += 17) {
+						world.getChunk(chunkPos.x + x, chunkPos.z + z, ChunkStatus.EMPTY, true).func_230344_a_(ModStructures.VAULT, start);
+					}
+				}
 
 				raid.searchForStart(world, chunkPos);
 				raid.teleportToStart(world, player);
@@ -92,12 +97,6 @@ public class VaultRaidData extends WorldSavedData {
 			}
 		});
 
-		if(this.activeRaids.containsKey(player.getUniqueID())) {
-			this.activeRaids.get(player.getUniqueID()).ticksLeft = 0;
-		}
-
-		this.activeRaids.put(raid.getPlayerId(), raid);
-		this.markDirty();
 		return raid;
 	}
 

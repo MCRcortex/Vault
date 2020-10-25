@@ -1,5 +1,6 @@
 package iskallia.vault.world.data;
 
+import iskallia.vault.Vault;
 import iskallia.vault.world.gen.structure.VaultStructure;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -14,6 +15,8 @@ import net.minecraftforge.common.util.INBTSerializable;
 import java.util.UUID;
 
 public class VaultRaid implements INBTSerializable<CompoundNBT> {
+
+	public static final int REGION_SIZE = 1 << 11;
 
 	private UUID playerId;
 	public MutableBoundingBox box;
@@ -71,7 +74,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 
 	public void teleportToStart(ServerWorld world, ServerPlayerEntity player) {
 		if(this.start == null) {
-			System.err.println("No vault start was found.");
+			Vault.LOGGER.warn("No vault start was found.");
 			player.teleport(world, this.box.minX + this.box.getXSize() / 2.0F, 256,
 					this.box.minZ + this.box.getZSize() / 2.0F, player.rotationYaw, player.rotationPitch);
 			return;
