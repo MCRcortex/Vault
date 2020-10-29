@@ -104,6 +104,11 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         return this;
     }
 
+    public AbilityTree addSkillPoints(int amount) {
+        this.unspentSkillPts += amount;
+        return this;
+    }
+
     public AbilityTree upgradeAbility(MinecraftServer server, AbilityNode<?> abilityNode) {
         this.remove(server, abilityNode);
 

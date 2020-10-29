@@ -6,6 +6,7 @@ import iskallia.vault.ability.passive.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.potion.Effects;
+import net.minecraftforge.common.ForgeMod;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,7 +51,7 @@ public class AbilitiesConfig extends Config {
         this.FIRE_RESISTANCE = AbilityGroup.ofEffect("Fire Resistance", Effects.FIRE_RESISTANCE, EffectAbility.Type.ICON_ONLY, 1, i -> 5);
         this.SPEED = AbilityGroup.ofEffect("Speed", Effects.SPEED, EffectAbility.Type.ICON_ONLY, 2, i -> 3);
         this.WATER_BREATHING = AbilityGroup.ofEffect("Water Breathing", Effects.WATER_BREATHING, EffectAbility.Type.ICON_ONLY, 1, i -> 5);
-        //reach
+        // ForgeMod.REACH_DISTANCE.get()
         this.WELL_FIT = AbilityGroup.ofAttribute("Well Fit", Attributes.MAX_HEALTH, "Extra Health", 10, i -> 1, i -> i * 2.0D, i -> AttributeModifier.Operation.ADDITION);
         this.TWERKER = new AbilityGroup<>("Twerker", new TwerkerAbility(4));
         this.ELVISH = new AbilityGroup<>("Elvish", new ElvishAbility(5));

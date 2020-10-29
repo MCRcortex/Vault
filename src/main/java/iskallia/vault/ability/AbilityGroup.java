@@ -41,7 +41,8 @@ public class AbilityGroup<T extends PlayerAbility> {
     }
 
     public T getAbility(int level) {
-        assert 0 < level && level <= getMaxLevel();
+        if (level < 0) return this.levels[0];
+        if (level >= getMaxLevel()) return this.levels[getMaxLevel() - 1];
         return this.levels[level - 1];
     }
 

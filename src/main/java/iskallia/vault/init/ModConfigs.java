@@ -9,6 +9,7 @@ public class ModConfigs {
     public static VaultLevelsConfig LEVELS_META;
     public static VaultOreConfig VAULT_ORES;
     public static VaultScaleConfig VAULT_SCALE;
+    public static VaultItemsConfig VAULT_ITEMS;
 
     public static void register() {
         ABILITIES = (AbilitiesConfig) new AbilitiesConfig().readConfig();
@@ -16,6 +17,7 @@ public class ModConfigs {
         LEVELS_META = (VaultLevelsConfig) new VaultLevelsConfig().readConfig();
         VAULT_ORES = (VaultOreConfig) new VaultOreConfig().readConfig();
         VAULT_SCALE = (VaultScaleConfig) new VaultScaleConfig().readConfig();
+        VAULT_ITEMS = (VaultItemsConfig) new VaultItemsConfig().readConfig();
     }
 
 }

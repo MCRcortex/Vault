@@ -1,6 +1,7 @@
 package iskallia.vault.event;
 
 import iskallia.vault.init.ModContainers;
+import iskallia.vault.init.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
@@ -16,7 +17,9 @@ public class InitRegistryEvent {
     public static void onBlockRegister(RegistryEvent.Register<Block> event) { }
 
     @SubscribeEvent
-    public static void onItemRegister(RegistryEvent.Register<Item> event) { }
+    public static void onItemRegister(RegistryEvent.Register<Item> event) {
+        ModItems.registerItems(event);
+    }
 
     @SubscribeEvent
     public static void onModelRegister(ModelRegistryEvent event) { }
