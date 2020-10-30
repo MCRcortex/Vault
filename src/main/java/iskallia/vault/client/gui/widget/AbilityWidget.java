@@ -118,7 +118,7 @@ public class AbilityWidget extends Widget {
 
     public void
     renderIcon(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        ResourceBoundary resourceBoundary = style.frameType.resourceBoundary;
+        ResourceBoundary resourceBoundary = style.frameType.getResourceBoundary();
 
 //        // DEBUG for clickable bounds
 //        Rectangle clickableBounds = getClickableBounds();
@@ -201,22 +201,6 @@ public class AbilityWidget extends Widget {
     public static int
     pipRowCount(int level) {
         return (int) Math.ceil((float) level / MAX_PIPs_INLINE);
-    }
-
-    public enum AbilityFrame {
-        STAR(new ResourceBoundary(RESOURCE, 0, 31, ICON_SIZE, ICON_SIZE)),
-        RECTANGULAR(new ResourceBoundary(RESOURCE, 30, 31, ICON_SIZE, ICON_SIZE)),
-        ;
-
-        ResourceBoundary resourceBoundary;
-
-        AbilityFrame(ResourceBoundary resourceBoundary) {
-            this.resourceBoundary = resourceBoundary;
-        }
-
-        public ResourceBoundary getResourceBoundary() {
-            return resourceBoundary;
-        }
     }
 
 }
