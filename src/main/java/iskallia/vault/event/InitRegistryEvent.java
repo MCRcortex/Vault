@@ -1,5 +1,6 @@
 package iskallia.vault.event;
 
+import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModContainers;
 import iskallia.vault.init.ModItems;
 import net.minecraft.block.Block;
@@ -14,7 +15,9 @@ import net.minecraftforge.fml.common.Mod;
 public class InitRegistryEvent {
 
     @SubscribeEvent
-    public static void onBlockRegister(RegistryEvent.Register<Block> event) { }
+    public static void onBlockRegister(RegistryEvent.Register<Block> event) {
+        ModBlocks.registerBlocks(event);
+    }
 
     @SubscribeEvent
     public static void onItemRegister(RegistryEvent.Register<Item> event) {

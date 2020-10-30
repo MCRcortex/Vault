@@ -3,7 +3,10 @@ package iskallia.vault.init;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import iskallia.vault.Vault;
-import iskallia.vault.command.*;
+import iskallia.vault.command.Command;
+import iskallia.vault.command.RaidCommand;
+import iskallia.vault.command.ReloadConfigsCommand;
+import iskallia.vault.command.VaultLevelCommand;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 
@@ -14,12 +17,10 @@ import static net.minecraft.command.Commands.literal;
 public class ModCommands {
 
     public static ReloadConfigsCommand RELOAD_CONFIGS;
-    public static SpawnVaultCommand SPAWN_VAULT;
     public static RaidCommand RAID;
     public static VaultLevelCommand VAULT_LEVEL;
 
     public static void registerCommands(CommandDispatcher<CommandSource> dispatcher, Commands.EnvironmentType env) {
-        SPAWN_VAULT = registerCommand(SpawnVaultCommand::new, dispatcher, env);
         RELOAD_CONFIGS = registerCommand(ReloadConfigsCommand::new, dispatcher, env);
         RAID = registerCommand(RaidCommand::new, dispatcher, env);
         VAULT_LEVEL = registerCommand(VaultLevelCommand::new, dispatcher, env);

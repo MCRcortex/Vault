@@ -10,6 +10,8 @@ import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.biome.BiomeRegistry;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.gen.feature.structure.StructureStart;
@@ -57,6 +59,8 @@ public class VaultRaidData extends WorldSavedData {
 	}
 
 	public VaultRaid startNew(ServerPlayerEntity player) {
+		player.sendStatusMessage(new StringTextComponent( "Generating vault, please wait...").mergeStyle(TextFormatting.GREEN), true);
+
 		VaultRaid raid = new VaultRaid(player.getUniqueID(), new MutableBoundingBox(
 				this.xOffset, 0, 0, this.xOffset += VaultRaid.REGION_SIZE, 256, VaultRaid.REGION_SIZE
 		), PlayerAbilitiesData.get(player.getServerWorld()).getAbilities(player).getVaultLevel());
