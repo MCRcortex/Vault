@@ -2,7 +2,6 @@ package iskallia.vault.config;
 
 import com.google.gson.annotations.Expose;
 import iskallia.vault.ability.AbilityFrame;
-import iskallia.vault.client.gui.widget.AbilityWidget;
 import iskallia.vault.init.ModConfigs;
 
 import java.util.HashMap;

@@ -6,7 +6,6 @@ import iskallia.vault.ability.passive.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.potion.Effects;
-import net.minecraftforge.common.ForgeMod;
 
 import java.util.Arrays;
 import java.util.List;
