@@ -37,7 +37,7 @@ public class StageManager {
         }
     }
 
-    private static void warnResearchRequirement(PlayerEntity player, String researchName, String i18nKey) {
+    private static void warnResearchRequirement(String researchName, String i18nKey) {
         TextComponent name = new StringTextComponent(researchName);
         Style style = Style.EMPTY.setColor(Color.fromInt(0xFF_fce336));
         name.setStyle(style);
@@ -61,7 +61,7 @@ public class StageManager {
             return; // Doesn't restrict craftability of this item, so stop here.
 
         if (!event.getPlayer().world.isRemote) {
-            warnResearchRequirement(player, restrictedBy, "craft");
+            warnResearchRequirement(restrictedBy, "craft");
         }
 
         for (int i = 0; i < craftingMatrix.getSizeInventory(); i++) {
@@ -84,10 +84,7 @@ public class StageManager {
     }
 
     @SubscribeEvent
-    public static void onPlayerAttack(AttackEntityEvent event) { }
-
-    @SubscribeEvent
-    public static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
+    public static void onItemUse(PlayerInteractEvent.RightClickItem event) {
         if (!event.isCancelable()) return;
 
         PlayerEntity player = event.getPlayer();
@@ -101,7 +98,7 @@ public class StageManager {
             return; // Doesn't restrict usability of this item, so stop here.
 
         if (event.getSide() == LogicalSide.CLIENT) {
-            warnResearchRequirement(player, restrictedBy, "usage");
+            warnResearchRequirement(restrictedBy, "usage");
         }
 
         event.setCanceled(true);
@@ -122,7 +119,7 @@ public class StageManager {
             return; // Doesn't restrict usability of this item, so stop here.
 
         if (event.getSide() == LogicalSide.CLIENT) {
-            warnResearchRequirement(player, restrictedBy, "usage");
+            warnResearchRequirement(restrictedBy, "usage");
         }
 
         event.setCanceled(true);
@@ -135,11 +132,13 @@ public class StageManager {
         PlayerEntity player = event.getPlayer();
         ResearchTree researchTree = getResearchTree(player);
 
+        String restrictedBy;
+
         BlockState blockState = player.world.getBlockState(event.getPos());
-        String restrictedBy = researchTree.restrictedBy(blockState.getBlock(), Restrictions.Type.BLOCK_INTERACTABILITY);
+        restrictedBy = researchTree.restrictedBy(blockState.getBlock(), Restrictions.Type.BLOCK_INTERACTABILITY);
         if (restrictedBy != null) {
             if (event.getSide() == LogicalSide.CLIENT) {
-                warnResearchRequirement(player, restrictedBy, "interact_block");
+                warnResearchRequirement(restrictedBy, "interact_block");
             }
             event.setCanceled(true);
             return;
@@ -152,7 +151,7 @@ public class StageManager {
         restrictedBy = researchTree.restrictedBy(item, Restrictions.Type.USABILITY);
         if (restrictedBy != null) {
             if (event.getSide() == LogicalSide.CLIENT) {
-                warnResearchRequirement(player, restrictedBy, "usage");
+                warnResearchRequirement(restrictedBy, "usage");
             }
             event.setCanceled(true);
         }
@@ -167,13 +166,26 @@ public class StageManager {
 
         BlockState blockState = player.world.getBlockState(event.getPos());
 
-        String restrictedBy = researchTree.restrictedBy(blockState.getBlock(), Restrictions.Type.HITTABILITY);
+        String restrictedBy;
 
-        if (restrictedBy == null)
-            return; // Doesn't restrict hittability of this item, so stop here.
+        restrictedBy = researchTree.restrictedBy(blockState.getBlock(), Restrictions.Type.HITTABILITY);
+        if (restrictedBy != null) {
+            if (event.getSide() == LogicalSide.CLIENT) {
+                warnResearchRequirement(restrictedBy, "hit");
+            }
+            return;
+        }
 
-        if (event.getSide() == LogicalSide.CLIENT) {
-            warnResearchRequirement(player, restrictedBy, "hit");
+        ItemStack itemStack = event.getItemStack();
+        if (itemStack == ItemStack.EMPTY) return;
+
+        Item item = itemStack.getItem();
+        restrictedBy = researchTree.restrictedBy(item, Restrictions.Type.USABILITY);
+        if (restrictedBy != null) {
+            if (event.getSide() == LogicalSide.CLIENT) {
+                warnResearchRequirement(restrictedBy, "usage");
+            }
+            event.setCanceled(true);
         }
 
         event.setCanceled(true);
@@ -187,16 +199,60 @@ public class StageManager {
         ResearchTree researchTree = getResearchTree(player);
         Entity entity = event.getEntity();
 
-        String restrictedBy = researchTree.restrictedBy(entity.getType(), Restrictions.Type.ENTITY_INTERACTABILITY);
+        String restrictedBy;
 
-        if (restrictedBy == null)
-            return; // Doesn't restrict interactivity of this item, so stop here.
-
-        if (event.getSide() == LogicalSide.CLIENT) {
-            warnResearchRequirement(player, restrictedBy, "interact_entity");
+        restrictedBy = researchTree.restrictedBy(entity.getType(), Restrictions.Type.ENTITY_INTERACTABILITY);
+        if (restrictedBy != null) {
+            if (event.getSide() == LogicalSide.CLIENT) {
+                warnResearchRequirement(restrictedBy, "interact_entity");
+            }
+            event.setCanceled(true);
+            return;
         }
 
-        event.setCanceled(true);
+        ItemStack itemStack = event.getItemStack();
+        if (itemStack == ItemStack.EMPTY) return;
+
+        Item item = itemStack.getItem();
+        restrictedBy = researchTree.restrictedBy(item, Restrictions.Type.USABILITY);
+        if (restrictedBy != null) {
+            if (event.getSide() == LogicalSide.CLIENT) {
+                warnResearchRequirement(restrictedBy, "usage");
+            }
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerAttack(AttackEntityEvent event) {
+        if (!event.isCancelable()) return;
+
+        PlayerEntity player = event.getPlayer();
+        ResearchTree researchTree = getResearchTree(player);
+        Entity entity = event.getEntity();
+
+        String restrictedBy;
+
+        restrictedBy = researchTree.restrictedBy(entity.getType(), Restrictions.Type.ENTITY_INTERACTABILITY);
+        if (restrictedBy != null) {
+            if (player.world.isRemote) {
+                warnResearchRequirement(restrictedBy, "interact_entity");
+            }
+            event.setCanceled(true);
+            return;
+        }
+
+        ItemStack itemStack = player.getHeldItemMainhand();
+        if (itemStack == ItemStack.EMPTY) return;
+
+        Item item = itemStack.getItem();
+        restrictedBy = researchTree.restrictedBy(item, Restrictions.Type.USABILITY);
+        if (restrictedBy != null) {
+            if (player.world.isRemote) {
+                warnResearchRequirement(restrictedBy, "usage");
+            }
+            event.setCanceled(true);
+        }
     }
 
     @OnlyIn(Dist.CLIENT)
