@@ -1,7 +1,13 @@
 {
   "itemGroup.the_vault": "The Vault",
-  "item.the_vault.vault_burger":  "Vault Burger",
-  "item.the_vault.skill_orbs":  "Skill Orbs",
+  "item.the_vault.vault_burger": "Vault Burger",
+  "item.the_vault.skill_orbs": "Skill Orbs",
   "key.category.the_vault": "The Vault",
-  "key.the_vault.open_ability_tree": "Open/Close Ability Tree"
+  "key.the_vault.open_ability_tree": "Open/Close Ability Tree",
+  "tooltip.requires_research": "Requires Research:",
+  "overlay.requires_research.usage": "You need to research %s in order to use this item.",
+  "overlay.requires_research.craft": "You need to research %s in order to craft this item.",
+  "overlay.requires_research.hit": "You need to research %s in order to hit this block.",
+  "overlay.requires_research.interact_block": "You need to research %s in order to interact with this block.",
+  "overlay.requires_research.interact_entity": "You need to research %s in order to interact with this entity."
 }
