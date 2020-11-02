@@ -12,11 +12,14 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class VaultRaid implements INBTSerializable<CompoundNBT> {
 
@@ -25,7 +28,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 	private UUID playerId;
 	public MutableBoundingBox box;
 	public int level;
-	public int ticksLeft = 20 * 60 * 20;
+	public int ticksLeft = 20 * 60 * 5;
 
 	public BlockPos start;
 	public Direction facing;
@@ -48,8 +51,28 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 		return this.ticksLeft <= 0;
 	}
 
-	public void tick() {
+	public void tick(ServerWorld world) {
 		this.ticksLeft--;
+
+		if(this.ticksLeft <= 0) {
+			this.runIfPresent(world, playerEntity -> {
+				playerEntity.sendMessage(new StringTextComponent("Time has run out!").mergeStyle(TextFormatting.GREEN), this.playerId);
+				this.teleportToStart(world, playerEntity);
+			});
+		} else if(this.ticksLeft <= 100 && this.ticksLeft % 20 == 0) {
+			this.runIfPresent(world, playerEntity -> {
+				int s = this.ticksLeft / 20;
+				playerEntity.sendMessage(new StringTextComponent("Teleporting in " + s + (s == 1 ? " second..." : " seconds...")).mergeStyle(TextFormatting.GREEN), this.playerId);
+			});
+		}
+	}
+
+	public boolean runIfPresent(ServerWorld world, Consumer<ServerPlayerEntity> action) {
+		if(world == null)return false;
+		ServerPlayerEntity player = (ServerPlayerEntity)world.getPlayerByUuid(this.playerId);
+		if(player == null)return false;
+		action.accept(player);
+		return true;
 	}
 
 	@Override
@@ -84,11 +107,12 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 			return;
 		}
 
-		player.teleport(world, this.start.getX(), this.start.getY(), this.start.getZ(),
+		player.teleport(world, this.start.getX() + 0.5D, this.start.getY() + 0.2D, this.start.getZ() + 0.5D,
 				this.facing == null ? world.getRandom().nextFloat() * 360.0F : this.facing.rotateY().getHorizontalAngle(), 0.0F);
 	}
 
-	public void searchForStart(ServerWorld world, ChunkPos chunkPos) {
+	public void start(ServerWorld world, ServerPlayerEntity player, ChunkPos chunkPos) {
+		loop:
 		for(int x = -48; x < 48; x++) {
 			for(int z = -48; z < 48; z++) {
 				for(int y = 0; y < 48; y++) {
@@ -108,12 +132,25 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 
 						if(count != 1) {
 							makePortal(world, pos, this.facing = direction, 2 + count - 1, 3 + count - 1);
-							return;
+							break loop;
 						}
 					}
 				}
 			}
 		}
+
+		if(player.func_242280_ah()) {
+			player.func_242279_ag();
+		}
+
+		this.teleportToStart(world, player);
+
+		this.runIfPresent(world, playerEntity -> {
+			float min = this.ticksLeft / (20.0F * 60.0F);
+			playerEntity.sendMessage(new StringTextComponent("Welcome to the Vault!").mergeStyle(TextFormatting.GREEN), this.playerId);
+			playerEntity.sendMessage(new StringTextComponent("You have " + min + " minutes to complete the raid.").mergeStyle(TextFormatting.GREEN), this.playerId);
+			playerEntity.sendMessage(new StringTextComponent("Good luck ").append(player.getName()).append(new StringTextComponent("!")).mergeStyle(TextFormatting.GREEN), this.playerId);
+		});
 	}
 
 	public static void makePortal(IWorld world, BlockPos pos, Direction facing, int width, int height) {

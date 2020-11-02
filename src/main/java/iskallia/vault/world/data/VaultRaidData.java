@@ -94,8 +94,7 @@ public class VaultRaidData extends WorldSavedData {
 					}
 				}
 
-				raid.searchForStart(world, chunkPos);
-				raid.teleportToStart(world, player);
+				raid.start(world, player, chunkPos);
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
@@ -105,7 +104,7 @@ public class VaultRaidData extends WorldSavedData {
 	}
 
 	public void tick(ServerWorld world) {
-		this.activeRaids.values().forEach(VaultRaid::tick);
+		this.activeRaids.values().forEach(vaultRaid -> vaultRaid.tick(world));
 
 		if(this.activeRaids.values().removeIf(VaultRaid::isComplete)) {
 			this.markDirty();
@@ -114,7 +113,7 @@ public class VaultRaidData extends WorldSavedData {
 
 	@SubscribeEvent
 	public static void onTick(TickEvent.WorldTickEvent event) {
-		if(event.side == LogicalSide.SERVER) {
+		if(event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START && event.world.getDimensionKey() == Vault.WORLD_KEY) {
 			get((ServerWorld)event.world).tick((ServerWorld)event.world);
 		}
 	}
