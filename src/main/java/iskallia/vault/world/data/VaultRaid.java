@@ -1,7 +1,10 @@
 package iskallia.vault.world.data;
 
 import iskallia.vault.Vault;
+import iskallia.vault.block.VaultPortalBlock;
+import iskallia.vault.init.ModBlocks;
 import iskallia.vault.world.gen.structure.VaultStructure;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -9,6 +12,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -81,7 +85,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 		}
 
 		player.teleport(world, this.start.getX(), this.start.getY(), this.start.getZ(),
-				this.facing == null ? world.getRandom().nextFloat() * 360.0F : this.facing.getHorizontalAngle(), 0.0F);
+				this.facing == null ? world.getRandom().nextFloat() * 360.0F : this.facing.rotateY().getHorizontalAngle(), 0.0F);
 	}
 
 	public void searchForStart(ServerWorld world, ChunkPos chunkPos) {
@@ -92,14 +96,35 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 					if(world.getBlockState(pos).getBlock() != Blocks.CRIMSON_PRESSURE_PLATE)continue;
 					this.start = pos;
 
-					Direction.Plane.HORIZONTAL.forEach(direction -> {
+					for(Direction direction : Direction.Plane.HORIZONTAL) {
 						if(world.getBlockState(pos.offset(direction)).getBlock() == Blocks.WARPED_PRESSURE_PLATE) {
 							this.facing = direction;
+							break;
 						}
-					});
+					}
 
-					return;
+					if(this.facing != null) {
+						makePortal(world, pos, this.facing, 2, 3);
+						return;
+					}
 				}
+			}
+		}
+	}
+
+	public static void makePortal(IWorld world, BlockPos pos, Direction facing, int width, int height) {
+		pos = pos.offset(Direction.DOWN).offset(facing.getOpposite());
+
+		for(int y = 0; y < height + 2; y++) {
+			world.setBlockState(pos.up(y), Blocks.OBSIDIAN.getDefaultState(), 1);
+			world.setBlockState(pos.offset(facing, width + 1).up(y), Blocks.OBSIDIAN.getDefaultState(), 1);
+
+			BlockState state = y == 0 || y == height + 1
+					? Blocks.OBSIDIAN.getDefaultState()
+					: ModBlocks.VAULT_PORTAL.getDefaultState().with(VaultPortalBlock.AXIS, facing.getAxis());
+
+			for(int x = 1; x < width + 1; x++) {
+				world.setBlockState(pos.offset(facing, x).up(y), state, 1);
 			}
 		}
 	}
