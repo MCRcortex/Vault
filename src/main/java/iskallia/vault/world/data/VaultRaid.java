@@ -94,18 +94,22 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 				for(int y = 0; y < 48; y++) {
 					BlockPos pos = chunkPos.asBlockPos().add(x, VaultStructure.START_Y + y, z);
 					if(world.getBlockState(pos).getBlock() != Blocks.CRIMSON_PRESSURE_PLATE)continue;
+					world.setBlockState(pos, Blocks.AIR.getDefaultState());
+
 					this.start = pos;
 
 					for(Direction direction : Direction.Plane.HORIZONTAL) {
-						if(world.getBlockState(pos.offset(direction)).getBlock() == Blocks.WARPED_PRESSURE_PLATE) {
-							this.facing = direction;
-							break;
-						}
-					}
+						int count = 1;
 
-					if(this.facing != null) {
-						makePortal(world, pos, this.facing, 2, 3);
-						return;
+						while(world.getBlockState(pos.offset(direction, count)).getBlock() == Blocks.WARPED_PRESSURE_PLATE) {
+							world.setBlockState(pos.offset(direction, count), Blocks.AIR.getDefaultState());
+							count++;
+						}
+
+						if(count != 1) {
+							makePortal(world, pos, this.facing = direction, 2 + count - 1, 3 + count - 1);
+							return;
+						}
 					}
 				}
 			}
