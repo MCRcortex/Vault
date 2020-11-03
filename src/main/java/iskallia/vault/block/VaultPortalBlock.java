@@ -9,6 +9,7 @@ import net.minecraft.block.NetherPortalBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.RegistryKey;
@@ -25,6 +26,8 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Optional;
 import java.util.Random;
@@ -62,34 +65,34 @@ public class VaultPortalBlock extends NetherPortalBlock {
 			//Reset cooldown.
 			if(player.func_242280_ah()) {
 				player.func_242279_ag();
+				return;
 			}
 
-			if(worldKey == World.OVERWORLD) {
-				ServerPlayerEntity playerEntity = (ServerPlayerEntity)entity;
-				BlockPos blockPos = playerEntity.func_241140_K_();
-				Optional<Vector3d> spawn = blockPos == null ? Optional.empty() : PlayerEntity.func_242374_a(destination,
-						blockPos, playerEntity.func_242109_L(), playerEntity.func_241142_M_(), true);
+			world.getServer().runAsync(() -> {
+				if(worldKey == World.OVERWORLD) {
+					ServerPlayerEntity playerEntity = (ServerPlayerEntity)entity;
+					BlockPos blockPos = playerEntity.func_241140_K_();
+					Optional<Vector3d> spawn = blockPos == null ? Optional.empty() : PlayerEntity.func_242374_a(destination,
+							blockPos, playerEntity.func_242109_L(), playerEntity.func_241142_M_(), true);
 
-				if(spawn.isPresent()) {
-					BlockState blockstate = destination.getBlockState(blockPos);
-					Vector3d vector3d = spawn.get();
+					if(spawn.isPresent()) {
+						BlockState blockstate = destination.getBlockState(blockPos);
+						Vector3d vector3d = spawn.get();
 
-					if(!blockstate.isIn(BlockTags.BEDS) && !blockstate.isIn(Blocks.RESPAWN_ANCHOR)) {
-						playerEntity.teleport(destination, vector3d.x, vector3d.y, vector3d.z, playerEntity.func_242109_L(), 0.0F);
+						if(!blockstate.isIn(BlockTags.BEDS) && !blockstate.isIn(Blocks.RESPAWN_ANCHOR)) {
+							playerEntity.teleport(destination, vector3d.x, vector3d.y, vector3d.z, playerEntity.func_242109_L(), 0.0F);
+						} else {
+							Vector3d vector3d1 = Vector3d.copyCenteredHorizontally(blockPos).subtract(vector3d).normalize();
+							playerEntity.teleport(destination, vector3d.x, vector3d.y, vector3d.z,
+									(float)MathHelper.wrapDegrees(MathHelper.atan2(vector3d1.z, vector3d1.x) * (double) (180F / (float) Math.PI) - 90.0D), 0.0F);
+						}
 					} else {
-						Vector3d vector3d1 = Vector3d.copyCenteredHorizontally(blockPos).subtract(vector3d).normalize();
-						playerEntity.teleport(destination, vector3d.x, vector3d.y, vector3d.z,
-								(float)MathHelper.wrapDegrees(MathHelper.atan2(vector3d1.z, vector3d1.x) * (double) (180F / (float) Math.PI) - 90.0D), 0.0F);
+						this.moveToSpawn(destination, player);
 					}
-
-					playerEntity.func_242111_a(destination.getDimensionKey(), blockPos, playerEntity.func_242109_L(),
-							playerEntity.func_241142_M_(), false);
-				} else {
-					this.moveToSpawn(destination, player);
+				} else if(worldKey == Vault.WORLD_KEY) {
+					VaultRaidData.get(destination).startNew(player);
 				}
-			} else if(worldKey == Vault.WORLD_KEY) {
-				VaultRaidData.get(destination).startNew(player);
-			}
+			});
 		}
 	}
 
@@ -98,7 +101,7 @@ public class VaultPortalBlock extends NetherPortalBlock {
 
 		if(world.getDimensionType().hasSkyLight() && world.getServer().func_240793_aU_().getGameType() != GameType.ADVENTURE) {
 			int i = Math.max(0, world.getServer().getSpawnRadius(world));
-			int j = MathHelper.floor(world.getWorldBorder().getClosestDistance((double)blockpos.getX(), (double)blockpos.getZ()));
+			int j = MathHelper.floor(world.getWorldBorder().getClosestDistance(blockpos.getX(), blockpos.getZ()));
 			if (j < i) {
 				i = j;
 			}
@@ -168,6 +171,31 @@ public class VaultPortalBlock extends NetherPortalBlock {
 				}
 			}
 		}
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	@Override
+	public void animateTick(BlockState state, World world, BlockPos pos, Random rand) {
+		for(int i = 0; i < 4; ++i) {
+			double d0 = (double)pos.getX() + rand.nextDouble();
+			double d1 = (double)pos.getY() + rand.nextDouble();
+			double d2 = (double)pos.getZ() + rand.nextDouble();
+			double d3 = ((double)rand.nextFloat() - 0.5D) * 0.5D;
+			double d4 = ((double)rand.nextFloat() - 0.5D) * 0.5D;
+			double d5 = ((double)rand.nextFloat() - 0.5D) * 0.5D;
+			int j = rand.nextInt(2) * 2 - 1;
+			
+			if(!world.getBlockState(pos.west()).isIn(this) && !world.getBlockState(pos.east()).isIn(this)) {
+				d0 = (double)pos.getX() + 0.5D + 0.25D * (double)j;
+				d3 = rand.nextFloat() * 2.0F * (float)j;
+			} else {
+				d2 = (double)pos.getZ() + 0.5D + 0.25D * (double)j;
+				d5 = rand.nextFloat() * 2.0F * (float)j;
+			}
+
+			world.addParticle(ParticleTypes.ASH, d0, d1, d2, d3, d4, d5);
+		}
+
 	}
 
 }

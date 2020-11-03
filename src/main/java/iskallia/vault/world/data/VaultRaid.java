@@ -4,6 +4,7 @@ import iskallia.vault.Vault;
 import iskallia.vault.block.VaultPortalBlock;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.world.gen.structure.VaultStructure;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -107,10 +108,10 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 			return;
 		}
 
-		BlockPos start = this.start.offset(this.facing.rotateY(), 2);
-
-		player.teleport(world, start.getX() + 0.5D, start.getY() + 0.2D, start.getZ() + 0.5D,
+		player.teleport(world, this.start.getX() + 0.5D, this.start.getY() + 0.2D, this.start.getZ() + 0.5D,
 				this.facing == null ? world.getRandom().nextFloat() * 360.0F : this.facing.rotateY().getHorizontalAngle(), 0.0F);
+
+		player.setOnGround(true);
 	}
 
 	public void start(ServerWorld world, ServerPlayerEntity player, ChunkPos chunkPos) {
@@ -133,7 +134,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 						}
 
 						if(count != 1) {
-							makePortal(world, pos, this.facing = direction, 2 + count - 1, 3 + count - 1);
+							makePortal(world, pos, this.facing = direction, count, count + 1);
 							break loop;
 						}
 					}
@@ -141,11 +142,8 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 			}
 		}
 
-		if(player.func_242280_ah()) {
-			player.func_242279_ag();
-		}
-
 		this.teleportToStart(world, player);
+		player.func_242279_ag();
 
 		this.runIfPresent(world, playerEntity -> {
 			float min = this.ticksLeft / (20.0F * 60.0F);
@@ -156,14 +154,18 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 	}
 
 	public static void makePortal(IWorld world, BlockPos pos, Direction facing, int width, int height) {
+		Block[] blocks = {
+			Blocks.BLACKSTONE, Blocks.POLISHED_BLACKSTONE, Blocks.POLISHED_BLACKSTONE_BRICKS, Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS
+		};
+
 		pos = pos.offset(Direction.DOWN).offset(facing.getOpposite());
 
 		for(int y = 0; y < height + 2; y++) {
-			world.setBlockState(pos.up(y), Blocks.OBSIDIAN.getDefaultState(), 1);
-			world.setBlockState(pos.offset(facing, width + 1).up(y), Blocks.OBSIDIAN.getDefaultState(), 1);
+			world.setBlockState(pos.up(y), blocks[world.getRandom().nextInt(blocks.length)].getDefaultState(), 1);
+			world.setBlockState(pos.offset(facing, width + 1).up(y), blocks[world.getRandom().nextInt(blocks.length)].getDefaultState(), 1);
 
 			BlockState state = y == 0 || y == height + 1
-					? Blocks.OBSIDIAN.getDefaultState()
+					? blocks[world.getRandom().nextInt(blocks.length)].getDefaultState()
 					: ModBlocks.VAULT_PORTAL.getDefaultState().with(VaultPortalBlock.AXIS, facing.getAxis());
 
 			for(int x = 1; x < width + 1; x++) {

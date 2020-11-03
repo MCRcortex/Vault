@@ -84,9 +84,8 @@ public class VaultRaidData extends WorldSavedData {
 						world.getStructureTemplateManager(), world.getSeed(), chunkPos,
 						BiomeRegistry.PLAINS, 0, settings);
 
-
 				//This is some cursed calculations, don't ask me how it works.
-				int chunkRadius  = VaultRaid.REGION_SIZE >> 5;
+				int chunkRadius = VaultRaid.REGION_SIZE >> 5;
 
 				for(int x = -chunkRadius; x <= chunkRadius; x += 17) {
 					for(int z = -chunkRadius; z <= chunkRadius; z += 17) {
