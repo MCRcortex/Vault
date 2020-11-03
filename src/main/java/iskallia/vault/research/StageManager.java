@@ -175,6 +175,7 @@ public class StageManager {
             if (event.getSide() == LogicalSide.CLIENT) {
                 warnResearchRequirement(restrictedBy, "hit");
             }
+            event.setCanceled(true);
             return;
         }
 
@@ -189,8 +190,6 @@ public class StageManager {
             }
             event.setCanceled(true);
         }
-
-        event.setCanceled(true);
     }
 
     @SubscribeEvent

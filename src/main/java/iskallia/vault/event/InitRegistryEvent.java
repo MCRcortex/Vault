@@ -22,6 +22,7 @@ public class InitRegistryEvent {
     @SubscribeEvent
     public static void onItemRegister(RegistryEvent.Register<Item> event) {
         ModItems.registerItems(event);
+        ModBlocks.registerBlockItems(event);
     }
 
     @SubscribeEvent
