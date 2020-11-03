@@ -107,7 +107,9 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 			return;
 		}
 
-		player.teleport(world, this.start.getX() + 0.5D, this.start.getY() + 0.2D, this.start.getZ() + 0.5D,
+		BlockPos start = this.start.offset(this.facing.rotateY(), 2);
+
+		player.teleport(world, start.getX() + 0.5D, start.getY() + 0.2D, start.getZ() + 0.5D,
 				this.facing == null ? world.getRandom().nextFloat() * 360.0F : this.facing.rotateY().getHorizontalAngle(), 0.0F);
 	}
 
