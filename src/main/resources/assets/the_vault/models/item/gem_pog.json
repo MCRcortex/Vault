@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "the_vault:items/gem_pog"
+    "layer0": "the_vault:item/gem_pog"
   }
 }

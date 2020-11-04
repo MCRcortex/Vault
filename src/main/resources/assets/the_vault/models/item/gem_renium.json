@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "the_vault:items/gem_renium"
+    "layer0": "the_vault:item/gem_renium"
   }
 }
