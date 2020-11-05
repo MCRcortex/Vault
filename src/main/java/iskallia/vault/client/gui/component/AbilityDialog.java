@@ -76,7 +76,7 @@ public class AbilityDialog extends AbstractGui {
         Rectangle abilityBounds = abilityWidget.getClickableBounds();
         Rectangle headingBounds = new Rectangle();
         headingBounds.x0 = 5;
-        headingBounds.y0 = 12;
+        headingBounds.y0 = 5;
         headingBounds.x1 = headingBounds.x0 + bounds.getWidth() - 20;
         headingBounds.y1 = headingBounds.y0 + abilityBounds.getHeight() + 5;
         return headingBounds;
@@ -215,13 +215,13 @@ public class AbilityDialog extends AbstractGui {
         matrixStack.translate(10, 0, 0);
         FontHelper.drawStringWithBorder(matrixStack,
                 abilityName,
-                abilityBounds.getWidth() + gap, 20,
+                abilityBounds.getWidth() + gap, 13,
                 abilityNode.getLevel() == 0 ? 0xFF_FFFFFF : 0xFF_fff8c7,
                 abilityNode.getLevel() == 0 ? 0xFF_000000 : 0xFF_3b3300);
 
         FontHelper.drawStringWithBorder(matrixStack,
                 subText,
-                abilityBounds.getWidth() + gap, 30,
+                abilityBounds.getWidth() + gap, 23,
                 abilityNode.getLevel() == 0 ? 0xFF_FFFFFF : 0xFF_fff8c7,
                 abilityNode.getLevel() == 0 ? 0xFF_000000 : 0xFF_3b3300);
 
@@ -233,7 +233,7 @@ public class AbilityDialog extends AbstractGui {
 
         matrixStack.translate(-abilityStyle.x, -abilityStyle.y, 0); // Nullify the viewport style
         matrixStack.translate(abilityBounds.getWidth() / 2f, 0, 0);
-        matrixStack.translate(0, 30, 0);
+        matrixStack.translate(0, 23, 0);
         abilityWidget.render(matrixStack, mouseX, mouseY, partialTicks);
         matrixStack.pop();
     }

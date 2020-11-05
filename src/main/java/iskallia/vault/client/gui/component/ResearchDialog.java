@@ -72,7 +72,7 @@ public class ResearchDialog extends AbstractGui {
         Rectangle researchBounds = researchWidget.getClickableBounds();
         Rectangle headingBounds = new Rectangle();
         headingBounds.x0 = 5;
-        headingBounds.y0 = 12;
+        headingBounds.y0 = 5;
         headingBounds.x1 = headingBounds.x0 + bounds.getWidth() - 20;
         headingBounds.y1 = headingBounds.y0 + researchBounds.getHeight() + 5;
         return headingBounds;
@@ -196,7 +196,7 @@ public class ResearchDialog extends AbstractGui {
         boolean researched = researchTree.getResearchesDone().contains(researchName);
 
         String subText = !researched
-                ? "Not Researched Yet"
+                ? "Not Researched"
                 : "Researched";
 
         int gap = 5;
@@ -207,19 +207,19 @@ public class ResearchDialog extends AbstractGui {
         matrixStack.translate(10, 0, 0);
         FontHelper.drawStringWithBorder(matrixStack,
                 researchName,
-                abilityBounds.getWidth() + gap, 20,
+                abilityBounds.getWidth() + gap, 13,
                 !researched ? 0xFF_FFFFFF : 0xFF_fff8c7,
                 !researched ? 0xFF_000000 : 0xFF_3b3300);
 
         FontHelper.drawStringWithBorder(matrixStack,
                 subText,
-                abilityBounds.getWidth() + gap, 30,
+                abilityBounds.getWidth() + gap, 23,
                 !researched ? 0xFF_FFFFFF : 0xFF_fff8c7,
                 !researched ? 0xFF_000000 : 0xFF_3b3300);
 
         matrixStack.translate(-abilityStyle.x, -abilityStyle.y, 0); // Nullify the viewport style
         matrixStack.translate(abilityBounds.getWidth() / 2f, 0, 0);
-        matrixStack.translate(0, 30, 0);
+        matrixStack.translate(0, 23, 0);
         researchWidget.render(matrixStack, mouseX, mouseY, partialTicks);
         matrixStack.pop();
     }

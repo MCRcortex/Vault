@@ -6,14 +6,17 @@ import iskallia.vault.Vault;
 import iskallia.vault.ability.AbilityTree;
 import iskallia.vault.client.gui.component.AbilityDialog;
 import iskallia.vault.client.gui.component.ResearchDialog;
+import iskallia.vault.client.gui.helper.FontHelper;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.client.gui.helper.UIHelper;
+import iskallia.vault.client.gui.overlay.VaultBarOverlay;
 import iskallia.vault.client.gui.tab.ResearchesTab;
 import iskallia.vault.client.gui.tab.SkillTab;
 import iskallia.vault.client.gui.tab.TalentsTab;
 import iskallia.vault.container.SkillTreeContainer;
 import iskallia.vault.research.ResearchTree;
 import iskallia.vault.research.node.Research;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
@@ -170,11 +173,11 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
         Rectangle containerBounds = getContainerBounds();
 
         AbilityTree abilityTree = getContainer().getAbilityTree();
-        renderLabel(matrixStack, "Vault Level: " + abilityTree.getVaultLevel(), 5);
+//        renderLabel(matrixStack, "Vault Level: " + abilityTree.getVaultLevel(), 5);
         if (abilityTree.getUnspentSkillPts() > 0) {
             renderLabel(matrixStack,
                     abilityTree.getUnspentSkillPts() + " unspent skill point(s)",
-                    containerBounds.getHeight() - 30);
+                    containerBounds.getHeight() - 28);
         }
         renderContainerBorders(matrixStack);
         renderContainerTabs(matrixStack);
@@ -235,14 +238,42 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
                 containerBounds.y0 - 25 - 10,
                 1, 44, 13, 13);
 
+        Minecraft minecraft = getMinecraft();
+
         if (activeTab instanceof TalentsTab) {
-            getMinecraft().fontRenderer.drawString(matrixStack, "Talents",
+            minecraft.fontRenderer.drawString(matrixStack, "Talents",
                     containerBounds.x0, containerBounds.y0 - 12, 0xFF_3f3f3f);
 
         } else if (activeTab instanceof ResearchesTab) {
-            getMinecraft().fontRenderer.drawString(matrixStack, "Researches",
+            minecraft.fontRenderer.drawString(matrixStack, "Researches",
                     containerBounds.x0, containerBounds.y0 - 12, 0xFF_3f3f3f);
         }
+
+        minecraft.textureManager.bindTexture(VaultBarOverlay.RESOURCE);
+
+        AbilityTree abilityTree = getContainer().getAbilityTree();
+        String text = String.valueOf(abilityTree.getVaultLevel());
+        int textWidth = minecraft.fontRenderer.getStringWidth(text);
+        int barWidth = 85;
+        float expPercentage = (float) abilityTree.getExp() / abilityTree.getTnl();
+
+        int barX = containerBounds.x1 - barWidth - 5;
+        int barY = containerBounds.y0 - 10;
+
+        minecraft.getProfiler().startSection("vaultBar");
+        minecraft.ingameGUI.blit(matrixStack,
+                barX, barY,
+                1, 1, barWidth, 5);
+        minecraft.ingameGUI.blit(matrixStack,
+                barX, barY,
+                1, 7, (int) (barWidth * expPercentage), 5);
+        FontHelper.drawStringWithBorder(matrixStack,
+                text,
+                barX - textWidth - 1, barY - 1,
+                0xFF_ffe637, 0xFF_3e3e3e);
+
+        minecraft.getProfiler().endSection();
+
     }
 
     private void
