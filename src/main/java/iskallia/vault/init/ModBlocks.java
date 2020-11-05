@@ -1,7 +1,5 @@
 package iskallia.vault.init;
 
-import java.util.function.Supplier;
-
 import iskallia.vault.Vault;
 import iskallia.vault.block.VaultAltarBlock;
 import iskallia.vault.block.VaultOreBlock;
@@ -34,7 +32,7 @@ public class ModBlocks {
 	public static final OreBlock WUTODIE_ORE = new VaultOreBlock();
 	public static final OreBlock VAULT_ROCK_ORE = new VaultOreBlock();
 
-	public static final TileEntityType<VaultPedestalTileEntity> VAULT_PEDESTAL_TILE_ENTITY = null;
+	public static final TileEntityType<VaultPedestalTileEntity> VAULT_PEDESTAL_TILE_ENTITY = TileEntityType.Builder.create(VaultPedestalTileEntity::new, VAULT_PEDESTAL).build(null);
 
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
 		registerBlock(event, VAULT_PORTAL, Vault.id("vault_portal"));
@@ -54,7 +52,7 @@ public class ModBlocks {
 	}
 
 	public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
-		registerTileEntity(event, VaultPedestalTileEntity::new, VAULT_PEDESTAL, Vault.id("vault_pedestal_tile_entity"));
+		registerTileEntity(event, VAULT_PEDESTAL_TILE_ENTITY, Vault.id("vault_pedestal_tile_entity"));
 	}
 
 	public static void registerBlockItems(RegistryEvent.Register<Item> event) {
@@ -79,8 +77,7 @@ public class ModBlocks {
 		event.getRegistry().register(block);
 	}
 
-	private static <T extends TileEntity> void registerTileEntity(RegistryEvent.Register<TileEntityType<?>> event, Supplier<? extends T> factory, Block block, ResourceLocation id) {
-		TileEntityType<?> type = TileEntityType.Builder.create(factory, block).build(null);
+	private static <T extends TileEntity> void registerTileEntity(RegistryEvent.Register<TileEntityType<?>> event, TileEntityType<?> type, ResourceLocation id) {
 		type.setRegistryName(id);
 		event.getRegistry().register(type);
 	}
