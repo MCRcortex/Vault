@@ -16,6 +16,14 @@ public class Rectangle {
         return y1 - y0;
     }
 
+    public void setWidth(int width) {
+        this.x1 = this.x0 + width;
+    }
+
+    public void setHeight(int height) {
+        this.y1 = this.y0 + height;
+    }
+
     public boolean contains(int x, int y) {
         return x0 <= x && x <= x1
                 && y0 <= y && y <= y1;

@@ -29,6 +29,9 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
     public static final ResourceLocation UI_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-tree.png");
     public static final ResourceLocation BACKGROUNDS_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-tree-bgs.png");
 
+    public static final int TAB_WIDTH = 28;
+    public static final int GAP = 3;
+
     protected SkillTab activeTab;
     protected AbilityDialog abilityDialog;
     protected ResearchDialog researchDialog;
@@ -61,6 +64,16 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
         return bounds;
     }
 
+    public Rectangle getTabBounds(int index, boolean active) {
+        Rectangle containerBounds = getContainerBounds();
+        Rectangle bounds = new Rectangle();
+        bounds.x0 = containerBounds.x0 + 5 + index * (TAB_WIDTH + GAP);
+        bounds.y0 = containerBounds.y0 - 25 - (active ? 21 : 17);
+        bounds.setWidth(TAB_WIDTH);
+        bounds.setHeight(active ? 32 : 25);
+        return bounds;
+    }
+
     public AbilityDialog getAbilityDialog() {
         return abilityDialog;
     }
@@ -78,11 +91,25 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
         if (containerBounds.contains((int) mouseX, (int) mouseY)) {
             this.activeTab.mouseClicked(mouseX, mouseY, button);
 
-        } else if (activeTab instanceof ResearchesTab) {
-            this.researchDialog.mouseClicked((int) mouseX, (int) mouseY, button);
-
         } else {
-            this.abilityDialog.mouseClicked((int) mouseX, (int) mouseY, button);
+//            Rectangle abilitiesTabBounds = getTabBounds(0, false);
+            Rectangle talentsTabBounds = getTabBounds(1, activeTab instanceof TalentsTab);
+            Rectangle researchesTabBounds = getTabBounds(2, activeTab instanceof ResearchesTab);
+
+            if (talentsTabBounds.contains(((int) mouseX), ((int) mouseY))) {
+                this.activeTab = new TalentsTab(this);
+                this.refreshWidgets();
+
+            } else if (researchesTabBounds.contains(((int) mouseX), ((int) mouseY))) {
+                this.activeTab = new ResearchesTab(this);
+                this.refreshWidgets();
+
+            } else if (activeTab instanceof ResearchesTab) {
+                this.researchDialog.mouseClicked((int) mouseX, (int) mouseY, button);
+
+            } else {
+                this.abilityDialog.mouseClicked((int) mouseX, (int) mouseY, button);
+            }
         }
 
 
@@ -111,20 +138,6 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
         this.activeTab.mouseScrolled(mouseX, mouseY, delta);
 
         return super.mouseScrolled(mouseX, mouseY, delta);
-    }
-
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        // TODO: NUKE PLSSSSSS!
-        if (activeTab instanceof ResearchesTab) {
-            this.activeTab = new TalentsTab(this);
-        } else {
-            this.activeTab = new ResearchesTab(this);
-        }
-
-        refreshWidgets();
-
-        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     /* --------------------------------------------------- */
@@ -186,14 +199,49 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
     renderContainerTabs(MatrixStack matrixStack) {
         Rectangle containerBounds = getContainerBounds();
 
-        int tabWidth = 28;
-        int gap = 3; // px
+        // Abilities
+        Rectangle abilitiesTabBounds = getTabBounds(0, false);
+        blit(matrixStack,
+                abilitiesTabBounds.x0,
+                abilitiesTabBounds.y0,
+                63, 0,
+                abilitiesTabBounds.getWidth(), abilitiesTabBounds.getHeight());
+        blit(matrixStack,
+                abilitiesTabBounds.x0 + 8,
+                containerBounds.y0 - 25 - 10,
+                1, 44, 13, 13);
 
-        for (int i = 0; i < 3; i++) {
-            blit(matrixStack,
-                    containerBounds.x0 + 5 + i * (tabWidth + gap),
-                    containerBounds.y0 - 25 - 17,
-                    63, 0, tabWidth, 25);
+        // Talents
+        Rectangle talentsTabBounds = getTabBounds(1, activeTab instanceof TalentsTab);
+        blit(matrixStack,
+                talentsTabBounds.x0,
+                talentsTabBounds.y0,
+                63, (activeTab instanceof TalentsTab) ? 28 : 0,
+                talentsTabBounds.getWidth(), talentsTabBounds.getHeight());
+        blit(matrixStack,
+                talentsTabBounds.x0 + 8,
+                containerBounds.y0 - 25 - 10,
+                1, 44, 13, 13);
+
+        // Research
+        Rectangle researchesTabBounds = getTabBounds(2, activeTab instanceof ResearchesTab);
+        blit(matrixStack,
+                researchesTabBounds.x0,
+                researchesTabBounds.y0,
+                63, (activeTab instanceof ResearchesTab) ? 28 : 0,
+                researchesTabBounds.getWidth(), researchesTabBounds.getHeight());
+        blit(matrixStack,
+                researchesTabBounds.x0 + 8,
+                containerBounds.y0 - 25 - 10,
+                1, 44, 13, 13);
+
+        if (activeTab instanceof TalentsTab) {
+            getMinecraft().fontRenderer.drawString(matrixStack, "Talents",
+                    containerBounds.x0, containerBounds.y0 - 12, 0xFF_3f3f3f);
+
+        } else if (activeTab instanceof ResearchesTab) {
+            getMinecraft().fontRenderer.drawString(matrixStack, "Researches",
+                    containerBounds.x0, containerBounds.y0 - 12, 0xFF_3f3f3f);
         }
     }
 
