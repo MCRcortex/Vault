@@ -2,34 +2,35 @@ package iskallia.vault.client.gui.tab;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import iskallia.vault.ability.AbilityTree;
 import iskallia.vault.client.gui.screen.SkillTreeScreen;
-import iskallia.vault.client.gui.widget.TalentWidget;
+import iskallia.vault.client.gui.widget.ResearchWidget;
 import iskallia.vault.init.ModConfigs;
+import iskallia.vault.research.ResearchTree;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.text.StringTextComponent;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class TalentsTab extends SkillTab {
+public class ResearchesTab extends SkillTab {
 
-    private List<TalentWidget> abilityWidgets;
-    private TalentWidget selectedWidget;
+    private List<ResearchWidget> researchWidgets;
+    private ResearchWidget selectedWidget;
 
-    public TalentsTab(SkillTreeScreen parentScreen) {
-        super(parentScreen, new StringTextComponent("Talents Tab"));
-        this.abilityWidgets = new LinkedList<>();
+    public ResearchesTab(SkillTreeScreen parentScreen) {
+        super(parentScreen, new StringTextComponent("Researches Tab"));
+        this.researchWidgets = new LinkedList<>();
     }
 
+    @Override
     public void refresh() {
-        this.abilityWidgets.clear();
+        this.researchWidgets.clear();
 
-        AbilityTree abilityTree = parentScreen.getContainer().getAbilityTree();
-        ModConfigs.TALENTS_GUI.getStyles().forEach((abilityName, style) -> {
-            this.abilityWidgets.add(new TalentWidget(
-                    ModConfigs.TALENTS.getByName(abilityName),
-                    abilityTree,
+        ResearchTree researchTree = parentScreen.getContainer().getResearchTree();
+        ModConfigs.RESEARCHES_GUI.getStyles().forEach((researchName, style) -> {
+            this.researchWidgets.add(new ResearchWidget(
+                    researchName,
+                    researchTree,
                     style
             ));
         });
@@ -42,13 +43,14 @@ public class TalentsTab extends SkillTab {
         Vector2f midpoint = parentScreen.getContainerBounds().midpoint();
         int containerMouseX = (int) ((mouseX - midpoint.x) / viewportScale - viewportTranslation.x);
         int containerMouseY = (int) ((mouseY - midpoint.y) / viewportScale - viewportTranslation.y);
-        for (TalentWidget abilityWidget : abilityWidgets) {
-            if (abilityWidget.isMouseOver(containerMouseX, containerMouseY)
-                    && abilityWidget.mouseClicked(containerMouseX, containerMouseY, button)) {
+
+        for (ResearchWidget researchWidget : researchWidgets) {
+            if (researchWidget.isMouseOver(containerMouseX, containerMouseY)
+                    && researchWidget.mouseClicked(containerMouseX, containerMouseY, button)) {
                 if (this.selectedWidget != null) this.selectedWidget.deselect();
-                this.selectedWidget = abilityWidget;
+                this.selectedWidget = researchWidget;
                 this.selectedWidget.select();
-                parentScreen.getAbilityDialog().setAbilityGroup(this.selectedWidget.getAbilityGroup());
+                parentScreen.getResearchDialog().setResearchName(this.selectedWidget.getResearchName());
                 break;
             }
         }
@@ -70,8 +72,8 @@ public class TalentsTab extends SkillTab {
         int containerMouseX = (int) ((mouseX - midpoint.x) / viewportScale - viewportTranslation.x);
         int containerMouseY = (int) ((mouseY - midpoint.y) / viewportScale - viewportTranslation.y);
 
-        for (TalentWidget abilityWidget : abilityWidgets) {
-            abilityWidget.render(matrixStack, containerMouseX, containerMouseY, partialTicks);
+        for (ResearchWidget researchWidget : researchWidgets) {
+            researchWidget.render(matrixStack, containerMouseX, containerMouseY, partialTicks);
         }
 
         matrixStack.pop();

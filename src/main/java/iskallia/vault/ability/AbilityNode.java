@@ -47,7 +47,7 @@ public class AbilityNode<T extends PlayerAbility> implements INBTSerializable<Co
     @SuppressWarnings("unchecked")
     public void deserializeNBT(CompoundNBT nbt) {
         String groupName = nbt.getString("Name");
-        this.group = (AbilityGroup<T>) ModConfigs.ABILITIES.getByName(groupName);
+        this.group = (AbilityGroup<T>) ModConfigs.TALENTS.getByName(groupName);
         this.level = nbt.getInt("Level");
     }
 
@@ -63,7 +63,7 @@ public class AbilityNode<T extends PlayerAbility> implements INBTSerializable<Co
     }
 
     public static <T extends PlayerAbility> AbilityNode<T> fromNBT(CompoundNBT nbt, Class<T> clazz) {
-        AbilityGroup<T> group = (AbilityGroup<T>) ModConfigs.ABILITIES.getByName(nbt.getString("Name"));
+        AbilityGroup<T> group = (AbilityGroup<T>) ModConfigs.TALENTS.getByName(nbt.getString("Name"));
         int level = nbt.getInt("Level");
         return new AbilityNode<>(group, level);
     }

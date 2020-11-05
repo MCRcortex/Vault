@@ -1,21 +1,21 @@
 package iskallia.vault.client.gui.tab;
 
-import iskallia.vault.client.gui.screen.AbilityTreeScreen;
+import iskallia.vault.client.gui.screen.SkillTreeScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.text.ITextComponent;
 
-public abstract class AbilityTreeTab extends Screen {
+public abstract class SkillTab extends Screen {
 
-    protected AbilityTreeScreen parentScreen;
+    protected SkillTreeScreen parentScreen;
 
     protected Vector2f viewportTranslation;
     protected float viewportScale;
     protected boolean dragging;
     protected Vector2f grabbedPos;
 
-    protected AbilityTreeTab(AbilityTreeScreen parentScreen, ITextComponent title) {
+    protected SkillTab(SkillTreeScreen parentScreen, ITextComponent title) {
         super(title);
         this.parentScreen = parentScreen;
         this.viewportTranslation = new Vector2f(0, 0);

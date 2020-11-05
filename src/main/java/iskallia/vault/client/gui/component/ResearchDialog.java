@@ -1,84 +1,80 @@
 package iskallia.vault.client.gui.component;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import iskallia.vault.ability.AbilityGroup;
 import iskallia.vault.ability.AbilityNode;
 import iskallia.vault.ability.AbilityTree;
-import iskallia.vault.ability.PlayerAbility;
 import iskallia.vault.client.gui.helper.FontHelper;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.client.gui.helper.UIHelper;
 import iskallia.vault.client.gui.screen.SkillTreeScreen;
-import iskallia.vault.client.gui.widget.TalentWidget;
+import iskallia.vault.client.gui.widget.ResearchWidget;
 import iskallia.vault.config.entry.SkillStyle;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.network.ModNetwork;
-import iskallia.vault.network.message.AbilityUpgradeMessage;
+import iskallia.vault.network.message.ResearchMessage;
+import iskallia.vault.research.ResearchTree;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.StringTextComponent;
 
-public class AbilityDialog extends AbstractGui {
+public class ResearchDialog extends AbstractGui {
 
     private Rectangle bounds;
-    private AbilityGroup<?> abilityGroup;
+    private String researchName;
+    private ResearchTree researchTree;
     private AbilityTree abilityTree;
 
-    private TalentWidget abilityWidget;
-    private Button abilityUpgradeButton;
+    private ResearchWidget researchWidget;
+    private Button researchButton;
 
-    public AbilityDialog(AbilityTree abilityTree) {
-        this.abilityGroup = null;
+    public ResearchDialog(ResearchTree researchTree, AbilityTree abilityTree) {
+        this.researchName = null;
+        this.researchTree = researchTree;
         this.abilityTree = abilityTree;
         refreshWidgets();
     }
 
     public void refreshWidgets() {
-        if (this.abilityGroup != null) {
-            SkillStyle abilityStyle = ModConfigs.TALENTS_GUI.getStyles()
-                    .get(abilityGroup.getParentName());
-            this.abilityWidget = new TalentWidget(abilityGroup, abilityTree, abilityStyle);
+        if (this.researchName != null) {
+            SkillStyle researchStyle = ModConfigs.RESEARCHES_GUI.getStyles()
+                    .get(researchName);
+            this.researchWidget = new ResearchWidget(researchName, researchTree, researchStyle);
 
-            AbilityNode<?> abilityNode = abilityTree.getNodeOf(abilityGroup);
+            String buttonText = researchTree.isResearched(researchName) ? "Researched"
+                    : "Research (" + ModConfigs.RESEARCHES.getByName(researchName).getCost() + ")";
 
-            String buttonText = !abilityNode.isLearned() ? "Learn (" + abilityGroup.learningCost() + ")" :
-                    abilityNode.getLevel() >= abilityGroup.getMaxLevel() ? "Fully Learned"
-                            : "Upgrade (" + abilityGroup.cost(abilityNode.getLevel() + 1) + ")";
-
-            this.abilityUpgradeButton = new Button(
+            this.researchButton = new Button(
                     10, bounds.getHeight() - 40,
                     bounds.getWidth() - 30, 20,
                     new StringTextComponent(buttonText),
-                    (button) -> { upgradeAbility(); },
-                    (button, matrixStack, x, y) -> { }
+                    (button) -> { research(); },
+                    (button, matrixStack, x, y) -> {}
             );
 
-            PlayerAbility ability = abilityNode.getAbility();
-            int cost = ability == null ? abilityGroup.learningCost() : ability.getCost();
-            this.abilityUpgradeButton.active = cost <= abilityTree.getUnspentSkillPts()
-                    && abilityNode.getLevel() < abilityGroup.getMaxLevel();
+            this.researchButton.active = !researchTree.isResearched(researchName)
+                    && abilityTree.getUnspentSkillPts() >= ModConfigs.RESEARCHES.getByName(researchName).getCost();
         }
     }
 
-    public void setAbilityGroup(AbilityGroup<?> abilityGroup) {
-        this.abilityGroup = abilityGroup;
+    public void setResearchName(String researchName) {
+        this.researchName = researchName;
         refreshWidgets();
     }
 
-    public AbilityDialog setBounds(Rectangle bounds) {
+    public ResearchDialog setBounds(Rectangle bounds) {
         this.bounds = bounds;
         return this;
     }
 
     public Rectangle getHeadingBounds() {
-        Rectangle abilityBounds = abilityWidget.getClickableBounds();
+        Rectangle researchBounds = researchWidget.getClickableBounds();
         Rectangle headingBounds = new Rectangle();
         headingBounds.x0 = 5;
         headingBounds.y0 = 5;
         headingBounds.x1 = headingBounds.x0 + bounds.getWidth() - 20;
-        headingBounds.y1 = headingBounds.y0 + abilityBounds.getHeight() + 5;
+        headingBounds.y1 = headingBounds.y0 + researchBounds.getHeight() + 5;
         return headingBounds;
     }
 
@@ -92,14 +88,26 @@ public class AbilityDialog extends AbstractGui {
         return descriptionsBounds;
     }
 
+    public void research() {
+        int unspentSkillPts = this.abilityTree.getUnspentSkillPts();
+
+        if (ModConfigs.RESEARCHES.getByName(researchName).getCost() > unspentSkillPts)
+            return;
+
+        researchTree.research(researchName);
+        refreshWidgets();
+
+        ModNetwork.channel.sendToServer(new ResearchMessage(researchName));
+    }
+
     public void mouseMoved(int screenX, int screenY) {
         if (bounds == null) return;
 
         int containerX = screenX - bounds.x0;
         int containerY = screenY - bounds.y0;
 
-        if (this.abilityUpgradeButton != null) {
-            this.abilityUpgradeButton.mouseMoved(containerX, containerY);
+        if (this.researchButton != null) {
+            this.researchButton.mouseMoved(containerX, containerY);
         }
     }
 
@@ -107,21 +115,9 @@ public class AbilityDialog extends AbstractGui {
         int containerX = screenX - bounds.x0;
         int containerY = screenY - bounds.y0;
 
-        if (this.abilityUpgradeButton != null) {
-            this.abilityUpgradeButton.mouseClicked(containerX, containerY, button);
+        if (this.researchButton != null) {
+            this.researchButton.mouseClicked(containerX, containerY, button);
         }
-    }
-
-    public void upgradeAbility() {
-        AbilityNode<?> abilityNode = this.abilityTree.getNodeOf(abilityGroup);
-
-        if (abilityNode.getLevel() >= abilityGroup.getMaxLevel())
-            return;
-
-        abilityTree.upgradeAbility(null, abilityNode);
-        refreshWidgets();
-
-        ModNetwork.channel.sendToServer(new AbilityUpgradeMessage(this.abilityGroup.getParentName()));
     }
 
     public void
@@ -130,7 +126,7 @@ public class AbilityDialog extends AbstractGui {
 
         renderBackground(matrixStack, mouseX, mouseY, partialTicks);
 
-        if (abilityGroup == null) return;
+        if (researchName == null) return;
 
         matrixStack.translate(bounds.x0 + 5, bounds.y0 + 5, 0);
         renderHeading(matrixStack, mouseX, mouseY, partialTicks);
@@ -186,12 +182,10 @@ public class AbilityDialog extends AbstractGui {
         Minecraft.getInstance().getTextureManager().bindTexture(SkillTreeScreen.UI_RESOURCE);
 
         FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
-        SkillStyle abilityStyle = ModConfigs.TALENTS_GUI.getStyles()
-                .get(abilityGroup.getParentName());
+        SkillStyle abilityStyle = ModConfigs.RESEARCHES_GUI.getStyles()
+                .get(researchName);
 
-        AbilityNode<?> abilityNode = abilityTree.getNodeByName(abilityGroup.getParentName());
-
-        Rectangle abilityBounds = abilityWidget.getClickableBounds();
+        Rectangle abilityBounds = researchWidget.getClickableBounds();
 
         UIHelper.renderContainerBorder(this, matrixStack,
                 getHeadingBounds(),
@@ -199,42 +193,34 @@ public class AbilityDialog extends AbstractGui {
                 2, 2, 2, 2,
                 0xFF_8B8B8B);
 
-        String abilityName = abilityNode.getLevel() == 0
-                ? abilityNode.getGroup().getName(1)
-                : abilityNode.getName();
+        boolean researched = researchTree.getResearchesDone().contains(researchName);
 
-        String subText = abilityNode.getLevel() == 0
-                ? "Not Learned Yet"
-                : "Learned";
+        String subText = !researched
+                ? "Not Researched"
+                : "Researched";
 
         int gap = 5;
         int contentWidth = abilityBounds.getWidth() + gap
-                + Math.max(fontRenderer.getStringWidth(abilityName), fontRenderer.getStringWidth(subText));
+                + Math.max(fontRenderer.getStringWidth(researchName), fontRenderer.getStringWidth(subText));
 
         matrixStack.push();
         matrixStack.translate(10, 0, 0);
         FontHelper.drawStringWithBorder(matrixStack,
-                abilityName,
+                researchName,
                 abilityBounds.getWidth() + gap, 13,
-                abilityNode.getLevel() == 0 ? 0xFF_FFFFFF : 0xFF_fff8c7,
-                abilityNode.getLevel() == 0 ? 0xFF_000000 : 0xFF_3b3300);
+                !researched ? 0xFF_FFFFFF : 0xFF_fff8c7,
+                !researched ? 0xFF_000000 : 0xFF_3b3300);
 
         FontHelper.drawStringWithBorder(matrixStack,
                 subText,
                 abilityBounds.getWidth() + gap, 23,
-                abilityNode.getLevel() == 0 ? 0xFF_FFFFFF : 0xFF_fff8c7,
-                abilityNode.getLevel() == 0 ? 0xFF_000000 : 0xFF_3b3300);
-
-//        FontHelper.drawStringWithBorder(matrixStack,
-//                abilityGroup.getMaxLevel() + " Max Level(s)",
-//                abilityBounds.getWidth() + gap, 54,
-//                abilityNode.getLevel() == 0 ? 0xFF_FFFFFF : 0xFF_fff8c7,
-//                abilityNode.getLevel() == 0 ? 0xFF_000000 : 0xFF_3b3300);
+                !researched ? 0xFF_FFFFFF : 0xFF_fff8c7,
+                !researched ? 0xFF_000000 : 0xFF_3b3300);
 
         matrixStack.translate(-abilityStyle.x, -abilityStyle.y, 0); // Nullify the viewport style
         matrixStack.translate(abilityBounds.getWidth() / 2f, 0, 0);
         matrixStack.translate(0, 23, 0);
-        abilityWidget.render(matrixStack, mouseX, mouseY, partialTicks);
+        researchWidget.render(matrixStack, mouseX, mouseY, partialTicks);
         matrixStack.pop();
     }
 
@@ -256,17 +242,15 @@ public class AbilityDialog extends AbstractGui {
         int containerX = mouseX - bounds.x0;
         int containerY = mouseY - bounds.y0;
 
-        this.abilityUpgradeButton.render(matrixStack, containerX, containerY, partialTicks);
+        this.researchButton.render(matrixStack, containerX, containerY, partialTicks);
 
         Minecraft.getInstance().getTextureManager().bindTexture(SkillTreeScreen.UI_RESOURCE);
 
-        AbilityNode<?> abilityNode = abilityTree.getNodeOf(abilityGroup);
-
-        if (abilityNode.isLearned() && abilityNode.getLevel() < abilityGroup.getMaxLevel()) {
-            blit(matrixStack,
-                    13, bounds.getHeight() - 40 - 2,
-                    121, 0, 15, 23);
-        }
+//        if (abilityNode.isLearned() && abilityNode.getLevel() < abilityGroup.getMaxLevel()) {
+//            blit(matrixStack,
+//                    13, bounds.getHeight() - 40 - 2,
+//                    121, 0, 15, 23);
+//        }
     }
 
 }

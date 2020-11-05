@@ -41,7 +41,7 @@ public class AbilityUpgradeMessage {
 
             if (sender == null) return;
 
-            AbilityGroup<?> abilityGroup = ModConfigs.ABILITIES.getByName(message.abilityName);
+            AbilityGroup<?> abilityGroup = ModConfigs.TALENTS.getByName(message.abilityName);
 
             PlayerAbilitiesData abilitiesData = PlayerAbilitiesData.get((ServerWorld) sender.world);
             AbilityTree abilityTree = abilitiesData.getAbilities(sender);

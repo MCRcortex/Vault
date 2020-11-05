@@ -26,7 +26,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
 
     public AbilityTree(UUID uuid) {
         this.uuid = uuid;
-        this.add(null, ModConfigs.ABILITIES.getAll().stream()
+        this.add(null, ModConfigs.TALENTS.getAll().stream()
                 .map(abilityGroup -> new AbilityNode<>(abilityGroup, 0))
                 .toArray(AbilityNode<?>[]::new));
     }
@@ -112,7 +112,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
     public AbilityTree upgradeAbility(MinecraftServer server, AbilityNode<?> abilityNode) {
         this.remove(server, abilityNode);
 
-        AbilityGroup<?> abilityGroup = ModConfigs.ABILITIES.getByName(abilityNode.getGroup().getParentName());
+        AbilityGroup<?> abilityGroup = ModConfigs.TALENTS.getByName(abilityNode.getGroup().getParentName());
         AbilityNode<?> upgradedAbilityNode = new AbilityNode<>(abilityGroup, abilityNode.getLevel() + 1);
         this.add(server, upgradedAbilityNode);
 

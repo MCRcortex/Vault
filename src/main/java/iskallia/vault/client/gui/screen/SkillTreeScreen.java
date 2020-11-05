@@ -5,55 +5,84 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
 import iskallia.vault.ability.AbilityTree;
 import iskallia.vault.client.gui.component.AbilityDialog;
+import iskallia.vault.client.gui.component.ResearchDialog;
+import iskallia.vault.client.gui.helper.FontHelper;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.client.gui.helper.UIHelper;
-import iskallia.vault.client.gui.tab.AbilityTreeTab;
+import iskallia.vault.client.gui.overlay.VaultBarOverlay;
+import iskallia.vault.client.gui.tab.ResearchesTab;
+import iskallia.vault.client.gui.tab.SkillTab;
 import iskallia.vault.client.gui.tab.TalentsTab;
-import iskallia.vault.client.gui.widget.AbilityWidget;
-import iskallia.vault.container.AbilityTreeContainer;
+import iskallia.vault.container.SkillTreeContainer;
+import iskallia.vault.research.ResearchTree;
+import iskallia.vault.research.node.Research;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
+public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
 
     public static final ResourceLocation UI_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-tree.png");
     public static final ResourceLocation BACKGROUNDS_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-tree-bgs.png");
 
-    protected AbilityTreeTab activeTab;
-    protected AbilityDialog abilityDialog;
+    public static final int TAB_WIDTH = 28;
+    public static final int GAP = 3;
 
-    public AbilityTreeScreen(AbilityTreeContainer container, PlayerInventory inventory, ITextComponent title) {
+    protected SkillTab activeTab;
+    protected AbilityDialog abilityDialog;
+    protected ResearchDialog researchDialog;
+
+    public SkillTreeScreen(SkillTreeContainer container, PlayerInventory inventory, ITextComponent title) {
         super(container, inventory, new StringTextComponent("Ability Tree Screen!"));
 
-        this.activeTab = new TalentsTab(this);
+        System.out.println(getContainer().getResearchTree().getResearchesDone());
+
+//        this.activeTab = new TalentsTab(this);
+        this.activeTab = new ResearchesTab(this);
         refreshWidgets();
     }
 
     public void refreshWidgets() {
         this.activeTab.refresh();
-        this.abilityDialog = new AbilityDialog(getContainer().getAbilityTree());
+        AbilityTree abilityTree = getContainer().getAbilityTree();
+        ResearchTree researchTree = getContainer().getResearchTree();
+        this.abilityDialog = new AbilityDialog(abilityTree);
+        this.researchDialog = new ResearchDialog(researchTree, abilityTree);
+
     }
 
     public Rectangle getContainerBounds() {
         Rectangle bounds = new Rectangle();
         bounds.x0 = 30; //px
         bounds.y0 = 60; //px
-        bounds.x1 = (int) (width * 0.7); // Responsiveness ayyyyy
+        bounds.x1 = (int) (width * 0.6); // Responsiveness ayyyyy
         bounds.y1 = height - 30;
+        return bounds;
+    }
+
+    public Rectangle getTabBounds(int index, boolean active) {
+        Rectangle containerBounds = getContainerBounds();
+        Rectangle bounds = new Rectangle();
+        bounds.x0 = containerBounds.x0 + 5 + index * (TAB_WIDTH + GAP);
+        bounds.y0 = containerBounds.y0 - 25 - (active ? 21 : 17);
+        bounds.setWidth(TAB_WIDTH);
+        bounds.setHeight(active ? 32 : 25);
         return bounds;
     }
 
     public AbilityDialog getAbilityDialog() {
         return abilityDialog;
+    }
+
+    public ResearchDialog getResearchDialog() {
+        return researchDialog;
     }
 
     /* --------------------------------------------------- */
@@ -66,8 +95,26 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
             this.activeTab.mouseClicked(mouseX, mouseY, button);
 
         } else {
-            this.abilityDialog.mouseClicked((int) mouseX, (int) mouseY, button);
+//            Rectangle abilitiesTabBounds = getTabBounds(0, false);
+            Rectangle talentsTabBounds = getTabBounds(1, activeTab instanceof TalentsTab);
+            Rectangle researchesTabBounds = getTabBounds(2, activeTab instanceof ResearchesTab);
+
+            if (talentsTabBounds.contains(((int) mouseX), ((int) mouseY))) {
+                this.activeTab = new TalentsTab(this);
+                this.refreshWidgets();
+
+            } else if (researchesTabBounds.contains(((int) mouseX), ((int) mouseY))) {
+                this.activeTab = new ResearchesTab(this);
+                this.refreshWidgets();
+
+            } else if (activeTab instanceof ResearchesTab) {
+                this.researchDialog.mouseClicked((int) mouseX, (int) mouseY, button);
+
+            } else {
+                this.abilityDialog.mouseClicked((int) mouseX, (int) mouseY, button);
+            }
         }
+
 
         return super.mouseClicked(mouseX, mouseY, button);
     }
@@ -81,7 +128,12 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
     @Override
     public void mouseMoved(double mouseX, double mouseY) {
         this.activeTab.mouseMoved(mouseX, mouseY);
-        this.abilityDialog.mouseMoved((int) mouseX, (int) mouseY);
+
+        if (activeTab instanceof ResearchesTab) {
+            this.researchDialog.mouseMoved((int) mouseX, (int) mouseY);
+        } else {
+            this.abilityDialog.mouseMoved((int) mouseX, (int) mouseY);
+        }
     }
 
     @Override
@@ -121,11 +173,11 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         Rectangle containerBounds = getContainerBounds();
 
         AbilityTree abilityTree = getContainer().getAbilityTree();
-        renderLabel(matrixStack, "Vault Level: " + abilityTree.getVaultLevel(), 5);
+//        renderLabel(matrixStack, "Vault Level: " + abilityTree.getVaultLevel(), 5);
         if (abilityTree.getUnspentSkillPts() > 0) {
             renderLabel(matrixStack,
                     abilityTree.getUnspentSkillPts() + " unspent skill point(s)",
-                    containerBounds.getHeight() - 30);
+                    containerBounds.getHeight() - 28);
         }
         renderContainerBorders(matrixStack);
         renderContainerTabs(matrixStack);
@@ -135,24 +187,93 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         dialogBounds.x1 = width - 21;
         dialogBounds.y1 = height - 21;
 
-        abilityDialog
-                .setBounds(dialogBounds)
-                .render(matrixStack, mouseX, mouseY, partialTicks);
+        researchDialog.setBounds(dialogBounds);
+        abilityDialog.setBounds(dialogBounds);
+
+        if (activeTab instanceof ResearchesTab) {
+            researchDialog.render(matrixStack, mouseX, mouseY, partialTicks);
+
+        } else {
+            abilityDialog.render(matrixStack, mouseX, mouseY, partialTicks);
+        }
     }
 
     private void
     renderContainerTabs(MatrixStack matrixStack) {
         Rectangle containerBounds = getContainerBounds();
 
-        int tabWidth = 28;
-        int gap = 3; // px
+        // Abilities
+        Rectangle abilitiesTabBounds = getTabBounds(0, false);
+        blit(matrixStack,
+                abilitiesTabBounds.x0,
+                abilitiesTabBounds.y0,
+                63, 0,
+                abilitiesTabBounds.getWidth(), abilitiesTabBounds.getHeight());
+        blit(matrixStack,
+                abilitiesTabBounds.x0 + 8,
+                containerBounds.y0 - 25 - 10,
+                1, 44, 13, 13);
 
-        for (int i = 0; i < 3; i++) {
-            blit(matrixStack,
-                    containerBounds.x0 + 5 + i * (tabWidth + gap),
-                    containerBounds.y0 - 25 - 17,
-                    63, 0, tabWidth, 25);
+        // Talents
+        Rectangle talentsTabBounds = getTabBounds(1, activeTab instanceof TalentsTab);
+        blit(matrixStack,
+                talentsTabBounds.x0,
+                talentsTabBounds.y0,
+                63, (activeTab instanceof TalentsTab) ? 28 : 0,
+                talentsTabBounds.getWidth(), talentsTabBounds.getHeight());
+        blit(matrixStack,
+                talentsTabBounds.x0 + 8,
+                containerBounds.y0 - 25 - 10,
+                1, 44, 13, 13);
+
+        // Research
+        Rectangle researchesTabBounds = getTabBounds(2, activeTab instanceof ResearchesTab);
+        blit(matrixStack,
+                researchesTabBounds.x0,
+                researchesTabBounds.y0,
+                63, (activeTab instanceof ResearchesTab) ? 28 : 0,
+                researchesTabBounds.getWidth(), researchesTabBounds.getHeight());
+        blit(matrixStack,
+                researchesTabBounds.x0 + 8,
+                containerBounds.y0 - 25 - 10,
+                1, 44, 13, 13);
+
+        Minecraft minecraft = getMinecraft();
+
+        if (activeTab instanceof TalentsTab) {
+            minecraft.fontRenderer.drawString(matrixStack, "Talents",
+                    containerBounds.x0, containerBounds.y0 - 12, 0xFF_3f3f3f);
+
+        } else if (activeTab instanceof ResearchesTab) {
+            minecraft.fontRenderer.drawString(matrixStack, "Researches",
+                    containerBounds.x0, containerBounds.y0 - 12, 0xFF_3f3f3f);
         }
+
+        minecraft.textureManager.bindTexture(VaultBarOverlay.RESOURCE);
+
+        AbilityTree abilityTree = getContainer().getAbilityTree();
+        String text = String.valueOf(abilityTree.getVaultLevel());
+        int textWidth = minecraft.fontRenderer.getStringWidth(text);
+        int barWidth = 85;
+        float expPercentage = (float) abilityTree.getExp() / abilityTree.getTnl();
+
+        int barX = containerBounds.x1 - barWidth - 5;
+        int barY = containerBounds.y0 - 10;
+
+        minecraft.getProfiler().startSection("vaultBar");
+        minecraft.ingameGUI.blit(matrixStack,
+                barX, barY,
+                1, 1, barWidth, 5);
+        minecraft.ingameGUI.blit(matrixStack,
+                barX, barY,
+                1, 7, (int) (barWidth * expPercentage), 5);
+        FontHelper.drawStringWithBorder(matrixStack,
+                text,
+                barX - textWidth - 1, barY - 1,
+                0xFF_ffe637, 0xFF_3e3e3e);
+
+        minecraft.getProfiler().endSection();
+
     }
 
     private void
