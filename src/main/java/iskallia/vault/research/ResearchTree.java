@@ -24,6 +24,18 @@ public class ResearchTree implements INBTSerializable<CompoundNBT> {
         this.researchesDone = new LinkedList<>();
     }
 
+    public List<String> getResearchesDone() {
+        return researchesDone;
+    }
+
+    public boolean isResearched(String researchName) {
+        return this.researchesDone.contains(researchName);
+    }
+
+    public void research(String researchName) {
+        this.researchesDone.add(researchName);
+    }
+
     public String restrictedBy(Item item, Restrictions.Type restrictionType) {
         for (Research research : ModConfigs.RESEARCHES.getAll()) {
             if (researchesDone.contains(research.getName())) continue;

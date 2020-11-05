@@ -27,6 +27,14 @@ public class ResearchConfig extends Config {
         return all;
     }
 
+    public Research getByName(String name) {
+        for (Research research : getAll()) {
+            if (research.getName().equals(name))
+                return research;
+        }
+        return null;
+    }
+
     @Override
     protected void reset() {
         this.MOD_RESEARCHES = new LinkedList<>();

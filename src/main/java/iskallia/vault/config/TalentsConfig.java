@@ -6,11 +6,12 @@ import iskallia.vault.ability.passive.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.potion.Effects;
+import net.minecraftforge.common.ForgeMod;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class AbilitiesConfig extends Config {
+public class TalentsConfig extends Config {
 
     @Expose public AbilityGroup<EffectAbility> HASTE;
     @Expose public AbilityGroup<EffectAbility> REGENERATION;
@@ -21,18 +22,19 @@ public class AbilitiesConfig extends Config {
     @Expose public AbilityGroup<EffectAbility> SPEED;
     @Expose public AbilityGroup<EffectAbility> WATER_BREATHING;
     @Expose public AbilityGroup<AttributeAbility> WELL_FIT;
+    @Expose public AbilityGroup<AttributeAbility> REACH;
     @Expose public AbilityGroup<TwerkerAbility> TWERKER;
     @Expose public AbilityGroup<ElvishAbility> ELVISH;
     @Expose public AbilityGroup<AngelAbility> ANGEL;
 
     @Override
     public String getName() {
-        return "abilities";
+        return "talents";
     }
 
     public List<AbilityGroup<?>> getAll() {
         return Arrays.asList(HASTE, REGENERATION, VAMPIRISM, RESISTANCE, STRENGTH, FIRE_RESISTANCE, SPEED,
-                WATER_BREATHING, WELL_FIT, TWERKER, ELVISH, ANGEL);
+                WATER_BREATHING, WELL_FIT, TWERKER, ELVISH, ANGEL, REACH);
     }
 
     public AbilityGroup<?> getByName(String name) {
@@ -50,8 +52,8 @@ public class AbilitiesConfig extends Config {
         this.FIRE_RESISTANCE = AbilityGroup.ofEffect("Fire Resistance", Effects.FIRE_RESISTANCE, EffectAbility.Type.ICON_ONLY, 1, i -> 5);
         this.SPEED = AbilityGroup.ofEffect("Speed", Effects.SPEED, EffectAbility.Type.ICON_ONLY, 2, i -> 3);
         this.WATER_BREATHING = AbilityGroup.ofEffect("Water Breathing", Effects.WATER_BREATHING, EffectAbility.Type.ICON_ONLY, 1, i -> 5);
-        // ForgeMod.REACH_DISTANCE.get()
         this.WELL_FIT = AbilityGroup.ofAttribute("Well Fit", Attributes.MAX_HEALTH, "Extra Health", 10, i -> 1, i -> i * 2.0D, i -> AttributeModifier.Operation.ADDITION);
+        this.REACH = AbilityGroup.ofAttribute("Reach", ForgeMod.REACH_DISTANCE.get(), "Maximum Reach", 10, i -> 1, i -> i * 1.0D, i -> AttributeModifier.Operation.ADDITION);
         this.TWERKER = new AbilityGroup<>("Twerker", new TwerkerAbility(4));
         this.ELVISH = new AbilityGroup<>("Elvish", new ElvishAbility(5));
         this.ANGEL = new AbilityGroup<>("Angel", new AngelAbility(15));

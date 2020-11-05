@@ -5,8 +5,8 @@ import iskallia.vault.util.ResourceBoundary;
 
 public enum AbilityFrame {
 
-	STAR(new ResourceBoundary(Vault.id("textures/gui/ability-widget.png"), 0, 31, 30, 30)),
-	RECTANGULAR(new ResourceBoundary(Vault.id("textures/gui/ability-widget.png"), 30, 31, 30, 30));
+	STAR(new ResourceBoundary(Vault.id("textures/gui/skill-widget.png"), 0, 31, 30, 30)),
+	RECTANGULAR(new ResourceBoundary(Vault.id("textures/gui/skill-widget.png"), 30, 31, 30, 30));
 
 	ResourceBoundary resourceBoundary;
 

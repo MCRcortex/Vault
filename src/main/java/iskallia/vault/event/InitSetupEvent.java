@@ -1,6 +1,7 @@
 package iskallia.vault.event;
 
 import iskallia.vault.Vault;
+import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModKeybinds;
 import iskallia.vault.init.ModScreens;
 import iskallia.vault.network.ModNetwork;
@@ -26,6 +27,7 @@ public class InitSetupEvent {
     public static void setupCommon(final FMLCommonSetupEvent event) {
         Vault.LOGGER.info("setupCommon()");
         ModNetwork.initialize();
+        ModConfigs.register();
     }
 
     @SubscribeEvent

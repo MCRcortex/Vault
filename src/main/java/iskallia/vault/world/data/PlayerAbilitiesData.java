@@ -90,6 +90,13 @@ public class PlayerAbilitiesData extends WorldSavedData {
         return this;
     }
 
+    public PlayerAbilitiesData spendSkillPts(ServerPlayerEntity player, int amount) {
+        this.getAbilities(player).spendSkillPoints(amount);
+
+        markDirty();
+        return this;
+    }
+
     public PlayerAbilitiesData tick(MinecraftServer server) {
         this.playerMap.values().forEach(abilityTree -> abilityTree.tick(server));
         return this;

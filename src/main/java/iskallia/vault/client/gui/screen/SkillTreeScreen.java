@@ -5,55 +5,68 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
 import iskallia.vault.ability.AbilityTree;
 import iskallia.vault.client.gui.component.AbilityDialog;
+import iskallia.vault.client.gui.component.ResearchDialog;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.client.gui.helper.UIHelper;
-import iskallia.vault.client.gui.tab.AbilityTreeTab;
+import iskallia.vault.client.gui.tab.ResearchesTab;
+import iskallia.vault.client.gui.tab.SkillTab;
 import iskallia.vault.client.gui.tab.TalentsTab;
-import iskallia.vault.client.gui.widget.AbilityWidget;
-import iskallia.vault.container.AbilityTreeContainer;
+import iskallia.vault.container.SkillTreeContainer;
+import iskallia.vault.research.ResearchTree;
+import iskallia.vault.research.node.Research;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
+public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
 
     public static final ResourceLocation UI_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-tree.png");
     public static final ResourceLocation BACKGROUNDS_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-tree-bgs.png");
 
-    protected AbilityTreeTab activeTab;
+    protected SkillTab activeTab;
     protected AbilityDialog abilityDialog;
+    protected ResearchDialog researchDialog;
 
-    public AbilityTreeScreen(AbilityTreeContainer container, PlayerInventory inventory, ITextComponent title) {
+    public SkillTreeScreen(SkillTreeContainer container, PlayerInventory inventory, ITextComponent title) {
         super(container, inventory, new StringTextComponent("Ability Tree Screen!"));
 
-        this.activeTab = new TalentsTab(this);
+        System.out.println(getContainer().getResearchTree().getResearchesDone());
+
+//        this.activeTab = new TalentsTab(this);
+        this.activeTab = new ResearchesTab(this);
         refreshWidgets();
     }
 
     public void refreshWidgets() {
         this.activeTab.refresh();
-        this.abilityDialog = new AbilityDialog(getContainer().getAbilityTree());
+        AbilityTree abilityTree = getContainer().getAbilityTree();
+        ResearchTree researchTree = getContainer().getResearchTree();
+        this.abilityDialog = new AbilityDialog(abilityTree);
+        this.researchDialog = new ResearchDialog(researchTree, abilityTree);
+
     }
 
     public Rectangle getContainerBounds() {
         Rectangle bounds = new Rectangle();
         bounds.x0 = 30; //px
         bounds.y0 = 60; //px
-        bounds.x1 = (int) (width * 0.7); // Responsiveness ayyyyy
+        bounds.x1 = (int) (width * 0.6); // Responsiveness ayyyyy
         bounds.y1 = height - 30;
         return bounds;
     }
 
     public AbilityDialog getAbilityDialog() {
         return abilityDialog;
+    }
+
+    public ResearchDialog getResearchDialog() {
+        return researchDialog;
     }
 
     /* --------------------------------------------------- */
@@ -65,9 +78,13 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         if (containerBounds.contains((int) mouseX, (int) mouseY)) {
             this.activeTab.mouseClicked(mouseX, mouseY, button);
 
+        } else if (activeTab instanceof ResearchesTab) {
+            this.researchDialog.mouseClicked((int) mouseX, (int) mouseY, button);
+
         } else {
             this.abilityDialog.mouseClicked((int) mouseX, (int) mouseY, button);
         }
+
 
         return super.mouseClicked(mouseX, mouseY, button);
     }
@@ -81,7 +98,12 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
     @Override
     public void mouseMoved(double mouseX, double mouseY) {
         this.activeTab.mouseMoved(mouseX, mouseY);
-        this.abilityDialog.mouseMoved((int) mouseX, (int) mouseY);
+
+        if (activeTab instanceof ResearchesTab) {
+            this.researchDialog.mouseMoved((int) mouseX, (int) mouseY);
+        } else {
+            this.abilityDialog.mouseMoved((int) mouseX, (int) mouseY);
+        }
     }
 
     @Override
@@ -89,6 +111,20 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         this.activeTab.mouseScrolled(mouseX, mouseY, delta);
 
         return super.mouseScrolled(mouseX, mouseY, delta);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        // TODO: NUKE PLSSSSSS!
+        if (activeTab instanceof ResearchesTab) {
+            this.activeTab = new TalentsTab(this);
+        } else {
+            this.activeTab = new ResearchesTab(this);
+        }
+
+        refreshWidgets();
+
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     /* --------------------------------------------------- */
@@ -135,9 +171,15 @@ public class AbilityTreeScreen extends ContainerScreen<AbilityTreeContainer> {
         dialogBounds.x1 = width - 21;
         dialogBounds.y1 = height - 21;
 
-        abilityDialog
-                .setBounds(dialogBounds)
-                .render(matrixStack, mouseX, mouseY, partialTicks);
+        researchDialog.setBounds(dialogBounds);
+        abilityDialog.setBounds(dialogBounds);
+
+        if (activeTab instanceof ResearchesTab) {
+            researchDialog.render(matrixStack, mouseX, mouseY, partialTicks);
+
+        } else {
+            abilityDialog.render(matrixStack, mouseX, mouseY, partialTicks);
+        }
     }
 
     private void

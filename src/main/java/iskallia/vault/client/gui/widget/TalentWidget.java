@@ -5,31 +5,31 @@ import iskallia.vault.Vault;
 import iskallia.vault.ability.AbilityGroup;
 import iskallia.vault.ability.AbilityTree;
 import iskallia.vault.client.gui.helper.Rectangle;
-import iskallia.vault.config.AbilitiesGUIConfig;
+import iskallia.vault.config.entry.SkillStyle;
 import iskallia.vault.util.ResourceBoundary;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 
-public class AbilityWidget extends Widget {
+public class TalentWidget extends Widget {
 
     private static final int PIP_SIZE = 8; //px
     private static final int GAP_SIZE = 2; //px
     private static final int ICON_SIZE = 30; // px
-    private static final int MAX_PIPs_INLINE = 5;
+    private static final int MAX_PIPs_INLINE = 4;
 
-    private static final ResourceLocation RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-widget.png");
-    private static final ResourceLocation ABILITIES_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/abilities.png");
+    private static final ResourceLocation SKILL_WIDGET_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/skill-widget.png");
+    private static final ResourceLocation TALENTS_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/talents.png");
 
     AbilityGroup<?> abilityGroup;
     AbilityTree abilityTree;
     boolean locked;
-    AbilitiesGUIConfig.AbilityStyle style;
+    SkillStyle style;
 
     boolean selected;
 
-    public AbilityWidget(AbilityGroup<?> abilityGroup, AbilityTree abilityTree, AbilitiesGUIConfig.AbilityStyle style) {
+    public TalentWidget(AbilityGroup<?> abilityGroup, AbilityTree abilityTree, SkillStyle style) {
         super(style.x, style.y,
                 5 * PIP_SIZE + 4 * GAP_SIZE,
                 pipRowCount(abilityTree.getNodeOf(abilityGroup).getLevel()) * (PIP_SIZE + GAP_SIZE) - GAP_SIZE,
@@ -120,11 +120,6 @@ public class AbilityWidget extends Widget {
     renderIcon(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         ResourceBoundary resourceBoundary = style.frameType.getResourceBoundary();
 
-//        // DEBUG for clickable bounds
-//        Rectangle clickableBounds = getClickableBounds();
-//        fill(matrixStack, clickableBounds.x0, clickableBounds.y0,
-//                clickableBounds.x1, clickableBounds.y1, 0xFF_FFFFFF);
-
         matrixStack.push();
         matrixStack.translate(-ICON_SIZE / 2f, -ICON_SIZE / 2f, 0);
         Minecraft.getInstance().textureManager.bindTexture(resourceBoundary.getResource());
@@ -141,7 +136,7 @@ public class AbilityWidget extends Widget {
 
         matrixStack.push();
         matrixStack.translate(-16 / 2f, -16 / 2f, 0);
-        Minecraft.getInstance().textureManager.bindTexture(locked ? RESOURCE : ABILITIES_RESOURCE);
+        Minecraft.getInstance().textureManager.bindTexture(locked ? SKILL_WIDGET_RESOURCE : TALENTS_RESOURCE);
         if (locked) {
             blit(matrixStack, this.x + 3, this.y + 1,
                     10, 124, 10, 14);
@@ -156,7 +151,7 @@ public class AbilityWidget extends Widget {
 
     public void
     renderPips(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        Minecraft.getInstance().textureManager.bindTexture(RESOURCE);
+        Minecraft.getInstance().textureManager.bindTexture(SKILL_WIDGET_RESOURCE);
 
         int rowCount = pipRowCount(abilityGroup.getMaxLevel());
         int remainingPips = abilityGroup.getMaxLevel();
