@@ -158,6 +158,46 @@ public class ResearchesGUIConfig extends Config {
                 0, 16 * 2);
         style.frameType = AbilityFrame.RECTANGULAR;
         styles.put("Total Control", style);
+
+        style = new SkillStyle(50 * 2, 50 * 5,
+                16, 16 * 2);
+        style.frameType = AbilityFrame.RECTANGULAR;
+        styles.put("Let there be light!", style);
+
+        style = new SkillStyle(50 * 3, 50 * 5,
+                16 * 2, 16 * 2);
+        style.frameType = AbilityFrame.RECTANGULAR;
+        styles.put("Energetic", style);
+
+        style = new SkillStyle(50 * 4, 50 * 5,
+                16 * 3, 16 * 2);
+        style.frameType = AbilityFrame.RECTANGULAR;
+        styles.put("Thermal Technician", style);
+
+        style = new SkillStyle(0, 50 * 6,
+                16 * 4, 16 * 2);
+        style.frameType = AbilityFrame.RECTANGULAR;
+        styles.put("Plastic Technician", style);
+
+        style = new SkillStyle(50, 50 * 6,
+                16 * 5, 16 * 2);
+        style.frameType = AbilityFrame.RECTANGULAR;
+        styles.put("Extended Possibilities", style);
+
+        style = new SkillStyle(50 * 2, 50 * 6,
+                16 * 6, 16 * 2);
+        style.frameType = AbilityFrame.RECTANGULAR;
+        styles.put("Power Overwhelming", style);
+
+        style = new SkillStyle(50 * 3, 50 * 6,
+                16 * 7, 16 * 2);
+        style.frameType = AbilityFrame.RECTANGULAR;
+        styles.put("Nuclear Power", style);
+
+        style = new SkillStyle(50 * 4, 50 * 6,
+                16 * 8, 16 * 2);
+        style.frameType = AbilityFrame.RECTANGULAR;
+        styles.put("Automatic Genius", style);
     }
 
 }

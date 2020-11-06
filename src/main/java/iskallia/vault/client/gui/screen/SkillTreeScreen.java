@@ -62,7 +62,7 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
         Rectangle bounds = new Rectangle();
         bounds.x0 = 30; //px
         bounds.y0 = 60; //px
-        bounds.x1 = (int) (width * 0.6); // Responsiveness ayyyyy
+        bounds.x1 = (int) (width * 0.55); // Responsiveness ayyyyy
         bounds.y1 = height - 30;
         return bounds;
     }
