@@ -1,9 +1,7 @@
 package iskallia.vault.event;
 
 import iskallia.vault.Vault;
-import iskallia.vault.init.ModConfigs;
-import iskallia.vault.init.ModKeybinds;
-import iskallia.vault.init.ModScreens;
+import iskallia.vault.init.*;
 import iskallia.vault.network.ModNetwork;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -13,7 +11,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-public class InitSetupEvent {
+public class SetupEvents {
 
     @SubscribeEvent
     public static void setupClient(final FMLClientSetupEvent event) {

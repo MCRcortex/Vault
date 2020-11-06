@@ -31,8 +31,6 @@ public class Vault {
     public static RegistryKey<World> WORLD_KEY = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(MOD_ID, "vault"));
 
     public Vault() {
-	    ModStructures.register();
-	    ModFeatures.register();
 	    MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, this::onCommandRegister);
 	    MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onBiomeLoad);
 	    MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, this::onPlayerLoggedIn);
