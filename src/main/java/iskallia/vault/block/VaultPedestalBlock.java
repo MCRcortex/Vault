@@ -42,7 +42,7 @@ public class VaultPedestalBlock extends Block {
 		if (te != null && !(te instanceof VaultPedestalTileEntity))
 			return;
 		VaultPedestalTileEntity pedestal = (VaultPedestalTileEntity) te;
-		switch (rand.nextInt(3)) {
+		switch (rand.nextInt(4)) {
 		case 0:
 			pedestal.setItem(new ItemStack(Items.IRON_INGOT));
 			pedestal.setItemCount(rand.nextInt(32000));
