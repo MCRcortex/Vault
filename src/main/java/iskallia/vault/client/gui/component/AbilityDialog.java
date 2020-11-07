@@ -8,6 +8,7 @@ import iskallia.vault.ability.PlayerAbility;
 import iskallia.vault.client.gui.helper.FontHelper;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.client.gui.helper.UIHelper;
+import iskallia.vault.client.gui.overlay.VaultBarOverlay;
 import iskallia.vault.client.gui.screen.SkillTreeScreen;
 import iskallia.vault.client.gui.widget.TalentWidget;
 import iskallia.vault.config.entry.SkillStyle;
@@ -57,7 +58,7 @@ public class AbilityDialog extends AbstractGui {
 
             PlayerAbility ability = abilityNode.getAbility();
             int cost = ability == null ? abilityGroup.learningCost() : ability.getCost();
-            this.abilityUpgradeButton.active = cost <= abilityTree.getUnspentSkillPts()
+            this.abilityUpgradeButton.active = cost <= VaultBarOverlay.unspentSkillPoints
                     && abilityNode.getLevel() < abilityGroup.getMaxLevel();
         }
     }

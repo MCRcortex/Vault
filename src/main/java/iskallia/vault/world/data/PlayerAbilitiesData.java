@@ -91,7 +91,7 @@ public class PlayerAbilitiesData extends WorldSavedData {
     }
 
     public PlayerAbilitiesData spendSkillPts(ServerPlayerEntity player, int amount) {
-        this.getAbilities(player).spendSkillPoints(amount);
+        this.getAbilities(player).spendSkillPoints(player.getServer(), amount);
 
         markDirty();
         return this;

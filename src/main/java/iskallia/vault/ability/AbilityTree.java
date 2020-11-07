@@ -100,8 +100,11 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         return this;
     }
 
-    public AbilityTree spendSkillPoints(int amount) {
+    public AbilityTree spendSkillPoints(MinecraftServer server, int amount) {
         this.unspentSkillPts -= amount;
+
+        syncLevelInfo(server);
+
         return this;
     }
 
@@ -117,7 +120,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         AbilityNode<?> upgradedAbilityNode = new AbilityNode<>(abilityGroup, abilityNode.getLevel() + 1);
         this.add(server, upgradedAbilityNode);
 
-        this.spendSkillPoints(upgradedAbilityNode.getAbility().getCost());
+        this.spendSkillPoints(server, upgradedAbilityNode.getAbility().getCost());
 
         return this;
     }
@@ -150,7 +153,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
     public void syncLevelInfo(MinecraftServer server) {
         NetcodeUtils.runIfPresent(server, this.uuid, player -> {
             ModNetwork.channel.sendTo(
-                    new VaultLevelMessage(this.vaultLevel, this.exp, this.getTnl()),
+                    new VaultLevelMessage(this.vaultLevel, this.exp, this.getTnl(), this.unspentSkillPts),
                     player.connection.netManager,
                     NetworkDirection.PLAY_TO_CLIENT
             );

@@ -42,20 +42,22 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
     public SkillTreeScreen(SkillTreeContainer container, PlayerInventory inventory, ITextComponent title) {
         super(container, inventory, new StringTextComponent("Ability Tree Screen!"));
 
-        System.out.println(getContainer().getResearchTree().getResearchesDone());
-
-//        this.activeTab = new TalentsTab(this);
         this.activeTab = new ResearchesTab(this);
+        AbilityTree abilityTree = getContainer().getAbilityTree();
+        ResearchTree researchTree = getContainer().getResearchTree();
+        this.abilityDialog = new AbilityDialog(abilityTree);
+        this.researchDialog = new ResearchDialog(researchTree, abilityTree);
         refreshWidgets();
     }
 
     public void refreshWidgets() {
         this.activeTab.refresh();
-        AbilityTree abilityTree = getContainer().getAbilityTree();
-        ResearchTree researchTree = getContainer().getResearchTree();
-        this.abilityDialog = new AbilityDialog(abilityTree);
-        this.researchDialog = new ResearchDialog(researchTree, abilityTree);
-
+        if (this.abilityDialog != null) {
+            this.abilityDialog.refreshWidgets();
+        }
+        if (this.researchDialog != null) {
+            this.researchDialog.refreshWidgets();
+        }
     }
 
     public Rectangle getContainerBounds() {
@@ -172,11 +174,9 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
 
         Rectangle containerBounds = getContainerBounds();
 
-        AbilityTree abilityTree = getContainer().getAbilityTree();
-//        renderLabel(matrixStack, "Vault Level: " + abilityTree.getVaultLevel(), 5);
-        if (abilityTree.getUnspentSkillPts() > 0) {
+        if (VaultBarOverlay.unspentSkillPoints > 0) {
             renderLabel(matrixStack,
-                    abilityTree.getUnspentSkillPts() + " unspent skill point(s)",
+                    VaultBarOverlay.unspentSkillPoints + " unspent skill point(s)",
                     containerBounds.getHeight() - 28);
         }
         renderContainerBorders(matrixStack);
@@ -251,11 +251,10 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
 
         minecraft.textureManager.bindTexture(VaultBarOverlay.RESOURCE);
 
-        AbilityTree abilityTree = getContainer().getAbilityTree();
-        String text = String.valueOf(abilityTree.getVaultLevel());
+        String text = String.valueOf(VaultBarOverlay.vaultLevel);
         int textWidth = minecraft.fontRenderer.getStringWidth(text);
         int barWidth = 85;
-        float expPercentage = (float) abilityTree.getExp() / abilityTree.getTnl();
+        float expPercentage = (float) VaultBarOverlay.vaultExp / VaultBarOverlay.tnl;
 
         int barX = containerBounds.x1 - barWidth - 5;
         int barY = containerBounds.y0 - 10;

@@ -195,7 +195,7 @@ public class ResearchesGUIConfig extends Config {
         styles.put("Nuclear Power", style);
 
         style = new SkillStyle(50 * 4, 50 * 6,
-                16 * 8, 16 * 2);
+                16 * 9, 16 * 2);
         style.frameType = AbilityFrame.RECTANGULAR;
         styles.put("Automatic Genius", style);
     }
