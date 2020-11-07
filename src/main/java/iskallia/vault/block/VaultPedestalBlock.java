@@ -1,16 +1,15 @@
 package iskallia.vault.block;
 
-import java.util.Random;
-
 import iskallia.vault.block.entity.VaultPedestalTileEntity;
 import iskallia.vault.init.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
@@ -37,30 +36,48 @@ public class VaultPedestalBlock extends Block {
 		if (worldIn.isRemote)
 			return;
 
-		Random rand = new Random();
+		VaultPedestalTileEntity pedestal = getVaultPedestalTileEntity(worldIn, pos);
+		if (pedestal == null)
+			return;
+
+		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+	}
+
+	@Override
+	public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
+		if (worldIn.isRemote)
+			return;
+
+		VaultPedestalTileEntity pedestal = getVaultPedestalTileEntity(worldIn, pos);
+		if (pedestal == null)
+			return;
+
+		if (!(entityIn instanceof ItemEntity)) {
+			return;
+		}
+
+		ItemStack itemEntity = ((ItemEntity) entityIn).getItem();
+
+		if (pedestal.getItem() == null) {
+			System.out.println(itemEntity.getDisplayName());
+			pedestal.setItem(itemEntity);
+			pedestal.setItemCount(itemEntity.getCount());
+			entityIn.remove();
+		} else if (pedestal.getItem().isItemEqualIgnoreDurability(itemEntity)) {
+			System.out.println(itemEntity.getDisplayName());
+			int count = itemEntity.getCount();
+			pedestal.setItemCount(pedestal.getItemCount() + count);
+			entityIn.remove();
+		}
+
+	}
+
+	public static VaultPedestalTileEntity getVaultPedestalTileEntity(World worldIn, BlockPos pos) {
 		TileEntity te = worldIn.getTileEntity(pos);
 		if (te != null && !(te instanceof VaultPedestalTileEntity))
-			return;
+			return null;
 		VaultPedestalTileEntity pedestal = (VaultPedestalTileEntity) te;
-		switch (rand.nextInt(4)) {
-		case 0:
-			pedestal.setItem(new ItemStack(Items.IRON_INGOT));
-			pedestal.setItemCount(rand.nextInt(32000));
-			break;
-		case 1:
-			pedestal.setItem(new ItemStack(Items.GOLD_INGOT));
-			pedestal.setItemCount(rand.nextInt(32000));
-			break;
-		case 2:
-			pedestal.setItem(new ItemStack(Items.DIAMOND));
-			pedestal.setItemCount(rand.nextInt(32000));
-			break;
-		case 3:
-			pedestal.setItem(new ItemStack(Items.NETHERITE_INGOT));
-			pedestal.setItemCount(rand.nextInt(32000));
-			break;
-		}
-		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+		return pedestal;
 	}
 
 }

@@ -57,6 +57,7 @@ public class VaultAltarBlock extends Block {
 						continue;
 					VaultPedestalTileEntity pedestal = (VaultPedestalTileEntity) te;
 					pedestals[index++] = pedestal;
+					System.out.println(pedestal.getItemCount());
 					if (index == 4)
 						return pedestals;
 				}
