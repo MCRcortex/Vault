@@ -3,6 +3,7 @@ package iskallia.vault.ability;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.network.ModNetwork;
 import iskallia.vault.network.message.VaultLevelMessage;
+import iskallia.vault.util.NetcodeUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -64,7 +65,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
 
     public AbilityTree add(MinecraftServer server, AbilityNode<?>... nodes) {
         for (AbilityNode<?> node : nodes) {
-            this.runIfPresent(server, player -> {
+            NetcodeUtils.runIfPresent(server, this.uuid, player -> {
                 if (node.isLearned()) {
                     node.getAbility().onAdded(player);
                 }
@@ -124,7 +125,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
     /* ------------------------------------ */
 
     public AbilityTree tick(MinecraftServer server) {
-        this.runIfPresent(server, player -> {
+        NetcodeUtils.runIfPresent(server, this.uuid, player -> {
             this.nodes.stream().filter(AbilityNode::isLearned)
                     .forEach(node -> node.getAbility().tick(player));
         });
@@ -133,7 +134,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
 
     public AbilityTree remove(MinecraftServer server, AbilityNode<?>... nodes) {
         for (AbilityNode<?> node : nodes) {
-            this.runIfPresent(server, player -> {
+            NetcodeUtils.runIfPresent(server, this.uuid, player -> {
                 if (node.isLearned()) {
                     node.getAbility().onRemoved(player);
                 }
@@ -144,18 +145,10 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         return this;
     }
 
-    public boolean runIfPresent(MinecraftServer server, Consumer<ServerPlayerEntity> action) {
-        if (server == null) return false;
-        ServerPlayerEntity player = server.getPlayerList().getPlayerByUUID(this.uuid);
-        if (player == null) return false;
-        action.accept(player);
-        return true;
-    }
-
     /* ------------------------------------ */
 
     public void syncLevelInfo(MinecraftServer server) {
-        runIfPresent(server, player -> {
+        NetcodeUtils.runIfPresent(server, this.uuid, player -> {
             ModNetwork.channel.sendTo(
                     new VaultLevelMessage(this.vaultLevel, this.exp, this.getTnl()),
                     player.connection.netManager,

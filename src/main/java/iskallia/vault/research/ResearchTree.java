@@ -1,18 +1,26 @@
 package iskallia.vault.research;
 
 import iskallia.vault.init.ModConfigs;
+import iskallia.vault.network.ModNetwork;
+import iskallia.vault.network.message.ResearchMessage;
+import iskallia.vault.network.message.ResearchTreeMessage;
 import iskallia.vault.research.node.Research;
+import iskallia.vault.util.NetcodeUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.network.NetworkDirection;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class ResearchTree implements INBTSerializable<CompoundNBT> {
 
@@ -60,6 +68,16 @@ public class ResearchTree implements INBTSerializable<CompoundNBT> {
         return null;
     }
 
+    public void sync(MinecraftServer server) {
+        NetcodeUtils.runIfPresent(server, this.playerUUID, player -> {
+            ModNetwork.channel.sendTo(
+                    new ResearchTreeMessage(this, player.getUniqueID()),
+                    player.connection.netManager,
+                    NetworkDirection.PLAY_TO_CLIENT
+            );
+        });
+    }
+
     @Override
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
@@ -89,5 +107,4 @@ public class ResearchTree implements INBTSerializable<CompoundNBT> {
             this.researchesDone.add(name);
         }
     }
-
 }

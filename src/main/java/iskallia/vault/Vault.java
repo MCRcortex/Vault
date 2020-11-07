@@ -5,6 +5,7 @@ import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModFeatures;
 import iskallia.vault.init.ModStructures;
 import iskallia.vault.world.data.PlayerAbilitiesData;
+import iskallia.vault.world.data.PlayerResearchesData;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.RegistryKey;
@@ -51,6 +52,7 @@ public class Vault {
 		ServerWorld serverWorld = player.getServerWorld();
 		MinecraftServer server = player.getServer();
 		PlayerAbilitiesData.get(serverWorld).getAbilities(player).syncLevelInfo(server);
+		PlayerResearchesData.get(serverWorld).getResearches(player).sync(server);
 	}
 
 	public static String sId(String name) {

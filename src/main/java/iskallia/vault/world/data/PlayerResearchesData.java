@@ -39,7 +39,11 @@ public class PlayerResearchesData extends WorldSavedData {
     }
 
     public PlayerResearchesData research(ServerPlayerEntity player, Research research) {
-        getResearches(player).research(research.getName());
+        ResearchTree researchTree = getResearches(player);
+        researchTree.research(research.getName());
+
+        researchTree.sync(player.getServer());
+
         markDirty();
         return this;
     }
