@@ -210,9 +210,9 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
                 63, 0,
                 abilitiesTabBounds.getWidth(), abilitiesTabBounds.getHeight());
         blit(matrixStack,
-                abilitiesTabBounds.x0 + 8,
-                containerBounds.y0 - 25 - 10,
-                1, 44, 13, 13);
+                abilitiesTabBounds.x0 + 6,
+                containerBounds.y0 - 25 - 11,
+                32, 60, 16, 16);
 
         // Talents
         Rectangle talentsTabBounds = getTabBounds(1, activeTab instanceof TalentsTab);
@@ -222,9 +222,9 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
                 63, (activeTab instanceof TalentsTab) ? 28 : 0,
                 talentsTabBounds.getWidth(), talentsTabBounds.getHeight());
         blit(matrixStack,
-                talentsTabBounds.x0 + 8,
-                containerBounds.y0 - 25 - 10,
-                1, 44, 13, 13);
+                talentsTabBounds.x0 + 6,
+                containerBounds.y0 - 25 - 11,
+                16, 60, 16, 16);
 
         // Research
         Rectangle researchesTabBounds = getTabBounds(2, activeTab instanceof ResearchesTab);
@@ -234,9 +234,9 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
                 63, (activeTab instanceof ResearchesTab) ? 28 : 0,
                 researchesTabBounds.getWidth(), researchesTabBounds.getHeight());
         blit(matrixStack,
-                researchesTabBounds.x0 + 8,
-                containerBounds.y0 - 25 - 10,
-                1, 44, 13, 13);
+                researchesTabBounds.x0 + 6,
+                containerBounds.y0 - 25 - 11,
+                0, 60, 16, 16);
 
         Minecraft minecraft = getMinecraft();
 
