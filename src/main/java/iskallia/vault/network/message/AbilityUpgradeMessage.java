@@ -1,8 +1,8 @@
 package iskallia.vault.network.message;
 
-import iskallia.vault.ability.AbilityGroup;
-import iskallia.vault.ability.AbilityNode;
-import iskallia.vault.ability.AbilityTree;
+import iskallia.vault.skill.talent.TalentGroup;
+import iskallia.vault.skill.talent.TalentNode;
+import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.world.data.PlayerAbilitiesData;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -41,20 +41,20 @@ public class AbilityUpgradeMessage {
 
             if (sender == null) return;
 
-            AbilityGroup<?> abilityGroup = ModConfigs.TALENTS.getByName(message.abilityName);
+            TalentGroup<?> talentGroup = ModConfigs.TALENTS.getByName(message.abilityName);
 
             PlayerAbilitiesData abilitiesData = PlayerAbilitiesData.get((ServerWorld) sender.world);
-            AbilityTree abilityTree = abilitiesData.getAbilities(sender);
+            TalentTree talentTree = abilitiesData.getAbilities(sender);
 
-            AbilityNode<?> abilityNode = abilityTree.getNodeByName(message.abilityName);
+            TalentNode<?> talentNode = talentTree.getNodeByName(message.abilityName);
 
-            if (abilityNode.getLevel() >= abilityGroup.getMaxLevel())
+            if (talentNode.getLevel() >= talentGroup.getMaxLevel())
                 return; // Already maxed out
 
-            if (abilityTree.getUnspentSkillPts() < abilityGroup.cost(abilityNode.getLevel() + 1))
+            if (talentTree.getUnspentSkillPts() < talentGroup.cost(talentNode.getLevel() + 1))
                 return; // Insufficient skill points
 
-            abilitiesData.upgradeAbility(sender, abilityNode);
+            abilitiesData.upgradeAbility(sender, talentNode);
         });
         context.setPacketHandled(true);
     }

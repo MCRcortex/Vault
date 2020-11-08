@@ -2,7 +2,7 @@ package iskallia.vault.client.gui.tab;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import iskallia.vault.ability.AbilityTree;
+import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.client.gui.screen.SkillTreeScreen;
 import iskallia.vault.client.gui.widget.TalentWidget;
 import iskallia.vault.init.ModConfigs;
@@ -25,11 +25,11 @@ public class TalentsTab extends SkillTab {
     public void refresh() {
         this.abilityWidgets.clear();
 
-        AbilityTree abilityTree = parentScreen.getContainer().getAbilityTree();
+        TalentTree talentTree = parentScreen.getContainer().getTalentTree();
         ModConfigs.TALENTS_GUI.getStyles().forEach((abilityName, style) -> {
             this.abilityWidgets.add(new TalentWidget(
                     ModConfigs.TALENTS.getByName(abilityName),
-                    abilityTree,
+                    talentTree,
                     style
             ));
         });
@@ -48,7 +48,7 @@ public class TalentsTab extends SkillTab {
                 if (this.selectedWidget != null) this.selectedWidget.deselect();
                 this.selectedWidget = abilityWidget;
                 this.selectedWidget.select();
-                parentScreen.getAbilityDialog().setAbilityGroup(this.selectedWidget.getAbilityGroup());
+                parentScreen.getAbilityDialog().setTalentGroup(this.selectedWidget.getTalentGroup());
                 break;
             }
         }

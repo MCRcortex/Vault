@@ -3,7 +3,7 @@ package iskallia.vault.client.gui.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
-import iskallia.vault.ability.AbilityTree;
+import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.client.gui.component.AbilityDialog;
 import iskallia.vault.client.gui.component.ResearchDialog;
 import iskallia.vault.client.gui.helper.FontHelper;
@@ -15,7 +15,6 @@ import iskallia.vault.client.gui.tab.SkillTab;
 import iskallia.vault.client.gui.tab.TalentsTab;
 import iskallia.vault.container.SkillTreeContainer;
 import iskallia.vault.research.ResearchTree;
-import iskallia.vault.research.node.Research;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -43,10 +42,10 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
         super(container, inventory, new StringTextComponent("Ability Tree Screen!"));
 
         this.activeTab = new ResearchesTab(this);
-        AbilityTree abilityTree = getContainer().getAbilityTree();
+        TalentTree talentTree = getContainer().getTalentTree();
         ResearchTree researchTree = getContainer().getResearchTree();
-        this.abilityDialog = new AbilityDialog(abilityTree);
-        this.researchDialog = new ResearchDialog(researchTree, abilityTree);
+        this.abilityDialog = new AbilityDialog(talentTree);
+        this.researchDialog = new ResearchDialog(researchTree, talentTree);
         refreshWidgets();
     }
 

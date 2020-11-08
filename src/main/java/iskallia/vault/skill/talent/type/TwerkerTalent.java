@@ -1,7 +1,6 @@
-package iskallia.vault.ability.passive;
+package iskallia.vault.skill.talent.type;
 
 import com.google.gson.annotations.Expose;
-import iskallia.vault.ability.PlayerAbility;
 import net.minecraft.block.Block;
 import net.minecraft.block.CropsBlock;
 import net.minecraft.block.SaplingBlock;
@@ -13,14 +12,14 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 
-public class TwerkerAbility extends PlayerAbility {
+public class TwerkerTalent extends PlayerTalent {
 
     @Expose private final int tickDelay = 5;
     @Expose private final int xRange = 2;
     @Expose private final int yRange = 1;
     @Expose private final int zRange = 2;
 
-    public TwerkerAbility(int cost) {
+    public TwerkerTalent(int cost) {
         super(cost);
     }
 

@@ -1,8 +1,8 @@
 package iskallia.vault.world.data;
 
 import iskallia.vault.Vault;
-import iskallia.vault.ability.AbilityNode;
-import iskallia.vault.ability.AbilityTree;
+import iskallia.vault.skill.talent.TalentNode;
+import iskallia.vault.skill.talent.TalentTree;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -26,7 +26,7 @@ public class PlayerAbilitiesData extends WorldSavedData {
 
     protected static final String DATA_NAME = Vault.MOD_ID + "_PlayerAbilities";
 
-    private Map<UUID, AbilityTree> playerMap = new HashMap<>();
+    private Map<UUID, TalentTree> playerMap = new HashMap<>();
 
     public PlayerAbilitiesData() {
         this(DATA_NAME);
@@ -36,29 +36,29 @@ public class PlayerAbilitiesData extends WorldSavedData {
         super(name);
     }
 
-    public AbilityTree getAbilities(PlayerEntity player) {
+    public TalentTree getAbilities(PlayerEntity player) {
         return this.getAbilities(player.getUniqueID());
     }
 
-    public AbilityTree getAbilities(UUID uuid) {
-        return this.playerMap.computeIfAbsent(uuid, AbilityTree::new);
+    public TalentTree getAbilities(UUID uuid) {
+        return this.playerMap.computeIfAbsent(uuid, TalentTree::new);
     }
 
     public PlayerAbilitiesData resetAbilityTree(ServerPlayerEntity player) {
         UUID uniqueID = player.getUniqueID();
 
-        AbilityTree oldAbilityTree = playerMap.get(uniqueID);
-        if (oldAbilityTree != null) {
-            for (AbilityNode<?> node : oldAbilityTree.getNodes()) {
+        TalentTree oldTalentTree = playerMap.get(uniqueID);
+        if (oldTalentTree != null) {
+            for (TalentNode<?> node : oldTalentTree.getNodes()) {
                 if (node.isLearned())
                     node.getAbility().onRemoved(player);
             }
         }
 
-        AbilityTree abilityTree = new AbilityTree(uniqueID);
-        this.playerMap.put(uniqueID, abilityTree);
+        TalentTree talentTree = new TalentTree(uniqueID);
+        this.playerMap.put(uniqueID, talentTree);
 
-        abilityTree.syncLevelInfo(player.getServer());
+        talentTree.syncLevelInfo(player.getServer());
 
         markDirty();
         return this;
@@ -78,22 +78,22 @@ public class PlayerAbilitiesData extends WorldSavedData {
         return this;
     }
 
-    public PlayerAbilitiesData add(ServerPlayerEntity player, AbilityNode<?>... nodes) {
+    public PlayerAbilitiesData add(ServerPlayerEntity player, TalentNode<?>... nodes) {
         this.getAbilities(player).add(player.getServer(), nodes);
 
         markDirty();
         return this;
     }
 
-    public PlayerAbilitiesData remove(ServerPlayerEntity player, AbilityNode<?>... nodes) {
+    public PlayerAbilitiesData remove(ServerPlayerEntity player, TalentNode<?>... nodes) {
         this.getAbilities(player).remove(player.getServer(), nodes);
 
         markDirty();
         return this;
     }
 
-    public PlayerAbilitiesData upgradeAbility(ServerPlayerEntity player, AbilityNode<?> abilityNode) {
-        this.getAbilities(player).upgradeAbility(player.getServer(), abilityNode);
+    public PlayerAbilitiesData upgradeAbility(ServerPlayerEntity player, TalentNode<?> talentNode) {
+        this.getAbilities(player).upgradeAbility(player.getServer(), talentNode);
 
         markDirty();
         return this;

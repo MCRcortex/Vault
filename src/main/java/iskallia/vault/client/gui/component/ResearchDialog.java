@@ -1,8 +1,7 @@
 package iskallia.vault.client.gui.component;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import iskallia.vault.ability.AbilityNode;
-import iskallia.vault.ability.AbilityTree;
+import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.client.gui.helper.FontHelper;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.client.gui.helper.UIHelper;
@@ -25,15 +24,15 @@ public class ResearchDialog extends AbstractGui {
     private Rectangle bounds;
     private String researchName;
     private ResearchTree researchTree;
-    private AbilityTree abilityTree;
+    private TalentTree talentTree;
 
     private ResearchWidget researchWidget;
     private Button researchButton;
 
-    public ResearchDialog(ResearchTree researchTree, AbilityTree abilityTree) {
+    public ResearchDialog(ResearchTree researchTree, TalentTree talentTree) {
         this.researchName = null;
         this.researchTree = researchTree;
-        this.abilityTree = abilityTree;
+        this.talentTree = talentTree;
         refreshWidgets();
     }
 

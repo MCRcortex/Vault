@@ -1,10 +1,11 @@
-package iskallia.vault.ability;
+package iskallia.vault.skill.talent;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.annotations.Expose;
-import iskallia.vault.ability.passive.AttributeAbility;
-import iskallia.vault.ability.passive.EffectAbility;
+import iskallia.vault.skill.talent.type.AttributeTalent;
+import iskallia.vault.skill.talent.type.EffectTalent;
+import iskallia.vault.skill.talent.type.PlayerTalent;
 import iskallia.vault.util.RomanNumber;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -15,14 +16,14 @@ import java.util.function.IntToDoubleFunction;
 import java.util.function.IntUnaryOperator;
 import java.util.stream.IntStream;
 
-public class AbilityGroup<T extends PlayerAbility> {
+public class TalentGroup<T extends PlayerTalent> {
 
     @Expose private final String name;
     @Expose private final T[] levels;
 
     private BiMap<String, T> registry;
 
-    public AbilityGroup(String name, T... levels) {
+    public TalentGroup(String name, T... levels) {
         this.name = name;
         this.levels = levels;
     }
@@ -73,26 +74,26 @@ public class AbilityGroup<T extends PlayerAbility> {
         return this.registry;
     }
 
-    public static AbilityGroup<EffectAbility> ofEffect(String name, Effect effect, EffectAbility.Type type, int maxLevel,
-                                                       IntUnaryOperator cost) {
-        EffectAbility[] abilities = IntStream.range(0, maxLevel)
-                .mapToObj(i -> new EffectAbility(cost.applyAsInt(i + 1), effect, i, type))
-                .toArray(EffectAbility[]::new);
-        return new AbilityGroup<>(name, abilities);
+    public static TalentGroup<EffectTalent> ofEffect(String name, Effect effect, EffectTalent.Type type, int maxLevel,
+                                                     IntUnaryOperator cost) {
+        EffectTalent[] abilities = IntStream.range(0, maxLevel)
+                .mapToObj(i -> new EffectTalent(cost.applyAsInt(i + 1), effect, i, type))
+                .toArray(EffectTalent[]::new);
+        return new TalentGroup<>(name, abilities);
     }
 
-    public static AbilityGroup<AttributeAbility> ofAttribute(String name, Attribute attribute, String modifierName,
-                                                             int maxLevel, IntUnaryOperator cost, IntToDoubleFunction amount,
-                                                             IntFunction<AttributeModifier.Operation> operation) {
-        AttributeAbility[] abilities = IntStream.range(0, maxLevel)
-                .mapToObj(i -> new AttributeAbility(cost.applyAsInt(i + 1), attribute,
-                        new AttributeAbility.Modifier(
+    public static TalentGroup<AttributeTalent> ofAttribute(String name, Attribute attribute, String modifierName,
+                                                           int maxLevel, IntUnaryOperator cost, IntToDoubleFunction amount,
+                                                           IntFunction<AttributeModifier.Operation> operation) {
+        AttributeTalent[] abilities = IntStream.range(0, maxLevel)
+                .mapToObj(i -> new AttributeTalent(cost.applyAsInt(i + 1), attribute,
+                        new AttributeTalent.Modifier(
                                 modifierName + " " + RomanNumber.toRoman(i + 1),
                                 amount.applyAsDouble(i + 1),
                                 operation.apply(i + 1)
                         )))
-                .toArray(AttributeAbility[]::new);
-        return new AbilityGroup<>(name, abilities);
+                .toArray(AttributeTalent[]::new);
+        return new TalentGroup<>(name, abilities);
     }
 
 }

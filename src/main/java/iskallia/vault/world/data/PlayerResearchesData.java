@@ -48,6 +48,16 @@ public class PlayerResearchesData extends WorldSavedData {
         return this;
     }
 
+    public PlayerResearchesData resetResearchTree(ServerPlayerEntity player) {
+        ResearchTree researchTree = getResearches(player);
+        researchTree.resetAll();
+
+        researchTree.sync(player.getServer());
+
+        markDirty();
+        return this;
+    }
+
     @Override
     public void read(CompoundNBT nbt) {
         ListNBT playerList = nbt.getList("PlayerEntries", Constants.NBT.TAG_STRING);

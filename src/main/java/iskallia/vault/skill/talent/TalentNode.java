@@ -1,20 +1,21 @@
-package iskallia.vault.ability;
+package iskallia.vault.skill.talent;
 
 import iskallia.vault.init.ModConfigs;
+import iskallia.vault.skill.talent.type.PlayerTalent;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
-public class AbilityNode<T extends PlayerAbility> implements INBTSerializable<CompoundNBT> {
+public class TalentNode<T extends PlayerTalent> implements INBTSerializable<CompoundNBT> {
 
-    private AbilityGroup<T> group;
+    private TalentGroup<T> group;
     private int level;
 
-    public AbilityNode(AbilityGroup<T> group, int level) {
+    public TalentNode(TalentGroup<T> group, int level) {
         this.group = group;
         this.level = level;
     }
 
-    public AbilityGroup<T> getGroup() {
+    public TalentGroup<T> getGroup() {
         return this.group;
     }
 
@@ -47,7 +48,7 @@ public class AbilityNode<T extends PlayerAbility> implements INBTSerializable<Co
     @SuppressWarnings("unchecked")
     public void deserializeNBT(CompoundNBT nbt) {
         String groupName = nbt.getString("Name");
-        this.group = (AbilityGroup<T>) ModConfigs.TALENTS.getByName(groupName);
+        this.group = (TalentGroup<T>) ModConfigs.TALENTS.getByName(groupName);
         this.level = nbt.getInt("Level");
     }
 
@@ -56,16 +57,16 @@ public class AbilityNode<T extends PlayerAbility> implements INBTSerializable<Co
         if (this == other) return true;
         if (other == null || getClass() != other.getClass()) return false;
 
-        AbilityNode<?> that = (AbilityNode<?>) other;
+        TalentNode<?> that = (TalentNode<?>) other;
 
         return this.level == that.level &&
                 this.group.getParentName().equals(that.group.getParentName());
     }
 
-    public static <T extends PlayerAbility> AbilityNode<T> fromNBT(CompoundNBT nbt, Class<T> clazz) {
-        AbilityGroup<T> group = (AbilityGroup<T>) ModConfigs.TALENTS.getByName(nbt.getString("Name"));
+    public static <T extends PlayerTalent> TalentNode<T> fromNBT(CompoundNBT nbt, Class<T> clazz) {
+        TalentGroup<T> group = (TalentGroup<T>) ModConfigs.TALENTS.getByName(nbt.getString("Name"));
         int level = nbt.getInt("Level");
-        return new AbilityNode<>(group, level);
+        return new TalentNode<>(group, level);
     }
 
 }

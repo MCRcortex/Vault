@@ -1,6 +1,6 @@
 package iskallia.vault.network.message;
 
-import iskallia.vault.ability.AbilityTree;
+import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.research.ResearchTree;
 import iskallia.vault.research.node.Research;
@@ -48,10 +48,10 @@ public class ResearchMessage {
 
             PlayerAbilitiesData abilitiesData = PlayerAbilitiesData.get((ServerWorld) sender.world);
             PlayerResearchesData researchesData = PlayerResearchesData.get((ServerWorld) sender.world);
-            AbilityTree abilityTree = abilitiesData.getAbilities(sender);
+            TalentTree talentTree = abilitiesData.getAbilities(sender);
             ResearchTree researchTree = researchesData.getResearches(sender);
 
-            if (abilityTree.getUnspentSkillPts() >= research.getCost()) {
+            if (talentTree.getUnspentSkillPts() >= research.getCost()) {
                 researchesData.research(sender, research);
                 abilitiesData.spendSkillPts(sender, research.getCost());
             }

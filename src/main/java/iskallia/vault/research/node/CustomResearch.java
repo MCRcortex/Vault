@@ -9,18 +9,17 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class CustomResearch extends Research {
 
     @Expose protected Map<String, Restrictions> itemRestrictions;
-    @Expose protected Map<String, Restrictions> blockRestriction;
+    @Expose protected Map<String, Restrictions> blockRestrictions;
     @Expose protected Map<String, Restrictions> entityRestrictions;
 
     public CustomResearch(String name, int cost) {
         super(name, cost);
         this.itemRestrictions = new HashMap<>();
-        this.blockRestriction = new HashMap<>();
+        this.blockRestrictions = new HashMap<>();
         this.entityRestrictions = new HashMap<>();
     }
 
@@ -28,8 +27,8 @@ public class CustomResearch extends Research {
         return itemRestrictions;
     }
 
-    public Map<String, Restrictions> getBlockRestriction() {
-        return blockRestriction;
+    public Map<String, Restrictions> getBlockRestrictions() {
+        return blockRestrictions;
     }
 
     public Map<String, Restrictions> getEntityRestrictions() {
@@ -51,7 +50,7 @@ public class CustomResearch extends Research {
         ResourceLocation registryName = block.getRegistryName();
         if (registryName == null) return false;
         String sid = registryName.getNamespace() + ":" + registryName.getPath();
-        Restrictions restrictions = blockRestriction.get(sid);
+        Restrictions restrictions = blockRestrictions.get(sid);
         if (restrictions == null) return false;
         return restrictions.restricts(restrictionType);
     }

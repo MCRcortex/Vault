@@ -1,10 +1,10 @@
-package iskallia.vault.ability;
+package iskallia.vault.skill.talent;
 
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.network.ModNetwork;
 import iskallia.vault.network.message.VaultLevelMessage;
+import iskallia.vault.skill.talent.type.PlayerTalent;
 import iskallia.vault.util.NetcodeUtils;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.server.MinecraftServer;
@@ -15,21 +15,20 @@ import net.minecraftforge.fml.network.NetworkDirection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
 
-public class AbilityTree implements INBTSerializable<CompoundNBT> {
+public class TalentTree implements INBTSerializable<CompoundNBT> {
 
     private final UUID uuid;
     private int vaultLevel;
     private int exp;
     private int unspentSkillPts;
-    private List<AbilityNode<?>> nodes = new ArrayList<>();
+    private List<TalentNode<?>> nodes = new ArrayList<>();
 
-    public AbilityTree(UUID uuid) {
+    public TalentTree(UUID uuid) {
         this.uuid = uuid;
         this.add(null, ModConfigs.TALENTS.getAll().stream()
-                .map(abilityGroup -> new AbilityNode<>(abilityGroup, 0))
-                .toArray(AbilityNode<?>[]::new));
+                .map(abilityGroup -> new TalentNode<>(abilityGroup, 0))
+                .toArray(TalentNode<?>[]::new));
     }
 
     public int getVaultLevel() {
@@ -48,23 +47,23 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         return unspentSkillPts;
     }
 
-    public List<AbilityNode<?>> getNodes() {
+    public List<TalentNode<?>> getNodes() {
         return this.nodes;
     }
 
-    public AbilityNode<?> getNodeOf(AbilityGroup<?> abilityGroup) {
-        return getNodeByName(abilityGroup.getParentName());
+    public TalentNode<?> getNodeOf(TalentGroup<?> talentGroup) {
+        return getNodeByName(talentGroup.getParentName());
     }
 
-    public AbilityNode<?> getNodeByName(String name) {
+    public TalentNode<?> getNodeByName(String name) {
         return this.nodes.stream().filter(node -> node.getGroup().getParentName().equals(name))
                 .findFirst().orElseThrow(() -> new IllegalArgumentException("Unknown ability name -> " + name));
     }
 
     /* ------------------------------------ */
 
-    public AbilityTree add(MinecraftServer server, AbilityNode<?>... nodes) {
-        for (AbilityNode<?> node : nodes) {
+    public TalentTree add(MinecraftServer server, TalentNode<?>... nodes) {
+        for (TalentNode<?> node : nodes) {
             NetcodeUtils.runIfPresent(server, this.uuid, player -> {
                 if (node.isLearned()) {
                     node.getAbility().onAdded(player);
@@ -76,7 +75,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         return this;
     }
 
-    public AbilityTree setVaultLevel(MinecraftServer server, int level) {
+    public TalentTree setVaultLevel(MinecraftServer server, int level) {
         this.vaultLevel = level;
         this.exp = 0;
 
@@ -85,7 +84,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         return this;
     }
 
-    public AbilityTree addVaultExp(MinecraftServer server, int exp) {
+    public TalentTree addVaultExp(MinecraftServer server, int exp) {
         int tnl;
         this.exp += exp;
 
@@ -100,7 +99,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         return this;
     }
 
-    public AbilityTree spendSkillPoints(MinecraftServer server, int amount) {
+    public TalentTree spendSkillPoints(MinecraftServer server, int amount) {
         this.unspentSkillPts -= amount;
 
         syncLevelInfo(server);
@@ -108,35 +107,35 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         return this;
     }
 
-    public AbilityTree addSkillPoints(int amount) {
+    public TalentTree addSkillPoints(int amount) {
         this.unspentSkillPts += amount;
         return this;
     }
 
-    public AbilityTree upgradeAbility(MinecraftServer server, AbilityNode<?> abilityNode) {
-        this.remove(server, abilityNode);
+    public TalentTree upgradeAbility(MinecraftServer server, TalentNode<?> talentNode) {
+        this.remove(server, talentNode);
 
-        AbilityGroup<?> abilityGroup = ModConfigs.TALENTS.getByName(abilityNode.getGroup().getParentName());
-        AbilityNode<?> upgradedAbilityNode = new AbilityNode<>(abilityGroup, abilityNode.getLevel() + 1);
-        this.add(server, upgradedAbilityNode);
+        TalentGroup<?> talentGroup = ModConfigs.TALENTS.getByName(talentNode.getGroup().getParentName());
+        TalentNode<?> upgradedTalentNode = new TalentNode<>(talentGroup, talentNode.getLevel() + 1);
+        this.add(server, upgradedTalentNode);
 
-        this.spendSkillPoints(server, upgradedAbilityNode.getAbility().getCost());
+        this.spendSkillPoints(server, upgradedTalentNode.getAbility().getCost());
 
         return this;
     }
 
     /* ------------------------------------ */
 
-    public AbilityTree tick(MinecraftServer server) {
+    public TalentTree tick(MinecraftServer server) {
         NetcodeUtils.runIfPresent(server, this.uuid, player -> {
-            this.nodes.stream().filter(AbilityNode::isLearned)
+            this.nodes.stream().filter(TalentNode::isLearned)
                     .forEach(node -> node.getAbility().tick(player));
         });
         return this;
     }
 
-    public AbilityTree remove(MinecraftServer server, AbilityNode<?>... nodes) {
-        for (AbilityNode<?> node : nodes) {
+    public TalentTree remove(MinecraftServer server, TalentNode<?>... nodes) {
+        for (TalentNode<?> node : nodes) {
             NetcodeUtils.runIfPresent(server, this.uuid, player -> {
                 if (node.isLearned()) {
                     node.getAbility().onRemoved(player);
@@ -171,7 +170,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         nbt.putInt("unspentSkillPts", unspentSkillPts);
 
         ListNBT list = new ListNBT();
-        this.nodes.stream().map(AbilityNode::serializeNBT).forEach(list::add);
+        this.nodes.stream().map(TalentNode::serializeNBT).forEach(list::add);
         nbt.put("Nodes", list);
 
         return nbt;
@@ -190,7 +189,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         ListNBT list = nbt.getList("Nodes", Constants.NBT.TAG_COMPOUND);
         this.nodes.clear();
         for (int i = 0; i < list.size(); i++) {
-            this.add(null, AbilityNode.fromNBT(list.getCompound(i), PlayerAbility.class));
+            this.add(null, TalentNode.fromNBT(list.getCompound(i), PlayerTalent.class));
         }
     }
 

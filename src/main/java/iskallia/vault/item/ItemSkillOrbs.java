@@ -1,7 +1,7 @@
 package iskallia.vault.item;
 
 import iskallia.vault.Vault;
-import iskallia.vault.ability.AbilityTree;
+import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.world.data.PlayerAbilitiesData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -35,7 +35,7 @@ public class ItemSkillOrbs extends Item {
 
         if (!world.isRemote) {
             PlayerAbilitiesData playerAbilitiesData = PlayerAbilitiesData.get((ServerWorld) world);
-            AbilityTree abilities = playerAbilitiesData.getAbilities(player);
+            TalentTree abilities = playerAbilitiesData.getAbilities(player);
 
             abilities.addSkillPoints(1);
             abilities.syncLevelInfo(world.getServer());

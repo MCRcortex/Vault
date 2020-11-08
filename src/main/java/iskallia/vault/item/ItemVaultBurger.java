@@ -1,7 +1,7 @@
 package iskallia.vault.item;
 
 import iskallia.vault.Vault;
-import iskallia.vault.ability.AbilityTree;
+import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.util.MathUtilities;
 import iskallia.vault.world.data.PlayerAbilitiesData;
@@ -34,7 +34,7 @@ public class ItemVaultBurger extends Item {
         if (!world.isRemote) {
             ServerPlayerEntity player = (ServerPlayerEntity) entityLiving;
             PlayerAbilitiesData playerAbilitiesData = PlayerAbilitiesData.get((ServerWorld) world);
-            AbilityTree abilities = playerAbilitiesData.getAbilities(player);
+            TalentTree abilities = playerAbilitiesData.getAbilities(player);
 
             int tnl = abilities.getTnl();
             float randomPercentage = MathUtilities.randomFloat(ModConfigs.VAULT_ITEMS.VAULT_BURGER.minExpPercent,

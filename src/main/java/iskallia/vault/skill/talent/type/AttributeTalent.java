@@ -1,7 +1,6 @@
-package iskallia.vault.ability.passive;
+package iskallia.vault.skill.talent.type;
 
 import com.google.gson.annotations.Expose;
-import iskallia.vault.ability.PlayerAbility;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
@@ -14,16 +13,16 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class AttributeAbility extends PlayerAbility {
+public class AttributeTalent extends PlayerTalent {
 
 	@Expose private final String attribute;
 	@Expose private final Modifier modifier;
 
-	public AttributeAbility(int cost, Attribute attribute, Modifier modifier) {
+	public AttributeTalent(int cost, Attribute attribute, Modifier modifier) {
 		this(cost, Registry.ATTRIBUTE.getKey(attribute).toString(), modifier);
 	}
 
-	public AttributeAbility(int cost, String attribute, Modifier modifier) {
+	public AttributeTalent(int cost, String attribute, Modifier modifier) {
 		super(cost);
 		this.attribute = attribute;
 		this.modifier = modifier;

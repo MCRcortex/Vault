@@ -2,8 +2,8 @@ package iskallia.vault.client.gui.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import iskallia.vault.Vault;
-import iskallia.vault.ability.AbilityGroup;
-import iskallia.vault.ability.AbilityTree;
+import iskallia.vault.skill.talent.TalentGroup;
+import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.config.entry.SkillStyle;
 import iskallia.vault.util.ResourceBoundary;
@@ -22,36 +22,36 @@ public class TalentWidget extends Widget {
     private static final ResourceLocation SKILL_WIDGET_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/skill-widget.png");
     private static final ResourceLocation TALENTS_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/talents.png");
 
-    AbilityGroup<?> abilityGroup;
-    AbilityTree abilityTree;
+    TalentGroup<?> talentGroup;
+    TalentTree talentTree;
     boolean locked;
     SkillStyle style;
 
     boolean selected;
 
-    public TalentWidget(AbilityGroup<?> abilityGroup, AbilityTree abilityTree, SkillStyle style) {
+    public TalentWidget(TalentGroup<?> talentGroup, TalentTree talentTree, SkillStyle style) {
         super(style.x, style.y,
                 5 * PIP_SIZE + 4 * GAP_SIZE,
-                pipRowCount(abilityTree.getNodeOf(abilityGroup).getLevel()) * (PIP_SIZE + GAP_SIZE) - GAP_SIZE,
+                pipRowCount(talentTree.getNodeOf(talentGroup).getLevel()) * (PIP_SIZE + GAP_SIZE) - GAP_SIZE,
                 new StringTextComponent("the_vault.widgets.talent"));
         this.style = style;
-        this.abilityGroup = abilityGroup;
-        this.abilityTree = abilityTree;
+        this.talentGroup = talentGroup;
+        this.talentTree = talentTree;
         this.locked = false; // TODO: <-- Implement once skill dependencies are a thing
         this.selected = false;
     }
 
-    public AbilityGroup<?> getAbilityGroup() {
-        return abilityGroup;
+    public TalentGroup<?> getTalentGroup() {
+        return talentGroup;
     }
 
-    public AbilityTree getAbilityTree() {
-        return abilityTree;
+    public TalentTree getTalentTree() {
+        return talentTree;
     }
 
     public int getClickableWidth() {
         int onlyIconWidth = ICON_SIZE + 2 * GAP_SIZE;
-        int pipLineWidth = Math.min(abilityGroup.getMaxLevel(), MAX_PIPs_INLINE) * (PIP_SIZE + GAP_SIZE);
+        int pipLineWidth = Math.min(talentGroup.getMaxLevel(), MAX_PIPs_INLINE) * (PIP_SIZE + GAP_SIZE);
         return hasPips()
                 ? Math.max(pipLineWidth, onlyIconWidth)
                 : onlyIconWidth;
@@ -60,7 +60,7 @@ public class TalentWidget extends Widget {
     public int getClickableHeight() {
         int height = 2 * GAP_SIZE + ICON_SIZE;
         if (hasPips()) {
-            int lines = pipRowCount(abilityGroup.getMaxLevel());
+            int lines = pipRowCount(talentGroup.getMaxLevel());
             height += GAP_SIZE;
             height += lines * PIP_SIZE + (lines - 1) * GAP_SIZE;
         }
@@ -77,7 +77,7 @@ public class TalentWidget extends Widget {
     }
 
     public boolean hasPips() {
-        return !locked && abilityGroup.getMaxLevel() > 1;
+        return !locked && talentGroup.getMaxLevel() > 1;
     }
 
     /* ----------------------------------------- */
@@ -126,7 +126,7 @@ public class TalentWidget extends Widget {
 
         int vOffset = locked ? 62
                 : selected || isMouseOver(mouseX, mouseY) ? -31
-                : abilityTree.getNodeOf(abilityGroup).getLevel() >= 1 ? 31 : 0;
+                : talentTree.getNodeOf(talentGroup).getLevel() >= 1 ? 31 : 0;
         blit(matrixStack, this.x, this.y,
                 resourceBoundary.getU(),
                 resourceBoundary.getV() + vOffset,
@@ -153,9 +153,9 @@ public class TalentWidget extends Widget {
     renderPips(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         Minecraft.getInstance().textureManager.bindTexture(SKILL_WIDGET_RESOURCE);
 
-        int rowCount = pipRowCount(abilityGroup.getMaxLevel());
-        int remainingPips = abilityGroup.getMaxLevel();
-        int remainingFilledPips = abilityTree.getNodeOf(abilityGroup).getLevel();
+        int rowCount = pipRowCount(talentGroup.getMaxLevel());
+        int remainingPips = talentGroup.getMaxLevel();
+        int remainingFilledPips = talentTree.getNodeOf(talentGroup).getLevel();
         for (int r = 0; r < rowCount; r++) {
             renderPipLine(matrixStack,
                     x,

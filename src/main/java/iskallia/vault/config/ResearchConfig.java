@@ -1,7 +1,6 @@
 package iskallia.vault.config;
 
 import com.google.gson.annotations.Expose;
-import iskallia.vault.Vault;
 import iskallia.vault.research.Restrictions;
 import iskallia.vault.research.node.CustomResearch;
 import iskallia.vault.research.node.ModResearch;
@@ -81,7 +80,7 @@ public class ResearchConfig extends Config {
                 "minecraft:wooden_pickaxe", Restrictions.forItems()
                         .set(Restrictions.Type.USABILITY, true)
                         .set(Restrictions.Type.HITTABILITY, true));
-        sampleResearch.getBlockRestriction().put(
+        sampleResearch.getBlockRestrictions().put(
                 "minecraft:stone", Restrictions.forBlocks());
         sampleResearch.getEntityRestrictions().put(
                 "minecraft:creeper", Restrictions.forEntities());

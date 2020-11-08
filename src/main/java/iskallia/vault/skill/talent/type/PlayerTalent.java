@@ -1,13 +1,13 @@
-package iskallia.vault.ability;
+package iskallia.vault.skill.talent.type;
 
 import com.google.gson.annotations.Expose;
 import net.minecraft.entity.player.PlayerEntity;
 
-public abstract class PlayerAbility {
+public abstract class PlayerTalent {
 
 	@Expose private int cost;
 
-	public PlayerAbility(int cost) {
+	public PlayerTalent(int cost) {
 		this.cost = cost;
 	}
 
