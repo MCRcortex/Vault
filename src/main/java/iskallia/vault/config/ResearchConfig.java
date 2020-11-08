@@ -2,9 +2,9 @@ package iskallia.vault.config;
 
 import com.google.gson.annotations.Expose;
 import iskallia.vault.research.Restrictions;
-import iskallia.vault.research.node.CustomResearch;
-import iskallia.vault.research.node.ModResearch;
-import iskallia.vault.research.node.Research;
+import iskallia.vault.research.type.CustomResearch;
+import iskallia.vault.research.type.ModResearch;
+import iskallia.vault.research.type.Research;
 
 import java.util.LinkedList;
 import java.util.List;

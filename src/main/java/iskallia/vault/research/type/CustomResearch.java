@@ -1,4 +1,4 @@
-package iskallia.vault.research.node;
+package iskallia.vault.research.type;
 
 import com.google.gson.annotations.Expose;
 import iskallia.vault.research.Restrictions;

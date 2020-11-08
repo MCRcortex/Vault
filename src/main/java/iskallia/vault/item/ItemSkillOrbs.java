@@ -1,8 +1,8 @@
 package iskallia.vault.item;
 
 import iskallia.vault.Vault;
-import iskallia.vault.skill.talent.TalentTree;
-import iskallia.vault.world.data.PlayerAbilitiesData;
+import iskallia.vault.skill.PlayerVaultStats;
+import iskallia.vault.world.data.PlayerVaultStatsData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -34,11 +34,10 @@ public class ItemSkillOrbs extends Item {
                 0.5F, 0.4F / (random.nextFloat() * 0.4F + 0.8F));
 
         if (!world.isRemote) {
-            PlayerAbilitiesData playerAbilitiesData = PlayerAbilitiesData.get((ServerWorld) world);
-            TalentTree abilities = playerAbilitiesData.getAbilities(player);
+            PlayerVaultStats stats = PlayerVaultStatsData.get((ServerWorld) world).getVaultStats(player);
 
-            abilities.addSkillPoints(1);
-            abilities.syncLevelInfo(world.getServer());
+            stats.addSkillPoints(1);
+            stats.sync(world.getServer());
         }
 
         player.addStat(Stats.ITEM_USED.get(this));

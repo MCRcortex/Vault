@@ -3,7 +3,7 @@ package iskallia.vault.network.message;
 import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.container.SkillTreeContainer;
 import iskallia.vault.research.ResearchTree;
-import iskallia.vault.world.data.PlayerAbilitiesData;
+import iskallia.vault.world.data.PlayerTalentsData;
 import iskallia.vault.world.data.PlayerResearchesData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -38,8 +38,8 @@ public class OpenAbilityTreeMessage {
 
             if (sender == null) return;
 
-            PlayerAbilitiesData playerAbilitiesData = PlayerAbilitiesData.get((ServerWorld) sender.world);
-            TalentTree talentTree = playerAbilitiesData.getAbilities(sender);
+            PlayerTalentsData playerTalentsData = PlayerTalentsData.get((ServerWorld) sender.world);
+            TalentTree talentTree = playerTalentsData.getAbilities(sender);
 
             PlayerResearchesData playerResearchesData = PlayerResearchesData.get((ServerWorld) sender.world);
             ResearchTree researchTree = playerResearchesData.getResearches(sender);

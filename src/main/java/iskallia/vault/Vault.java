@@ -1,11 +1,9 @@
 package iskallia.vault;
 
 import iskallia.vault.init.ModCommands;
-import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModFeatures;
-import iskallia.vault.init.ModStructures;
-import iskallia.vault.world.data.PlayerAbilitiesData;
 import iskallia.vault.world.data.PlayerResearchesData;
+import iskallia.vault.world.data.PlayerVaultStatsData;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.RegistryKey;
@@ -51,7 +49,7 @@ public class Vault {
 		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
 		ServerWorld serverWorld = player.getServerWorld();
 		MinecraftServer server = player.getServer();
-		PlayerAbilitiesData.get(serverWorld).getAbilities(player).syncLevelInfo(server);
+		PlayerVaultStatsData.get(serverWorld).getVaultStats(player).sync(server);
 		PlayerResearchesData.get(serverWorld).getResearches(player).sync(server);
 	}
 

@@ -4,8 +4,9 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import iskallia.vault.world.data.PlayerAbilitiesData;
+import iskallia.vault.world.data.PlayerTalentsData;
 import iskallia.vault.world.data.PlayerResearchesData;
+import iskallia.vault.world.data.PlayerVaultStatsData;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 
@@ -49,20 +50,21 @@ public class VaultLevelCommand extends Command {
     private int setLevel(CommandContext<CommandSource> context) throws CommandSyntaxException {
         int level = IntegerArgumentType.getInteger(context, "level");
         CommandSource source = context.getSource();
-        PlayerAbilitiesData.get(source.getWorld()).setVaultLevel(source.asPlayer(), level);
+        PlayerVaultStatsData.get(source.getWorld()).setVaultLevel(source.asPlayer(), level);
         return 0;
     }
 
     private int addExp(CommandContext<CommandSource> context) throws CommandSyntaxException {
         int exp = IntegerArgumentType.getInteger(context, "exp");
         CommandSource source = context.getSource();
-        PlayerAbilitiesData.get(source.getWorld()).addVaultExp(source.asPlayer(), exp);
+        PlayerVaultStatsData.get(source.getWorld()).addVaultExp(source.asPlayer(), exp);
         return 0;
     }
 
     private int resetAll(CommandContext<CommandSource> context) throws CommandSyntaxException {
         CommandSource source = context.getSource();
-        PlayerAbilitiesData.get(source.getWorld()).resetAbilityTree(source.asPlayer());
+        PlayerVaultStatsData.get(source.getWorld()).reset(source.asPlayer());
+        PlayerTalentsData.get(source.getWorld()).resetAbilityTree(source.asPlayer());
         PlayerResearchesData.get(source.getWorld()).resetResearchTree(source.asPlayer());
         return 0;
     }

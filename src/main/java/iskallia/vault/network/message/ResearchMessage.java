@@ -1,11 +1,11 @@
 package iskallia.vault.network.message;
 
-import iskallia.vault.skill.talent.TalentTree;
+import iskallia.vault.skill.PlayerVaultStats;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.research.ResearchTree;
-import iskallia.vault.research.node.Research;
-import iskallia.vault.world.data.PlayerAbilitiesData;
+import iskallia.vault.research.type.Research;
 import iskallia.vault.world.data.PlayerResearchesData;
+import iskallia.vault.world.data.PlayerVaultStatsData;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.server.ServerWorld;
@@ -46,14 +46,15 @@ public class ResearchMessage {
 
             if (research == null) return;
 
-            PlayerAbilitiesData abilitiesData = PlayerAbilitiesData.get((ServerWorld) sender.world);
+            PlayerVaultStatsData statsData = PlayerVaultStatsData.get((ServerWorld) sender.world);
             PlayerResearchesData researchesData = PlayerResearchesData.get((ServerWorld) sender.world);
-            TalentTree talentTree = abilitiesData.getAbilities(sender);
+
+            PlayerVaultStats stats = statsData.getVaultStats(sender);
             ResearchTree researchTree = researchesData.getResearches(sender);
 
-            if (talentTree.getUnspentSkillPts() >= research.getCost()) {
+            if (stats.getUnspentSkillPts() >= research.getCost()) {
                 researchesData.research(sender, research);
-                abilitiesData.spendSkillPts(sender, research.getCost());
+                statsData.spendSkillPts(sender, research.getCost());
             }
         });
         context.setPacketHandled(true);

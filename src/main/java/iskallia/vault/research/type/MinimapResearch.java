@@ -1,4 +1,4 @@
-package iskallia.vault.research.node;
+package iskallia.vault.research.type;
 
 import iskallia.vault.research.Restrictions;
 import net.minecraft.block.Block;

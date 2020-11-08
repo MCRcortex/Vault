@@ -1,7 +1,6 @@
 package iskallia.vault.research;
 
 import iskallia.vault.Vault;
-import iskallia.vault.research.node.Research;
 import iskallia.vault.world.data.PlayerResearchesData;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;

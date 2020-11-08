@@ -3,7 +3,7 @@ package iskallia.vault.skill.talent.type;
 import com.google.gson.annotations.Expose;
 import iskallia.vault.skill.talent.TalentNode;
 import iskallia.vault.skill.talent.TalentTree;
-import iskallia.vault.world.data.PlayerAbilitiesData;
+import iskallia.vault.world.data.PlayerTalentsData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -32,7 +32,7 @@ public class VampirismTalent extends PlayerTalent {
 	public static void onLivingHurt(LivingHurtEvent event) {
 		if(!(event.getSource().getTrueSource() instanceof ServerPlayerEntity))return;
 		ServerPlayerEntity player = (ServerPlayerEntity)event.getSource().getTrueSource();
-		TalentTree abilities = PlayerAbilitiesData.get(player.getServerWorld()).getAbilities(player);
+		TalentTree abilities = PlayerTalentsData.get(player.getServerWorld()).getAbilities(player);
 
 		for(TalentNode<?> node: abilities.getNodes()) {
 			if(!(node.getTalent() instanceof VampirismTalent))continue;

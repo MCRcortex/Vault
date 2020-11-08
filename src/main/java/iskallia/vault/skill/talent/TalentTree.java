@@ -21,32 +21,11 @@ public class TalentTree implements INBTSerializable<CompoundNBT> {
     private final UUID uuid;
     private List<TalentNode<?>> nodes = new ArrayList<>();
 
-    // TODO: Extract those into their own container
-    private int vaultLevel;
-    private int exp;
-    private int unspentSkillPts;
-
     public TalentTree(UUID uuid) {
         this.uuid = uuid;
         this.add(null, ModConfigs.TALENTS.getAll().stream()
                 .map(abilityGroup -> new TalentNode<>(abilityGroup, 0))
                 .toArray(TalentNode<?>[]::new));
-    }
-
-    public int getVaultLevel() {
-        return vaultLevel;
-    }
-
-    public int getExp() {
-        return exp;
-    }
-
-    public int getTnl() {
-        return ModConfigs.LEVELS_META.getLevelMeta(this.vaultLevel).tnl;
-    }
-
-    public int getUnspentSkillPts() {
-        return unspentSkillPts;
     }
 
     public List<TalentNode<?>> getNodes() {
@@ -64,43 +43,6 @@ public class TalentTree implements INBTSerializable<CompoundNBT> {
 
     /* ------------------------------------ */
 
-    public TalentTree setVaultLevel(MinecraftServer server, int level) {
-        this.vaultLevel = level;
-        this.exp = 0;
-
-        syncLevelInfo(server);
-
-        return this;
-    }
-
-    public TalentTree addVaultExp(MinecraftServer server, int exp) {
-        int tnl;
-        this.exp += exp;
-
-        while (this.exp >= (tnl = getTnl())) {
-            this.vaultLevel++;
-            this.unspentSkillPts++;
-            this.exp -= tnl; // Carry extra exp to next level!
-        }
-
-        syncLevelInfo(server);
-
-        return this;
-    }
-
-    public TalentTree spendSkillPoints(MinecraftServer server, int amount) {
-        this.unspentSkillPts -= amount;
-
-        syncLevelInfo(server);
-
-        return this;
-    }
-
-    public TalentTree addSkillPoints(int amount) {
-        this.unspentSkillPts += amount;
-        return this;
-    }
-
     public TalentTree upgradeTalent(MinecraftServer server, TalentNode<?> talentNode) {
         this.remove(server, talentNode);
 
@@ -108,7 +50,8 @@ public class TalentTree implements INBTSerializable<CompoundNBT> {
         TalentNode<?> upgradedTalentNode = new TalentNode<>(talentGroup, talentNode.getLevel() + 1);
         this.add(server, upgradedTalentNode);
 
-        this.spendSkillPoints(server, upgradedTalentNode.getTalent().getCost());
+        // TODO: Spend skill points
+//        this.spendSkillPoints(server, upgradedTalentNode.getTalent().getCost());
 
         return this;
     }
@@ -151,25 +94,9 @@ public class TalentTree implements INBTSerializable<CompoundNBT> {
 
     /* ------------------------------------ */
 
-    public void syncLevelInfo(MinecraftServer server) {
-        NetcodeUtils.runIfPresent(server, this.uuid, player -> {
-            ModNetwork.channel.sendTo(
-                    new VaultLevelMessage(this.vaultLevel, this.exp, this.getTnl(), this.unspentSkillPts),
-                    player.connection.netManager,
-                    NetworkDirection.PLAY_TO_CLIENT
-            );
-        });
-    }
-
     @Override
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
-
-        nbt.putInt("vaultLevel", vaultLevel);
-
-        nbt.putInt("exp", exp);
-
-        nbt.putInt("unspentSkillPts", unspentSkillPts);
 
         ListNBT list = new ListNBT();
         this.nodes.stream().map(TalentNode::serializeNBT).forEach(list::add);
@@ -180,14 +107,6 @@ public class TalentTree implements INBTSerializable<CompoundNBT> {
 
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
-        this.vaultLevel = nbt.getInt("vaultLevel");
-
-        this.exp = nbt.getInt("exp");
-
-        this.unspentSkillPts = nbt.getInt("unspentSkillPts");
-
-        this.vaultLevel = nbt.getInt("vaultLevel");
-
         ListNBT list = nbt.getList("Nodes", Constants.NBT.TAG_COMPOUND);
         this.nodes.clear();
         for (int i = 0; i < list.size(); i++) {
