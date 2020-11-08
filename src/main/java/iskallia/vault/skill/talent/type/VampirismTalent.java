@@ -35,8 +35,8 @@ public class VampirismTalent extends PlayerTalent {
 		TalentTree abilities = PlayerAbilitiesData.get(player.getServerWorld()).getAbilities(player);
 
 		for(TalentNode<?> node: abilities.getNodes()) {
-			if(!(node.getAbility() instanceof VampirismTalent))continue;
-			VampirismTalent vampirism = (VampirismTalent)node.getAbility();
+			if(!(node.getTalent() instanceof VampirismTalent))continue;
+			VampirismTalent vampirism = (VampirismTalent)node.getTalent();
 			vampirism.onDamagedEntity(player, event);
 		}
 	}

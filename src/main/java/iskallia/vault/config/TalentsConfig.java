@@ -39,7 +39,7 @@ public class TalentsConfig extends Config {
 
     public TalentGroup<?> getByName(String name) {
         return this.getAll().stream().filter(group -> group.getParentName().equals(name)).findFirst()
-                .orElseThrow(() -> new IllegalStateException("Unknown ability with name " + name));
+                .orElseThrow(() -> new IllegalStateException("Unknown talent with name " + name));
     }
 
     @Override

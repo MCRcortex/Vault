@@ -56,7 +56,7 @@ public class AbilityDialog extends AbstractGui {
                     (button, matrixStack, x, y) -> { }
             );
 
-            PlayerTalent ability = talentNode.getAbility();
+            PlayerTalent ability = talentNode.getTalent();
             int cost = ability == null ? talentGroup.learningCost() : ability.getCost();
             this.abilityUpgradeButton.active = cost <= VaultBarOverlay.unspentSkillPoints
                     && talentNode.getLevel() < talentGroup.getMaxLevel();
@@ -119,7 +119,7 @@ public class AbilityDialog extends AbstractGui {
         if (talentNode.getLevel() >= talentGroup.getMaxLevel())
             return;
 
-        talentTree.upgradeAbility(null, talentNode);
+        talentTree.upgradeTalent(null, talentNode);
         refreshWidgets();
 
         ModNetwork.channel.sendToServer(new AbilityUpgradeMessage(this.talentGroup.getParentName()));

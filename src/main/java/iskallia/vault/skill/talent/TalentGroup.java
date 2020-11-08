@@ -38,10 +38,10 @@ public class TalentGroup<T extends PlayerTalent> {
 
     public String getName(int level) {
         if (level == 0) return name + " " + RomanNumber.toRoman(0);
-        return this.getRegistry().inverse().get(this.getAbility(level));
+        return this.getRegistry().inverse().get(this.getTalent(level));
     }
 
-    public T getAbility(int level) {
+    public T getTalent(int level) {
         if (level < 0) return this.levels[0];
         if (level >= getMaxLevel()) return this.levels[getMaxLevel() - 1];
         return this.levels[level - 1];
@@ -66,7 +66,7 @@ public class TalentGroup<T extends PlayerTalent> {
             } else if (this.getMaxLevel() > 1) {
                 for (int i = 0; i < this.getMaxLevel(); i++) {
                     this.registry.put(this.getParentName() + " " + RomanNumber.toRoman(i + 1),
-                            this.getAbility(i + 1));
+                            this.getTalent(i + 1));
                 }
             }
         }
@@ -74,18 +74,20 @@ public class TalentGroup<T extends PlayerTalent> {
         return this.registry;
     }
 
+    /* --------------------------------------- */
+
     public static TalentGroup<EffectTalent> ofEffect(String name, Effect effect, EffectTalent.Type type, int maxLevel,
                                                      IntUnaryOperator cost) {
-        EffectTalent[] abilities = IntStream.range(0, maxLevel)
+        EffectTalent[] talents = IntStream.range(0, maxLevel)
                 .mapToObj(i -> new EffectTalent(cost.applyAsInt(i + 1), effect, i, type))
                 .toArray(EffectTalent[]::new);
-        return new TalentGroup<>(name, abilities);
+        return new TalentGroup<>(name, talents);
     }
 
     public static TalentGroup<AttributeTalent> ofAttribute(String name, Attribute attribute, String modifierName,
                                                            int maxLevel, IntUnaryOperator cost, IntToDoubleFunction amount,
                                                            IntFunction<AttributeModifier.Operation> operation) {
-        AttributeTalent[] abilities = IntStream.range(0, maxLevel)
+        AttributeTalent[] talents = IntStream.range(0, maxLevel)
                 .mapToObj(i -> new AttributeTalent(cost.applyAsInt(i + 1), attribute,
                         new AttributeTalent.Modifier(
                                 modifierName + " " + RomanNumber.toRoman(i + 1),
@@ -93,7 +95,7 @@ public class TalentGroup<T extends PlayerTalent> {
                                 operation.apply(i + 1)
                         )))
                 .toArray(AttributeTalent[]::new);
-        return new TalentGroup<>(name, abilities);
+        return new TalentGroup<>(name, talents);
     }
 
 }

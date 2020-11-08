@@ -1,35 +1,35 @@
-package iskallia.vault.skill.talent;
+package iskallia.vault.skill.ability;
 
 import iskallia.vault.init.ModConfigs;
-import iskallia.vault.skill.talent.type.PlayerTalent;
+import iskallia.vault.skill.ability.type.PlayerAbility;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
-public class TalentNode<T extends PlayerTalent> implements INBTSerializable<CompoundNBT> {
+public class AbilityNode<T extends PlayerAbility> implements INBTSerializable<CompoundNBT> {
 
-    private TalentGroup<T> group;
+    private AbilityGroup<T> group;
     private int level;
 
-    public TalentNode(TalentGroup<T> group, int level) {
+    public AbilityNode(AbilityGroup<T> group, int level) {
         this.group = group;
         this.level = level;
     }
 
-    public TalentGroup<T> getGroup() {
-        return this.group;
+    public AbilityGroup<T> getGroup() {
+        return group;
     }
 
     public int getLevel() {
-        return this.level;
+        return level;
     }
 
-    public T getTalent() {
+    public T getAbility() {
         if (!isLearned()) return null;
-        return this.getGroup().getTalent(this.getLevel());
+        return this.group.getAbility(this.level);
     }
 
     public String getName() {
-        return this.getGroup().getName(this.getLevel());
+        return this.group.getName(this.level);
     }
 
     public boolean isLearned() {
@@ -48,7 +48,7 @@ public class TalentNode<T extends PlayerTalent> implements INBTSerializable<Comp
     @SuppressWarnings("unchecked")
     public void deserializeNBT(CompoundNBT nbt) {
         String groupName = nbt.getString("Name");
-        this.group = (TalentGroup<T>) ModConfigs.TALENTS.getByName(groupName);
+        this.group = (AbilityGroup<T>) ModConfigs.ABILITIES.getByName(groupName);
         this.level = nbt.getInt("Level");
     }
 
@@ -57,18 +57,12 @@ public class TalentNode<T extends PlayerTalent> implements INBTSerializable<Comp
         if (this == other) return true;
         if (other == null || getClass() != other.getClass()) return false;
 
-        TalentNode<?> that = (TalentNode<?>) other;
+        AbilityNode<?> that = (AbilityNode<?>) other;
 
-        return this.level == that.level &&
-                this.group.getParentName().equals(that.group.getParentName());
+        return this.level == that.level
+                && this.group.getParentName().equals(that.group.getParentName());
     }
 
     /* ----------------------------------------- */
-
-    public static <T extends PlayerTalent> TalentNode<T> fromNBT(CompoundNBT nbt, Class<T> clazz) {
-        TalentGroup<T> group = (TalentGroup<T>) ModConfigs.TALENTS.getByName(nbt.getString("Name"));
-        int level = nbt.getInt("Level");
-        return new TalentNode<>(group, level);
-    }
 
 }

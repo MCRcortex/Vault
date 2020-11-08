@@ -51,7 +51,7 @@ public class PlayerAbilitiesData extends WorldSavedData {
         if (oldTalentTree != null) {
             for (TalentNode<?> node : oldTalentTree.getNodes()) {
                 if (node.isLearned())
-                    node.getAbility().onRemoved(player);
+                    node.getTalent().onRemoved(player);
             }
         }
 
@@ -93,7 +93,7 @@ public class PlayerAbilitiesData extends WorldSavedData {
     }
 
     public PlayerAbilitiesData upgradeAbility(ServerPlayerEntity player, TalentNode<?> talentNode) {
-        this.getAbilities(player).upgradeAbility(player.getServer(), talentNode);
+        this.getAbilities(player).upgradeTalent(player.getServer(), talentNode);
 
         markDirty();
         return this;

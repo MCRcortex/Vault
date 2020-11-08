@@ -19,10 +19,12 @@ import java.util.UUID;
 public class TalentTree implements INBTSerializable<CompoundNBT> {
 
     private final UUID uuid;
+    private List<TalentNode<?>> nodes = new ArrayList<>();
+
+    // TODO: Extract those into their own container
     private int vaultLevel;
     private int exp;
     private int unspentSkillPts;
-    private List<TalentNode<?>> nodes = new ArrayList<>();
 
     public TalentTree(UUID uuid) {
         this.uuid = uuid;
@@ -57,23 +59,10 @@ public class TalentTree implements INBTSerializable<CompoundNBT> {
 
     public TalentNode<?> getNodeByName(String name) {
         return this.nodes.stream().filter(node -> node.getGroup().getParentName().equals(name))
-                .findFirst().orElseThrow(() -> new IllegalArgumentException("Unknown ability name -> " + name));
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("Unknown talent name -> " + name));
     }
 
     /* ------------------------------------ */
-
-    public TalentTree add(MinecraftServer server, TalentNode<?>... nodes) {
-        for (TalentNode<?> node : nodes) {
-            NetcodeUtils.runIfPresent(server, this.uuid, player -> {
-                if (node.isLearned()) {
-                    node.getAbility().onAdded(player);
-                }
-            });
-            this.nodes.add(node);
-        }
-
-        return this;
-    }
 
     public TalentTree setVaultLevel(MinecraftServer server, int level) {
         this.vaultLevel = level;
@@ -112,24 +101,37 @@ public class TalentTree implements INBTSerializable<CompoundNBT> {
         return this;
     }
 
-    public TalentTree upgradeAbility(MinecraftServer server, TalentNode<?> talentNode) {
+    public TalentTree upgradeTalent(MinecraftServer server, TalentNode<?> talentNode) {
         this.remove(server, talentNode);
 
         TalentGroup<?> talentGroup = ModConfigs.TALENTS.getByName(talentNode.getGroup().getParentName());
         TalentNode<?> upgradedTalentNode = new TalentNode<>(talentGroup, talentNode.getLevel() + 1);
         this.add(server, upgradedTalentNode);
 
-        this.spendSkillPoints(server, upgradedTalentNode.getAbility().getCost());
+        this.spendSkillPoints(server, upgradedTalentNode.getTalent().getCost());
 
         return this;
     }
 
     /* ------------------------------------ */
 
+    public TalentTree add(MinecraftServer server, TalentNode<?>... nodes) {
+        for (TalentNode<?> node : nodes) {
+            NetcodeUtils.runIfPresent(server, this.uuid, player -> {
+                if (node.isLearned()) {
+                    node.getTalent().onAdded(player);
+                }
+            });
+            this.nodes.add(node);
+        }
+
+        return this;
+    }
+
     public TalentTree tick(MinecraftServer server) {
         NetcodeUtils.runIfPresent(server, this.uuid, player -> {
             this.nodes.stream().filter(TalentNode::isLearned)
-                    .forEach(node -> node.getAbility().tick(player));
+                    .forEach(node -> node.getTalent().tick(player));
         });
         return this;
     }
@@ -138,7 +140,7 @@ public class TalentTree implements INBTSerializable<CompoundNBT> {
         for (TalentNode<?> node : nodes) {
             NetcodeUtils.runIfPresent(server, this.uuid, player -> {
                 if (node.isLearned()) {
-                    node.getAbility().onRemoved(player);
+                    node.getTalent().onRemoved(player);
                 }
             });
             this.nodes.remove(node);
