@@ -24,6 +24,11 @@ public class ResearchesGUIConfig extends Config {
         SkillStyle style;
         this.styles = new HashMap<>();
 
+        style = new SkillStyle(-100, -100,
+                16 * 9, 0);
+        style.frameType = AbilityFrame.STAR;
+        styles.put("Pickaxe Proficiency I", style);
+
         style = new SkillStyle(0, 0,
                 0, 0);
         style.frameType = AbilityFrame.RECTANGULAR;

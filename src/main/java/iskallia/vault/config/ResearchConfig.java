@@ -37,27 +37,28 @@ public class ResearchConfig extends Config {
 
     @Override
     protected void reset() {
+        this.MOD_RESEARCHES = new LinkedList<>();
         this.MOD_RESEARCHES.add(new ModResearch("Backpacks!", 2, "simplybackpacks").withRestrictions(false, false, false, false, true));
         this.MOD_RESEARCHES.add(new ModResearch("Waystones", 3, "waystones").withRestrictions(false, false, true, true, true));
         this.MOD_RESEARCHES.add(new ModResearch("Safety First", 3, "torchmaster").withRestrictions(false, false, false, false, true));
-        this.MOD_RESEARCHES.add(new ModResearch("Organisation", 3, "trashcans","dankstorage","pickletweaks").withRestrictions(false, false, false, false, true));
+        this.MOD_RESEARCHES.add(new ModResearch("Organisation", 3, "trashcans", "dankstorage", "pickletweaks").withRestrictions(false, false, false, false, true));
         this.MOD_RESEARCHES.add(new ModResearch("Super Builder", 3, "buildinggadgets").withRestrictions(false, false, false, false, true));
         this.MOD_RESEARCHES.add(new ModResearch("Super Miner", 8, "mininggadgets").withRestrictions(false, false, false, false, true));
-        this.MOD_RESEARCHES.add(new ModResearch("Storage Noob", 1, "ironchest","metalbarrels").withRestrictions(false, false, false, false, true));
-        this.MOD_RESEARCHES.add(new ModResearch("Storage Master", 2, "storage_overhaul","storagedrawers","modularrouters").withRestrictions(false, false, false, false, true));
+        this.MOD_RESEARCHES.add(new ModResearch("Storage Noob", 1, "ironchest", "metalbarrels").withRestrictions(false, false, false, false, true));
+        this.MOD_RESEARCHES.add(new ModResearch("Storage Master", 2, "storage_overhaul", "storagedrawers", "modularrouters").withRestrictions(false, false, false, false, true));
         this.MOD_RESEARCHES.add(new ModResearch("Storage Refined", 6, "refinedstorage").withRestrictions(false, false, false, false, true));
         this.MOD_RESEARCHES.add(new ModResearch("Storage Energistic", 6, "appliedenergistics").withRestrictions(false, false, false, false, true));
         this.MOD_RESEARCHES.add(new ModResearch("Storage Enthusiast", 4, "rftoolsstorage").withRestrictions(false, false, false, false, true));
-        this.MOD_RESEARCHES.add(new ModResearch("Decorator", 1, "decorative_blocks","camera","masonry").withRestrictions(false, false, false, false, true));
-        this.MOD_RESEARCHES.add(new ModResearch("Decorator Pro", 2, "mcwbridges","mcwdoors","mcwroofs","mcwwindows","enviromats","blockcarpentry","platforms").withRestrictions(false, false, false, false, true));
-        this.MOD_RESEARCHES.add(new ModResearch("Engineer", 1, "ironfurnaces","engineersdecor").withRestrictions(false, false, false, false, true));
-        this.MOD_RESEARCHES.add(new ModResearch("Super Engineer", 3, "movingelevators","immersiveengineering").withRestrictions(false, false, false, false, true));
-        this.MOD_RESEARCHES.add(new ModResearch("One with Ender", 1, "endermail","elevatorid").withRestrictions(false, false, false, false, true));
+        this.MOD_RESEARCHES.add(new ModResearch("Decorator", 1, "decorative_blocks", "camera", "masonry").withRestrictions(false, false, false, false, true));
+        this.MOD_RESEARCHES.add(new ModResearch("Decorator Pro", 2, "mcwbridges", "mcwdoors", "mcwroofs", "mcwwindows", "enviromats", "blockcarpentry", "platforms").withRestrictions(false, false, false, false, true));
+        this.MOD_RESEARCHES.add(new ModResearch("Engineer", 1, "ironfurnaces", "engineersdecor").withRestrictions(false, false, false, false, true));
+        this.MOD_RESEARCHES.add(new ModResearch("Super Engineer", 3, "movingelevators", "immersiveengineering").withRestrictions(false, false, false, false, true));
+        this.MOD_RESEARCHES.add(new ModResearch("One with Ender", 1, "endermail", "elevatorid").withRestrictions(false, false, false, false, true));
         this.MOD_RESEARCHES.add(new ModResearch("The Chef", 1, "cookingforblockheads").withRestrictions(false, false, false, false, true));
         this.MOD_RESEARCHES.add(new ModResearch("Traveller", 1, "comforts").withRestrictions(false, false, false, false, true));
         this.MOD_RESEARCHES.add(new ModResearch("Adventurer", 3, "dimstorage").withRestrictions(false, false, false, false, true));
         this.MOD_RESEARCHES.add(new ModResearch("Hacker", 6, "xnet").withRestrictions(false, false, false, false, true));
-        this.MOD_RESEARCHES.add(new ModResearch("Redstoner", 1, "rsgauges","rftoolsutility").withRestrictions(false, false, false, false, true));
+        this.MOD_RESEARCHES.add(new ModResearch("Redstoner", 1, "rsgauges", "rftoolsutility").withRestrictions(false, false, false, false, true));
         this.MOD_RESEARCHES.add(new ModResearch("Natural Magical", 8, "botania").withRestrictions(false, false, false, false, true));
         this.MOD_RESEARCHES.add(new ModResearch("Tech Freak", 10, "mekanism").withRestrictions(false, false, false, false, true));
         this.MOD_RESEARCHES.add(new ModResearch("The Emerald King", 3, "easy_villagers").withRestrictions(false, false, false, false, true));
@@ -75,13 +76,16 @@ public class ResearchConfig extends Config {
         this.MOD_RESEARCHES.add(new ModResearch("Automatic Genius", 20, ""));
 
         this.CUSTOM_RESEARCHES = new LinkedList<>();
-//        this.CUSTOM_RESEARCHES.add(new CustomResearch("Pickaxe Proficiency I", 1,
-//                new String[]{"minecraft:wooden_pickaxe",
-//                        "minecraft:stone_pickaxe",
-//                        "minecraft:iron_pickaxe",
-//                        "minecraft:diamond_pickaxe"},
-//                new String[]{},
-//                new String[]{}));
+        CustomResearch sampleResearch = new CustomResearch("Pickaxe Proficiency I", 1);
+        sampleResearch.getItemRestrictions().put(
+                "minecraft:wooden_pickaxe", Restrictions.forItems()
+                        .set(Restrictions.Type.USABILITY, true)
+                        .set(Restrictions.Type.HITTABILITY, true));
+        sampleResearch.getBlockRestriction().put(
+                "minecraft:stone", Restrictions.forBlocks());
+        sampleResearch.getEntityRestrictions().put(
+                "minecraft:creeper", Restrictions.forEntities());
+        this.CUSTOM_RESEARCHES.add(sampleResearch);
     }
 
 }

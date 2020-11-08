@@ -19,7 +19,7 @@ public class ModResearch extends Research {
     public ModResearch(String name, int cost, String... modIds) {
         super(name, cost);
         this.modIds = new HashSet<>();
-        this.restrictions = new Restrictions();
+        this.restrictions = Restrictions.forMods();
 
         Collections.addAll(this.modIds, modIds);
     }
