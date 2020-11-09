@@ -71,30 +71,11 @@ public class VaultPedestalBlock extends Block {
 		pedestal.setItem(heldItem);
 		pedestal.addCount(heldItem.getCount());
 		pedestal.update();
+
 		player.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
 
 		return ActionResultType.SUCCESS;
 	}
-	/*
-	 * @Override public void onEntityCollision(BlockState state, World worldIn,
-	 * BlockPos pos, Entity entityIn) { if (worldIn.isRemote) return;
-	 * 
-	 * if (!(entityIn instanceof ItemEntity)) { return; }
-	 * 
-	 * VaultPedestalTileEntity pedestal = getVaultPedestalTileEntity(worldIn, pos);
-	 * if (pedestal == null) return;
-	 * 
-	 * if (pedestal.getItem() == null) return;
-	 * 
-	 * ItemStack itemEntity = ((ItemEntity) entityIn).getItem();
-	 * 
-	 * if (pedestal.getItem().isItemEqualIgnoreDurability(itemEntity)) {
-	 * System.out.println(itemEntity.getDisplayName()); int count =
-	 * itemEntity.getCount(); pedestal.setItemCount(pedestal.getItemCount() +
-	 * count); entityIn.remove(); }
-	 * 
-	 * }
-	 */
 
 	public static VaultPedestalTileEntity getVaultPedestalTileEntity(World worldIn, BlockPos pos) {
 		TileEntity te = worldIn.getTileEntity(pos);
