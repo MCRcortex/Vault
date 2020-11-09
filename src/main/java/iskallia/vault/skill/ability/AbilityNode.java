@@ -1,6 +1,7 @@
-package iskallia.vault.ability;
+package iskallia.vault.skill.ability;
 
 import iskallia.vault.init.ModConfigs;
+import iskallia.vault.skill.ability.type.PlayerAbility;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -15,20 +16,20 @@ public class AbilityNode<T extends PlayerAbility> implements INBTSerializable<Co
     }
 
     public AbilityGroup<T> getGroup() {
-        return this.group;
+        return group;
     }
 
     public int getLevel() {
-        return this.level;
+        return level;
     }
 
     public T getAbility() {
         if (!isLearned()) return null;
-        return this.getGroup().getAbility(this.getLevel());
+        return this.group.getAbility(this.level);
     }
 
     public String getName() {
-        return this.getGroup().getName(this.getLevel());
+        return this.group.getName(this.level);
     }
 
     public boolean isLearned() {
@@ -47,7 +48,7 @@ public class AbilityNode<T extends PlayerAbility> implements INBTSerializable<Co
     @SuppressWarnings("unchecked")
     public void deserializeNBT(CompoundNBT nbt) {
         String groupName = nbt.getString("Name");
-        this.group = (AbilityGroup<T>) ModConfigs.TALENTS.getByName(groupName);
+        this.group = (AbilityGroup<T>) ModConfigs.ABILITIES.getByName(groupName);
         this.level = nbt.getInt("Level");
     }
 
@@ -58,14 +59,10 @@ public class AbilityNode<T extends PlayerAbility> implements INBTSerializable<Co
 
         AbilityNode<?> that = (AbilityNode<?>) other;
 
-        return this.level == that.level &&
-                this.group.getParentName().equals(that.group.getParentName());
+        return this.level == that.level
+                && this.group.getParentName().equals(that.group.getParentName());
     }
 
-    public static <T extends PlayerAbility> AbilityNode<T> fromNBT(CompoundNBT nbt, Class<T> clazz) {
-        AbilityGroup<T> group = (AbilityGroup<T>) ModConfigs.TALENTS.getByName(nbt.getString("Name"));
-        int level = nbt.getInt("Level");
-        return new AbilityNode<>(group, level);
-    }
+    /* ----------------------------------------- */
 
 }

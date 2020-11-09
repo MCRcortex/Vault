@@ -1,7 +1,6 @@
-package iskallia.vault.ability.passive;
+package iskallia.vault.skill.talent.type;
 
 import com.google.gson.annotations.Expose;
-import iskallia.vault.ability.PlayerAbility;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
@@ -12,17 +11,17 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class EffectAbility extends PlayerAbility {
+public class EffectTalent extends PlayerTalent {
 
 	@Expose private final String effect;
 	@Expose private final int amplifier;
 	@Expose private final String type;
 
-	public EffectAbility(int cost, Effect effect, int amplifier, Type type) {
+	public EffectTalent(int cost, Effect effect, int amplifier, Type type) {
 		this(cost, Registry.EFFECTS.getKey(effect).toString(), amplifier, type.toString());
 	}
 
-	public EffectAbility(int cost, String effect, int amplifier, String type) {
+	public EffectTalent(int cost, String effect, int amplifier, String type) {
 		super(cost);
 		this.effect = effect;
 		this.amplifier = amplifier;

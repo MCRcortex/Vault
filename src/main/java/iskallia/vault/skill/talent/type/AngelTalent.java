@@ -1,11 +1,10 @@
-package iskallia.vault.ability.passive;
+package iskallia.vault.skill.talent.type;
 
-import iskallia.vault.ability.PlayerAbility;
 import net.minecraft.entity.player.PlayerEntity;
 
-public class AngelAbility extends PlayerAbility {
+public class AngelTalent extends PlayerTalent {
 
-	public AngelAbility(int cost) {
+	public AngelTalent(int cost) {
 		super(cost);
 	}
 

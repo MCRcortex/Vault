@@ -2,7 +2,7 @@ package iskallia.vault.world.data;
 
 import iskallia.vault.Vault;
 import iskallia.vault.research.ResearchTree;
-import iskallia.vault.research.node.Research;
+import iskallia.vault.research.type.Research;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -38,11 +38,29 @@ public class PlayerResearchesData extends WorldSavedData {
         return this.playerMap.computeIfAbsent(uuid, ResearchTree::new);
     }
 
+    /* ------------------------------- */
+
     public PlayerResearchesData research(ServerPlayerEntity player, Research research) {
-        getResearches(player).research(research.getName());
+        ResearchTree researchTree = getResearches(player);
+        researchTree.research(research.getName());
+
+        researchTree.sync(player.getServer());
+
         markDirty();
         return this;
     }
+
+    public PlayerResearchesData resetResearchTree(ServerPlayerEntity player) {
+        ResearchTree researchTree = getResearches(player);
+        researchTree.resetAll();
+
+        researchTree.sync(player.getServer());
+
+        markDirty();
+        return this;
+    }
+
+    /* ------------------------------- */
 
     @Override
     public void read(CompoundNBT nbt) {

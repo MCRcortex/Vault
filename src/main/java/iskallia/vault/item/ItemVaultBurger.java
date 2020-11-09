@@ -1,10 +1,12 @@
 package iskallia.vault.item;
 
 import iskallia.vault.Vault;
-import iskallia.vault.ability.AbilityTree;
+import iskallia.vault.skill.PlayerVaultStats;
+import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.util.MathUtilities;
-import iskallia.vault.world.data.PlayerAbilitiesData;
+import iskallia.vault.world.data.PlayerTalentsData;
+import iskallia.vault.world.data.PlayerVaultStatsData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Food;
@@ -33,14 +35,14 @@ public class ItemVaultBurger extends Item {
     public ItemStack onItemUseFinish(ItemStack stack, World world, LivingEntity entityLiving) {
         if (!world.isRemote) {
             ServerPlayerEntity player = (ServerPlayerEntity) entityLiving;
-            PlayerAbilitiesData playerAbilitiesData = PlayerAbilitiesData.get((ServerWorld) world);
-            AbilityTree abilities = playerAbilitiesData.getAbilities(player);
 
-            int tnl = abilities.getTnl();
-            float randomPercentage = MathUtilities.randomFloat(ModConfigs.VAULT_ITEMS.VAULT_BURGER.minExpPercent,
+            PlayerVaultStats stats = PlayerVaultStatsData.get((ServerWorld) world).getVaultStats(player);
+
+            float randomPercentage = MathUtilities.randomFloat(
+                    ModConfigs.VAULT_ITEMS.VAULT_BURGER.minExpPercent,
                     ModConfigs.VAULT_ITEMS.VAULT_BURGER.maxExpPercent);
 
-            playerAbilitiesData.addVaultExp(player, (int) (tnl * randomPercentage));
+            stats.addVaultExp(player.getServer(), (int) (stats.getTnl() * randomPercentage));
         }
 
         return super.onItemUseFinish(stack, world, entityLiving);

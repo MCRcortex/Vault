@@ -3,7 +3,7 @@ package iskallia.vault.client.gui.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
-import iskallia.vault.ability.AbilityTree;
+import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.client.gui.component.AbilityDialog;
 import iskallia.vault.client.gui.component.ResearchDialog;
 import iskallia.vault.client.gui.helper.FontHelper;
@@ -15,7 +15,6 @@ import iskallia.vault.client.gui.tab.SkillTab;
 import iskallia.vault.client.gui.tab.TalentsTab;
 import iskallia.vault.container.SkillTreeContainer;
 import iskallia.vault.research.ResearchTree;
-import iskallia.vault.research.node.Research;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -42,27 +41,29 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
     public SkillTreeScreen(SkillTreeContainer container, PlayerInventory inventory, ITextComponent title) {
         super(container, inventory, new StringTextComponent("Ability Tree Screen!"));
 
-        System.out.println(getContainer().getResearchTree().getResearchesDone());
-
-//        this.activeTab = new TalentsTab(this);
         this.activeTab = new ResearchesTab(this);
+        TalentTree talentTree = getContainer().getTalentTree();
+        ResearchTree researchTree = getContainer().getResearchTree();
+        this.abilityDialog = new AbilityDialog(talentTree);
+        this.researchDialog = new ResearchDialog(researchTree, talentTree);
         refreshWidgets();
     }
 
     public void refreshWidgets() {
         this.activeTab.refresh();
-        AbilityTree abilityTree = getContainer().getAbilityTree();
-        ResearchTree researchTree = getContainer().getResearchTree();
-        this.abilityDialog = new AbilityDialog(abilityTree);
-        this.researchDialog = new ResearchDialog(researchTree, abilityTree);
-
+        if (this.abilityDialog != null) {
+            this.abilityDialog.refreshWidgets();
+        }
+        if (this.researchDialog != null) {
+            this.researchDialog.refreshWidgets();
+        }
     }
 
     public Rectangle getContainerBounds() {
         Rectangle bounds = new Rectangle();
         bounds.x0 = 30; //px
         bounds.y0 = 60; //px
-        bounds.x1 = (int) (width * 0.6); // Responsiveness ayyyyy
+        bounds.x1 = (int) (width * 0.55); // Responsiveness ayyyyy
         bounds.y1 = height - 30;
         return bounds;
     }
@@ -172,11 +173,9 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
 
         Rectangle containerBounds = getContainerBounds();
 
-        AbilityTree abilityTree = getContainer().getAbilityTree();
-//        renderLabel(matrixStack, "Vault Level: " + abilityTree.getVaultLevel(), 5);
-        if (abilityTree.getUnspentSkillPts() > 0) {
+        if (VaultBarOverlay.unspentSkillPoints > 0) {
             renderLabel(matrixStack,
-                    abilityTree.getUnspentSkillPts() + " unspent skill point(s)",
+                    VaultBarOverlay.unspentSkillPoints + " unspent skill point(s)",
                     containerBounds.getHeight() - 28);
         }
         renderContainerBorders(matrixStack);
@@ -210,9 +209,9 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
                 63, 0,
                 abilitiesTabBounds.getWidth(), abilitiesTabBounds.getHeight());
         blit(matrixStack,
-                abilitiesTabBounds.x0 + 8,
-                containerBounds.y0 - 25 - 10,
-                1, 44, 13, 13);
+                abilitiesTabBounds.x0 + 6,
+                containerBounds.y0 - 25 - 11,
+                32, 60, 16, 16);
 
         // Talents
         Rectangle talentsTabBounds = getTabBounds(1, activeTab instanceof TalentsTab);
@@ -222,9 +221,9 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
                 63, (activeTab instanceof TalentsTab) ? 28 : 0,
                 talentsTabBounds.getWidth(), talentsTabBounds.getHeight());
         blit(matrixStack,
-                talentsTabBounds.x0 + 8,
-                containerBounds.y0 - 25 - 10,
-                1, 44, 13, 13);
+                talentsTabBounds.x0 + 6,
+                containerBounds.y0 - 25 - 11,
+                16, 60, 16, 16);
 
         // Research
         Rectangle researchesTabBounds = getTabBounds(2, activeTab instanceof ResearchesTab);
@@ -234,9 +233,9 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
                 63, (activeTab instanceof ResearchesTab) ? 28 : 0,
                 researchesTabBounds.getWidth(), researchesTabBounds.getHeight());
         blit(matrixStack,
-                researchesTabBounds.x0 + 8,
-                containerBounds.y0 - 25 - 10,
-                1, 44, 13, 13);
+                researchesTabBounds.x0 + 6,
+                containerBounds.y0 - 25 - 11,
+                0, 60, 16, 16);
 
         Minecraft minecraft = getMinecraft();
 
@@ -251,11 +250,10 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
 
         minecraft.textureManager.bindTexture(VaultBarOverlay.RESOURCE);
 
-        AbilityTree abilityTree = getContainer().getAbilityTree();
-        String text = String.valueOf(abilityTree.getVaultLevel());
+        String text = String.valueOf(VaultBarOverlay.vaultLevel);
         int textWidth = minecraft.fontRenderer.getStringWidth(text);
         int barWidth = 85;
-        float expPercentage = (float) abilityTree.getExp() / abilityTree.getTnl();
+        float expPercentage = (float) VaultBarOverlay.vaultExp / VaultBarOverlay.tnl;
 
         int barX = containerBounds.x1 - barWidth - 5;
         int barY = containerBounds.y0 - 10;

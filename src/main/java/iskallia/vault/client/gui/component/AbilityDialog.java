@@ -1,13 +1,14 @@
 package iskallia.vault.client.gui.component;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import iskallia.vault.ability.AbilityGroup;
-import iskallia.vault.ability.AbilityNode;
-import iskallia.vault.ability.AbilityTree;
-import iskallia.vault.ability.PlayerAbility;
+import iskallia.vault.skill.talent.TalentGroup;
+import iskallia.vault.skill.talent.TalentNode;
+import iskallia.vault.skill.talent.TalentTree;
+import iskallia.vault.skill.talent.type.PlayerTalent;
 import iskallia.vault.client.gui.helper.FontHelper;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.client.gui.helper.UIHelper;
+import iskallia.vault.client.gui.overlay.VaultBarOverlay;
 import iskallia.vault.client.gui.screen.SkillTreeScreen;
 import iskallia.vault.client.gui.widget.TalentWidget;
 import iskallia.vault.config.entry.SkillStyle;
@@ -23,29 +24,29 @@ import net.minecraft.util.text.StringTextComponent;
 public class AbilityDialog extends AbstractGui {
 
     private Rectangle bounds;
-    private AbilityGroup<?> abilityGroup;
-    private AbilityTree abilityTree;
+    private TalentGroup<?> talentGroup;
+    private TalentTree talentTree;
 
     private TalentWidget abilityWidget;
     private Button abilityUpgradeButton;
 
-    public AbilityDialog(AbilityTree abilityTree) {
-        this.abilityGroup = null;
-        this.abilityTree = abilityTree;
+    public AbilityDialog(TalentTree talentTree) {
+        this.talentGroup = null;
+        this.talentTree = talentTree;
         refreshWidgets();
     }
 
     public void refreshWidgets() {
-        if (this.abilityGroup != null) {
+        if (this.talentGroup != null) {
             SkillStyle abilityStyle = ModConfigs.TALENTS_GUI.getStyles()
-                    .get(abilityGroup.getParentName());
-            this.abilityWidget = new TalentWidget(abilityGroup, abilityTree, abilityStyle);
+                    .get(talentGroup.getParentName());
+            this.abilityWidget = new TalentWidget(talentGroup, talentTree, abilityStyle);
 
-            AbilityNode<?> abilityNode = abilityTree.getNodeOf(abilityGroup);
+            TalentNode<?> talentNode = talentTree.getNodeOf(talentGroup);
 
-            String buttonText = !abilityNode.isLearned() ? "Learn (" + abilityGroup.learningCost() + ")" :
-                    abilityNode.getLevel() >= abilityGroup.getMaxLevel() ? "Fully Learned"
-                            : "Upgrade (" + abilityGroup.cost(abilityNode.getLevel() + 1) + ")";
+            String buttonText = !talentNode.isLearned() ? "Learn (" + talentGroup.learningCost() + ")" :
+                    talentNode.getLevel() >= talentGroup.getMaxLevel() ? "Fully Learned"
+                            : "Upgrade (" + talentGroup.cost(talentNode.getLevel() + 1) + ")";
 
             this.abilityUpgradeButton = new Button(
                     10, bounds.getHeight() - 40,
@@ -55,15 +56,15 @@ public class AbilityDialog extends AbstractGui {
                     (button, matrixStack, x, y) -> { }
             );
 
-            PlayerAbility ability = abilityNode.getAbility();
-            int cost = ability == null ? abilityGroup.learningCost() : ability.getCost();
-            this.abilityUpgradeButton.active = cost <= abilityTree.getUnspentSkillPts()
-                    && abilityNode.getLevel() < abilityGroup.getMaxLevel();
+            PlayerTalent ability = talentNode.getTalent();
+            int cost = ability == null ? talentGroup.learningCost() : ability.getCost();
+            this.abilityUpgradeButton.active = cost <= VaultBarOverlay.unspentSkillPoints
+                    && talentNode.getLevel() < talentGroup.getMaxLevel();
         }
     }
 
-    public void setAbilityGroup(AbilityGroup<?> abilityGroup) {
-        this.abilityGroup = abilityGroup;
+    public void setTalentGroup(TalentGroup<?> talentGroup) {
+        this.talentGroup = talentGroup;
         refreshWidgets();
     }
 
@@ -113,15 +114,15 @@ public class AbilityDialog extends AbstractGui {
     }
 
     public void upgradeAbility() {
-        AbilityNode<?> abilityNode = this.abilityTree.getNodeOf(abilityGroup);
+        TalentNode<?> talentNode = this.talentTree.getNodeOf(talentGroup);
 
-        if (abilityNode.getLevel() >= abilityGroup.getMaxLevel())
+        if (talentNode.getLevel() >= talentGroup.getMaxLevel())
             return;
 
-        abilityTree.upgradeAbility(null, abilityNode);
+        talentTree.upgradeTalent(null, talentNode);
         refreshWidgets();
 
-        ModNetwork.channel.sendToServer(new AbilityUpgradeMessage(this.abilityGroup.getParentName()));
+        ModNetwork.channel.sendToServer(new AbilityUpgradeMessage(this.talentGroup.getParentName()));
     }
 
     public void
@@ -130,7 +131,7 @@ public class AbilityDialog extends AbstractGui {
 
         renderBackground(matrixStack, mouseX, mouseY, partialTicks);
 
-        if (abilityGroup == null) return;
+        if (talentGroup == null) return;
 
         matrixStack.translate(bounds.x0 + 5, bounds.y0 + 5, 0);
         renderHeading(matrixStack, mouseX, mouseY, partialTicks);
@@ -187,9 +188,9 @@ public class AbilityDialog extends AbstractGui {
 
         FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
         SkillStyle abilityStyle = ModConfigs.TALENTS_GUI.getStyles()
-                .get(abilityGroup.getParentName());
+                .get(talentGroup.getParentName());
 
-        AbilityNode<?> abilityNode = abilityTree.getNodeByName(abilityGroup.getParentName());
+        TalentNode<?> talentNode = talentTree.getNodeByName(talentGroup.getParentName());
 
         Rectangle abilityBounds = abilityWidget.getClickableBounds();
 
@@ -199,11 +200,11 @@ public class AbilityDialog extends AbstractGui {
                 2, 2, 2, 2,
                 0xFF_8B8B8B);
 
-        String abilityName = abilityNode.getLevel() == 0
-                ? abilityNode.getGroup().getName(1)
-                : abilityNode.getName();
+        String abilityName = talentNode.getLevel() == 0
+                ? talentNode.getGroup().getName(1)
+                : talentNode.getName();
 
-        String subText = abilityNode.getLevel() == 0
+        String subText = talentNode.getLevel() == 0
                 ? "Not Learned Yet"
                 : "Learned";
 
@@ -216,14 +217,14 @@ public class AbilityDialog extends AbstractGui {
         FontHelper.drawStringWithBorder(matrixStack,
                 abilityName,
                 abilityBounds.getWidth() + gap, 13,
-                abilityNode.getLevel() == 0 ? 0xFF_FFFFFF : 0xFF_fff8c7,
-                abilityNode.getLevel() == 0 ? 0xFF_000000 : 0xFF_3b3300);
+                talentNode.getLevel() == 0 ? 0xFF_FFFFFF : 0xFF_fff8c7,
+                talentNode.getLevel() == 0 ? 0xFF_000000 : 0xFF_3b3300);
 
         FontHelper.drawStringWithBorder(matrixStack,
                 subText,
                 abilityBounds.getWidth() + gap, 23,
-                abilityNode.getLevel() == 0 ? 0xFF_FFFFFF : 0xFF_fff8c7,
-                abilityNode.getLevel() == 0 ? 0xFF_000000 : 0xFF_3b3300);
+                talentNode.getLevel() == 0 ? 0xFF_FFFFFF : 0xFF_fff8c7,
+                talentNode.getLevel() == 0 ? 0xFF_000000 : 0xFF_3b3300);
 
 //        FontHelper.drawStringWithBorder(matrixStack,
 //                abilityGroup.getMaxLevel() + " Max Level(s)",
@@ -260,9 +261,9 @@ public class AbilityDialog extends AbstractGui {
 
         Minecraft.getInstance().getTextureManager().bindTexture(SkillTreeScreen.UI_RESOURCE);
 
-        AbilityNode<?> abilityNode = abilityTree.getNodeOf(abilityGroup);
+        TalentNode<?> talentNode = talentTree.getNodeOf(talentGroup);
 
-        if (abilityNode.isLearned() && abilityNode.getLevel() < abilityGroup.getMaxLevel()) {
+        if (talentNode.isLearned() && talentNode.getLevel() < talentGroup.getMaxLevel()) {
             blit(matrixStack,
                     13, bounds.getHeight() - 40 - 2,
                     121, 0, 15, 23);

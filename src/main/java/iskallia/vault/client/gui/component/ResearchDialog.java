@@ -1,11 +1,11 @@
 package iskallia.vault.client.gui.component;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import iskallia.vault.ability.AbilityNode;
-import iskallia.vault.ability.AbilityTree;
+import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.client.gui.helper.FontHelper;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.client.gui.helper.UIHelper;
+import iskallia.vault.client.gui.overlay.VaultBarOverlay;
 import iskallia.vault.client.gui.screen.SkillTreeScreen;
 import iskallia.vault.client.gui.widget.ResearchWidget;
 import iskallia.vault.config.entry.SkillStyle;
@@ -24,15 +24,15 @@ public class ResearchDialog extends AbstractGui {
     private Rectangle bounds;
     private String researchName;
     private ResearchTree researchTree;
-    private AbilityTree abilityTree;
+    private TalentTree talentTree;
 
     private ResearchWidget researchWidget;
     private Button researchButton;
 
-    public ResearchDialog(ResearchTree researchTree, AbilityTree abilityTree) {
+    public ResearchDialog(ResearchTree researchTree, TalentTree talentTree) {
         this.researchName = null;
         this.researchTree = researchTree;
-        this.abilityTree = abilityTree;
+        this.talentTree = talentTree;
         refreshWidgets();
     }
 
@@ -54,7 +54,7 @@ public class ResearchDialog extends AbstractGui {
             );
 
             this.researchButton.active = !researchTree.isResearched(researchName)
-                    && abilityTree.getUnspentSkillPts() >= ModConfigs.RESEARCHES.getByName(researchName).getCost();
+                    && VaultBarOverlay.unspentSkillPoints >= ModConfigs.RESEARCHES.getByName(researchName).getCost();
         }
     }
 
@@ -89,9 +89,10 @@ public class ResearchDialog extends AbstractGui {
     }
 
     public void research() {
-        int unspentSkillPts = this.abilityTree.getUnspentSkillPts();
+        int cost = ModConfigs.RESEARCHES.getByName(researchName).getCost();
+        int unspentSkillPts = VaultBarOverlay.unspentSkillPoints;
 
-        if (ModConfigs.RESEARCHES.getByName(researchName).getCost() > unspentSkillPts)
+        if (cost > unspentSkillPts)
             return;
 
         researchTree.research(researchName);

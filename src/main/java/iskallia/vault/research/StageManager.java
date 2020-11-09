@@ -29,9 +29,13 @@ import java.util.Objects;
 @Mod.EventBusSubscriber(modid = Vault.MOD_ID)
 public class StageManager {
 
+    public static ResearchTree RESEARCH_TREE;
+
     private static ResearchTree getResearchTree(PlayerEntity player) {
         if (player.world.isRemote) {
-            return new ResearchTree(player.getUniqueID()); // TODO
+            return RESEARCH_TREE != null
+                    ? RESEARCH_TREE
+                    : new ResearchTree(player.getUniqueID());
 
         } else {
             return PlayerResearchesData.get((ServerWorld) player.world)
@@ -95,6 +99,8 @@ public class StageManager {
         Item usedItem = event.getItemStack().getItem();
 
         String restrictedBy = researchTree.restrictedBy(usedItem, Restrictions.Type.USABILITY);
+
+        System.out.println(restrictedBy);
 
         if (restrictedBy == null)
             return; // Doesn't restrict usability of this item, so stop here.

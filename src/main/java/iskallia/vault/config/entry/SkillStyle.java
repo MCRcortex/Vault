@@ -1,12 +1,12 @@
 package iskallia.vault.config.entry;
 
 import com.google.gson.annotations.Expose;
-import iskallia.vault.ability.AbilityFrame;
+import iskallia.vault.client.gui.helper.SkillFrame;
 
 public class SkillStyle {
 
     @Expose public int x, y;
-    @Expose public AbilityFrame frameType;
+    @Expose public SkillFrame frameType;
     @Expose public int u, v;
 
     public SkillStyle() {}

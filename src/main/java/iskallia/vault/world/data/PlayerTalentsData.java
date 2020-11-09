@@ -1,8 +1,9 @@
 package iskallia.vault.world.data;
 
 import iskallia.vault.Vault;
-import iskallia.vault.ability.AbilityNode;
-import iskallia.vault.ability.AbilityTree;
+import iskallia.vault.skill.PlayerVaultStats;
+import iskallia.vault.skill.talent.TalentNode;
+import iskallia.vault.skill.talent.TalentTree;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -22,82 +23,72 @@ import java.util.Map;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class PlayerAbilitiesData extends WorldSavedData {
+public class PlayerTalentsData extends WorldSavedData {
 
     protected static final String DATA_NAME = Vault.MOD_ID + "_PlayerAbilities";
 
-    private Map<UUID, AbilityTree> playerMap = new HashMap<>();
+    private Map<UUID, TalentTree> playerMap = new HashMap<>();
 
-    public PlayerAbilitiesData() {
+    public PlayerTalentsData() {
         this(DATA_NAME);
     }
 
-    public PlayerAbilitiesData(String name) {
+    public PlayerTalentsData(String name) {
         super(name);
     }
 
-    public AbilityTree getAbilities(PlayerEntity player) {
+    public TalentTree getAbilities(PlayerEntity player) {
         return this.getAbilities(player.getUniqueID());
     }
 
-    public AbilityTree getAbilities(UUID uuid) {
-        return this.playerMap.computeIfAbsent(uuid, AbilityTree::new);
+    public TalentTree getAbilities(UUID uuid) {
+        return this.playerMap.computeIfAbsent(uuid, TalentTree::new);
     }
 
-    public PlayerAbilitiesData resetAbilityTree(ServerPlayerEntity player) {
-        UUID uniqueID = player.getUniqueID();
-        AbilityTree abilityTree = new AbilityTree(uniqueID);
-        this.playerMap.put(uniqueID, abilityTree);
+    /* ------------------------------- */
 
-        abilityTree.syncLevelInfo(player.getServer());
-
-        markDirty();
-        return this;
-    }
-
-    public PlayerAbilitiesData setVaultLevel(ServerPlayerEntity player, int level) {
-        this.getAbilities(player).setVaultLevel(player.getServer(), level);
-
-        markDirty();
-        return this;
-    }
-
-    public PlayerAbilitiesData addVaultExp(ServerPlayerEntity player, int exp) {
-        this.getAbilities(player).addVaultExp(player.getServer(), exp);
-
-        markDirty();
-        return this;
-    }
-
-    public PlayerAbilitiesData add(ServerPlayerEntity player, AbilityNode<?>... nodes) {
+    public PlayerTalentsData add(ServerPlayerEntity player, TalentNode<?>... nodes) {
         this.getAbilities(player).add(player.getServer(), nodes);
 
         markDirty();
         return this;
     }
 
-    public PlayerAbilitiesData remove(ServerPlayerEntity player, AbilityNode<?>... nodes) {
+    public PlayerTalentsData remove(ServerPlayerEntity player, TalentNode<?>... nodes) {
         this.getAbilities(player).remove(player.getServer(), nodes);
 
         markDirty();
         return this;
     }
 
-    public PlayerAbilitiesData upgradeAbility(ServerPlayerEntity player, AbilityNode<?> abilityNode) {
-        this.getAbilities(player).upgradeAbility(player.getServer(), abilityNode);
+    public PlayerTalentsData upgradeAbility(ServerPlayerEntity player, TalentNode<?> talentNode) {
+        this.getAbilities(player).upgradeTalent(player.getServer(), talentNode);
 
         markDirty();
         return this;
     }
 
-    public PlayerAbilitiesData spendSkillPts(ServerPlayerEntity player, int amount) {
-        this.getAbilities(player).spendSkillPoints(amount);
+    public PlayerTalentsData resetAbilityTree(ServerPlayerEntity player) {
+        UUID uniqueID = player.getUniqueID();
+
+        TalentTree oldTalentTree = playerMap.get(uniqueID);
+        if (oldTalentTree != null) {
+            for (TalentNode<?> node : oldTalentTree.getNodes()) {
+                if (node.isLearned())
+                    node.getTalent().onRemoved(player);
+            }
+        }
+
+        TalentTree talentTree = new TalentTree(uniqueID);
+        this.playerMap.put(uniqueID, talentTree);
 
         markDirty();
         return this;
     }
 
-    public PlayerAbilitiesData tick(MinecraftServer server) {
+    /* ------------------------------- */
+
+    public PlayerTalentsData tick(MinecraftServer server) {
         this.playerMap.values().forEach(abilityTree -> abilityTree.tick(server));
         return this;
     }
@@ -115,6 +106,8 @@ public class PlayerAbilitiesData extends WorldSavedData {
             get((ServerWorld) event.player.world).getAbilities(event.player);
         }
     }
+
+    /* ------------------------------- */
 
     @Override
     public void read(CompoundNBT nbt) {
@@ -147,9 +140,9 @@ public class PlayerAbilitiesData extends WorldSavedData {
         return nbt;
     }
 
-    public static PlayerAbilitiesData get(ServerWorld world) {
+    public static PlayerTalentsData get(ServerWorld world) {
         return world.getServer().func_241755_D_()
-                .getSavedData().getOrCreate(PlayerAbilitiesData::new, DATA_NAME);
+                .getSavedData().getOrCreate(PlayerTalentsData::new, DATA_NAME);
     }
 
 }

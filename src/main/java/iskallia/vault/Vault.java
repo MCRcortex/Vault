@@ -1,10 +1,9 @@
 package iskallia.vault;
 
 import iskallia.vault.init.ModCommands;
-import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModFeatures;
-import iskallia.vault.init.ModStructures;
-import iskallia.vault.world.data.PlayerAbilitiesData;
+import iskallia.vault.world.data.PlayerResearchesData;
+import iskallia.vault.world.data.PlayerVaultStatsData;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.RegistryKey;
@@ -31,8 +30,6 @@ public class Vault {
     public static RegistryKey<World> WORLD_KEY = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(MOD_ID, "vault"));
 
     public Vault() {
-	    ModStructures.register();
-	    ModFeatures.register();
 	    MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, this::onCommandRegister);
 	    MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onBiomeLoad);
 	    MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, this::onPlayerLoggedIn);
@@ -52,7 +49,8 @@ public class Vault {
 		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
 		ServerWorld serverWorld = player.getServerWorld();
 		MinecraftServer server = player.getServer();
-		PlayerAbilitiesData.get(serverWorld).getAbilities(player).syncLevelInfo(server);
+		PlayerVaultStatsData.get(serverWorld).getVaultStats(player).sync(server);
+		PlayerResearchesData.get(serverWorld).getResearches(player).sync(server);
 	}
 
 	public static String sId(String name) {

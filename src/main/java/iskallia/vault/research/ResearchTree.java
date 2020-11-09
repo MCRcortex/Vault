@@ -1,14 +1,19 @@
 package iskallia.vault.research;
 
 import iskallia.vault.init.ModConfigs;
-import iskallia.vault.research.node.Research;
+import iskallia.vault.network.ModNetwork;
+import iskallia.vault.network.message.ResearchTreeMessage;
+import iskallia.vault.research.type.Research;
+import iskallia.vault.util.NetcodeUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.network.NetworkDirection;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -36,6 +41,10 @@ public class ResearchTree implements INBTSerializable<CompoundNBT> {
         this.researchesDone.add(researchName);
     }
 
+    public void resetAll() {
+        this.researchesDone.clear();
+    }
+
     public String restrictedBy(Item item, Restrictions.Type restrictionType) {
         for (Research research : ModConfigs.RESEARCHES.getAll()) {
             if (researchesDone.contains(research.getName())) continue;
@@ -58,6 +67,16 @@ public class ResearchTree implements INBTSerializable<CompoundNBT> {
             if (research.restricts(entityType, restrictionType)) return research.getName();
         }
         return null;
+    }
+
+    public void sync(MinecraftServer server) {
+        NetcodeUtils.runIfPresent(server, this.playerUUID, player -> {
+            ModNetwork.channel.sendTo(
+                    new ResearchTreeMessage(this, player.getUniqueID()),
+                    player.connection.netManager,
+                    NetworkDirection.PLAY_TO_CLIENT
+            );
+        });
     }
 
     @Override
@@ -89,5 +108,4 @@ public class ResearchTree implements INBTSerializable<CompoundNBT> {
             this.researchesDone.add(name);
         }
     }
-
 }

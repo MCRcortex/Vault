@@ -1,16 +1,16 @@
-package iskallia.vault.research.node;
+package iskallia.vault.research.type;
 
 import iskallia.vault.research.Restrictions;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 
-public class CustomResearch extends Research {
+public class MinimapResearch extends Research {
 
-    public CustomResearch(String name, int cost, String[] itemIds, String[] blockIds, String[] entityIds) {
+    public MinimapResearch(String name, int cost) {
         super(name, cost);
 
-        // TODO: Implement this dude again..
+        // TODO: Implement this bad boi
     }
 
     @Override

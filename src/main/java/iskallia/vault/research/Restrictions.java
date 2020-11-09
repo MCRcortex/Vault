@@ -9,20 +9,49 @@ public class Restrictions {
 
     @Expose protected Map<Type, Boolean> restricts;
 
-    public Restrictions() {
+    private Restrictions() {
         this.restricts = new HashMap<>();
-
-        for (Type type : Type.values()) {
-            restricts.put(type, false);
-        }
     }
 
-    public void set(Type type, boolean restricts) {
+    public Restrictions set(Type type, boolean restricts) {
         this.restricts.put(type, restricts);
+        return this;
     }
 
     public boolean restricts(Type type) {
         return this.restricts.getOrDefault(type, false);
+    }
+
+    public static Restrictions forMods() {
+        Restrictions restrictions = new Restrictions();
+        restrictions.restricts.put(Type.USABILITY, false);
+        restrictions.restricts.put(Type.CRAFTABILITY, false);
+        restrictions.restricts.put(Type.HITTABILITY, false);
+        restrictions.restricts.put(Type.BLOCK_INTERACTABILITY, false);
+        restrictions.restricts.put(Type.ENTITY_INTERACTABILITY, false);
+        return restrictions;
+    }
+
+    public static Restrictions forItems() {
+        Restrictions restrictions = new Restrictions();
+        restrictions.restricts.put(Type.USABILITY, false);
+        restrictions.restricts.put(Type.CRAFTABILITY, false);
+        restrictions.restricts.put(Type.HITTABILITY, false);
+        return restrictions;
+    }
+
+    public static Restrictions forBlocks() {
+        Restrictions restrictions = new Restrictions();
+        restrictions.restricts.put(Type.HITTABILITY, false);
+        restrictions.restricts.put(Type.BLOCK_INTERACTABILITY, false);
+        return restrictions;
+    }
+
+    public static Restrictions forEntities() {
+        Restrictions restrictions = new Restrictions();
+        restrictions.restricts.put(Type.HITTABILITY, false);
+        restrictions.restricts.put(Type.ENTITY_INTERACTABILITY, false);
+        return restrictions;
     }
 
     public enum Type {
