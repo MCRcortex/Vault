@@ -49,6 +49,12 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
         refreshWidgets();
     }
 
+    @Override
+    protected void init() {
+        super.init();
+        xSize = width; // <-- Be goneee, JEI!
+    }
+
     public void refreshWidgets() {
         this.activeTab.refresh();
         if (this.abilityDialog != null) {

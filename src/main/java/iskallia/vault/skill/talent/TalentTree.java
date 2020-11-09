@@ -50,9 +50,6 @@ public class TalentTree implements INBTSerializable<CompoundNBT> {
         TalentNode<?> upgradedTalentNode = new TalentNode<>(talentGroup, talentNode.getLevel() + 1);
         this.add(server, upgradedTalentNode);
 
-        // TODO: Spend skill points
-//        this.spendSkillPoints(server, upgradedTalentNode.getTalent().getCost());
-
         return this;
     }
 

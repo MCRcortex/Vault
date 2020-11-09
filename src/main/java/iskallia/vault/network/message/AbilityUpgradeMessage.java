@@ -55,10 +55,12 @@ public class AbilityUpgradeMessage {
             if (talentNode.getLevel() >= talentGroup.getMaxLevel())
                 return; // Already maxed out
 
-            if (stats.getUnspentSkillPts() < talentGroup.cost(talentNode.getLevel() + 1))
-                return; // Insufficient skill points
+            int requiredSkillPts = talentGroup.cost(talentNode.getLevel() + 1);
 
-            abilitiesData.upgradeAbility(sender, talentNode);
+            if (stats.getUnspentSkillPts() >= requiredSkillPts) {
+                abilitiesData.upgradeAbility(sender, talentNode);
+                statsData.spendSkillPts(sender, requiredSkillPts);
+            }
         });
         context.setPacketHandled(true);
     }

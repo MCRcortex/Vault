@@ -72,19 +72,14 @@ public class ResearchConfig extends Config {
         this.MOD_RESEARCHES.add(new ModResearch("Extended Possibilities", 3, ""));
         this.MOD_RESEARCHES.add(new ModResearch("Power Overwhelming", 6, ""));
         this.MOD_RESEARCHES.add(new ModResearch("Nuclear Power", 6, ""));
-        this.MOD_RESEARCHES.add(new ModResearch("Automatic Genius", 20, ""));
 
         this.CUSTOM_RESEARCHES = new LinkedList<>();
-        CustomResearch sampleResearch = new CustomResearch("Pickaxe Proficiency I", 1);
-        sampleResearch.getItemRestrictions().put(
-                "minecraft:wooden_pickaxe", Restrictions.forItems()
-                        .set(Restrictions.Type.USABILITY, true)
-                        .set(Restrictions.Type.HITTABILITY, true));
-        sampleResearch.getBlockRestrictions().put(
-                "minecraft:stone", Restrictions.forBlocks());
-        sampleResearch.getEntityRestrictions().put(
-                "minecraft:creeper", Restrictions.forEntities());
-        this.CUSTOM_RESEARCHES.add(sampleResearch);
+        CustomResearch customResearch = new CustomResearch("Automatic Genius", 20);
+        customResearch.getItemRestrictions().put("refinedstorage:crafter", Restrictions.forItems(true));
+        customResearch.getItemRestrictions().put("rftoolsutility:crafter1", Restrictions.forItems(true));
+        customResearch.getItemRestrictions().put("appliedenergistics2:molecular_assembler", Restrictions.forItems(true));
+        customResearch.getItemRestrictions().put("mekanism:formulaic_assemblicator", Restrictions.forItems(true));
+        this.CUSTOM_RESEARCHES.add(customResearch);
     }
 
 }

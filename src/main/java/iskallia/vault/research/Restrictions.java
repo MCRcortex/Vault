@@ -32,25 +32,25 @@ public class Restrictions {
         return restrictions;
     }
 
-    public static Restrictions forItems() {
+    public static Restrictions forItems(boolean restricted) {
         Restrictions restrictions = new Restrictions();
-        restrictions.restricts.put(Type.USABILITY, false);
-        restrictions.restricts.put(Type.CRAFTABILITY, false);
-        restrictions.restricts.put(Type.HITTABILITY, false);
+        restrictions.restricts.put(Type.USABILITY, restricted);
+        restrictions.restricts.put(Type.CRAFTABILITY, restricted);
+        restrictions.restricts.put(Type.HITTABILITY, restricted);
         return restrictions;
     }
 
-    public static Restrictions forBlocks() {
+    public static Restrictions forBlocks(boolean restricted) {
         Restrictions restrictions = new Restrictions();
-        restrictions.restricts.put(Type.HITTABILITY, false);
-        restrictions.restricts.put(Type.BLOCK_INTERACTABILITY, false);
+        restrictions.restricts.put(Type.HITTABILITY, restricted);
+        restrictions.restricts.put(Type.BLOCK_INTERACTABILITY, restricted);
         return restrictions;
     }
 
-    public static Restrictions forEntities() {
+    public static Restrictions forEntities(boolean restricted) {
         Restrictions restrictions = new Restrictions();
-        restrictions.restricts.put(Type.HITTABILITY, false);
-        restrictions.restricts.put(Type.ENTITY_INTERACTABILITY, false);
+        restrictions.restricts.put(Type.HITTABILITY, restricted);
+        restrictions.restricts.put(Type.ENTITY_INTERACTABILITY, restricted);
         return restrictions;
     }
 
