@@ -6,19 +6,24 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
 public class VaultPedestalBlock extends Block {
 
 	public VaultPedestalBlock() {
-		super(Properties.create(Material.ROCK, MaterialColor.DIAMOND).setRequiresTool().hardnessAndResistance(3f, 3f));
+		super(Properties.create(Material.ROCK, MaterialColor.DIAMOND).setRequiresTool().hardnessAndResistance(3f, 3f).setLightLevel(light -> {
+			return 0;
+		}));
 	}
 
 	@Override
@@ -44,33 +49,52 @@ public class VaultPedestalBlock extends Block {
 	}
 
 	@Override
-	public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
+	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
 		if (worldIn.isRemote)
-			return;
+			return ActionResultType.SUCCESS;
+
+		if (handIn != Hand.MAIN_HAND)
+			return ActionResultType.SUCCESS;
+
+		if (player.getHeldItemMainhand() == ItemStack.EMPTY)
+			return ActionResultType.SUCCESS;
 
 		VaultPedestalTileEntity pedestal = getVaultPedestalTileEntity(worldIn, pos);
+
 		if (pedestal == null)
-			return;
+			return ActionResultType.SUCCESS;
 
-		if (!(entityIn instanceof ItemEntity)) {
-			return;
-		}
+		if (pedestal.getItem() != null)
+			return ActionResultType.SUCCESS;
 
-		ItemStack itemEntity = ((ItemEntity) entityIn).getItem();
+		ItemStack heldItem = player.getHeldItem(handIn);
+		pedestal.setItem(heldItem);
+		pedestal.addCount(heldItem.getCount());
+		pedestal.update();
+		player.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
 
-		if (pedestal.getItem() == null) {
-			System.out.println(itemEntity.getDisplayName());
-			pedestal.setItem(itemEntity);
-			pedestal.setItemCount(itemEntity.getCount());
-			entityIn.remove();
-		} else if (pedestal.getItem().isItemEqualIgnoreDurability(itemEntity)) {
-			System.out.println(itemEntity.getDisplayName());
-			int count = itemEntity.getCount();
-			pedestal.setItemCount(pedestal.getItemCount() + count);
-			entityIn.remove();
-		}
-
+		return ActionResultType.SUCCESS;
 	}
+	/*
+	 * @Override public void onEntityCollision(BlockState state, World worldIn,
+	 * BlockPos pos, Entity entityIn) { if (worldIn.isRemote) return;
+	 * 
+	 * if (!(entityIn instanceof ItemEntity)) { return; }
+	 * 
+	 * VaultPedestalTileEntity pedestal = getVaultPedestalTileEntity(worldIn, pos);
+	 * if (pedestal == null) return;
+	 * 
+	 * if (pedestal.getItem() == null) return;
+	 * 
+	 * ItemStack itemEntity = ((ItemEntity) entityIn).getItem();
+	 * 
+	 * if (pedestal.getItem().isItemEqualIgnoreDurability(itemEntity)) {
+	 * System.out.println(itemEntity.getDisplayName()); int count =
+	 * itemEntity.getCount(); pedestal.setItemCount(pedestal.getItemCount() +
+	 * count); entityIn.remove(); }
+	 * 
+	 * }
+	 */
 
 	public static VaultPedestalTileEntity getVaultPedestalTileEntity(World worldIn, BlockPos pos) {
 		TileEntity te = worldIn.getTileEntity(pos);

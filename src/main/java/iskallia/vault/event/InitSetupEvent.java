@@ -1,6 +1,7 @@
 package iskallia.vault.event;
 
 import iskallia.vault.Vault;
+import iskallia.vault.block.render.VaultPedestalRenderer;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModKeybinds;
 import iskallia.vault.init.ModScreens;
@@ -15,24 +16,25 @@ import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class InitSetupEvent {
 
-    @SubscribeEvent
-    public static void setupClient(final FMLClientSetupEvent event) {
-        Vault.LOGGER.info("setupClient()");
-        ModScreens.register(event);
-        ModKeybinds.register(event);
-        MinecraftForge.EVENT_BUS.register(KeyboardEvents.class);
-    }
+	@SubscribeEvent
+	public static void setupClient(final FMLClientSetupEvent event) {
+		Vault.LOGGER.info("setupClient()");
+		ModScreens.register(event);
+		ModKeybinds.register(event);
+		MinecraftForge.EVENT_BUS.register(KeyboardEvents.class);
+		VaultPedestalRenderer.register();
+	}
 
-    @SubscribeEvent
-    public static void setupCommon(final FMLCommonSetupEvent event) {
-        Vault.LOGGER.info("setupCommon()");
-        ModNetwork.initialize();
-        ModConfigs.register();
-    }
+	@SubscribeEvent
+	public static void setupCommon(final FMLCommonSetupEvent event) {
+		Vault.LOGGER.info("setupCommon()");
+		ModNetwork.initialize();
+		ModConfigs.register();
+	}
 
-    @SubscribeEvent
-    public static void setupDedicatedServer(final FMLDedicatedServerSetupEvent event) {
-        Vault.LOGGER.info("setupDedicatedServer()");
-    }
+	@SubscribeEvent
+	public static void setupDedicatedServer(final FMLDedicatedServerSetupEvent event) {
+		Vault.LOGGER.info("setupDedicatedServer()");
+	}
 
 }

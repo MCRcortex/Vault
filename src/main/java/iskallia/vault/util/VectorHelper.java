@@ -1,7 +1,6 @@
 package iskallia.vault.util;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 
 public class VectorHelper {
@@ -27,23 +26,11 @@ public class VectorHelper {
 		return new Vector3d(velocity.x * speed, velocity.y * speed, velocity.z * speed);
 	}
 
-	public static Vector3d clampMagnitude(Vector3d velocity, float max) {
-		double length = (double) MathHelper.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
-		return length < 1.0E-4D ? Vector3d.ZERO : new Vector3d(velocity.x / length * max, velocity.y / length * max, velocity.z / length * max);
-	}
+	public static Vector3d getMovementVelocity(Vector3d current, Vector3d target, float speed) {
 
-	public static Vector3d moveTowards(Vector3d current, Vector3d target, float maxDistanceDelta) {
-		float toVector_x = (float) (target.x - current.x);
-		float toVector_y = (float) (target.y - current.y);
-		float toVector_z = (float) (target.z - current.z);
+		Vector3d velocity = VectorHelper.multiply(getDirectionNormalized(target, current), speed);
 
-		float sqdist = toVector_x * toVector_x + toVector_y * toVector_y + toVector_z * toVector_z;
-
-		if (sqdist == 0 || (maxDistanceDelta >= 0 && sqdist <= maxDistanceDelta * maxDistanceDelta))
-			return target;
-		float dist = (float) MathHelper.sqrt(sqdist);
-
-		return new Vector3d(current.x + toVector_x / dist * maxDistanceDelta, current.y + toVector_y / dist * maxDistanceDelta, current.z + toVector_z / dist * maxDistanceDelta);
+		return velocity;
 	}
 
 }
