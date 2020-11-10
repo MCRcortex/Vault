@@ -8,7 +8,7 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class ModNetwork {
 
-    private static final String NETWORK_VERSION = "0.9.0";
+    private static final String NETWORK_VERSION = "0.10.0";
 
     public static final SimpleChannel channel = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(Vault.MOD_ID, "network"),
@@ -67,6 +67,11 @@ public class ModNetwork {
                 AbilityActivityMessage::encode,
                 AbilityActivityMessage::decode,
                 AbilityActivityMessage::handle);
+
+        channel.registerMessage(10, VaultRaidTickMessage.class,
+                VaultRaidTickMessage::encode,
+                VaultRaidTickMessage::decode,
+                VaultRaidTickMessage::handle);
     }
 
 }

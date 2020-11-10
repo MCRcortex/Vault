@@ -4,6 +4,8 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
+import iskallia.vault.client.gui.helper.FontHelper;
+import iskallia.vault.client.gui.helper.UIHelper;
 import iskallia.vault.config.entry.SkillStyle;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.skill.ability.AbilityNode;
@@ -28,12 +30,6 @@ public class AbilitiesOverlay {
     public static int focusedIndex;
     public static int cooldownTicks;
     public static boolean active;
-
-    @SubscribeEvent
-    public static void
-    onClientTick(TickEvent.ClientTickEvent event) {
-        cooldownTicks = Math.max(0, cooldownTicks - 1);
-    }
 
     @SubscribeEvent
     public static void

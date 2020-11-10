@@ -57,15 +57,11 @@ public class EffectAbility extends PlayerAbility {
             player.removePotionEffect(this.getEffect());
 
         } else {
-            EffectInstance activeEffect = player.getActivePotionEffect(this.getEffect());
-            EffectInstance newEffect = new EffectInstance(this.getEffect(), 1000, this.getAmplifier(),
-                    false, this.getType().showParticles, this.getType().showIcon);
+            EffectInstance newEffect = new EffectInstance(this.getEffect(), 20 * 60,
+                    this.getAmplifier(), false,
+                    this.getType().showParticles, this.getType().showIcon);
 
-            if (activeEffect != null) {
-                activeEffect.combine(newEffect);
-            } else {
-                player.addPotionEffect(newEffect);
-            }
+            player.addPotionEffect(newEffect);
         }
     }
 

@@ -106,9 +106,16 @@ public class VaultRaidData extends WorldSavedData {
     public void tick(ServerWorld world) {
         this.activeRaids.values().forEach(vaultRaid -> vaultRaid.tick(world));
 
-        if (this.activeRaids.values().removeIf(VaultRaid::isComplete)) {
-            this.markDirty();
+        boolean removed = false;
+
+        for (VaultRaid raid : this.activeRaids.values()) {
+            if (raid.isComplete()) {
+                raid.syncTicksLeft(world.getServer());
+                removed |= this.activeRaids.values().remove(raid);
+            }
         }
+
+        if (removed) this.markDirty();
     }
 
     @SubscribeEvent

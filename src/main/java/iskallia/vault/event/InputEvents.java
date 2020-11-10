@@ -23,8 +23,6 @@ public class InputEvents {
             ModNetwork.channel.sendToServer(new OpenSkillTreeMessage());
 
         } else if (AbilitiesOverlay.cooldownTicks == 0 && ModKeybinds.abilityKey.getKey().getKeyCode() == event.getKey()) {
-            System.out.println(event.getKey());
-
             if (event.getAction() == GLFW.GLFW_RELEASE) {
                 ModNetwork.channel.sendToServer(new AbilityKeyMessage(true, false, false, false));
 

@@ -28,8 +28,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
     private boolean active;
     private int cooldownTicks;
 
-    private boolean keyDown;
-    private boolean swappingDone;
+    private boolean swappingAttempted;
     private boolean swappingLocked;
 
     public AbilityTree(UUID uuid) {
@@ -71,8 +70,9 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
     /* ---------------------------------- */
 
     public AbilityTree scrollUp(MinecraftServer server) {
-        System.out.println("Scroll up");
         List<AbilityNode<?>> learnedNodes = learnedNodes();
+
+        swappingAttempted = true;
 
         if (!swappingLocked && learnedNodes.size() != 0) {
             AbilityNode<?> previouslyFocused = getFocusedAbility();
@@ -89,8 +89,6 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
             NetcodeUtils.runIfPresent(server, this.uuid, player -> {
                 newFocused.getAbility().onFocus(player);
             });
-
-            swappingDone = true;
             syncFocusedIndex(server);
             syncActivity(server);
         }
@@ -99,8 +97,9 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
     }
 
     public AbilityTree scrollDown(MinecraftServer server) {
-        System.out.println("Scroll down");
         List<AbilityNode<?>> learnedNodes = learnedNodes();
+
+        swappingAttempted = true;
 
         if (!swappingLocked && learnedNodes.size() != 0) {
             AbilityNode<?> previouslyFocused = getFocusedAbility();
@@ -118,7 +117,6 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
                 newFocused.getAbility().onFocus(player);
             });
 
-            swappingDone = true;
             syncFocusedIndex(server);
             syncActivity(server);
         }
@@ -127,8 +125,6 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
     }
 
     public void keyDown(MinecraftServer server) {
-        System.out.println("Key down");
-
         AbilityNode<?> focusedAbility = getFocusedAbility();
 
         if (focusedAbility == null) return;
@@ -146,14 +142,12 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
     }
 
     public void keyUp(MinecraftServer server) {
-        System.out.println("Key up");
-
         AbilityNode<?> focusedAbility = getFocusedAbility();
 
         if (focusedAbility == null) return;
 
-        if (swappingDone) {
-            swappingDone = false;
+        if (swappingAttempted) {
+            swappingAttempted = false;
             return;
         }
 
@@ -164,14 +158,19 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
             NetcodeUtils.runIfPresent(server, this.uuid, player -> {
                 focusedAbility.getAbility().onAction(player, active);
             });
+            lockSwapping(active);
             putOnCooldown(server);
 
         } else if (behavior == PlayerAbility.Behavior.HOLD_TO_ACTIVATE) {
             active = false;
-            NetcodeUtils.runIfPresent(server, this.uuid, player -> {
-                focusedAbility.getAbility().onAction(player, active);
-            });
-            putOnCooldown(server);
+            if (swappingLocked) {
+                NetcodeUtils.runIfPresent(server, this.uuid, player -> {
+                    focusedAbility.getAbility().onAction(player, active);
+                });
+                putOnCooldown(server);
+            } else {
+                syncActivity(server);
+            }
 
         } else if (behavior == PlayerAbility.Behavior.RELEASE_TO_PERFORM) {
             NetcodeUtils.runIfPresent(server, this.uuid, player -> {
@@ -234,7 +233,10 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
 
         if (focusedAbility != null) {
             focusedAbility.getAbility().onTick(event.player, isActive());
-            cooldownTicks = Math.max(0, cooldownTicks - 1);
+            int prevCooldownTicks = this.cooldownTicks;
+            this.cooldownTicks = Math.max(0, this.cooldownTicks - 1);
+            if (prevCooldownTicks != this.cooldownTicks)
+                syncActivity(event.player.getServer());
         }
     }
 
