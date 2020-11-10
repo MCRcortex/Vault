@@ -28,6 +28,10 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
     private boolean active;
     private int cooldownTicks;
 
+    private boolean keyDown;
+    private boolean swappingDone;
+    private boolean swappingLocked;
+
     public AbilityTree(UUID uuid) {
         this.uuid = uuid;
         this.add(null, ModConfigs.ABILITIES.getAll().stream()
@@ -70,7 +74,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         System.out.println("Scroll up");
         List<AbilityNode<?>> learnedNodes = learnedNodes();
 
-        if (learnedNodes.size() != 0) {
+        if (!swappingLocked && learnedNodes.size() != 0) {
             AbilityNode<?> previouslyFocused = getFocusedAbility();
             NetcodeUtils.runIfPresent(server, this.uuid, player -> {
                 previouslyFocused.getAbility().onBlur(player);
@@ -86,7 +90,9 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
                 newFocused.getAbility().onFocus(player);
             });
 
+            swappingDone = true;
             syncFocusedIndex(server);
+            syncActivity(server);
         }
 
         return this;
@@ -96,7 +102,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         System.out.println("Scroll down");
         List<AbilityNode<?>> learnedNodes = learnedNodes();
 
-        if (learnedNodes.size() != 0) {
+        if (!swappingLocked && learnedNodes.size() != 0) {
             AbilityNode<?> previouslyFocused = getFocusedAbility();
             NetcodeUtils.runIfPresent(server, this.uuid, player -> {
                 previouslyFocused.getAbility().onBlur(player);
@@ -112,7 +118,9 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
                 newFocused.getAbility().onFocus(player);
             });
 
+            swappingDone = true;
             syncFocusedIndex(server);
+            syncActivity(server);
         }
 
         return this;
@@ -129,6 +137,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
 
         if (behavior == PlayerAbility.Behavior.HOLD_TO_ACTIVATE) {
             active = true;
+            swappingLocked = false;
             NetcodeUtils.runIfPresent(server, this.uuid, player -> {
                 focusedAbility.getAbility().onAction(player, active);
             });
@@ -142,6 +151,11 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         AbilityNode<?> focusedAbility = getFocusedAbility();
 
         if (focusedAbility == null) return;
+
+        if (swappingDone) {
+            swappingDone = false;
+            return;
+        }
 
         PlayerAbility.Behavior behavior = focusedAbility.getAbility().getBehavior();
 
@@ -170,6 +184,10 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
     public void putOnCooldown(MinecraftServer server) {
         this.cooldownTicks = ModConfigs.ABILITIES.cooldownTicks;
         syncActivity(server);
+    }
+
+    public void lockSwapping(boolean lock) {
+        this.swappingLocked = lock;
     }
 
     public AbilityTree upgradeAbility(MinecraftServer server, AbilityNode<?> abilityNode) {

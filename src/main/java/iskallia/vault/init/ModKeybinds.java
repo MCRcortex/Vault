@@ -17,7 +17,7 @@ public class ModKeybinds {
 
     public static void register(final FMLClientSetupEvent event) {
         openAbilityTree = createKeyBinding("open_ability_tree", KeyEvent.VK_H);
-        abilityKey = createKeyBinding("ability_key", KeyEvent.VK_X);
+        abilityKey = createKeyBinding("ability_key", 342); // --> Supposed to be R_ALT
 
         ClientRegistry.registerKeyBinding(openAbilityTree);
         ClientRegistry.registerKeyBinding(abilityKey);

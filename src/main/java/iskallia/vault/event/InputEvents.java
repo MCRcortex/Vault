@@ -15,9 +15,6 @@ import org.lwjgl.glfw.GLFW;
 @OnlyIn(Dist.CLIENT)
 public class InputEvents {
 
-    public static boolean abilityKeyPressed = false;
-    public static boolean abilityScrolled = false;
-
     @SubscribeEvent
     public static void onKey(InputEvent.KeyInputEvent event) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -26,21 +23,13 @@ public class InputEvents {
             ModNetwork.channel.sendToServer(new OpenSkillTreeMessage());
 
         } else if (AbilitiesOverlay.cooldownTicks == 0 && ModKeybinds.abilityKey.getKey().getKeyCode() == event.getKey()) {
+            System.out.println(event.getKey());
+
             if (event.getAction() == GLFW.GLFW_RELEASE) {
-                if (!abilityKeyPressed) return;
-                if (abilityScrolled) {
-                    abilityScrolled = false;
-                    abilityKeyPressed = false;
-                    AbilitiesOverlay.active = false;
-                    return;
-                }
                 ModNetwork.channel.sendToServer(new AbilityKeyMessage(true, false, false, false));
-                abilityKeyPressed = false;
 
             } else if (event.getAction() == GLFW.GLFW_PRESS) {
-                if (abilityKeyPressed) return;
                 ModNetwork.channel.sendToServer(new AbilityKeyMessage(false, true, false, false));
-                abilityKeyPressed = true;
             }
         }
     }
@@ -57,7 +46,6 @@ public class InputEvents {
                 } else {
                     ModNetwork.channel.sendToServer(new AbilityKeyMessage(false, false, true, false));
                 }
-                abilityScrolled = true;
             }
             event.setCanceled(true);
         }

@@ -25,6 +25,8 @@ public class WorldEvents {
 
             if (focusedAbility != null && focusedAbility.getAbility() instanceof VeinMinerAbility) {
                 // TODO: Vein Mineeeeeeeeeeeeee!
+                System.out.println("VEIN MINEEEEEEEE!");
+                abilityTree.lockSwapping(true);
             }
         }
     }
