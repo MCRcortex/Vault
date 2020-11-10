@@ -5,7 +5,10 @@ import iskallia.vault.block.VaultAltarBlock;
 import iskallia.vault.block.VaultOreBlock;
 import iskallia.vault.block.VaultPedestalBlock;
 import iskallia.vault.block.VaultPortalBlock;
+import iskallia.vault.block.entity.VaultAltarTileEntity;
 import iskallia.vault.block.entity.VaultPedestalTileEntity;
+import iskallia.vault.block.render.VaultAltarRenderer;
+import iskallia.vault.block.render.VaultPedestalRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.OreBlock;
 import net.minecraft.item.BlockItem;
@@ -33,6 +36,7 @@ public class ModBlocks {
 	public static final OreBlock VAULT_ROCK_ORE = new VaultOreBlock();
 
 	public static final TileEntityType<VaultPedestalTileEntity> VAULT_PEDESTAL_TILE_ENTITY = TileEntityType.Builder.create(VaultPedestalTileEntity::new, VAULT_PEDESTAL).build(null);
+	public static final TileEntityType<VaultAltarTileEntity> VAULT_ALTAR_TILE_ENTITY = TileEntityType.Builder.create(VaultAltarTileEntity::new, VAULT_ALTAR).build(null);
 
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
 		registerBlock(event, VAULT_PORTAL, Vault.id("vault_portal"));
@@ -53,6 +57,12 @@ public class ModBlocks {
 
 	public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
 		registerTileEntity(event, VAULT_PEDESTAL_TILE_ENTITY, Vault.id("vault_pedestal_tile_entity"));
+		registerTileEntity(event, VAULT_ALTAR_TILE_ENTITY, Vault.id("vault_altar_tile_entity"));
+	}
+
+	public static void registerTileEntityRenderers() {
+		VaultPedestalRenderer.register();
+		VaultAltarRenderer.register();
 	}
 
 	public static void registerBlockItems(RegistryEvent.Register<Item> event) {

@@ -1,17 +1,23 @@
 package iskallia.vault.block;
 
+import iskallia.vault.altar.PedestalItem;
 import iskallia.vault.block.entity.VaultPedestalTileEntity;
+import iskallia.vault.init.ModConfigs;
+import iskallia.vault.world.data.PlayerVaultAltarData;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
 public class VaultAltarBlock extends Block {
 
@@ -27,10 +33,29 @@ public class VaultAltarBlock extends Block {
 		VaultPedestalTileEntity[] pedestals = getNearbyPedestals(worldIn, pos);
 
 		if (pedestals != null) {
-			// found 4 pedestals.. validate the infusion recipe.
+			for (VaultPedestalTileEntity pedestal : pedestals) {
+				pedestal.print();
+			}
 		}
 
 		return ActionResultType.SUCCESS;
+	}
+
+	@Override
+	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+		if (worldIn.isRemote)
+			return;
+		PlayerVaultAltarData data = PlayerVaultAltarData.get((ServerWorld) worldIn);
+		if (!data.getMap().containsKey(placer.getUniqueID()))
+			data.getMap().put(placer.getUniqueID(), ModConfigs.VAULT_PEDESTAL.getRequiredItemsFromConfig());
+
+		VaultPedestalTileEntity[] pedestals = getNearbyPedestals(worldIn, pos);
+		int i = 0;
+		for (PedestalItem item : data.getMap().get(placer.getUniqueID())) {
+			pedestals[i++].setRequiredItem(item);
+		}
+
+		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 	}
 
 	/**
@@ -57,7 +82,7 @@ public class VaultAltarBlock extends Block {
 						continue;
 					VaultPedestalTileEntity pedestal = (VaultPedestalTileEntity) te;
 					pedestals[index++] = pedestal;
-					System.out.println(pedestal.getItemCount());
+					// System.out.println(pedestal.getRequiredItem().getCurrentAmount());
 					if (index == 4)
 						return pedestals;
 				}

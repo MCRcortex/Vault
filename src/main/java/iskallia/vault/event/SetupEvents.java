@@ -1,8 +1,10 @@
 package iskallia.vault.event;
 
 import iskallia.vault.Vault;
-import iskallia.vault.block.render.VaultPedestalRenderer;
-import iskallia.vault.init.*;
+import iskallia.vault.init.ModBlocks;
+import iskallia.vault.init.ModConfigs;
+import iskallia.vault.init.ModKeybinds;
+import iskallia.vault.init.ModScreens;
 import iskallia.vault.network.ModNetwork;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -20,7 +22,7 @@ public class SetupEvents {
 		ModScreens.register(event);
 		ModKeybinds.register(event);
 		MinecraftForge.EVENT_BUS.register(KeyboardEvents.class);
-		VaultPedestalRenderer.register();
+		ModBlocks.registerTileEntityRenderers();
 	}
 
 	@SubscribeEvent
