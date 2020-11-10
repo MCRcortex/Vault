@@ -24,7 +24,7 @@ public class TalentTree implements INBTSerializable<CompoundNBT> {
     public TalentTree(UUID uuid) {
         this.uuid = uuid;
         this.add(null, ModConfigs.TALENTS.getAll().stream()
-                .map(abilityGroup -> new TalentNode<>(abilityGroup, 0))
+                .map(talentGroup -> new TalentNode<>(talentGroup, 0))
                 .toArray(TalentNode<?>[]::new));
     }
 

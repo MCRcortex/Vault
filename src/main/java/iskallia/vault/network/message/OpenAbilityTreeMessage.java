@@ -39,7 +39,7 @@ public class OpenAbilityTreeMessage {
             if (sender == null) return;
 
             PlayerTalentsData playerTalentsData = PlayerTalentsData.get((ServerWorld) sender.world);
-            TalentTree talentTree = playerTalentsData.getAbilities(sender);
+            TalentTree talentTree = playerTalentsData.getTalents(sender);
 
             PlayerResearchesData playerResearchesData = PlayerResearchesData.get((ServerWorld) sender.world);
             ResearchTree researchTree = playerResearchesData.getResearches(sender);

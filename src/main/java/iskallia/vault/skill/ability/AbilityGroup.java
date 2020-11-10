@@ -3,8 +3,13 @@ package iskallia.vault.skill.ability;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.annotations.Expose;
+import iskallia.vault.skill.ability.type.EffectAbility;
 import iskallia.vault.skill.ability.type.PlayerAbility;
 import iskallia.vault.util.RomanNumber;
+import net.minecraft.potion.Effect;
+
+import java.util.function.IntUnaryOperator;
+import java.util.stream.IntStream;
 
 public class AbilityGroup<T extends PlayerAbility> {
 
@@ -66,6 +71,12 @@ public class AbilityGroup<T extends PlayerAbility> {
 
     /* --------------------------------------- */
 
-    // TODO: ofEffect; for Night vision and Invisibility
+    public static AbilityGroup<EffectAbility> ofEffect(String name, Effect effect, EffectAbility.Type type, int maxLevel,
+                                                       IntUnaryOperator cost) {
+        EffectAbility[] abilities = IntStream.range(0, maxLevel)
+                .mapToObj(i -> new EffectAbility(cost.applyAsInt(i + 1), effect, i, type))
+                .toArray(EffectAbility[]::new);
+        return new AbilityGroup<>(name, abilities);
+    }
 
 }

@@ -1,0 +1,94 @@
+package iskallia.vault.world.data;
+
+import iskallia.vault.Vault;
+import iskallia.vault.skill.ability.AbilityNode;
+import iskallia.vault.skill.ability.AbilityTree;
+import iskallia.vault.skill.talent.TalentNode;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.common.Mod;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
+public class PlayerAbilitiesData extends WorldSavedData {
+
+    protected static final String DATA_NAME = Vault.MOD_ID + "_PlayerAbilities";
+
+    private Map<UUID, AbilityTree> playerMap = new HashMap<>();
+
+    public PlayerAbilitiesData() {
+        super(DATA_NAME);
+    }
+
+    public PlayerAbilitiesData(String name) {
+        super(name);
+    }
+
+    public AbilityTree getAbilities(PlayerEntity player) {
+        return this.getAbilities(player.getUniqueID());
+    }
+
+    public AbilityTree getAbilities(UUID uuid) {
+        return this.playerMap.computeIfAbsent(uuid, AbilityTree::new);
+    }
+
+    /* ---------------------------------------------- */
+
+    public PlayerAbilitiesData add(ServerPlayerEntity player, AbilityNode<?>... nodes) {
+        this.getAbilities(player).add(player.getServer(), nodes);
+
+        markDirty();
+        return this;
+    }
+
+    public PlayerAbilitiesData remove(ServerPlayerEntity player, AbilityNode<?>... nodes) {
+        this.getAbilities(player).remove(player.getServer(), nodes);
+
+        markDirty();
+        return this;
+    }
+
+    /* ---------------------------------------------- */
+
+    @SubscribeEvent
+    public static void onTick(TickEvent.PlayerTickEvent event) {
+        if (event.side == LogicalSide.SERVER) {
+            AbilityTree abilities = get((ServerWorld) event.player.world)
+                    .getAbilities(event.player);
+            AbilityNode<?> focusedAbility = abilities.getFocusedAbility();
+
+            if (focusedAbility != null) {
+                focusedAbility.getAbility()
+                        .onTick(event.player, abilities.isActive());
+            }
+        }
+    }
+
+    /* ---------------------------------------------- */
+
+    @Override
+    public void read(CompoundNBT nbt) {
+
+    }
+
+    @Override
+    public CompoundNBT write(CompoundNBT compound) {
+        return null;
+    }
+
+    public static PlayerAbilitiesData get(ServerWorld world) {
+        return world.getServer().func_241755_D_()
+                .getSavedData().getOrCreate(PlayerAbilitiesData::new, DATA_NAME);
+    }
+
+}

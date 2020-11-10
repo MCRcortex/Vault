@@ -14,14 +14,14 @@ import iskallia.vault.client.gui.widget.TalentWidget;
 import iskallia.vault.config.entry.SkillStyle;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.network.ModNetwork;
-import iskallia.vault.network.message.AbilityUpgradeMessage;
+import iskallia.vault.network.message.TalentUpgradeMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.StringTextComponent;
 
-public class AbilityDialog extends AbstractGui {
+public class TalentDialog extends AbstractGui {
 
     private Rectangle bounds;
     private TalentGroup<?> talentGroup;
@@ -30,7 +30,7 @@ public class AbilityDialog extends AbstractGui {
     private TalentWidget abilityWidget;
     private Button abilityUpgradeButton;
 
-    public AbilityDialog(TalentTree talentTree) {
+    public TalentDialog(TalentTree talentTree) {
         this.talentGroup = null;
         this.talentTree = talentTree;
         refreshWidgets();
@@ -68,7 +68,7 @@ public class AbilityDialog extends AbstractGui {
         refreshWidgets();
     }
 
-    public AbilityDialog setBounds(Rectangle bounds) {
+    public TalentDialog setBounds(Rectangle bounds) {
         this.bounds = bounds;
         return this;
     }
@@ -122,7 +122,7 @@ public class AbilityDialog extends AbstractGui {
         talentTree.upgradeTalent(null, talentNode);
         refreshWidgets();
 
-        ModNetwork.channel.sendToServer(new AbilityUpgradeMessage(this.talentGroup.getParentName()));
+        ModNetwork.channel.sendToServer(new TalentUpgradeMessage(this.talentGroup.getParentName()));
     }
 
     public void

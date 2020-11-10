@@ -48,7 +48,7 @@ public class TalentsTab extends SkillTab {
                 if (this.selectedWidget != null) this.selectedWidget.deselect();
                 this.selectedWidget = abilityWidget;
                 this.selectedWidget.select();
-                parentScreen.getAbilityDialog().setTalentGroup(this.selectedWidget.getTalentGroup());
+                parentScreen.getTalentDialog().setTalentGroup(this.selectedWidget.getTalentGroup());
                 break;
             }
         }

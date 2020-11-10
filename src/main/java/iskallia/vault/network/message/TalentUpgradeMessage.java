@@ -15,41 +15,41 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import java.util.function.Supplier;
 
 // From Client to Server
-// "Hey dude, I want to upgrade dis ability o' mine. May I?"
-public class AbilityUpgradeMessage {
+// "Hey dude, I want to upgrade dis talent o' mine. May I?"
+public class TalentUpgradeMessage {
 
-    public String abilityName;
+    public String talentName;
 
-    public AbilityUpgradeMessage() { }
+    public TalentUpgradeMessage() { }
 
-    public AbilityUpgradeMessage(String abilityName) {
-        this.abilityName = abilityName;
+    public TalentUpgradeMessage(String talentName) {
+        this.talentName = talentName;
     }
 
-    public static void encode(AbilityUpgradeMessage message, PacketBuffer buffer) {
-        buffer.writeString(message.abilityName);
+    public static void encode(TalentUpgradeMessage message, PacketBuffer buffer) {
+        buffer.writeString(message.talentName);
     }
 
-    public static AbilityUpgradeMessage decode(PacketBuffer buffer) {
-        AbilityUpgradeMessage message = new AbilityUpgradeMessage();
-        message.abilityName = buffer.readString();
+    public static TalentUpgradeMessage decode(PacketBuffer buffer) {
+        TalentUpgradeMessage message = new TalentUpgradeMessage();
+        message.talentName = buffer.readString();
         return message;
     }
 
-    public static void handle(AbilityUpgradeMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
+    public static void handle(TalentUpgradeMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
             ServerPlayerEntity sender = context.getSender();
 
             if (sender == null) return;
 
-            TalentGroup<?> talentGroup = ModConfigs.TALENTS.getByName(message.abilityName);
+            TalentGroup<?> talentGroup = ModConfigs.TALENTS.getByName(message.talentName);
 
             PlayerVaultStatsData statsData = PlayerVaultStatsData.get((ServerWorld) sender.world);
             PlayerTalentsData abilitiesData = PlayerTalentsData.get((ServerWorld) sender.world);
-            TalentTree talentTree = abilitiesData.getAbilities(sender);
+            TalentTree talentTree = abilitiesData.getTalents(sender);
 
-            TalentNode<?> talentNode = talentTree.getNodeByName(message.abilityName);
+            TalentNode<?> talentNode = talentTree.getNodeByName(message.talentName);
             PlayerVaultStats stats = statsData.getVaultStats(sender);
 
             if (talentNode.getLevel() >= talentGroup.getMaxLevel())
