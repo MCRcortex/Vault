@@ -47,7 +47,7 @@ public class AbilityGroup<T extends PlayerAbility> {
     }
 
     public int cost(int level) {
-        if (level >= getMaxLevel()) return -1;
+        if (level > getMaxLevel()) return -1;
         return this.levels[level - 1].getCost();
     }
 

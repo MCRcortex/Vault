@@ -63,10 +63,10 @@ public class ModNetwork {
                 AbilityFocusMessage::decode,
                 AbilityFocusMessage::handle);
 
-        channel.registerMessage(9, AbilityCooldownMessage.class,
-                AbilityCooldownMessage::encode,
-                AbilityCooldownMessage::decode,
-                AbilityCooldownMessage::handle);
+        channel.registerMessage(9, AbilityActivityMessage.class,
+                AbilityActivityMessage::encode,
+                AbilityActivityMessage::decode,
+                AbilityActivityMessage::handle);
     }
 
 }

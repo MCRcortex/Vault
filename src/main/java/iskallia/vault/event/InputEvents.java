@@ -13,7 +13,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
 
 @OnlyIn(Dist.CLIENT)
-public class KeyboardEvents {
+public class InputEvents {
 
     public static boolean abilityKeyPressed = false;
     public static boolean abilityScrolled = false;
@@ -31,6 +31,7 @@ public class KeyboardEvents {
                 if (abilityScrolled) {
                     abilityScrolled = false;
                     abilityKeyPressed = false;
+                    AbilitiesOverlay.active = false;
                     return;
                 }
                 ModNetwork.channel.sendToServer(new AbilityKeyMessage(true, false, false, false));

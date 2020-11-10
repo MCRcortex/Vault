@@ -39,6 +39,11 @@ public class AbilitiesGUIConfig extends Config {
                 16, 0);
         style.frameType = SkillFrame.STAR;
         styles.put(ModConfigs.ABILITIES.VEIN_MINER.getParentName(), style);
+
+        style = new SkillStyle(50 * 3, 0,
+                16 * 5, 0);
+        style.frameType = SkillFrame.STAR;
+        styles.put(ModConfigs.ABILITIES.SELF_SUSTAIN.getParentName(), style);
     }
 
 }

@@ -18,7 +18,7 @@ public class SetupEvents {
         Vault.LOGGER.info("setupClient()");
         ModScreens.register(event);
         ModKeybinds.register(event);
-        MinecraftForge.EVENT_BUS.register(KeyboardEvents.class);
+        MinecraftForge.EVENT_BUS.register(InputEvents.class);
     }
 
     @SubscribeEvent

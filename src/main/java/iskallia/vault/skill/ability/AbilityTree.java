@@ -2,12 +2,10 @@ package iskallia.vault.skill.ability;
 
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.network.ModNetwork;
-import iskallia.vault.network.message.AbilityCooldownMessage;
+import iskallia.vault.network.message.AbilityActivityMessage;
 import iskallia.vault.network.message.AbilityFocusMessage;
 import iskallia.vault.network.message.AbilityKnownOnesMessage;
 import iskallia.vault.skill.ability.type.PlayerAbility;
-import iskallia.vault.skill.talent.TalentNode;
-import iskallia.vault.skill.talent.type.PlayerTalent;
 import iskallia.vault.util.NetcodeUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -134,7 +132,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
             NetcodeUtils.runIfPresent(server, this.uuid, player -> {
                 focusedAbility.getAbility().onAction(player, active);
             });
-            putOnCooldown(server);
+            syncActivity(server);
         }
     }
 
@@ -171,7 +169,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
 
     public void putOnCooldown(MinecraftServer server) {
         this.cooldownTicks = ModConfigs.ABILITIES.cooldownTicks;
-        syncCooldownTicks(server);
+        syncActivity(server);
     }
 
     public AbilityTree upgradeAbility(MinecraftServer server, AbilityNode<?> abilityNode) {
@@ -225,7 +223,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
     public void sync(MinecraftServer server) {
         syncTree(server);
         syncFocusedIndex(server);
-        syncCooldownTicks(server);
+        syncActivity(server);
     }
 
     public void syncTree(MinecraftServer server) {
@@ -248,10 +246,10 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         });
     }
 
-    public void syncCooldownTicks(MinecraftServer server) {
+    public void syncActivity(MinecraftServer server) {
         NetcodeUtils.runIfPresent(server, this.uuid, player -> {
             ModNetwork.channel.sendTo(
-                    new AbilityCooldownMessage(this.cooldownTicks),
+                    new AbilityActivityMessage(this.cooldownTicks, this.active),
                     player.connection.netManager,
                     NetworkDirection.PLAY_TO_CLIENT
             );

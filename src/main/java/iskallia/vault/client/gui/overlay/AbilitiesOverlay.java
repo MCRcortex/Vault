@@ -4,8 +4,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
-import iskallia.vault.client.gui.helper.FontHelper;
-import iskallia.vault.client.gui.helper.UIHelper;
 import iskallia.vault.config.entry.SkillStyle;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.skill.ability.AbilityNode;
@@ -17,7 +15,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
 
 import java.util.List;
 
@@ -30,6 +27,7 @@ public class AbilitiesOverlay {
     public static List<AbilityNode<?>> learnedAbilities;
     public static int focusedIndex;
     public static int cooldownTicks;
+    public static boolean active;
 
     @SubscribeEvent
     public static void
@@ -94,14 +92,14 @@ public class AbilitiesOverlay {
         AbilityNode<?> previousAbility = learnedAbilities.get(previousIndex);
         SkillStyle previousStyle = ModConfigs.ABILITIES_GUI.getStyles().get(previousAbility.getGroup().getParentName());
         minecraft.ingameGUI.blit(matrixStack,
-                3, 3,
+                42, 3,
                 previousStyle.u, previousStyle.v,
                 16, 16);
 
-        AbilityNode<?> nextAbility = learnedAbilities.get(previousIndex);
+        AbilityNode<?> nextAbility = learnedAbilities.get(nextIndex);
         SkillStyle nextStyle = ModConfigs.ABILITIES_GUI.getStyles().get(nextAbility.getGroup().getParentName());
         minecraft.ingameGUI.blit(matrixStack,
-                42, 3,
+                3, 3,
                 nextStyle.u, nextStyle.v,
                 16, 16);
 
@@ -109,7 +107,9 @@ public class AbilitiesOverlay {
         GlStateManager.color4f(1, 1, 1, 1);
         minecraft.ingameGUI.blit(matrixStack,
                 19, -1,
-                64, 13, 24, 24);
+                64 + (cooldownTicks > 0 ? 50 : active ? 25 : 0),
+                13,
+                24, 24);
 
         matrixStack.pop();
         minecraft.getProfiler().endSection();
