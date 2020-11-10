@@ -3,6 +3,9 @@ package iskallia.vault.client.gui.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
+import iskallia.vault.client.gui.component.AbilityDialog;
+import iskallia.vault.client.gui.tab.AbilitiesTab;
+import iskallia.vault.skill.ability.AbilityTree;
 import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.client.gui.component.TalentDialog;
 import iskallia.vault.client.gui.component.ResearchDialog;
@@ -36,23 +39,29 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
 
     protected SkillTab activeTab;
     protected TalentDialog talentDialog;
+    protected AbilityDialog abilityDialog;
     protected ResearchDialog researchDialog;
 
     public SkillTreeScreen(SkillTreeContainer container, PlayerInventory inventory, ITextComponent title) {
         super(container, inventory, new StringTextComponent("Ability Tree Screen!"));
 
-        this.activeTab = new ResearchesTab(this);
+        this.activeTab = new AbilitiesTab(this);
+        AbilityTree abilityTree = getContainer().getAbilityTree();
         TalentTree talentTree = getContainer().getTalentTree();
         ResearchTree researchTree = getContainer().getResearchTree();
+        this.abilityDialog = new AbilityDialog(abilityTree);
         this.talentDialog = new TalentDialog(talentTree);
         this.researchDialog = new ResearchDialog(researchTree, talentTree);
         refreshWidgets();
+
+        xSize = 270;
+        ySize = 200;
     }
 
     @Override
     protected void init() {
-        super.init();
         xSize = width; // <-- Be goneee, JEI!
+        super.init();
     }
 
     public void refreshWidgets() {
@@ -62,6 +71,9 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
         }
         if (this.researchDialog != null) {
             this.researchDialog.refreshWidgets();
+        }
+        if (this.abilityDialog != null) {
+            this.abilityDialog.refreshWidgets();
         }
     }
 
@@ -92,6 +104,10 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
         return researchDialog;
     }
 
+    public AbilityDialog getAbilityDialog() {
+        return abilityDialog;
+    }
+
     /* --------------------------------------------------- */
 
     @Override
@@ -102,11 +118,15 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
             this.activeTab.mouseClicked(mouseX, mouseY, button);
 
         } else {
-//            Rectangle abilitiesTabBounds = getTabBounds(0, false);
+            Rectangle abilitiesTabBounds = getTabBounds(0, activeTab instanceof AbilitiesTab);
             Rectangle talentsTabBounds = getTabBounds(1, activeTab instanceof TalentsTab);
             Rectangle researchesTabBounds = getTabBounds(2, activeTab instanceof ResearchesTab);
 
-            if (talentsTabBounds.contains(((int) mouseX), ((int) mouseY))) {
+            if (abilitiesTabBounds.contains((int) mouseX, (int) mouseY)) {
+                this.activeTab = new AbilitiesTab(this);
+                this.refreshWidgets();
+
+            } else if (talentsTabBounds.contains(((int) mouseX), ((int) mouseY))) {
                 this.activeTab = new TalentsTab(this);
                 this.refreshWidgets();
 
@@ -117,8 +137,11 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
             } else if (activeTab instanceof ResearchesTab) {
                 this.researchDialog.mouseClicked((int) mouseX, (int) mouseY, button);
 
-            } else {
+            } else if (activeTab instanceof TalentsTab) {
                 this.talentDialog.mouseClicked((int) mouseX, (int) mouseY, button);
+
+            } else if (activeTab instanceof AbilitiesTab) {
+                this.abilityDialog.mouseClicked((int) mouseX, (int) mouseY, button);
             }
         }
 
@@ -138,8 +161,12 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
 
         if (activeTab instanceof ResearchesTab) {
             this.researchDialog.mouseMoved((int) mouseX, (int) mouseY);
-        } else {
+
+        } else if (activeTab instanceof TalentsTab) {
             this.talentDialog.mouseMoved((int) mouseX, (int) mouseY);
+
+        } else if (activeTab instanceof AbilitiesTab) {
+            this.abilityDialog.mouseMoved((int) mouseX, (int) mouseY);
         }
     }
 
@@ -192,14 +219,18 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
         dialogBounds.x1 = width - 21;
         dialogBounds.y1 = height - 21;
 
+        abilityDialog.setBounds(dialogBounds);
         researchDialog.setBounds(dialogBounds);
         talentDialog.setBounds(dialogBounds);
 
         if (activeTab instanceof ResearchesTab) {
             researchDialog.render(matrixStack, mouseX, mouseY, partialTicks);
 
-        } else {
+        } else if (activeTab instanceof TalentsTab) {
             talentDialog.render(matrixStack, mouseX, mouseY, partialTicks);
+
+        } else if (activeTab instanceof AbilitiesTab) {
+            abilityDialog.render(matrixStack, mouseX, mouseY, partialTicks);
         }
     }
 
@@ -208,11 +239,11 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
         Rectangle containerBounds = getContainerBounds();
 
         // Abilities
-        Rectangle abilitiesTabBounds = getTabBounds(0, false);
+        Rectangle abilitiesTabBounds = getTabBounds(0, activeTab instanceof AbilitiesTab);
         blit(matrixStack,
                 abilitiesTabBounds.x0,
                 abilitiesTabBounds.y0,
-                63, 0,
+                63, (activeTab instanceof AbilitiesTab) ? 28 : 0,
                 abilitiesTabBounds.getWidth(), abilitiesTabBounds.getHeight());
         blit(matrixStack,
                 abilitiesTabBounds.x0 + 6,
@@ -245,7 +276,11 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
 
         Minecraft minecraft = getMinecraft();
 
-        if (activeTab instanceof TalentsTab) {
+        if (activeTab instanceof AbilitiesTab) {
+            minecraft.fontRenderer.drawString(matrixStack, "Abilities",
+                    containerBounds.x0, containerBounds.y0 - 12, 0xFF_3f3f3f);
+
+        } else if (activeTab instanceof TalentsTab) {
             minecraft.fontRenderer.drawString(matrixStack, "Talents",
                     containerBounds.x0, containerBounds.y0 - 12, 0xFF_3f3f3f);
 

@@ -2,15 +2,21 @@ package iskallia.vault.skill.ability;
 
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.skill.ability.type.PlayerAbility;
+import iskallia.vault.skill.talent.TalentNode;
+import iskallia.vault.skill.talent.type.PlayerTalent;
 import iskallia.vault.util.NetcodeUtils;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class AbilityTree {
+public class AbilityTree implements INBTSerializable<CompoundNBT> {
 
     private final UUID uuid;
     private List<AbilityNode<?>> nodes = new ArrayList<>();
@@ -182,6 +188,28 @@ public class AbilityTree {
         }
 
         return this;
+    }
+
+    /* ---------------------------------- */
+
+    @Override
+    public CompoundNBT serializeNBT() {
+        CompoundNBT nbt = new CompoundNBT();
+
+        ListNBT list = new ListNBT();
+        this.nodes.stream().map(AbilityNode::serializeNBT).forEach(list::add);
+        nbt.put("Nodes", list);
+
+        return nbt;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundNBT nbt) {
+        ListNBT list = nbt.getList("Nodes", Constants.NBT.TAG_COMPOUND);
+        this.nodes.clear();
+        for (int i = 0; i < list.size(); i++) {
+            this.add(null, AbilityNode.fromNBT(list.getCompound(i), PlayerAbility.class));
+        }
     }
 
 }

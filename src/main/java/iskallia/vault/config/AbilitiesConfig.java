@@ -19,7 +19,7 @@ public class AbilitiesConfig extends Config {
     }
 
     public List<AbilityGroup<?>> getAll() {
-        return Arrays.asList();
+        return Arrays.asList(NIGHT_VISION, INVISIBILITY);
     }
 
     public AbilityGroup<?> getByName(String name) {

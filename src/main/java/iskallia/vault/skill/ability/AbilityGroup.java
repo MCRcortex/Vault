@@ -33,7 +33,7 @@ public class AbilityGroup<T extends PlayerAbility> {
 
     public String getName(int level) {
         if (level == 0) return name + " " + RomanNumber.toRoman(0);
-        return this.registry.inverse().get(this.getAbility(level));
+        return this.getRegistry().inverse().get(this.getAbility(level));
     }
 
     public T getAbility(int level) {

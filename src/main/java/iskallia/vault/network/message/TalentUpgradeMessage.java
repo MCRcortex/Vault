@@ -58,7 +58,7 @@ public class TalentUpgradeMessage {
             int requiredSkillPts = talentGroup.cost(talentNode.getLevel() + 1);
 
             if (stats.getUnspentSkillPts() >= requiredSkillPts) {
-                abilitiesData.upgradeAbility(sender, talentNode);
+                abilitiesData.upgradeTalent(sender, talentNode);
                 statsData.spendSkillPts(sender, requiredSkillPts);
             }
         });

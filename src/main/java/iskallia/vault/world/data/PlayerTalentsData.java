@@ -60,14 +60,14 @@ public class PlayerTalentsData extends WorldSavedData {
         return this;
     }
 
-    public PlayerTalentsData upgradeAbility(ServerPlayerEntity player, TalentNode<?> talentNode) {
+    public PlayerTalentsData upgradeTalent(ServerPlayerEntity player, TalentNode<?> talentNode) {
         this.getTalents(player).upgradeTalent(player.getServer(), talentNode);
 
         markDirty();
         return this;
     }
 
-    public PlayerTalentsData resetAbilityTree(ServerPlayerEntity player) {
+    public PlayerTalentsData resetTalentTree(ServerPlayerEntity player) {
         UUID uniqueID = player.getUniqueID();
 
         TalentTree oldTalentTree = playerMap.get(uniqueID);

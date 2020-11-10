@@ -58,6 +58,31 @@ public class PlayerAbilitiesData extends WorldSavedData {
         return this;
     }
 
+    public PlayerAbilitiesData upgradeAbility(ServerPlayerEntity player, AbilityNode<?> abilityNode) {
+        this.getAbilities(player).upgradeAbility(player.getServer(), abilityNode);
+
+        markDirty();
+        return this;
+    }
+
+    public PlayerAbilitiesData resetAbilityTree(ServerPlayerEntity player) {
+        UUID uniqueID = player.getUniqueID();
+
+        AbilityTree oldAbilityTree = playerMap.get(uniqueID);
+        if (oldAbilityTree != null) {
+            for (AbilityNode<?> node : oldAbilityTree.getNodes()) {
+                if (node.isLearned())
+                    node.getAbility().onRemoved(player);
+            }
+        }
+
+        AbilityTree abilityTree = new AbilityTree(uniqueID);
+        this.playerMap.put(uniqueID, abilityTree);
+
+        markDirty();
+        return this;
+    }
+
     /* ---------------------------------------------- */
 
     @SubscribeEvent

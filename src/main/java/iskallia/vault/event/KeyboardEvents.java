@@ -3,7 +3,7 @@ package iskallia.vault.event;
 import iskallia.vault.init.ModKeybinds;
 import iskallia.vault.network.ModNetwork;
 import iskallia.vault.network.message.AbilityKeyMessage;
-import iskallia.vault.network.message.OpenAbilityTreeMessage;
+import iskallia.vault.network.message.OpenSkillTreeMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -22,7 +22,7 @@ public class KeyboardEvents {
         Minecraft minecraft = Minecraft.getInstance();
 
         if (minecraft.currentScreen == null && ModKeybinds.openAbilityTree.isPressed()) {
-            ModNetwork.channel.sendToServer(new OpenAbilityTreeMessage());
+            ModNetwork.channel.sendToServer(new OpenSkillTreeMessage());
 
         } else if (ModKeybinds.abilityKey.getKey().getKeyCode() == event.getKey()) {
             if (event.getAction() == GLFW.GLFW_RELEASE) {
