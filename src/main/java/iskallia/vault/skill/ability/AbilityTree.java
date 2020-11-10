@@ -1,6 +1,9 @@
 package iskallia.vault.skill.ability;
 
 import iskallia.vault.init.ModConfigs;
+import iskallia.vault.network.ModNetwork;
+import iskallia.vault.network.message.AbilityFocusMessage;
+import iskallia.vault.network.message.AbilityKnownOnesMessage;
 import iskallia.vault.skill.ability.type.PlayerAbility;
 import iskallia.vault.skill.talent.TalentNode;
 import iskallia.vault.skill.talent.type.PlayerTalent;
@@ -10,6 +13,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.network.NetworkDirection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +84,8 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
             NetcodeUtils.runIfPresent(server, this.uuid, player -> {
                 newFocused.getAbility().onFocus(player);
             });
+
+            syncFocusedIndex(server);
         }
 
         return this;
@@ -103,6 +109,8 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
             NetcodeUtils.runIfPresent(server, this.uuid, player -> {
                 newFocused.getAbility().onFocus(player);
             });
+
+            syncFocusedIndex(server);
         }
 
         return this;
@@ -191,6 +199,31 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
     }
 
     /* ---------------------------------- */
+
+    public void sync(MinecraftServer server) {
+        syncTree(server);
+        syncFocusedIndex(server);
+    }
+
+    public void syncTree(MinecraftServer server) {
+        NetcodeUtils.runIfPresent(server, this.uuid, player -> {
+            ModNetwork.channel.sendTo(
+                    new AbilityKnownOnesMessage(this),
+                    player.connection.netManager,
+                    NetworkDirection.PLAY_TO_CLIENT
+            );
+        });
+    }
+
+    public void syncFocusedIndex(MinecraftServer server) {
+        NetcodeUtils.runIfPresent(server, this.uuid, player -> {
+            ModNetwork.channel.sendTo(
+                    new AbilityFocusMessage(this.focusedAbilityIndex),
+                    player.connection.netManager,
+                    NetworkDirection.PLAY_TO_CLIENT
+            );
+        });
+    }
 
     @Override
     public CompoundNBT serializeNBT() {

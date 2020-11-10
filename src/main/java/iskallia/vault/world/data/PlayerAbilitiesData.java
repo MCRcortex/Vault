@@ -7,9 +7,12 @@ import iskallia.vault.skill.talent.TalentNode;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
@@ -59,8 +62,11 @@ public class PlayerAbilitiesData extends WorldSavedData {
     }
 
     public PlayerAbilitiesData upgradeAbility(ServerPlayerEntity player, AbilityNode<?> abilityNode) {
-        this.getAbilities(player).upgradeAbility(player.getServer(), abilityNode);
+        AbilityTree abilityTree = this.getAbilities(player);
 
+        abilityTree.upgradeAbility(player.getServer(), abilityNode);
+
+        abilityTree.sync(player.server);
         markDirty();
         return this;
     }
@@ -79,6 +85,7 @@ public class PlayerAbilitiesData extends WorldSavedData {
         AbilityTree abilityTree = new AbilityTree(uniqueID);
         this.playerMap.put(uniqueID, abilityTree);
 
+        abilityTree.sync(player.server);
         markDirty();
         return this;
     }
@@ -103,12 +110,33 @@ public class PlayerAbilitiesData extends WorldSavedData {
 
     @Override
     public void read(CompoundNBT nbt) {
+        ListNBT playerList = nbt.getList("PlayerEntries", Constants.NBT.TAG_STRING);
+        ListNBT abilitiesList = nbt.getList("AbilityEntries", Constants.NBT.TAG_COMPOUND);
 
+        if (playerList.size() != abilitiesList.size()) {
+            throw new IllegalStateException("Map doesn't have the same amount of keys as values");
+        }
+
+        for (int i = 0; i < playerList.size(); i++) {
+            UUID playerUUID = UUID.fromString(playerList.getString(i));
+            this.getAbilities(playerUUID).deserializeNBT(abilitiesList.getCompound(i));
+        }
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT compound) {
-        return null;
+    public CompoundNBT write(CompoundNBT nbt) {
+        ListNBT playerList = new ListNBT();
+        ListNBT abilitiesList = new ListNBT();
+
+        this.playerMap.forEach((uuid, researchTree) -> {
+            playerList.add(StringNBT.valueOf(uuid.toString()));
+            abilitiesList.add(researchTree.serializeNBT());
+        });
+
+        nbt.put("PlayerEntries", playerList);
+        nbt.put("AbilityEntries", abilitiesList);
+
+        return nbt;
     }
 
     public static PlayerAbilitiesData get(ServerWorld world) {

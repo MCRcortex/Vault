@@ -1,6 +1,7 @@
 package iskallia.vault.client.gui.overlay;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
 import iskallia.vault.client.gui.helper.FontHelper;
 import net.minecraft.client.Minecraft;
@@ -21,10 +22,6 @@ public class VaultBarOverlay {
 
     @SubscribeEvent
     public static void
-    onPreRender(RenderGameOverlayEvent.Pre event) { }
-
-    @SubscribeEvent
-    public static void
     onPostRender(RenderGameOverlayEvent.Post event) {
         if (event.getType() != RenderGameOverlayEvent.ElementType.HOTBAR)
             return; // Render only on HOTBAR
@@ -42,6 +39,7 @@ public class VaultBarOverlay {
 
         minecraft.getProfiler().startSection("vaultBar");
         minecraft.getTextureManager().bindTexture(RESOURCE);
+        RenderSystem.enableBlend();
         minecraft.ingameGUI.blit(matrixStack,
                 midX + 9, bottom - 48,
                 1, 1, barWidth, 5);

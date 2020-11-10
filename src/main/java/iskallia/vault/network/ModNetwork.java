@@ -8,7 +8,7 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class ModNetwork {
 
-    private static final String NETWORK_VERSION = "0.7.0";
+    private static final String NETWORK_VERSION = "0.9.0";
 
     public static final SimpleChannel channel = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(Vault.MOD_ID, "network"),
@@ -52,6 +52,16 @@ public class ModNetwork {
                 AbilityUpgradeMessage::encode,
                 AbilityUpgradeMessage::decode,
                 AbilityUpgradeMessage::handle);
+
+        channel.registerMessage(7, AbilityKnownOnesMessage.class,
+                AbilityKnownOnesMessage::encode,
+                AbilityKnownOnesMessage::decode,
+                AbilityKnownOnesMessage::handle);
+
+        channel.registerMessage(8, AbilityFocusMessage.class,
+                AbilityFocusMessage::encode,
+                AbilityFocusMessage::decode,
+                AbilityFocusMessage::handle);
     }
 
 }
