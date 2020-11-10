@@ -34,6 +34,11 @@ public class AbilitiesGUIConfig extends Config {
                 16 * 6, 0);
         style.frameType = SkillFrame.RECTANGULAR;
         styles.put(ModConfigs.ABILITIES.INVISIBILITY.getParentName(), style);
+
+        style = new SkillStyle(50 * 2, 0,
+                16, 0);
+        style.frameType = SkillFrame.STAR;
+        styles.put(ModConfigs.ABILITIES.VEIN_MINER.getParentName(), style);
     }
 
 }

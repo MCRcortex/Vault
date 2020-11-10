@@ -52,13 +52,13 @@ public class EffectAbility extends PlayerAbility {
     }
 
     @Override
-    public void onAction(PlayerEntity player, boolean active) {
+    public void onTick(PlayerEntity player, boolean active) {
         if (!active) {
             player.removePotionEffect(this.getEffect());
 
         } else {
             EffectInstance activeEffect = player.getActivePotionEffect(this.getEffect());
-            EffectInstance newEffect = new EffectInstance(this.getEffect(), 100, this.getAmplifier(),
+            EffectInstance newEffect = new EffectInstance(this.getEffect(), 1000, this.getAmplifier(),
                     false, this.getType().showParticles, this.getType().showIcon);
 
             if (activeEffect != null) {
@@ -68,6 +68,9 @@ public class EffectAbility extends PlayerAbility {
             }
         }
     }
+
+    @Override
+    public void onAction(PlayerEntity player, boolean active) { }
 
     public enum Type {
         HIDDEN("hidden", false, false),

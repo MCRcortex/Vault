@@ -2,6 +2,7 @@ package iskallia.vault.skill.ability;
 
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.network.ModNetwork;
+import iskallia.vault.network.message.AbilityCooldownMessage;
 import iskallia.vault.network.message.AbilityFocusMessage;
 import iskallia.vault.network.message.AbilityKnownOnesMessage;
 import iskallia.vault.skill.ability.type.PlayerAbility;
@@ -13,6 +14,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fml.network.NetworkDirection;
 
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
     private List<AbilityNode<?>> nodes = new ArrayList<>();
     private int focusedAbilityIndex;
     private boolean active;
-    // TODO: Cooldown
+    private int cooldownTicks;
 
     public AbilityTree(UUID uuid) {
         this.uuid = uuid;
@@ -48,7 +50,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
     public AbilityNode<?> getFocusedAbility() {
         List<AbilityNode<?>> learnedNodes = learnedNodes();
         if (learnedNodes.size() == 0) return null;
-        return learnedNodes.get(0);
+        return learnedNodes.get(focusedAbilityIndex);
     }
 
     public AbilityNode<?> getNodeOf(AbilityGroup<?> abilityGroup) {
@@ -79,6 +81,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
             this.focusedAbilityIndex++;
             if (this.focusedAbilityIndex >= learnedNodes.size())
                 this.focusedAbilityIndex -= learnedNodes.size();
+            this.active = false;
 
             AbilityNode<?> newFocused = getFocusedAbility();
             NetcodeUtils.runIfPresent(server, this.uuid, player -> {
@@ -104,6 +107,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
             this.focusedAbilityIndex--;
             if (this.focusedAbilityIndex < 0)
                 this.focusedAbilityIndex += learnedNodes.size();
+            this.active = false;
 
             AbilityNode<?> newFocused = getFocusedAbility();
             NetcodeUtils.runIfPresent(server, this.uuid, player -> {
@@ -130,6 +134,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
             NetcodeUtils.runIfPresent(server, this.uuid, player -> {
                 focusedAbility.getAbility().onAction(player, active);
             });
+            putOnCooldown(server);
         }
     }
 
@@ -147,18 +152,26 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
             NetcodeUtils.runIfPresent(server, this.uuid, player -> {
                 focusedAbility.getAbility().onAction(player, active);
             });
+            putOnCooldown(server);
 
         } else if (behavior == PlayerAbility.Behavior.HOLD_TO_ACTIVATE) {
             active = false;
             NetcodeUtils.runIfPresent(server, this.uuid, player -> {
                 focusedAbility.getAbility().onAction(player, active);
             });
+            putOnCooldown(server);
 
         } else if (behavior == PlayerAbility.Behavior.RELEASE_TO_PERFORM) {
             NetcodeUtils.runIfPresent(server, this.uuid, player -> {
                 focusedAbility.getAbility().onAction(player, active);
             });
+            putOnCooldown(server);
         }
+    }
+
+    public void putOnCooldown(MinecraftServer server) {
+        this.cooldownTicks = ModConfigs.ABILITIES.cooldownTicks;
+        syncCooldownTicks(server);
     }
 
     public AbilityTree upgradeAbility(MinecraftServer server, AbilityNode<?> abilityNode) {
@@ -200,9 +213,19 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
 
     /* ---------------------------------- */
 
+    public void tick(TickEvent.PlayerTickEvent event) {
+        AbilityNode<?> focusedAbility = getFocusedAbility();
+
+        if (focusedAbility != null) {
+            focusedAbility.getAbility().onTick(event.player, isActive());
+            cooldownTicks = Math.max(0, cooldownTicks - 1);
+        }
+    }
+
     public void sync(MinecraftServer server) {
         syncTree(server);
         syncFocusedIndex(server);
+        syncCooldownTicks(server);
     }
 
     public void syncTree(MinecraftServer server) {
@@ -219,6 +242,16 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         NetcodeUtils.runIfPresent(server, this.uuid, player -> {
             ModNetwork.channel.sendTo(
                     new AbilityFocusMessage(this.focusedAbilityIndex),
+                    player.connection.netManager,
+                    NetworkDirection.PLAY_TO_CLIENT
+            );
+        });
+    }
+
+    public void syncCooldownTicks(MinecraftServer server) {
+        NetcodeUtils.runIfPresent(server, this.uuid, player -> {
+            ModNetwork.channel.sendTo(
+                    new AbilityCooldownMessage(this.cooldownTicks),
                     player.connection.netManager,
                     NetworkDirection.PLAY_TO_CLIENT
             );

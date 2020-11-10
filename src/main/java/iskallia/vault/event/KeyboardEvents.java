@@ -1,5 +1,6 @@
 package iskallia.vault.event;
 
+import iskallia.vault.client.gui.overlay.AbilitiesOverlay;
 import iskallia.vault.init.ModKeybinds;
 import iskallia.vault.network.ModNetwork;
 import iskallia.vault.network.message.AbilityKeyMessage;
@@ -24,11 +25,12 @@ public class KeyboardEvents {
         if (minecraft.currentScreen == null && ModKeybinds.openAbilityTree.isPressed()) {
             ModNetwork.channel.sendToServer(new OpenSkillTreeMessage());
 
-        } else if (ModKeybinds.abilityKey.getKey().getKeyCode() == event.getKey()) {
+        } else if (AbilitiesOverlay.cooldownTicks == 0 && ModKeybinds.abilityKey.getKey().getKeyCode() == event.getKey()) {
             if (event.getAction() == GLFW.GLFW_RELEASE) {
                 if (!abilityKeyPressed) return;
                 if (abilityScrolled) {
                     abilityScrolled = false;
+                    abilityKeyPressed = false;
                     return;
                 }
                 ModNetwork.channel.sendToServer(new AbilityKeyMessage(true, false, false, false));
@@ -47,13 +49,15 @@ public class KeyboardEvents {
         double scrollDelta = event.getScrollDelta();
 
         if (ModKeybinds.abilityKey.isKeyDown()) {
-            if (scrollDelta < 0) {
-                ModNetwork.channel.sendToServer(new AbilityKeyMessage(false, false, false, true));
+            if (AbilitiesOverlay.cooldownTicks == 0) {
+                if (scrollDelta < 0) {
+                    ModNetwork.channel.sendToServer(new AbilityKeyMessage(false, false, false, true));
 
-            } else {
-                ModNetwork.channel.sendToServer(new AbilityKeyMessage(false, false, true, false));
+                } else {
+                    ModNetwork.channel.sendToServer(new AbilityKeyMessage(false, false, true, false));
+                }
+                abilityScrolled = true;
             }
-            abilityScrolled = true;
             event.setCanceled(true);
         }
     }

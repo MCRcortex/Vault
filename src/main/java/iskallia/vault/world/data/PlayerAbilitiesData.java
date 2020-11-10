@@ -97,12 +97,7 @@ public class PlayerAbilitiesData extends WorldSavedData {
         if (event.side == LogicalSide.SERVER) {
             AbilityTree abilities = get((ServerWorld) event.player.world)
                     .getAbilities(event.player);
-            AbilityNode<?> focusedAbility = abilities.getFocusedAbility();
-
-            if (focusedAbility != null) {
-                focusedAbility.getAbility()
-                        .onTick(event.player, abilities.isActive());
-            }
+            abilities.tick(event);
         }
     }
 

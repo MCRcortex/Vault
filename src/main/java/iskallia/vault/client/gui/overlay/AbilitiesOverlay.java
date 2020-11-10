@@ -4,15 +4,20 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
+import iskallia.vault.client.gui.helper.FontHelper;
+import iskallia.vault.client.gui.helper.UIHelper;
 import iskallia.vault.config.entry.SkillStyle;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.skill.ability.AbilityNode;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 
 import java.util.List;
 
@@ -24,6 +29,13 @@ public class AbilitiesOverlay {
 
     public static List<AbilityNode<?>> learnedAbilities;
     public static int focusedIndex;
+    public static int cooldownTicks;
+
+    @SubscribeEvent
+    public static void
+    onClientTick(TickEvent.ClientTickEvent event) {
+        cooldownTicks = Math.max(0, cooldownTicks - 1);
+    }
 
     @SubscribeEvent
     public static void
@@ -44,33 +56,39 @@ public class AbilitiesOverlay {
 
         MatrixStack matrixStack = event.getMatrixStack();
         Minecraft minecraft = Minecraft.getInstance();
-        int midY = minecraft.getMainWindow().getScaledHeight() / 2;
-
-
-//        String text = String.valueOf(vaultLevel);
-//        int textX = midX + 50 - (minecraft.fontRenderer.getStringWidth(text) / 2);
-//        int textY = bottom - 54;
-        int barHeight = 62;
-//        float expPercentage = (float) vaultExp / tnl;
+        int bottom = minecraft.getMainWindow().getScaledHeight();
+        int barWidth = 62;
+        int barHeight = 22;
 
         minecraft.getProfiler().startSection("abilityBar");
         matrixStack.push();
 
         RenderSystem.enableBlend();
-        matrixStack.translate(10, midY - barHeight / 2f, 0);
+        matrixStack.translate(10, bottom - barHeight, 0);
 
         minecraft.getTextureManager().bindTexture(HUD_RESOURCE);
         minecraft.ingameGUI.blit(matrixStack,
                 0, 0,
-                1, 13, 22, barHeight);
+                1, 13, barWidth, barHeight);
 
         minecraft.getTextureManager().bindTexture(ABILITIES_RESOURCE);
         AbilityNode<?> focusedAbility = learnedAbilities.get(focusedIndex);
         SkillStyle focusedStyle = ModConfigs.ABILITIES_GUI.getStyles().get(focusedAbility.getGroup().getParentName());
+        GlStateManager.color4f(1, 1, 1, cooldownTicks > 0 ? 0.4f : 1);
         minecraft.ingameGUI.blit(matrixStack,
-                3, 23,
+                23, 3,
                 focusedStyle.u, focusedStyle.v,
                 16, 16);
+
+        if (cooldownTicks > 0) {
+            float cooldownPercent = (float) cooldownTicks / ModConfigs.ABILITIES.cooldownTicks;
+            int cooldownHeight = (int) (16 * cooldownPercent);
+            AbstractGui.fill(matrixStack,
+                    23, 3 + (16 - cooldownHeight),
+                    23 + 16, 3 + 16,
+                    0x99_FFFFFF);
+            RenderSystem.enableBlend();
+        }
 
         GlStateManager.color4f(0.7f, 0.7f, 0.7f, 0.5f);
         AbilityNode<?> previousAbility = learnedAbilities.get(previousIndex);
@@ -82,21 +100,16 @@ public class AbilitiesOverlay {
 
         AbilityNode<?> nextAbility = learnedAbilities.get(previousIndex);
         SkillStyle nextStyle = ModConfigs.ABILITIES_GUI.getStyles().get(nextAbility.getGroup().getParentName());
-        // TODO: Make dis more transparent
         minecraft.ingameGUI.blit(matrixStack,
-                3, 42,
+                42, 3,
                 nextStyle.u, nextStyle.v,
                 16, 16);
 
         minecraft.getTextureManager().bindTexture(HUD_RESOURCE);
         GlStateManager.color4f(1, 1, 1, 1);
         minecraft.ingameGUI.blit(matrixStack,
-                -1, 19,
-                24, 13, 24, 24);
-//        FontHelper.drawStringWithBorder(matrixStack,
-//                text,
-//                textX, textY,
-//                0xFF_ffe637, 0x3c3400);
+                19, -1,
+                64, 13, 24, 24);
 
         matrixStack.pop();
         minecraft.getProfiler().endSection();

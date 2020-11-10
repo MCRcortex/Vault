@@ -6,7 +6,7 @@ import net.minecraft.entity.player.PlayerEntity;
 public abstract class PlayerAbility {
 
     @Expose private int cost;
-    protected Behavior behavior;
+    @Expose protected Behavior behavior;
 
     public PlayerAbility(int cost, Behavior behavior) {
         this.cost = cost;
@@ -29,6 +29,12 @@ public abstract class PlayerAbility {
 
     public void onTick(PlayerEntity player, boolean active) { }
 
+    /**
+     * Semantics of this dude depends on its behavior <br/>
+     * - if HOLD_TO_ACTIVATE: called once holding began, released <br/>
+     * - if PRESS_TO_TOGGLE: called once key is released <br/>
+     * - if RELEASE_TO_PERFORM: called once key is released
+     */
     public void onAction(PlayerEntity player, boolean active) { }
 
     public void onRemoved(PlayerEntity player) { }
