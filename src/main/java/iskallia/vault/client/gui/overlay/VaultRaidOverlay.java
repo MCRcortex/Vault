@@ -4,8 +4,12 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
 import iskallia.vault.client.gui.helper.FontHelper;
+import net.minecraft.block.StoneButtonBlock;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SimpleSound;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -18,6 +22,8 @@ public class VaultRaidOverlay {
     public static final ResourceLocation RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/vault-hud.png");
 
     public static int remainingTicks;
+
+    public static SimpleSound panicSound;
 
     @SubscribeEvent
     public static void
@@ -33,20 +39,27 @@ public class VaultRaidOverlay {
         int bottom = minecraft.getMainWindow().getScaledHeight();
         int barWidth = 62;
         int barHeight = 22;
+        int panicTicks = 30 * 20;
 
         matrixStack.push();
         matrixStack.translate(10, bottom - barHeight, 0);
         FontHelper.drawStringWithBorder(matrixStack,
                 formatTimeString(),
                 18, -12,
-                remainingTicks < 30 * 20
+                remainingTicks < panicTicks
                         && remainingTicks % 10 < 5
                         ? 0xFF_FF0000
                         : 0xFF_FFFFFF,
                 0xFF_000000);
 
         matrixStack.translate(30, -25, 0);
-        matrixStack.rotate(new Quaternion(0, 0, (float) remainingTicks % 360, true));
+
+
+        if (remainingTicks < panicTicks)
+            matrixStack.rotate(new Quaternion(0, 0, (remainingTicks * 10f) % 360, true));
+        else
+            matrixStack.rotate(new Quaternion(0, 0, (float) remainingTicks % 360, true));
+
         minecraft.getTextureManager().bindTexture(RESOURCE);
         RenderSystem.enableBlend();
         int hourglassWidth = 12;
@@ -60,6 +73,16 @@ public class VaultRaidOverlay {
         );
 
         matrixStack.pop();
+
+        if (remainingTicks < panicTicks) {
+            if (panicSound == null || !minecraft.getSoundHandler().isPlaying(panicSound)) {
+                panicSound = SimpleSound.master(
+                        SoundEvents.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE,
+                        2.0f - ((float) remainingTicks / panicTicks)
+                );
+                minecraft.getSoundHandler().play(panicSound);
+            }
+        }
     }
 
     public static String formatTimeString() {

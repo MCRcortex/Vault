@@ -39,7 +39,7 @@ public class AbilitiesConfig extends Config {
 
         this.NIGHT_VISION = AbilityGroup.ofEffect("Night Vision", Effects.NIGHT_VISION, EffectAbility.Type.ICON_ONLY, 1, i -> 1);
         this.INVISIBILITY = AbilityGroup.ofEffect("Invisibility", Effects.INVISIBILITY, EffectAbility.Type.ICON_ONLY, 1, i -> 1);
-        this.VEIN_MINER = new AbilityGroup<>("Vein Miner", new VeinMinerAbility(1, 32), new VeinMinerAbility(1, 64));
+        this.VEIN_MINER = new AbilityGroup<>("Vein Miner", new VeinMinerAbility(1, 4), new VeinMinerAbility(1, 8), new VeinMinerAbility(1, 16), new VeinMinerAbility(1, 32), new VeinMinerAbility(1, 64));
         this.SELF_SUSTAIN = new AbilityGroup<>("Self Sustain", new SelfSustainAbility(3, 1), new SelfSustainAbility(3, 2), new SelfSustainAbility(3, 4));
     }
 
