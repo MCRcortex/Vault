@@ -1,8 +1,12 @@
 package iskallia.vault.client.gui.overlay;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import iskallia.vault.Vault;
 import iskallia.vault.client.gui.helper.FontHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Quaternion;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -10,6 +14,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 @OnlyIn(Dist.CLIENT)
 public class VaultRaidOverlay {
+
+    public static final ResourceLocation RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/vault-hud.png");
 
     public static int remainingTicks;
 
@@ -38,6 +44,21 @@ public class VaultRaidOverlay {
                         ? 0xFF_FF0000
                         : 0xFF_FFFFFF,
                 0xFF_000000);
+
+        matrixStack.translate(30, -25, 0);
+        matrixStack.rotate(new Quaternion(0, 0, (float) remainingTicks % 360, true));
+        minecraft.getTextureManager().bindTexture(RESOURCE);
+        RenderSystem.enableBlend();
+        int hourglassWidth = 12;
+        int hourglassHeight = 16;
+        matrixStack.translate(-hourglassWidth / 2f, -hourglassHeight / 2f, 0);
+        
+        minecraft.ingameGUI.blit(matrixStack,
+                0, 0,
+                1, 36,
+                hourglassWidth, hourglassHeight
+        );
+
         matrixStack.pop();
     }
 

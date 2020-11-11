@@ -67,11 +67,6 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
                 playerEntity.sendMessage(new StringTextComponent("Time has run out!").mergeStyle(TextFormatting.GREEN), this.playerId);
                 this.teleportToStart(world, playerEntity);
             });
-        } else if (this.ticksLeft <= 100 && this.ticksLeft % 20 == 0) {
-            this.runIfPresent(world, playerEntity -> {
-                int s = this.ticksLeft / 20;
-                playerEntity.sendMessage(new StringTextComponent("Teleporting in " + s + (s == 1 ? " second..." : " seconds...")).mergeStyle(TextFormatting.GREEN), this.playerId);
-            });
         }
     }
 
@@ -163,9 +158,11 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         player.func_242279_ag();
 
         this.runIfPresent(world, playerEntity -> {
-            float min = this.ticksLeft / (20.0F * 60.0F);
+            long seconds = (this.ticksLeft / 20) % 60;
+            long minutes = ((this.ticksLeft / 20) / 60) % 60;
+            String duration = String.format("%02d:%02d", minutes, seconds);
             playerEntity.sendMessage(new StringTextComponent("Welcome to the Vault!").mergeStyle(TextFormatting.GREEN), this.playerId);
-            playerEntity.sendMessage(new StringTextComponent("You have " + min + " minutes to complete the raid.").mergeStyle(TextFormatting.GREEN), this.playerId);
+            playerEntity.sendMessage(new StringTextComponent("You have " + duration + " minutes to complete the raid.").mergeStyle(TextFormatting.GREEN), this.playerId);
             playerEntity.sendMessage(new StringTextComponent("Good luck ").append(player.getName()).append(new StringTextComponent("!")).mergeStyle(TextFormatting.GREEN), this.playerId);
         });
     }
