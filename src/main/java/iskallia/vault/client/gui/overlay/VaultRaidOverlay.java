@@ -52,7 +52,7 @@ public class VaultRaidOverlay {
         int hourglassWidth = 12;
         int hourglassHeight = 16;
         matrixStack.translate(-hourglassWidth / 2f, -hourglassHeight / 2f, 0);
-        
+
         minecraft.ingameGUI.blit(matrixStack,
                 0, 0,
                 1, 36,

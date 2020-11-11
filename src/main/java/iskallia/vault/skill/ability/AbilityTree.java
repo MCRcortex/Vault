@@ -167,10 +167,8 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
                 NetcodeUtils.runIfPresent(server, this.uuid, player -> {
                     focusedAbility.getAbility().onAction(player, active);
                 });
-                putOnCooldown(server);
-            } else {
-                syncActivity(server);
             }
+            syncActivity(server);
 
         } else if (behavior == PlayerAbility.Behavior.RELEASE_TO_PERFORM) {
             NetcodeUtils.runIfPresent(server, this.uuid, player -> {
