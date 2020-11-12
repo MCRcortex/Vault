@@ -45,9 +45,9 @@ public class VaultAltarBlock extends Block {
 	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
 		if (worldIn.isRemote)
 			return ActionResultType.SUCCESS;
-		if (handIn != Hand.MAIN_HAND) {
+		if (handIn != Hand.MAIN_HAND)
 			return ActionResultType.SUCCESS;
-		}
+
 		VaultAltarTileEntity altar = getAltarTileEntity(worldIn, pos);
 		if (altar == null)
 			return ActionResultType.SUCCESS;
@@ -81,8 +81,6 @@ public class VaultAltarBlock extends Block {
 		return ActionResultType.SUCCESS;
 	}
 
-	
-	
 	@Override
 	public int getWeakPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
 
@@ -118,10 +116,8 @@ public class VaultAltarBlock extends Block {
 	/**
 	 * Gets an array of 4 pedestals within a bounding box specified by [range]
 	 * 
-	 * @param world
-	 *            The world to check positions.
-	 * @param altar
-	 *            The position of the Vault Altar to search near.
+	 * @param world The world to check positions.
+	 * @param altar The position of the Vault Altar to search near.
 	 * @return
 	 */
 	private VaultPedestalTileEntity[] getNearbyPedestals(World world, BlockPos altar) {
