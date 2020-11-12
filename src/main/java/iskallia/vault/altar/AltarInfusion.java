@@ -1,8 +1,5 @@
 package iskallia.vault.altar;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;

@@ -1,13 +1,12 @@
 package iskallia.vault.world.data;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import iskallia.vault.Vault;
-import iskallia.vault.altar.PedestalItem;
 import iskallia.vault.altar.AltarInfusion;
+import iskallia.vault.altar.PedestalItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;

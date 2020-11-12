@@ -2,6 +2,7 @@ package iskallia.vault.block;
 
 import iskallia.vault.altar.PedestalItem;
 import iskallia.vault.block.entity.VaultPedestalTileEntity;
+import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.world.data.PlayerVaultAltarData;
 import net.minecraft.block.Block;
@@ -16,6 +17,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
@@ -23,6 +25,16 @@ public class VaultAltarBlock extends Block {
 
 	public VaultAltarBlock() {
 		super(Properties.create(Material.ROCK, MaterialColor.DIAMOND).setRequiresTool().hardnessAndResistance(3f, 3f));
+	}
+
+	@Override
+	public boolean hasTileEntity(BlockState state) {
+		return true;
+	}
+
+	@Override
+	public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+		return ModBlocks.VAULT_ALTAR_TILE_ENTITY.create();
 	}
 
 	@Override

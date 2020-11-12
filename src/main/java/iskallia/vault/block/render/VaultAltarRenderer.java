@@ -1,9 +1,12 @@
 package iskallia.vault.block.render;
 
+import java.util.Map;
+import java.util.UUID;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import iskallia.vault.altar.PedestalItem;
 import iskallia.vault.block.entity.VaultAltarTileEntity;
-import iskallia.vault.block.entity.VaultPedestalTileEntity;
 import iskallia.vault.init.ModBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -26,27 +29,55 @@ public class VaultAltarRenderer extends TileEntityRenderer<VaultAltarTileEntity>
 		super(rendererDispatcherIn);
 	}
 
+	int i = 0;
+
 	@Override
 	public void render(VaultAltarTileEntity altar, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
-
 		Minecraft mc = Minecraft.getInstance();
 
+		PedestalItem[] items = null;
+		Map<UUID, PedestalItem[]> map = altar.getNearbyPlayers();
+		for (UUID id : map.keySet()) {
+			if (id.equals(mc.player.getUniqueID())) {
+				items = map.get(id);
+				break;
+			}
+		}
+		if (items == null)
+			return;
+
 		currentTick = mc.player.ticksExisted;
-		float angle = currentTick + partialTicks;
-		matrixStack.push();
-		matrixStack.translate(.5, 1.1, .5);
-		matrixStack.rotate(Vector3f.YP.rotationDegrees(angle));
+		float angle = (currentTick + partialTicks) * 5f;
 		ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-		// IBakedModel ibakedmodel = itemRenderer.getItemModelWithOverrides(itemStack,
-		// altar.getWorld(), null);
 		int blockLight = altar.getWorld().getLightFor(LightType.BLOCK, altar.getPos().up());
 		int skyLight = altar.getWorld().getLightFor(LightType.SKY, altar.getPos().up());
 		int lightLevel = LightTexture.packLight(blockLight, skyLight);
-		// itemRenderer.renderItem(itemStack, TransformType.GROUND, true, matrixStack,
-		// buffer, lightLevel, combinedOverlay, ibakedmodel);
+		for (int i = 0; i < items.length; i++) {
+			matrixStack.push();
+			double[] corner = getCorner(i);
+			matrixStack.translate(corner[0], corner[1], corner[2]);
+			matrixStack.rotate(Vector3f.YP.rotationDegrees(angle));
+			ItemStack itemStack = items[i].getItem();
+			IBakedModel ibakedmodel = itemRenderer.getItemModelWithOverrides(itemStack, altar.getWorld(), null);
 
-		matrixStack.pop();
+			itemRenderer.renderItem(itemStack, TransformType.GROUND, true, matrixStack, buffer, lightLevel, combinedOverlay, ibakedmodel);
 
+			matrixStack.pop();
+		}
+
+	}
+
+	private double[] getCorner(int index) {
+		switch (index) {
+		case 0:
+			return new double[] { .9, 1.5, 0.1 };
+		case 1:
+			return new double[] { .9, 1.5, .9 };
+		case 2:
+			return new double[] { 0.1, 1.5, .9 };
+		default:
+			return new double[] { 0.1, 1.5, 0.1 };
+		}
 	}
 
 	public static void register() {
