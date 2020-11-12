@@ -6,10 +6,12 @@ import iskallia.vault.network.message.AbilityActivityMessage;
 import iskallia.vault.network.message.AbilityFocusMessage;
 import iskallia.vault.network.message.AbilityKnownOnesMessage;
 import iskallia.vault.skill.ability.type.PlayerAbility;
+import iskallia.vault.util.MathUtilities;
 import iskallia.vault.util.NetcodeUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.TickEvent;
@@ -151,6 +153,8 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
             return;
         }
 
+        if (cooldownTicks > 0) return;
+
         PlayerAbility.Behavior behavior = focusedAbility.getAbility().getBehavior();
 
         if (behavior == PlayerAbility.Behavior.PRESS_TO_TOGGLE) {
@@ -221,6 +225,9 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
             this.nodes.remove(node);
         }
 
+        this.focusedAbilityIndex = MathHelper.clamp(this.focusedAbilityIndex,
+                0, learnedNodes().size() - 1);
+
         return this;
     }
 
@@ -281,6 +288,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         ListNBT list = new ListNBT();
         this.nodes.stream().map(AbilityNode::serializeNBT).forEach(list::add);
         nbt.put("Nodes", list);
+        nbt.putInt("FocusedIndex", focusedAbilityIndex);
 
         return nbt;
     }
@@ -292,6 +300,8 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
         for (int i = 0; i < list.size(); i++) {
             this.add(null, AbilityNode.fromNBT(list.getCompound(i), PlayerAbility.class));
         }
+        this.focusedAbilityIndex = MathHelper.clamp(nbt.getInt("FocusedIndex"),
+                0, learnedNodes().size() - 1);
     }
 
 }
