@@ -44,6 +44,11 @@ public class AbilitiesGUIConfig extends Config {
                 16 * 5, 0);
         style.frameType = SkillFrame.STAR;
         styles.put(ModConfigs.ABILITIES.SELF_SUSTAIN.getParentName(), style);
+
+        style = new SkillStyle(0, 50,
+                0, 0);
+        style.frameType = SkillFrame.STAR;
+        styles.put(ModConfigs.ABILITIES.DASH.getParentName(), style);
     }
 
 }
