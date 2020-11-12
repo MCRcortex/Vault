@@ -213,6 +213,9 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
             this.nodes.add(node);
         }
 
+        this.focusedAbilityIndex = MathHelper.clamp(this.focusedAbilityIndex,
+                0, learnedNodes().size() - 1);
+
         return this;
     }
 
