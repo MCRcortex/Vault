@@ -10,12 +10,14 @@ import net.minecraft.item.FireworkRocketItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.TridentItem;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.world.server.ServerWorld;
 
 import java.util.EnumSet;
 
@@ -37,6 +39,7 @@ public class DashAbility extends PlayerAbility {
         Vector3d lookVector = player.getLookVec();
 
         double magnitude = (10 + extraRadius) * 0.15;
+        double extraPitch = 10;
 
         Vector3d dashVector = new Vector3d(
                 lookVector.getX(),
@@ -45,29 +48,25 @@ public class DashAbility extends PlayerAbility {
         );
 
         float initialYaw = (float) MathUtilities.extractYaw(dashVector);
-        
+
         dashVector = dashVector.rotateYaw(initialYaw);
 
         double dashPitch = Math.toDegrees(MathUtilities.extractPitch(dashVector));
 
-        if (dashPitch + 20 > 90) {
+        if (dashPitch + extraPitch > 90) {
             dashVector = new Vector3d(0, 1, 0);
             dashPitch = 90;
         } else {
-            dashVector = dashVector.rotateRoll((float) Math.toRadians(-20));
+            dashVector = dashVector.rotateRoll((float) Math.toRadians(-extraPitch));
             dashVector = dashVector.rotateYaw(-initialYaw);
             dashVector = dashVector.normalize();
         }
 
-        double coef = 1.5 - MathUtilities.map(Math.abs(dashPitch),
+        double coef = 1.6 - MathUtilities.map(Math.abs(dashPitch),
                 0.0d, 90.0d,
-                0.5, 1.0d);
+                0.6, 1.0d);
 
-        dashVector = dashVector.mul(
-                magnitude,
-                magnitude * coef,
-                magnitude
-        );
+        dashVector = dashVector.scale(magnitude * coef);
 
         player.addVelocity(
                 dashVector.getX(),
@@ -78,6 +77,9 @@ public class DashAbility extends PlayerAbility {
         player.velocityChanged = true;
 
         player.playSound(SoundEvents.ITEM_TRIDENT_RIPTIDE_3, SoundCategory.MASTER, 1f, 1f);
+        ((ServerWorld) player.world).spawnParticle(ParticleTypes.POOF,
+                player.getPosX(), player.getPosY(), player.getPosZ(),
+                50, 1D, 0.5D, 1D, 0.0D);
     }
 
 }
