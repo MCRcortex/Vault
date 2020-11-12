@@ -5,6 +5,7 @@ import iskallia.vault.config.*;
 public class ModConfigs {
 
 	public static AbilitiesConfig ABILITIES;
+	public static AbilitiesGUIConfig ABILITIES_GUI;
 	public static TalentsConfig TALENTS;
 	public static TalentsGUIConfig TALENTS_GUI;
 	public static ResearchConfig RESEARCHES;
@@ -17,6 +18,7 @@ public class ModConfigs {
 
 	public static void register() {
 		ABILITIES = (AbilitiesConfig) new AbilitiesConfig().readConfig();
+		ABILITIES_GUI = (AbilitiesGUIConfig) new AbilitiesGUIConfig().readConfig();
 		TALENTS = (TalentsConfig) new TalentsConfig().readConfig();
 		TALENTS_GUI = (TalentsGUIConfig) new TalentsGUIConfig().readConfig();
 		RESEARCHES = (ResearchConfig) new ResearchConfig().readConfig();

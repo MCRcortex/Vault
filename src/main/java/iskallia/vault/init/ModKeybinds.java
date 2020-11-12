@@ -13,11 +13,14 @@ import java.awt.event.KeyEvent;
 public class ModKeybinds {
 
     public static KeyBinding openAbilityTree;
+    public static KeyBinding abilityKey;
 
     public static void register(final FMLClientSetupEvent event) {
         openAbilityTree = createKeyBinding("open_ability_tree", KeyEvent.VK_H);
+        abilityKey = createKeyBinding("ability_key", 342); // --> Supposed to be R_ALT
 
         ClientRegistry.registerKeyBinding(openAbilityTree);
+        ClientRegistry.registerKeyBinding(abilityKey);
     }
 
     private static KeyBinding createKeyBinding(String name, int key) {

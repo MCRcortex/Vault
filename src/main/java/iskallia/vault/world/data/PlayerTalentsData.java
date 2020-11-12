@@ -1,7 +1,6 @@
 package iskallia.vault.world.data;
 
 import iskallia.vault.Vault;
-import iskallia.vault.skill.PlayerVaultStats;
 import iskallia.vault.skill.talent.TalentNode;
 import iskallia.vault.skill.talent.TalentTree;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,7 +24,7 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class PlayerTalentsData extends WorldSavedData {
 
-    protected static final String DATA_NAME = Vault.MOD_ID + "_PlayerAbilities";
+    protected static final String DATA_NAME = Vault.MOD_ID + "_PlayerTalents";
 
     private Map<UUID, TalentTree> playerMap = new HashMap<>();
 
@@ -37,38 +36,38 @@ public class PlayerTalentsData extends WorldSavedData {
         super(name);
     }
 
-    public TalentTree getAbilities(PlayerEntity player) {
-        return this.getAbilities(player.getUniqueID());
+    public TalentTree getTalents(PlayerEntity player) {
+        return this.getTalents(player.getUniqueID());
     }
 
-    public TalentTree getAbilities(UUID uuid) {
+    public TalentTree getTalents(UUID uuid) {
         return this.playerMap.computeIfAbsent(uuid, TalentTree::new);
     }
 
     /* ------------------------------- */
 
     public PlayerTalentsData add(ServerPlayerEntity player, TalentNode<?>... nodes) {
-        this.getAbilities(player).add(player.getServer(), nodes);
+        this.getTalents(player).add(player.getServer(), nodes);
 
         markDirty();
         return this;
     }
 
     public PlayerTalentsData remove(ServerPlayerEntity player, TalentNode<?>... nodes) {
-        this.getAbilities(player).remove(player.getServer(), nodes);
+        this.getTalents(player).remove(player.getServer(), nodes);
 
         markDirty();
         return this;
     }
 
-    public PlayerTalentsData upgradeAbility(ServerPlayerEntity player, TalentNode<?> talentNode) {
-        this.getAbilities(player).upgradeTalent(player.getServer(), talentNode);
+    public PlayerTalentsData upgradeTalent(ServerPlayerEntity player, TalentNode<?> talentNode) {
+        this.getTalents(player).upgradeTalent(player.getServer(), talentNode);
 
         markDirty();
         return this;
     }
 
-    public PlayerTalentsData resetAbilityTree(ServerPlayerEntity player) {
+    public PlayerTalentsData resetTalentTree(ServerPlayerEntity player) {
         UUID uniqueID = player.getUniqueID();
 
         TalentTree oldTalentTree = playerMap.get(uniqueID);
@@ -103,7 +102,7 @@ public class PlayerTalentsData extends WorldSavedData {
     @SubscribeEvent
     public static void onTick(TickEvent.PlayerTickEvent event) {
         if (event.side == LogicalSide.SERVER) {
-            get((ServerWorld) event.player.world).getAbilities(event.player);
+            get((ServerWorld) event.player.world).getTalents(event.player);
         }
     }
 
@@ -112,30 +111,30 @@ public class PlayerTalentsData extends WorldSavedData {
     @Override
     public void read(CompoundNBT nbt) {
         ListNBT playerList = nbt.getList("PlayerEntries", Constants.NBT.TAG_STRING);
-        ListNBT abilityList = nbt.getList("AbilityEntries", Constants.NBT.TAG_COMPOUND);
+        ListNBT talentList = nbt.getList("TalentEntries", Constants.NBT.TAG_COMPOUND);
 
-        if (playerList.size() != abilityList.size()) {
+        if (playerList.size() != talentList.size()) {
             throw new IllegalStateException("Map doesn't have the same amount of keys as values");
         }
 
         for (int i = 0; i < playerList.size(); i++) {
             UUID playerUUID = UUID.fromString(playerList.getString(i));
-            this.getAbilities(playerUUID).deserializeNBT(abilityList.getCompound(i));
+            this.getTalents(playerUUID).deserializeNBT(talentList.getCompound(i));
         }
     }
 
     @Override
     public CompoundNBT write(CompoundNBT nbt) {
         ListNBT playerList = new ListNBT();
-        ListNBT abilityList = new ListNBT();
+        ListNBT talentList = new ListNBT();
 
         this.playerMap.forEach((uuid, abilityTree) -> {
             playerList.add(StringNBT.valueOf(uuid.toString()));
-            abilityList.add(abilityTree.serializeNBT());
+            talentList.add(abilityTree.serializeNBT());
         });
 
         nbt.put("PlayerEntries", playerList);
-        nbt.put("AbilityEntries", abilityList);
+        nbt.put("TalentEntries", talentList);
 
         return nbt;
     }

@@ -2,6 +2,7 @@ package iskallia.vault;
 
 import iskallia.vault.init.ModCommands;
 import iskallia.vault.init.ModFeatures;
+import iskallia.vault.world.data.PlayerAbilitiesData;
 import iskallia.vault.world.data.PlayerResearchesData;
 import iskallia.vault.world.data.PlayerVaultStatsData;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -51,6 +52,7 @@ public class Vault {
 		MinecraftServer server = player.getServer();
 		PlayerVaultStatsData.get(serverWorld).getVaultStats(player).sync(server);
 		PlayerResearchesData.get(serverWorld).getResearches(player).sync(server);
+		PlayerAbilitiesData.get(serverWorld).getAbilities(player).sync(server);
 	}
 
 	public static String sId(String name) {
@@ -60,5 +62,5 @@ public class Vault {
 	public static ResourceLocation id(String name) {
 		return new ResourceLocation(MOD_ID, name);
 	}
-	
+
 }

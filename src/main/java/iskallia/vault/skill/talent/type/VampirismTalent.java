@@ -32,7 +32,7 @@ public class VampirismTalent extends PlayerTalent {
 	public static void onLivingHurt(LivingHurtEvent event) {
 		if(!(event.getSource().getTrueSource() instanceof ServerPlayerEntity))return;
 		ServerPlayerEntity player = (ServerPlayerEntity)event.getSource().getTrueSource();
-		TalentTree abilities = PlayerTalentsData.get(player.getServerWorld()).getAbilities(player);
+		TalentTree abilities = PlayerTalentsData.get(player.getServerWorld()).getTalents(player);
 
 		for(TalentNode<?> node: abilities.getNodes()) {
 			if(!(node.getTalent() instanceof VampirismTalent))continue;

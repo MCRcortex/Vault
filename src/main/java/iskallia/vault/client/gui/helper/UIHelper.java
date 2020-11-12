@@ -2,12 +2,18 @@ package iskallia.vault.client.gui.helper;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import iskallia.vault.Vault;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import java.util.function.Consumer;
 
 public class UIHelper {
+
+    public static final ResourceLocation UI_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-tree.png");
 
     public static void
     renderOverflowHidden(MatrixStack matrixStack,
@@ -114,6 +120,40 @@ public class UIHelper {
         gui.blit(matrixStack, 0, 0,
                 u + lw + 3, v + th + 1,
                 rw, 1);
+        matrixStack.pop();
+    }
+
+    public static void
+    renderLabelAtRight(AbstractGui gui, MatrixStack matrixStack, String text, int x, int y) {
+        Minecraft minecraft = Minecraft.getInstance();
+        minecraft.getTextureManager().bindTexture(UI_RESOURCE);
+
+        FontRenderer fontRenderer = minecraft.fontRenderer;
+        int textWidth = fontRenderer.getStringWidth(text);
+
+        matrixStack.push();
+        matrixStack.translate(x, y, 0);
+
+        float scale = 0.75f;
+        matrixStack.scale(scale, scale, scale);
+        matrixStack.translate(-9, 0, 0);
+        gui.blit(matrixStack, 0, 0, 143, 36, 9, 24);
+
+        int gap = 5;
+        int remainingWidth = textWidth + 2 * gap;
+        matrixStack.translate(-remainingWidth, 0, 0);
+        while (remainingWidth > 0) {
+            gui.blit(matrixStack, 0, 0, 136, 36, 6, 24);
+            remainingWidth -= 6;
+            matrixStack.translate(Math.min(6, remainingWidth), 0, 0);
+        }
+
+        matrixStack.translate(-textWidth - 2 * gap - 6, 0, 0);
+        gui.blit(matrixStack, 0, 0, 121, 36, 14, 24);
+
+        fontRenderer.drawString(matrixStack, text,
+                14 + gap, 9, 0xFF_443a1b);
+
         matrixStack.pop();
     }
 

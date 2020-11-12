@@ -50,7 +50,6 @@ public class ResearchMessage {
             PlayerResearchesData researchesData = PlayerResearchesData.get((ServerWorld) sender.world);
 
             PlayerVaultStats stats = statsData.getVaultStats(sender);
-            ResearchTree researchTree = researchesData.getResearches(sender);
 
             if (stats.getUnspentSkillPts() >= research.getCost()) {
                 researchesData.research(sender, research);

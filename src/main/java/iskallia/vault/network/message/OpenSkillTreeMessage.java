@@ -1,8 +1,10 @@
 package iskallia.vault.network.message;
 
+import iskallia.vault.skill.ability.AbilityTree;
 import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.container.SkillTreeContainer;
 import iskallia.vault.research.ResearchTree;
+import iskallia.vault.world.data.PlayerAbilitiesData;
 import iskallia.vault.world.data.PlayerTalentsData;
 import iskallia.vault.world.data.PlayerResearchesData;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,25 +23,28 @@ import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 // From Client to Server
-public class OpenAbilityTreeMessage {
+public class OpenSkillTreeMessage {
 
-    public OpenAbilityTreeMessage() { }
+    public OpenSkillTreeMessage() { }
 
-    public static void encode(OpenAbilityTreeMessage message, PacketBuffer buffer) { }
+    public static void encode(OpenSkillTreeMessage message, PacketBuffer buffer) { }
 
-    public static OpenAbilityTreeMessage decode(PacketBuffer buffer) {
-        return new OpenAbilityTreeMessage();
+    public static OpenSkillTreeMessage decode(PacketBuffer buffer) {
+        return new OpenSkillTreeMessage();
     }
 
-    public static void handle(OpenAbilityTreeMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
+    public static void handle(OpenSkillTreeMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
             ServerPlayerEntity sender = context.getSender();
 
             if (sender == null) return;
 
+            PlayerAbilitiesData playerAbilitiesData = PlayerAbilitiesData.get((ServerWorld) sender.world);
+            AbilityTree abilityTree = playerAbilitiesData.getAbilities(sender);
+
             PlayerTalentsData playerTalentsData = PlayerTalentsData.get((ServerWorld) sender.world);
-            TalentTree talentTree = playerTalentsData.getAbilities(sender);
+            TalentTree talentTree = playerTalentsData.getTalents(sender);
 
             PlayerResearchesData playerResearchesData = PlayerResearchesData.get((ServerWorld) sender.world);
             ResearchTree researchTree = playerResearchesData.getResearches(sender);
@@ -55,10 +60,11 @@ public class OpenAbilityTreeMessage {
                         @Nullable
                         @Override
                         public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-                            return new SkillTreeContainer(i, talentTree, researchTree);
+                            return new SkillTreeContainer(i, abilityTree, talentTree, researchTree);
                         }
                     },
                     (buffer) -> {
+                        buffer.writeCompoundTag(abilityTree.serializeNBT());
                         buffer.writeCompoundTag(talentTree.serializeNBT());
                         buffer.writeCompoundTag(researchTree.serializeNBT());
                     }

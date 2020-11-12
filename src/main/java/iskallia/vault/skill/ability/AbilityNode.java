@@ -2,6 +2,9 @@ package iskallia.vault.skill.ability;
 
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.skill.ability.type.PlayerAbility;
+import iskallia.vault.skill.talent.TalentGroup;
+import iskallia.vault.skill.talent.TalentNode;
+import iskallia.vault.skill.talent.type.PlayerTalent;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -64,5 +67,12 @@ public class AbilityNode<T extends PlayerAbility> implements INBTSerializable<Co
     }
 
     /* ----------------------------------------- */
+
+    public static <T extends PlayerAbility> AbilityNode<T> fromNBT(CompoundNBT nbt, Class<T> clazz) {
+        AbilityGroup<T> group = (AbilityGroup<T>) ModConfigs.ABILITIES.getByName(nbt.getString("Name"));
+        int level = nbt.getInt("Level");
+        return new AbilityNode<>(group, level);
+    }
+
 
 }

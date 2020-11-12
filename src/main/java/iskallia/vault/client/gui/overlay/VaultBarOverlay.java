@@ -1,9 +1,14 @@
 package iskallia.vault.client.gui.overlay;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
 import iskallia.vault.client.gui.helper.FontHelper;
+import iskallia.vault.client.gui.helper.UIHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -18,10 +23,6 @@ public class VaultBarOverlay {
     public static int vaultLevel;
     public static int vaultExp, tnl;
     public static int unspentSkillPoints; // <-- TODO: "Has unspent points!" indicator
-
-    @SubscribeEvent
-    public static void
-    onPreRender(RenderGameOverlayEvent.Pre event) { }
 
     @SubscribeEvent
     public static void
@@ -40,8 +41,19 @@ public class VaultBarOverlay {
         int barWidth = 85;
         float expPercentage = (float) vaultExp / tnl;
 
+        if (VaultBarOverlay.unspentSkillPoints > 0) {
+            ClientPlayerEntity player = minecraft.player;
+            boolean iconsShowing = player != null && player.getActivePotionEffects().stream()
+                    .anyMatch(EffectInstance::isShowIcon);
+            UIHelper.renderLabelAtRight(new AbstractGui() {}, matrixStack,
+                    VaultBarOverlay.unspentSkillPoints + " unspent skill point(s)",
+                    minecraft.getMainWindow().getScaledWidth(),
+                    iconsShowing ? 30 : 5);
+        }
+
         minecraft.getProfiler().startSection("vaultBar");
         minecraft.getTextureManager().bindTexture(RESOURCE);
+        RenderSystem.enableBlend();
         minecraft.ingameGUI.blit(matrixStack,
                 midX + 9, bottom - 48,
                 1, 1, barWidth, 5);
@@ -52,7 +64,6 @@ public class VaultBarOverlay {
                 text,
                 textX, textY,
                 0xFF_ffe637, 0x3c3400);
-
         minecraft.getProfiler().endSection();
     }
 

@@ -24,7 +24,7 @@ public class TalentTree implements INBTSerializable<CompoundNBT> {
     public TalentTree(UUID uuid) {
         this.uuid = uuid;
         this.add(null, ModConfigs.TALENTS.getAll().stream()
-                .map(abilityGroup -> new TalentNode<>(abilityGroup, 0))
+                .map(talentGroup -> new TalentNode<>(talentGroup, 0))
                 .toArray(TalentNode<?>[]::new));
     }
 
@@ -49,9 +49,6 @@ public class TalentTree implements INBTSerializable<CompoundNBT> {
         TalentGroup<?> talentGroup = ModConfigs.TALENTS.getByName(talentNode.getGroup().getParentName());
         TalentNode<?> upgradedTalentNode = new TalentNode<>(talentGroup, talentNode.getLevel() + 1);
         this.add(server, upgradedTalentNode);
-
-        // TODO: Spend skill points
-//        this.spendSkillPoints(server, upgradedTalentNode.getTalent().getCost());
 
         return this;
     }

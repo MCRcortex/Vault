@@ -3,8 +3,13 @@ package iskallia.vault.skill.ability;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.annotations.Expose;
+import iskallia.vault.skill.ability.type.EffectAbility;
 import iskallia.vault.skill.ability.type.PlayerAbility;
 import iskallia.vault.util.RomanNumber;
+import net.minecraft.potion.Effect;
+
+import java.util.function.IntUnaryOperator;
+import java.util.stream.IntStream;
 
 public class AbilityGroup<T extends PlayerAbility> {
 
@@ -28,7 +33,7 @@ public class AbilityGroup<T extends PlayerAbility> {
 
     public String getName(int level) {
         if (level == 0) return name + " " + RomanNumber.toRoman(0);
-        return this.registry.inverse().get(this.getAbility(level));
+        return this.getRegistry().inverse().get(this.getAbility(level));
     }
 
     public T getAbility(int level) {
@@ -42,7 +47,7 @@ public class AbilityGroup<T extends PlayerAbility> {
     }
 
     public int cost(int level) {
-        if (level >= getMaxLevel()) return -1;
+        if (level > getMaxLevel()) return -1;
         return this.levels[level - 1].getCost();
     }
 
@@ -66,6 +71,12 @@ public class AbilityGroup<T extends PlayerAbility> {
 
     /* --------------------------------------- */
 
-    // TODO: ofEffect; for Night vision and Invisibility
+    public static AbilityGroup<EffectAbility> ofEffect(String name, Effect effect, EffectAbility.Type type, int maxLevel,
+                                                       IntUnaryOperator cost) {
+        EffectAbility[] abilities = IntStream.range(0, maxLevel)
+                .mapToObj(i -> new EffectAbility(cost.applyAsInt(i + 1), effect, i, type))
+                .toArray(EffectAbility[]::new);
+        return new AbilityGroup<>(name, abilities);
+    }
 
 }
