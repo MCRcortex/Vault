@@ -23,6 +23,11 @@ public class PlayerVaultAltarData extends WorldSavedData {
 	public PlayerVaultAltarData() {
 		super(DATA_NAME);
 	}
+	
+	public boolean playerExists(UUID id) {
+		if(playerMap.containsKey(id)) return true;
+		return false;
+	}
 
 	public PedestalItem[] getRequiredItems(PlayerEntity player) {
 		return getRequiredItems(player.getUniqueID());

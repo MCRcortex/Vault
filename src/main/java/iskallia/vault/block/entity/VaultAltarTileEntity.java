@@ -28,11 +28,19 @@ import net.minecraftforge.common.util.Constants;
 public class VaultAltarTileEntity extends TileEntity implements ITickableTileEntity {
 
 	private Map<UUID, PedestalItem[]> playerMap = new HashMap<>();
-	private PedestalItem[] displayItems;
+	private boolean holdingVaultRock = false;
 	private int tick = 0;
 
 	public VaultAltarTileEntity() {
 		super(ModBlocks.VAULT_ALTAR_TILE_ENTITY);
+	}
+
+	public void setHoldingVaultRock(boolean holdingVaultRock) {
+		this.holdingVaultRock = holdingVaultRock;
+	}
+
+	public boolean isHoldingVaultRock() {
+		return holdingVaultRock;
 	}
 
 	public void update() {
@@ -46,8 +54,12 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
 		if (world.isRemote)
 			return;
 
+		if (!holdingVaultRock) {
+			if(!playerMap.isEmpty()) playerMap.clear();
+			return;
+		}
+		
 		PlayerVaultAltarData data = PlayerVaultAltarData.get((ServerWorld) world);
-		Map<UUID, PedestalItem[]> map = data.getMap();
 
 		double x = this.getPos().getX();
 		double y = this.getPos().getY();
@@ -57,8 +69,8 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
 
 		List<PlayerEntity> players = world.getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(x - range, y - range, z - range, x + range, y + range, z + range));
 		for (PlayerEntity p : players) {
-			if (map.containsKey(p.getUniqueID())) {
-				PedestalItem[] items = map.get(p.getUniqueID());
+			if (data.playerExists(p.getUniqueID())) {
+				PedestalItem[] items = data.getRequiredItems(p.getUniqueID());
 				playerMap.put(p.getUniqueID(), items);
 			}
 		}

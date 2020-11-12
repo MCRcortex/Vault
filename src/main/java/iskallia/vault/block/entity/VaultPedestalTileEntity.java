@@ -50,6 +50,9 @@ public class VaultPedestalTileEntity extends TileEntity implements ITickableTile
 		if (world.isRemote)
 			return;
 
+		if (required == null)
+			return;
+
 		double x = this.getPos().getX() + 0.5D;
 		double y = this.getPos().getY() + 0.5D;
 		double z = this.getPos().getZ() + 0.5D;

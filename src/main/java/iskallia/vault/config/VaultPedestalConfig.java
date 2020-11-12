@@ -41,7 +41,7 @@ public class VaultPedestalConfig extends Config {
 		configItems.addAll(ITEMS);
 
 		for (int i = 0; i < pedestalItems.length; i++) {
-			PedestalConfigItem configItem = ITEMS.remove(rand.nextInt(ITEMS.size()));
+			PedestalConfigItem configItem = configItems.remove(rand.nextInt(configItems.size()));
 			Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(configItem.ITEM_ID));
 
 			pedestalItems[i] = new PedestalItem(new ItemStack(item), getRandomInt(configItem.MIN, configItem.MAX), 0);

@@ -1,19 +1,23 @@
 package iskallia.vault.block;
 
 import iskallia.vault.altar.PedestalItem;
+import iskallia.vault.block.entity.VaultAltarTileEntity;
 import iskallia.vault.block.entity.VaultPedestalTileEntity;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModConfigs;
+import iskallia.vault.init.ModItems;
 import iskallia.vault.world.data.PlayerVaultAltarData;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -41,31 +45,72 @@ public class VaultAltarBlock extends Block {
 	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
 		if (worldIn.isRemote)
 			return ActionResultType.SUCCESS;
+		if (handIn != Hand.MAIN_HAND) {
+			return ActionResultType.SUCCESS;
+		}
+		VaultAltarTileEntity altar = getAltarTileEntity(worldIn, pos);
+		if (altar == null)
+			return ActionResultType.SUCCESS;
 
-		VaultPedestalTileEntity[] pedestals = getNearbyPedestals(worldIn, pos);
-
-		if (pedestals != null) {
-			for (VaultPedestalTileEntity pedestal : pedestals) {
-				pedestal.print();
+		if (player.isSneaking()) {
+			if (altar.isHoldingVaultRock()) {
+				altar.setHoldingVaultRock(false);
+				if (!player.inventory.addItemStackToInventory(new ItemStack(ModItems.VAULT_ROCK))) {
+					ItemEntity e = new ItemEntity(worldIn, pos.getX() + 0.5d, pos.getY() + 1.5d, pos.getZ() + 0.5d);
+					e.setItem(new ItemStack(ModItems.VAULT_ROCK));
+					worldIn.addEntity(e);
+				}
 			}
 		}
 
+		ItemStack heldItem = player.getHeldItemMainhand();
+		if (heldItem.getItem() != ModItems.VAULT_ROCK) {
+
+			return ActionResultType.SUCCESS;
+		}
+
+		PlayerVaultAltarData data = PlayerVaultAltarData.get((ServerWorld) worldIn);
+		PedestalItem[] items = ModConfigs.VAULT_PEDESTAL.getRequiredItemsFromConfig();
+
+		if (!data.playerExists(player.getUniqueID()))
+			data.getMap().put(player.getUniqueID(), items);
+
+		altar.setHoldingVaultRock(true);
+		System.out.println("Holding Rock: " + altar.isHoldingVaultRock());
+		altar.update();
 		return ActionResultType.SUCCESS;
+	}
+
+	
+	
+	@Override
+	public int getWeakPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
+
+		VaultPedestalTileEntity[] pedestals = getNearbyPedestals((World) blockAccess, pos);
+		if (pedestals != null) {
+			for (int i = 0; i < pedestals.length; i++) {
+				VaultPedestalTileEntity pedestal = pedestals[i];
+				PedestalItem item = pedestal.getRequiredItem();
+				if (item != null)
+					System.out.println(item.getItem());
+			}
+
+		}
+		return 0;
+	}
+
+	private VaultAltarTileEntity getAltarTileEntity(World worldIn, BlockPos pos) {
+		TileEntity te = worldIn.getTileEntity(pos);
+		if (te == null || !(te instanceof VaultAltarTileEntity))
+			return null;
+		VaultAltarTileEntity altar = (VaultAltarTileEntity) worldIn.getTileEntity(pos);
+		return altar;
 	}
 
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
 		if (worldIn.isRemote)
 			return;
-		PlayerVaultAltarData data = PlayerVaultAltarData.get((ServerWorld) worldIn);
-		if (!data.getMap().containsKey(placer.getUniqueID()))
-			data.getMap().put(placer.getUniqueID(), ModConfigs.VAULT_PEDESTAL.getRequiredItemsFromConfig());
-
-		VaultPedestalTileEntity[] pedestals = getNearbyPedestals(worldIn, pos);
-		int i = 0;
-		for (PedestalItem item : data.getMap().get(placer.getUniqueID())) {
-			pedestals[i++].setRequiredItem(item);
-		}
 
 		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 	}
