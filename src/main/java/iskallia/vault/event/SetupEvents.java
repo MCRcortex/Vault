@@ -28,8 +28,8 @@ public class SetupEvents {
     @SubscribeEvent
     public static void setupCommon(final FMLCommonSetupEvent event) {
         Vault.LOGGER.info("setupCommon()");
-        ModNetwork.initialize();
         ModConfigs.register();
+        ModNetwork.initialize();
     }
 
     @SubscribeEvent

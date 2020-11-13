@@ -3,6 +3,7 @@ package iskallia.vault.world.data;
 import iskallia.vault.Vault;
 import iskallia.vault.block.VaultPortalBlock;
 import iskallia.vault.init.ModBlocks;
+import iskallia.vault.init.ModConfigs;
 import iskallia.vault.network.ModNetwork;
 import iskallia.vault.network.message.VaultRaidTickMessage;
 import iskallia.vault.util.NetcodeUtils;
@@ -21,6 +22,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.network.NetworkDirection;
 
@@ -34,10 +36,12 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
     private UUID playerId;
     public MutableBoundingBox box;
     public int level;
-    public int ticksLeft = 20 * 60 * 5;
+    public int ticksLeft = ModConfigs.VAULT_GENERAL.getTickCounter();
 
     public BlockPos start;
     public Direction facing;
+
+    public VaultSpawner spawner = new VaultSpawner(this);
 
     protected VaultRaid() {
 
@@ -62,10 +66,14 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 
         this.syncTicksLeft(world.getServer());
 
-        if (this.ticksLeft <= 0) {
+        if(this.ticksLeft <= 0) {
             this.runIfPresent(world, playerEntity -> {
                 playerEntity.sendMessage(new StringTextComponent("Time has run out!").mergeStyle(TextFormatting.GREEN), this.playerId);
                 this.teleportToStart(world, playerEntity);
+            });
+        } else {
+            this.runIfPresent(world, playerEntity -> {
+                this.spawner.tick(playerEntity);
             });
         }
     }
@@ -95,6 +103,15 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         nbt.put("Box", this.box.toNBTTagIntArray());
         nbt.putInt("Level", this.level);
         nbt.putInt("TicksLeft", this.ticksLeft);
+
+        if(this.start != null) {
+            CompoundNBT startNBT = new CompoundNBT();
+            startNBT.putInt("x", this.start.getX());
+            startNBT.putInt("y", this.start.getY());
+            startNBT.putInt("z", this.start.getZ());
+            nbt.put("Start", startNBT);
+        }
+
         return nbt;
     }
 
@@ -104,6 +121,11 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         this.box = new MutableBoundingBox(nbt.getIntArray("Box"));
         this.level = nbt.getInt("Level");
         this.ticksLeft = nbt.getInt("TicksLeft");
+
+        if(nbt.contains("Start", Constants.NBT.TAG_COMPOUND)) {
+            CompoundNBT startNBT = nbt.getCompound("Start");
+            this.start = new BlockPos(startNBT.getInt("x"), startNBT.getInt("y"), startNBT.getInt("z"));
+        }
     }
 
     public static VaultRaid fromNBT(CompoundNBT nbt) {

@@ -14,6 +14,7 @@ public class ModConfigs {
     public static VaultOreConfig VAULT_ORES;
     public static VaultScaleConfig VAULT_SCALE;
     public static VaultItemsConfig VAULT_ITEMS;
+    public static VaultGeneralConfig VAULT_GENERAL;
 
     public static void register() {
         ABILITIES = (AbilitiesConfig) new AbilitiesConfig().readConfig();
@@ -26,6 +27,7 @@ public class ModConfigs {
         VAULT_ORES = (VaultOreConfig) new VaultOreConfig().readConfig();
         VAULT_SCALE = (VaultScaleConfig) new VaultScaleConfig().readConfig();
         VAULT_ITEMS = (VaultItemsConfig) new VaultItemsConfig().readConfig();
+        VAULT_GENERAL = (VaultGeneralConfig) new VaultGeneralConfig().readConfig();
     }
 
 }
