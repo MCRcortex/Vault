@@ -23,29 +23,28 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.util.Constants;
 
 public class VaultAltarTileEntity extends TileEntity implements ITickableTileEntity {
 
 	private Map<UUID, PedestalItem[]> playerMap = new HashMap<>();
-	private boolean holdingVaultRock = false;
-	private int tick = 0;
+	private boolean containsVaultRock = false;
 
 	public VaultAltarTileEntity() {
 		super(ModBlocks.VAULT_ALTAR_TILE_ENTITY);
 	}
 
-	public void setHoldingVaultRock(boolean holdingVaultRock) {
-		this.holdingVaultRock = holdingVaultRock;
+	public void setContainsVaultRock(boolean containsVaultRock) {
+		this.containsVaultRock = containsVaultRock;
 	}
 
-	public boolean isHoldingVaultRock() {
-		return holdingVaultRock;
+	public boolean containsVaultRock() {
+		return containsVaultRock;
 	}
 
 	public void update() {
-		this.markDirty();
-		this.world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), Constants.BlockFlags.BLOCK_UPDATE + Constants.BlockFlags.NOTIFY_NEIGHBORS);
+		this.world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
+		this.world.notifyNeighborsOfStateChange(pos, this.getBlockState().getBlock());
+		markDirty();
 	}
 
 	@Override
@@ -54,11 +53,11 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
 		if (world.isRemote)
 			return;
 
-		if (!holdingVaultRock) {
-			if(!playerMap.isEmpty()) playerMap.clear();
+		if (!containsVaultRock && !playerMap.isEmpty()) {
+			playerMap.clear();
 			return;
 		}
-		
+
 		PlayerVaultAltarData data = PlayerVaultAltarData.get((ServerWorld) world);
 
 		double x = this.getPos().getX();
@@ -72,6 +71,7 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
 			if (data.playerExists(p.getUniqueID())) {
 				PedestalItem[] items = data.getRequiredItems(p.getUniqueID());
 				playerMap.put(p.getUniqueID(), items);
+				update();
 			}
 		}
 
@@ -79,6 +79,7 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
 
 	@Override
 	public CompoundNBT write(CompoundNBT compound) {
+		compound.putBoolean("containsVaultRock", containsVaultRock);
 		ListNBT list = new ListNBT();
 		for (UUID uuid : playerMap.keySet()) {
 			CompoundNBT nbt = new CompoundNBT();
@@ -91,6 +92,7 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
 
 	@Override
 	public void read(BlockState state, CompoundNBT nbt) {
+		containsVaultRock = nbt.getBoolean("containsVaultRock");
 		ListNBT list = (ListNBT) nbt.get("players");
 		for (INBT compound : list) {
 			CompoundNBT c = (CompoundNBT) compound;
@@ -106,6 +108,7 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
 	@Override
 	public CompoundNBT getUpdateTag() {
 		CompoundNBT tag = super.getUpdateTag();
+		tag.putBoolean("containsVaultRock", containsVaultRock);
 		ListNBT list = new ListNBT();
 		for (UUID uuid : playerMap.keySet()) {
 			CompoundNBT nbt = new CompoundNBT();

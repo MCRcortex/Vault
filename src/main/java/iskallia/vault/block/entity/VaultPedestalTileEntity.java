@@ -97,7 +97,8 @@ public class VaultPedestalTileEntity extends TileEntity implements ITickableTile
 
 	@Override
 	public CompoundNBT write(CompoundNBT compound) {
-		compound.put("pedestalItem", PedestalItem.serializeNBT(required));
+		if (required != null)
+			compound.put("pedestalItem", PedestalItem.serializeNBT(required));
 		return super.write(compound);
 	}
 

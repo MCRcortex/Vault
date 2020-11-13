@@ -1,5 +1,6 @@
 package iskallia.vault.block;
 
+import iskallia.vault.altar.PedestalItem;
 import iskallia.vault.block.entity.VaultPedestalTileEntity;
 import iskallia.vault.init.ModBlocks;
 import net.minecraft.block.Block;
@@ -7,9 +8,14 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
@@ -43,35 +49,33 @@ public class VaultPedestalBlock extends Block {
 		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 	}
 
-	// @Override
-	// public ActionResultType onBlockActivated(BlockState state, World worldIn,
-	// BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-	// if (worldIn.isRemote)
-	// return ActionResultType.SUCCESS;
-	//
-	// if (handIn != Hand.MAIN_HAND)
-	// return ActionResultType.SUCCESS;
-	//
-	// if (player.getHeldItemMainhand() == ItemStack.EMPTY)
-	// return ActionResultType.SUCCESS;
-	//
-	// VaultPedestalTileEntity pedestal = getVaultPedestalTileEntity(worldIn, pos);
-	//
-	// if (pedestal == null)
-	// return ActionResultType.SUCCESS;
-	//
-	// if (pedestal.getRequiredItem() != null)
-	// return ActionResultType.SUCCESS;
-	//
-	// ItemStack heldItem = player.getHeldItem(handIn);
-	// pedestal.getRequiredItem().setItem(heldItem);
-	// pedestal.getRequiredItem().addAmount(heldItem.getCount());
-	// pedestal.update();
-	//
-	// player.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
-	//
-	// return ActionResultType.SUCCESS;
-	// }
+	@Override
+	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+		if (worldIn.isRemote)
+			return ActionResultType.SUCCESS;
+
+		if (handIn != Hand.MAIN_HAND)
+			return ActionResultType.SUCCESS;
+
+		if (player.getHeldItemMainhand() == ItemStack.EMPTY)
+			return ActionResultType.SUCCESS;
+
+		VaultPedestalTileEntity pedestal = getVaultPedestalTileEntity(worldIn, pos);
+
+		if (pedestal == null)
+			return ActionResultType.SUCCESS;
+
+		if (pedestal.getRequiredItem() != null)
+			return ActionResultType.SUCCESS;
+
+		ItemStack heldItem = player.getHeldItem(handIn);
+		pedestal.setRequiredItem(new PedestalItem(heldItem, heldItem.getCount(), 0));
+		pedestal.update();
+
+		player.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
+
+		return ActionResultType.SUCCESS;
+	}
 
 	public static VaultPedestalTileEntity getVaultPedestalTileEntity(World worldIn, BlockPos pos) {
 		TileEntity te = worldIn.getTileEntity(pos);

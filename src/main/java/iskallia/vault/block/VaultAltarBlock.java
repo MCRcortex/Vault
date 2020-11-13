@@ -53,18 +53,21 @@ public class VaultAltarBlock extends Block {
 			return ActionResultType.SUCCESS;
 
 		if (player.isSneaking()) {
-			if (altar.isHoldingVaultRock()) {
-				altar.setHoldingVaultRock(false);
+			if (altar.containsVaultRock()) {
+				altar.setContainsVaultRock(false);
 				if (!player.inventory.addItemStackToInventory(new ItemStack(ModItems.VAULT_ROCK))) {
 					ItemEntity e = new ItemEntity(worldIn, pos.getX() + 0.5d, pos.getY() + 1.5d, pos.getZ() + 0.5d);
 					e.setItem(new ItemStack(ModItems.VAULT_ROCK));
 					worldIn.addEntity(e);
 				}
 			}
+			altar.update();
+			return ActionResultType.SUCCESS;
 		}
 
 		ItemStack heldItem = player.getHeldItemMainhand();
 		if (heldItem.getItem() != ModItems.VAULT_ROCK) {
+			altar.update();
 
 			return ActionResultType.SUCCESS;
 		}
@@ -75,8 +78,9 @@ public class VaultAltarBlock extends Block {
 		if (!data.playerExists(player.getUniqueID()))
 			data.getMap().put(player.getUniqueID(), items);
 
-		altar.setHoldingVaultRock(true);
-		System.out.println("Holding Rock: " + altar.isHoldingVaultRock());
+		altar.setContainsVaultRock(true);
+
+		heldItem.setCount(heldItem.getCount() - 1);
 		altar.update();
 		return ActionResultType.SUCCESS;
 	}
