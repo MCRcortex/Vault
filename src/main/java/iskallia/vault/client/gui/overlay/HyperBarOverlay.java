@@ -55,7 +55,7 @@ public class HyperBarOverlay {
         int innerWidth = 21;
         int innerHeight = 72;
 
-        float percentage = (float) currentHype / maxHype;
+        float percentage = Math.min(1.0f, (float) currentHype / maxHype);
         int filledHypeHeight = (int) (innerHeight * percentage);
 
         minecraft.ingameGUI.blit(matrixStack,
