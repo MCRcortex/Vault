@@ -1,7 +1,6 @@
 package iskallia.vault.client.gui.component;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.client.gui.helper.FontHelper;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.client.gui.helper.UIHelper;
@@ -13,6 +12,7 @@ import iskallia.vault.init.ModConfigs;
 import iskallia.vault.network.ModNetwork;
 import iskallia.vault.network.message.ResearchMessage;
 import iskallia.vault.research.ResearchTree;
+import iskallia.vault.skill.talent.TalentTree;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;

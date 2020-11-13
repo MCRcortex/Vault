@@ -1,6 +1,5 @@
 package iskallia.vault.network.message;
 
-import iskallia.vault.init.ModConfigs;
 import iskallia.vault.skill.ability.AbilityTree;
 import iskallia.vault.world.data.PlayerAbilitiesData;
 import net.minecraft.entity.player.ServerPlayerEntity;

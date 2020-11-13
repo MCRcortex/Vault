@@ -58,20 +58,22 @@ public class VaultOreConfig extends Config {
 
 	@Override
 	protected void reset() {
-		POOLS.add(new Pool(1).add(Blocks.DIAMOND_ORE, 8).add(Blocks.LAPIS_ORE, 10));
-		POOLS.add(new Pool(1).add(Blocks.GOLD_ORE, 12, 2).add(Blocks.GOLD_BLOCK, 3));
-		POOLS.add(new Pool(1).add(Blocks.IRON_ORE, 15).add(Blocks.COAL_ORE, 20));
-		POOLS.add(new Pool(1).add(Blocks.REDSTONE_ORE, 10).add(Blocks.EMERALD_ORE, 4));
+		POOLS.add(new Pool(1, 128).add(Blocks.DIAMOND_ORE, 8).add(Blocks.LAPIS_ORE, 10));
+		POOLS.add(new Pool(1, 128).add(Blocks.GOLD_ORE, 12, 2).add(Blocks.GOLD_BLOCK, 3));
+		POOLS.add(new Pool(1, 128).add(Blocks.IRON_ORE, 15).add(Blocks.COAL_ORE, 20));
+		POOLS.add(new Pool(1, 128).add(Blocks.REDSTONE_ORE, 10).add(Blocks.EMERALD_ORE, 4));
 	}
 
 	public static class Pool {
 		@Expose private List<Ore> ORES;
 		@Expose private int WEIGHT;
+		@Expose private int TRIES;
 		private int totalWeight;
 
-		public Pool(int weight) {
-			this.WEIGHT = weight;
+		public Pool(int weight, int tries) {
 			this.ORES = new ArrayList<>();
+			this.WEIGHT = weight;
+			this.TRIES = tries;
 		}
 
 		public Pool add(Block block, int size, int weight) {
@@ -81,6 +83,10 @@ public class VaultOreConfig extends Config {
 
 		public Pool add(Block block, int size) {
 			return this.add(block, size, 1);
+		}
+
+		public int getTries() {
+			return this.TRIES;
 		}
 
 		public OreFeatureConfig getRandom(Random random) {

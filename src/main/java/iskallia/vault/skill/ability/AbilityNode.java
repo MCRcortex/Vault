@@ -2,9 +2,6 @@ package iskallia.vault.skill.ability;
 
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.skill.ability.type.PlayerAbility;
-import iskallia.vault.skill.talent.TalentGroup;
-import iskallia.vault.skill.talent.TalentNode;
-import iskallia.vault.skill.talent.type.PlayerTalent;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 

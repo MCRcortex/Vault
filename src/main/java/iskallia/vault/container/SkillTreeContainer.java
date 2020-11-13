@@ -1,9 +1,9 @@
 package iskallia.vault.container;
 
-import iskallia.vault.skill.ability.AbilityTree;
-import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.init.ModContainers;
 import iskallia.vault.research.ResearchTree;
+import iskallia.vault.skill.ability.AbilityTree;
+import iskallia.vault.skill.talent.TalentTree;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
 

@@ -10,7 +10,6 @@ import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.gen.feature.*;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,21 +26,8 @@ public class ModFeatures {
     }
 
     public static void registerFeatures(RegistryEvent.Register<Feature<?>> event) {
-        VAULT_ORE = registerOre(event.getRegistry(), "vault_ore", 128);
-    }
-
-    public static ConfiguredFeature<?, ?> registerOre(IForgeRegistry<Feature<?>> registry, String name, int tries) {
-        OreFeatureConfig config = new OreFeatureConfig(VaultRuleTest.INSTANCE, Blocks.DIORITE.getDefaultState(), 0);
-
-        ConfiguredFeature<?, ?> cf = OreFeature.ORE
-                .withConfiguration(config)
-                .func_242733_d(256)
-                .func_242728_a()
-                .func_242731_b(tries);
-
-        registry.register(cf.feature);
-
-        return register(name, cf);
+        RegionOreFeature.register(event);
+        VAULT_ORE = register("vault_ore", RegionOreFeature.INSTANCE.withConfiguration(new OreFeatureConfig(VaultRuleTest.INSTANCE, Blocks.DIORITE.getDefaultState(), 0)).func_242731_b(1));
     }
 
     private static <FC extends IFeatureConfig, F extends Feature<FC>> ConfiguredFeature<FC, F> register(String name, ConfiguredFeature<FC, F> feature) {

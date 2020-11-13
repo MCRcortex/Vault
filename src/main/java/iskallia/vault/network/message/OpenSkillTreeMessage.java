@@ -1,12 +1,12 @@
 package iskallia.vault.network.message;
 
-import iskallia.vault.skill.ability.AbilityTree;
-import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.container.SkillTreeContainer;
 import iskallia.vault.research.ResearchTree;
+import iskallia.vault.skill.ability.AbilityTree;
+import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.world.data.PlayerAbilitiesData;
-import iskallia.vault.world.data.PlayerTalentsData;
 import iskallia.vault.world.data.PlayerResearchesData;
+import iskallia.vault.world.data.PlayerTalentsData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;

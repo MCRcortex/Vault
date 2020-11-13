@@ -1,10 +1,10 @@
 package iskallia.vault.network.message;
 
+import iskallia.vault.init.ModConfigs;
 import iskallia.vault.skill.PlayerVaultStats;
 import iskallia.vault.skill.talent.TalentGroup;
 import iskallia.vault.skill.talent.TalentNode;
 import iskallia.vault.skill.talent.TalentTree;
-import iskallia.vault.init.ModConfigs;
 import iskallia.vault.world.data.PlayerTalentsData;
 import iskallia.vault.world.data.PlayerVaultStatsData;
 import net.minecraft.entity.player.ServerPlayerEntity;
