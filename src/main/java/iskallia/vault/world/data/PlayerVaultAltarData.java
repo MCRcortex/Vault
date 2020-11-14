@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import iskallia.vault.Vault;
 import iskallia.vault.altar.AltarInfusion;
-import iskallia.vault.altar.PedestalItem;
+import iskallia.vault.altar.RequiredItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -17,63 +17,62 @@ import net.minecraftforge.common.util.Constants;
 
 public class PlayerVaultAltarData extends WorldSavedData {
 
-	protected static final String DATA_NAME = Vault.MOD_ID + "_PlayerAltarData";
-	private Map<UUID, PedestalItem[]> playerMap = new HashMap<>();
+    protected static final String DATA_NAME = Vault.MOD_ID + "_PlayerAltarData";
+    private Map<UUID, RequiredItem[]> playerMap = new HashMap<>();
 
-	public PlayerVaultAltarData() {
-		super(DATA_NAME);
-	}
-	
-	public boolean playerExists(UUID id) {
-		if(playerMap.containsKey(id)) return true;
-		return false;
-	}
+    public PlayerVaultAltarData() {
+        super(DATA_NAME);
+    }
 
-	public PedestalItem[] getRequiredItems(PlayerEntity player) {
-		return getRequiredItems(player.getUniqueID());
-	}
+    public static PlayerVaultAltarData get(ServerWorld world) {
+        return world.getServer().func_241755_D_().getSavedData().getOrCreate(PlayerVaultAltarData::new, DATA_NAME);
+    }
 
-	public PedestalItem[] getRequiredItems(UUID uuid) {
-		return playerMap.get(uuid);
-	}
+    public boolean playerExists(UUID id) {
+        return playerMap.containsKey(id);
+    }
 
-	public Map<UUID, PedestalItem[]> getMap() {
-		return playerMap;
-	}
+    public RequiredItem[] getRequiredItems(PlayerEntity player) {
+        return getRequiredItems(player.getUniqueID());
+    }
 
-	@Override
-	public void read(CompoundNBT nbt) {
-		ListNBT playerList = nbt.getList("PlayerEntries", Constants.NBT.TAG_STRING);
-		ListNBT requiredItemsList = nbt.getList("RequiredItemsEntries", Constants.NBT.TAG_COMPOUND);
+    public RequiredItem[] getRequiredItems(UUID uuid) {
+        return playerMap.get(uuid);
+    }
 
-		if (playerList.size() != requiredItemsList.size()) {
-			throw new IllegalStateException("Map doesn't have the same amount of keys as values");
-		}
+    public Map<UUID, RequiredItem[]> getMap() {
+        return playerMap;
+    }
 
-		for (int i = 0; i < playerList.size(); i++) {
-			UUID playerUUID = UUID.fromString(playerList.getString(i));
-			playerMap.put(playerUUID, AltarInfusion.deserialize(requiredItemsList.getCompound(i)));
-		}
-	}
+    @Override
+    public void read(CompoundNBT nbt) {
+        ListNBT playerList = nbt.getList("PlayerEntries", Constants.NBT.TAG_STRING);
+        ListNBT requiredItemsList = nbt.getList("RequiredItemsEntries", Constants.NBT.TAG_COMPOUND);
 
-	@Override
-	public CompoundNBT write(CompoundNBT nbt) {
-		ListNBT playerList = new ListNBT();
-		ListNBT requredItemsList = new ListNBT();
+        if (playerList.size() != requiredItemsList.size()) {
+            throw new IllegalStateException("Map doesn't have the same amount of keys as values");
+        }
 
-		this.playerMap.forEach((uuid, requiredItems) -> {
-			playerList.add(StringNBT.valueOf(uuid.toString()));
-			requredItemsList.add(AltarInfusion.serialize(requiredItems));
-		});
+        for (int i = 0; i < playerList.size(); i++) {
+            UUID playerUUID = UUID.fromString(playerList.getString(i));
+            playerMap.put(playerUUID, AltarInfusion.deserialize(requiredItemsList.getCompound(i)));
+        }
+    }
 
-		nbt.put("PlayerEntries", playerList);
-		nbt.put("RequiredItemsEntries", requredItemsList);
+    @Override
+    public CompoundNBT write(CompoundNBT nbt) {
+        ListNBT playerList = new ListNBT();
+        ListNBT requredItemsList = new ListNBT();
 
-		return nbt;
-	}
+        this.playerMap.forEach((uuid, requiredItems) -> {
+            playerList.add(StringNBT.valueOf(uuid.toString()));
+            requredItemsList.add(AltarInfusion.serialize(requiredItems));
+        });
 
-	public static PlayerVaultAltarData get(ServerWorld world) {
-		return world.getServer().func_241755_D_().getSavedData().getOrCreate(PlayerVaultAltarData::new, DATA_NAME);
-	}
+        nbt.put("PlayerEntries", playerList);
+        nbt.put("RequiredItemsEntries", requredItemsList);
+
+        return nbt;
+    }
 
 }

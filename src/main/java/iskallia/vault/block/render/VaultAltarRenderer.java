@@ -1,7 +1,7 @@
 package iskallia.vault.block.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import iskallia.vault.altar.PedestalItem;
+import iskallia.vault.altar.RequiredItem;
 import iskallia.vault.block.entity.VaultAltarTileEntity;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModItems;
@@ -47,11 +47,11 @@ public class VaultAltarRenderer extends TileEntityRenderer<VaultAltarTileEntity>
         Minecraft mc = Minecraft.getInstance();
         ClientPlayerEntity player = mc.player;
 
-        Map<UUID, PedestalItem[]> nearbyPlayers = altar.getNearbyPlayers();
+        Map<UUID, RequiredItem[]> nearbyPlayers = altar.getNearbyPlayers();
         if (!nearbyPlayers.containsKey(player.getUniqueID()))
             return;
 
-        PedestalItem[] items = nearbyPlayers.get(player.getUniqueID());
+        RequiredItem[] items = nearbyPlayers.get(player.getUniqueID());
 
         ItemRenderer itemRenderer = mc.getItemRenderer();
         FontRenderer fontRenderer = mc.fontRenderer;
@@ -64,14 +64,14 @@ public class VaultAltarRenderer extends TileEntityRenderer<VaultAltarTileEntity>
             matrixStack.push();
             double[] corner = getCorner(i);
             matrixStack.translate(corner[0], corner[1], corner[2]);
-            matrixStack.rotate(Vector3f.YP.rotationDegrees(180.0F - player.rotationYaw));
+            matrixStack.rotate(Vector3f.YP.rotationDegrees(getAngle(player, partialTicks) * 5f));
             IBakedModel ibakedmodel = itemRenderer.getItemModelWithOverrides(items[i].getItem(), altar.getWorld(), null);
             itemRenderer.renderItem(items[i].getItem(), TransformType.GROUND, true, matrixStack, buffer, lightLevel, combinedOverlay, ibakedmodel);
             matrixStack.pop();
 
             //render amount required for the item
             matrixStack.push();
-            StringTextComponent text = new StringTextComponent(String.valueOf(items[i].getAmountRequired()));
+            StringTextComponent text = new StringTextComponent(String.valueOf(items[i].getAmountRequired() - items[i].getCurrentAmount()));
             float scale = 0.01f;
             int opacity = (int) (.4f * 255.0F) << 24;
             float offset = (float) (-fontRenderer.getStringPropertyWidth(text) / 2);
@@ -85,10 +85,10 @@ public class VaultAltarRenderer extends TileEntityRenderer<VaultAltarTileEntity>
             matrixStack.pop();
 
         }
-
+        // a change
         //render vault rock
         matrixStack.push();
-        matrixStack.translate(.5f, 1.75f, .5f);
+        matrixStack.translate(.5f, 1.60f, .5f);
         matrixStack.rotate(Vector3f.YP.rotationDegrees(180.0F - player.rotationYaw));
         ItemStack vaultRock = new ItemStack(ModItems.VAULT_ROCK);
         IBakedModel ibakedmodel = itemRenderer.getItemModelWithOverrides(vaultRock, altar.getWorld(), null);
@@ -112,13 +112,13 @@ public class VaultAltarRenderer extends TileEntityRenderer<VaultAltarTileEntity>
     private double[] getCorner(int index) {
         switch (index) {
             case 0:
-                return new double[]{.9, 1.1, 0.1};
+                return new double[]{.875, 1.1, 0.125};
             case 1:
-                return new double[]{.9, 1.1, .9};
+                return new double[]{.875, 1.1, .875};
             case 2:
-                return new double[]{0.1, 1.1, .9};
+                return new double[]{0.125, 1.1, .875};
             default:
-                return new double[]{0.1, 1.1, 0.1};
+                return new double[]{0.125, 1.1, 0.125};
         }
     }
 

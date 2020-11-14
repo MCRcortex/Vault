@@ -6,7 +6,7 @@ import java.util.Random;
 
 import com.google.gson.annotations.Expose;
 
-import iskallia.vault.altar.PedestalItem;
+import iskallia.vault.altar.RequiredItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -15,7 +15,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class VaultPedestalConfig extends Config {
 
     @Expose
-    public List<PedestalConfigItem> ITEMS = new ArrayList<PedestalConfigItem>();
+    public List<PedestalConfigItem> ITEMS = new ArrayList<>();
 
     private Random rand = new Random();
 
@@ -34,20 +34,19 @@ public class VaultPedestalConfig extends Config {
 
     }
 
-    public PedestalItem[] getRequiredItemsFromConfig() {
-        PedestalItem[] pedestalItems = new PedestalItem[4];
+    public RequiredItem[] getRequiredItemsFromConfig() {
+        RequiredItem[] requiredItems = new RequiredItem[4];
 
-        List<PedestalConfigItem> configItems = new ArrayList<PedestalConfigItem>();
-        configItems.addAll(ITEMS);
+        List<PedestalConfigItem> configItems = new ArrayList<>(ITEMS);
 
-        for (int i = 0; i < pedestalItems.length; i++) {
+        for (int i = 0; i < requiredItems.length; i++) {
             PedestalConfigItem configItem = configItems.remove(rand.nextInt(configItems.size()));
             Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(configItem.ITEM_ID));
 
-            pedestalItems[i] = new PedestalItem(new ItemStack(item), 0, getRandomInt(configItem.MIN, configItem.MAX));
+            requiredItems[i] = new RequiredItem(new ItemStack(item), 0, getRandomInt(configItem.MIN, configItem.MAX));
         }
 
-        return pedestalItems;
+        return requiredItems;
     }
 
     private int getRandomInt(int min, int max) {

@@ -3,13 +3,13 @@ package iskallia.vault.altar;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 
-public class PedestalItem {
+public class RequiredItem {
 
 	private ItemStack item;
 	private int currentAmount;
 	private int amountRequired;
 
-	public PedestalItem(ItemStack stack, int currentAmount, int amountRequired) {
+	public RequiredItem(ItemStack stack, int currentAmount, int amountRequired) {
 		this.item = stack;
 		this.currentAmount = currentAmount;
 		this.amountRequired = amountRequired;
@@ -43,18 +43,18 @@ public class PedestalItem {
 		this.amountRequired = amountRequired;
 	}
 
-	public static CompoundNBT serializeNBT(PedestalItem pedestalItem) {
+	public static CompoundNBT serializeNBT(RequiredItem requiredItem) {
 		CompoundNBT nbt = new CompoundNBT();
-		nbt.put("item", pedestalItem.getItem().serializeNBT());
-		nbt.putInt("currentAmount", pedestalItem.getCurrentAmount());
-		nbt.putInt("amountRequired", pedestalItem.getAmountRequired());
+		nbt.put("item", requiredItem.getItem().serializeNBT());
+		nbt.putInt("currentAmount", requiredItem.getCurrentAmount());
+		nbt.putInt("amountRequired", requiredItem.getAmountRequired());
 		return nbt;
 	}
 
-	public static PedestalItem deserializeNBT(CompoundNBT nbt) {
+	public static RequiredItem deserializeNBT(CompoundNBT nbt) {
 		if (!nbt.contains("item"))
 			return null;
-		return new PedestalItem(ItemStack.read(nbt.getCompound("item")), nbt.getInt("currentAmount"), nbt.getInt("amountRequired"));
+		return new RequiredItem(ItemStack.read(nbt.getCompound("item")), nbt.getInt("currentAmount"), nbt.getInt("amountRequired"));
 	}
 
 }

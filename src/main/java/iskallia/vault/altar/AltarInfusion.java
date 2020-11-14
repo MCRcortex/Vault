@@ -6,36 +6,36 @@ import net.minecraftforge.common.util.Constants;
 
 public class AltarInfusion {
 
-	private PedestalItem[] requiredItems;
+	private RequiredItem[] requiredItems;
 
 	public AltarInfusion() {
-		requiredItems = new PedestalItem[4];
+		requiredItems = new RequiredItem[4];
 	}
 
-	public AltarInfusion(PedestalItem[] items) {
+	public AltarInfusion(RequiredItem[] items) {
 		this.requiredItems = items;
 	}
 
-	public PedestalItem[] getRequiredItems() {
+	public RequiredItem[] getRequiredItems() {
 		return requiredItems;
 	}
 
-	public static CompoundNBT serialize(PedestalItem[] requiredItems) {
+	public static CompoundNBT serialize(RequiredItem[] requiredItems) {
 		CompoundNBT nbt = new CompoundNBT();
 		ListNBT list = new ListNBT();
-		for (int i = 0; i < requiredItems.length; i++) {
-			list.add(PedestalItem.serializeNBT(requiredItems[i]));
+		for (RequiredItem item : requiredItems) {
+			list.add(RequiredItem.serializeNBT(item));
 		}
 		nbt.put("requiredItems", list);
 		return nbt;
 	}
 
-	public static PedestalItem[] deserialize(CompoundNBT nbt) {
+	public static RequiredItem[] deserialize(CompoundNBT nbt) {
 		ListNBT list = nbt.getList("requiredItems", Constants.NBT.TAG_COMPOUND);
-		PedestalItem[] requiredItems = new PedestalItem[4];
+		RequiredItem[] requiredItems = new RequiredItem[4];
 		for (int i = 0; i < list.size(); i++) {
 			CompoundNBT compound = (CompoundNBT) list.get(i);
-			requiredItems[i] = PedestalItem.deserializeNBT(compound);
+			requiredItems[i] = RequiredItem.deserializeNBT(compound);
 		}
 		return requiredItems;
 	}
