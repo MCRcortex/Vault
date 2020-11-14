@@ -25,12 +25,12 @@ public class AbilityUpgradeMessage {
     }
 
     public static void encode(AbilityUpgradeMessage message, PacketBuffer buffer) {
-        buffer.writeString(message.abilityName);
+        buffer.writeString(message.abilityName, 32767);
     }
 
     public static AbilityUpgradeMessage decode(PacketBuffer buffer) {
         AbilityUpgradeMessage message = new AbilityUpgradeMessage();
-        message.abilityName = buffer.readString();
+        message.abilityName = buffer.readString(32767);
         return message;
     }
 

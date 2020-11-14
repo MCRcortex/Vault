@@ -27,12 +27,12 @@ public class TalentUpgradeMessage {
     }
 
     public static void encode(TalentUpgradeMessage message, PacketBuffer buffer) {
-        buffer.writeString(message.talentName);
+        buffer.writeString(message.talentName, 32767);
     }
 
     public static TalentUpgradeMessage decode(PacketBuffer buffer) {
         TalentUpgradeMessage message = new TalentUpgradeMessage();
-        message.talentName = buffer.readString();
+        message.talentName = buffer.readString(32767);
         return message;
     }
 
