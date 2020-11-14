@@ -17,7 +17,7 @@ apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '0.1.0'
+version = '0.1.1'
 group = 'iskallia.vault' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'the_vault'
 
@@ -33,13 +33,14 @@ minecraft {
     // Use non-default mappings at your own risk. they may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
      mappings channel: 'snapshot', version: '20200916-1.16.2' //ABSOLUTELY  G A R B A G E  MCP MAPPINGS
+    // mappings channel: 'snapshot', version: '20201028-1.16.3' // Dis also won't work, cuz you know :V
     //mappings channel: 'snapshot', version: '20200514-mixed-1.16.3' //but this won't work :(
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     // Default run configurations.
-    // These can be tweaked, removed, or duplicated as needed.
+    // These can be tweaked, removed, or duplicated as needed
     runs {
         client {
             workingDirectory project.file('run')
