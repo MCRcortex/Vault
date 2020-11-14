@@ -1,13 +1,9 @@
 package iskallia.vault.network.message;
 
 import iskallia.vault.client.gui.overlay.AbilitiesOverlay;
-import iskallia.vault.client.gui.overlay.VaultBarOverlay;
-import iskallia.vault.client.gui.screen.SkillTreeScreen;
 import iskallia.vault.skill.ability.AbilityNode;
 import iskallia.vault.skill.ability.AbilityTree;
 import iskallia.vault.skill.ability.type.PlayerAbility;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;

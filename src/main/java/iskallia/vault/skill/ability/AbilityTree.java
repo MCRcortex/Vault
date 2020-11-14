@@ -6,7 +6,6 @@ import iskallia.vault.network.message.AbilityActivityMessage;
 import iskallia.vault.network.message.AbilityFocusMessage;
 import iskallia.vault.network.message.AbilityKnownOnesMessage;
 import iskallia.vault.skill.ability.type.PlayerAbility;
-import iskallia.vault.util.MathUtilities;
 import iskallia.vault.util.NetcodeUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;

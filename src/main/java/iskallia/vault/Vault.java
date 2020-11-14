@@ -41,7 +41,7 @@ public class Vault {
 	}
 
 	public void onBiomeLoad(BiomeLoadingEvent event) {
-    	if(event.getName().getNamespace().equals(MOD_ID)) {
+    	if(event.getName().equals(Vault.id("spoopy"))) {
     		ModFeatures.FEATURES.forEach(feature -> event.getGeneration().withFeature(GenerationStage.Decoration.UNDERGROUND_DECORATION, feature));
 	    }
 	}

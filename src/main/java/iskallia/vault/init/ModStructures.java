@@ -3,7 +3,6 @@ package iskallia.vault.init;
 import iskallia.vault.Vault;
 import iskallia.vault.world.gen.structure.VaultConfig;
 import iskallia.vault.world.gen.structure.VaultStructure;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraftforge.event.RegistryEvent;

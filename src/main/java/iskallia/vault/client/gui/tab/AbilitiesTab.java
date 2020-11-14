@@ -4,10 +4,8 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.client.gui.screen.SkillTreeScreen;
 import iskallia.vault.client.gui.widget.AbilityWidget;
-import iskallia.vault.client.gui.widget.TalentWidget;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.skill.ability.AbilityTree;
-import iskallia.vault.skill.talent.TalentTree;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.text.StringTextComponent;
 

@@ -6,7 +6,6 @@ import iskallia.vault.client.gui.overlay.VaultBarOverlay;
 import iskallia.vault.client.gui.overlay.VaultRaidOverlay;
 import iskallia.vault.client.gui.screen.SkillTreeScreen;
 import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 

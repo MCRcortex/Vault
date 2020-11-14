@@ -1,9 +1,8 @@
 package iskallia.vault.network.message;
 
-import iskallia.vault.skill.PlayerVaultStats;
 import iskallia.vault.init.ModConfigs;
-import iskallia.vault.research.ResearchTree;
 import iskallia.vault.research.type.Research;
+import iskallia.vault.skill.PlayerVaultStats;
 import iskallia.vault.world.data.PlayerResearchesData;
 import iskallia.vault.world.data.PlayerVaultStatsData;
 import net.minecraft.entity.player.ServerPlayerEntity;

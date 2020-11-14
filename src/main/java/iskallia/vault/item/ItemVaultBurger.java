@@ -1,11 +1,9 @@
 package iskallia.vault.item;
 
 import iskallia.vault.Vault;
-import iskallia.vault.skill.PlayerVaultStats;
-import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.init.ModConfigs;
+import iskallia.vault.skill.PlayerVaultStats;
 import iskallia.vault.util.MathUtilities;
-import iskallia.vault.world.data.PlayerTalentsData;
 import iskallia.vault.world.data.PlayerVaultStatsData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;

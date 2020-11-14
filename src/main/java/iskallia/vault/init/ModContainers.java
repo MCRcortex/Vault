@@ -1,14 +1,14 @@
 package iskallia.vault.init;
 
-import iskallia.vault.skill.ability.AbilityTree;
-import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.container.SkillTreeContainer;
 import iskallia.vault.research.ResearchTree;
+import iskallia.vault.skill.ability.AbilityTree;
+import iskallia.vault.skill.talent.TalentTree;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.network.IContainerFactory;
-import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -17,7 +17,7 @@ public class ModContainers {
 
     public static ContainerType<SkillTreeContainer> SKILL_TREE_CONTAINER;
 
-    public static void register(IForgeRegistry<ContainerType<?>> registry) {
+    public static void register(RegistryEvent.Register<ContainerType<?>> event) {
         SKILL_TREE_CONTAINER = createContainerType((windowId, inventory, buffer) -> {
             UUID uniqueID = inventory.player.getUniqueID();
             AbilityTree abilityTree = new AbilityTree(uniqueID);
@@ -29,7 +29,7 @@ public class ModContainers {
             return new SkillTreeContainer(windowId, abilityTree, talentTree, researchTree);
         });
 
-        registry.registerAll(
+        event.getRegistry().registerAll(
                 SKILL_TREE_CONTAINER.setRegistryName("ability_tree")
         );
     }

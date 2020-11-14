@@ -6,10 +6,8 @@ import iskallia.vault.world.data.VaultRaid;
 import iskallia.vault.world.data.VaultRaidData;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -17,6 +15,8 @@ import java.util.Random;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EntityEvents {
+
+
 
 	@SubscribeEvent
 	public static void onEntityTick(LivingEvent.LivingUpdateEvent event) {
@@ -31,6 +31,14 @@ public class EntityEvents {
 
 		EntityScaler.scale(entity, raid.level, new Random());
 		entity.getTags().add("VaultScaled");
+		entity.enablePersistence();
+	}
+
+	@SubscribeEvent
+	public static void onEntitySpawn(LivingSpawnEvent.CheckSpawn event) {
+		if(event.getEntity().getEntityWorld().getDimensionKey() == Vault.WORLD_KEY && !event.isSpawner()) {
+			event.setCanceled(true);
+		}
 	}
 
 }

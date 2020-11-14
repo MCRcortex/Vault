@@ -64,24 +64,26 @@ public class VaultScaleConfig extends Config {
 
 	@Override
 	protected void reset() {
-		this.OVERRIDES.add(new Overrides(5).add(LEATHER_ARMOR).add(WOODEN_WEAPONS).add(STONE_WEAPONS).enchant(1, 1));
-		this.OVERRIDES.add(new Overrides(10).add(LEATHER_ARMOR).add(GOLDEN_ARMOR).add(STONE_WEAPONS).add(GOLDEN_WEAPONS).enchant(1, 2));
-		this.OVERRIDES.add(new Overrides(15).add(GOLDEN_ARMOR).add(IRON_ARMOR).add(GOLDEN_WEAPONS).add(IRON_WEAPONS).enchant(2, 1));
-		this.OVERRIDES.add(new Overrides(20).add(IRON_ARMOR).add(DIAMOND_ARMOR).add(IRON_WEAPONS).add(DIAMOND_WEAPONS).enchant(2, 2));
-		this.OVERRIDES.add(new Overrides(25).add(DIAMOND_ARMOR).add(NETHERITE_ARMOR).add(DIAMOND_WEAPONS).add(NETHERITE_WEAPONS).enchant(3, 1));
-		this.OVERRIDES.add(new Overrides(30).add(NETHERITE_ARMOR).add(NETHERITE_WEAPONS).enchant(3, 2));
+		this.OVERRIDES.add(new Overrides(5, 3).add(LEATHER_ARMOR).add(WOODEN_WEAPONS).add(STONE_WEAPONS).enchant(1, 1));
+		this.OVERRIDES.add(new Overrides(10, 3).add(LEATHER_ARMOR).add(GOLDEN_ARMOR).add(STONE_WEAPONS).add(GOLDEN_WEAPONS).enchant(1, 2));
+		this.OVERRIDES.add(new Overrides(15, 4).add(GOLDEN_ARMOR).add(IRON_ARMOR).add(GOLDEN_WEAPONS).add(IRON_WEAPONS).enchant(2, 1));
+		this.OVERRIDES.add(new Overrides(20, 4).add(IRON_ARMOR).add(DIAMOND_ARMOR).add(IRON_WEAPONS).add(DIAMOND_WEAPONS).enchant(2, 2));
+		this.OVERRIDES.add(new Overrides(25, 5).add(DIAMOND_ARMOR).add(NETHERITE_ARMOR).add(DIAMOND_WEAPONS).add(NETHERITE_WEAPONS).enchant(3, 1));
+		this.OVERRIDES.add(new Overrides(30, 6).add(NETHERITE_ARMOR).add(NETHERITE_WEAPONS).enchant(3, 2));
 	}
 
 	public static class Overrides {
-		public static final Overrides EMPTY = new Overrides(0);
+		public static final Overrides EMPTY = new Overrides(0, 0);
 
 		@Expose public int MIN_LEVEL;
 		@Expose public Map<String, List<String>> LOOT;
 		@Expose public int ENCH_LEVEL;
 		@Expose public int ENCH_TRIALS;
+		@Expose public int MAX_MOBS;
 
-		public Overrides(int minLevel) {
+		public Overrides(int minLevel, int maxMobs) {
 			this.MIN_LEVEL = minLevel;
+			this.MAX_MOBS = maxMobs;
 			this.LOOT = new LinkedHashMap<>();
 		}
 

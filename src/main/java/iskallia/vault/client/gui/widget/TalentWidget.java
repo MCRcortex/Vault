@@ -2,10 +2,10 @@ package iskallia.vault.client.gui.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import iskallia.vault.Vault;
-import iskallia.vault.skill.talent.TalentGroup;
-import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.config.entry.SkillStyle;
+import iskallia.vault.skill.talent.TalentGroup;
+import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.util.ResourceBoundary;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;

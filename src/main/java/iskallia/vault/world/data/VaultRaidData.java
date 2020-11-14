@@ -3,7 +3,6 @@ package iskallia.vault.world.data;
 import iskallia.vault.Vault;
 import iskallia.vault.init.ModFeatures;
 import iskallia.vault.init.ModStructures;
-import iskallia.vault.skill.PlayerVaultStats;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;

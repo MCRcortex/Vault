@@ -1,8 +1,6 @@
 package iskallia.vault.skill.talent;
 
 import iskallia.vault.init.ModConfigs;
-import iskallia.vault.network.ModNetwork;
-import iskallia.vault.network.message.VaultLevelMessage;
 import iskallia.vault.skill.talent.type.PlayerTalent;
 import iskallia.vault.util.NetcodeUtils;
 import net.minecraft.nbt.CompoundNBT;
@@ -10,7 +8,6 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fml.network.NetworkDirection;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -2,7 +2,6 @@ package iskallia.vault.world.data;
 
 import iskallia.vault.Vault;
 import iskallia.vault.skill.PlayerVaultStats;
-import iskallia.vault.skill.talent.TalentNode;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;

@@ -4,7 +4,6 @@ import iskallia.vault.client.gui.overlay.VaultBarOverlay;
 import iskallia.vault.client.gui.screen.SkillTreeScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 

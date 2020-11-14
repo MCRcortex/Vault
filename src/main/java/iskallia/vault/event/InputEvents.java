@@ -18,15 +18,26 @@ public class InputEvents {
     @SubscribeEvent
     public static void onKey(InputEvent.KeyInputEvent event) {
         Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.world == null) return;
+        onInput(minecraft, event.getKey(), event.getAction());
+    }
 
+    @SubscribeEvent
+    public static void onMouse(InputEvent.MouseInputEvent event) {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.world == null) return;
+        onInput(minecraft, event.getButton(), event.getAction());
+    }
+
+    private static void onInput(Minecraft minecraft, int key, int action) {
         if (minecraft.currentScreen == null && ModKeybinds.openAbilityTree.isPressed()) {
             ModNetwork.channel.sendToServer(new OpenSkillTreeMessage());
 
-        } else if (AbilitiesOverlay.cooldownTicks == 0 && ModKeybinds.abilityKey.getKey().getKeyCode() == event.getKey()) {
-            if (event.getAction() == GLFW.GLFW_RELEASE) {
+        } else if (AbilitiesOverlay.cooldownTicks == 0 && ModKeybinds.abilityKey.getKey().getKeyCode() == key) {
+            if (action == GLFW.GLFW_RELEASE) {
                 ModNetwork.channel.sendToServer(new AbilityKeyMessage(true, false, false, false));
 
-            } else if (event.getAction() == GLFW.GLFW_PRESS) {
+            } else if (action == GLFW.GLFW_PRESS) {
                 ModNetwork.channel.sendToServer(new AbilityKeyMessage(false, true, false, false));
             }
         }
@@ -34,6 +45,10 @@ public class InputEvents {
 
     @SubscribeEvent
     public static void onMouseScroll(InputEvent.MouseScrollEvent event) {
+        Minecraft minecraft = Minecraft.getInstance();
+
+        if (minecraft.world == null) return;
+
         double scrollDelta = event.getScrollDelta();
 
         if (ModKeybinds.abilityKey.isKeyDown()) {
