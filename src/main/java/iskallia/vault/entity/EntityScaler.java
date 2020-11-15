@@ -1,6 +1,6 @@
 package iskallia.vault.entity;
 
-import iskallia.vault.config.VaultScaleConfig;
+import iskallia.vault.config.VaultMobsConfig;
 import iskallia.vault.init.ModConfigs;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.monster.MonsterEntity;
@@ -14,7 +14,7 @@ import java.util.Random;
 public class EntityScaler {
 
 	public static void scale(MonsterEntity entity, int level, Random random) {
-		VaultScaleConfig.Overrides overrides = ModConfigs.VAULT_SCALE.getForLevel(level);
+		VaultMobsConfig.Level overrides = ModConfigs.VAULT_MOBS.getForLevel(level);
 
 		for(EquipmentSlotType slot: EquipmentSlotType.values()) {
 			if(slot.getSlotType() == EquipmentSlotType.Group.HAND) {

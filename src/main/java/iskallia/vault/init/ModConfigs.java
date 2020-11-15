@@ -12,7 +12,7 @@ public class ModConfigs {
     public static ResearchesGUIConfig RESEARCHES_GUI;
     public static VaultLevelsConfig LEVELS_META;
     public static VaultOreConfig VAULT_ORES;
-    public static VaultScaleConfig VAULT_SCALE;
+    public static VaultMobsConfig VAULT_MOBS;
     public static VaultItemsConfig VAULT_ITEMS;
     public static VaultGeneralConfig VAULT_GENERAL;
 
@@ -25,7 +25,7 @@ public class ModConfigs {
         RESEARCHES_GUI = (ResearchesGUIConfig) new ResearchesGUIConfig().readConfig();
         LEVELS_META = (VaultLevelsConfig) new VaultLevelsConfig().readConfig();
         VAULT_ORES = (VaultOreConfig) new VaultOreConfig().readConfig();
-        VAULT_SCALE = (VaultScaleConfig) new VaultScaleConfig().readConfig();
+        VAULT_MOBS = (VaultMobsConfig) new VaultMobsConfig().readConfig();
         VAULT_ITEMS = (VaultItemsConfig) new VaultItemsConfig().readConfig();
         VAULT_GENERAL = (VaultGeneralConfig) new VaultGeneralConfig().readConfig();
     }
