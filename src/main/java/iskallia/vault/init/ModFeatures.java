@@ -3,8 +3,8 @@ package iskallia.vault.init;
 import iskallia.vault.Vault;
 import iskallia.vault.world.gen.decorator.RegionOreFeature;
 import iskallia.vault.world.gen.ruletest.VaultRuleTest;
-import iskallia.vault.world.gen.structure.VaultConfig;
-import iskallia.vault.world.gen.structure.VaultPools;
+import iskallia.vault.world.gen.structure.ArenaStructure;
+import iskallia.vault.world.gen.structure.VaultStructure;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.gen.feature.*;
@@ -18,11 +18,13 @@ public class ModFeatures {
 
     public static List<ConfiguredFeature<?, ?>> FEATURES = new ArrayList<>();
 
-    public static StructureFeature<VaultConfig, ? extends Structure<VaultConfig>> VAULT_FEATURE;
+    public static StructureFeature<VaultStructure.Config, ? extends Structure<VaultStructure.Config>> VAULT_FEATURE;
+    public static StructureFeature<ArenaStructure.Config, ? extends Structure<ArenaStructure.Config>> ARENA_FEATURE;
     public static ConfiguredFeature<?, ?> VAULT_ORE;
 
     public static void registerStructureFeatures() {
-        VAULT_FEATURE = register("vault", ModStructures.VAULT.func_236391_a_(new VaultConfig(() -> VaultPools.START, 5)));
+        VAULT_FEATURE = register("vault", ModStructures.VAULT.func_236391_a_(new VaultStructure.Config(() -> VaultStructure.Pools.START, 5)));
+        ARENA_FEATURE = register("arena", ModStructures.ARENA.func_236391_a_(new ArenaStructure.Config(() -> ArenaStructure.Pools.START, 8)));
     }
 
     public static void registerFeatures(RegistryEvent.Register<Feature<?>> event) {

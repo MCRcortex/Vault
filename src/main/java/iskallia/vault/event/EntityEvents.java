@@ -2,8 +2,8 @@ package iskallia.vault.event;
 
 import iskallia.vault.Vault;
 import iskallia.vault.entity.EntityScaler;
-import iskallia.vault.world.data.VaultRaid;
 import iskallia.vault.world.data.VaultRaidData;
+import iskallia.vault.world.raid.VaultRaid;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.living.LivingEvent;

@@ -1,4 +1,4 @@
-package iskallia.vault.world.data;
+package iskallia.vault.world.raid;
 
 import iskallia.vault.init.ModConfigs;
 import net.minecraft.entity.EntityType;
@@ -56,7 +56,6 @@ public class VaultSpawner {
 					if(player.getDistanceSq(pos.getX(), pos.getY(), pos.getZ()) < 10 * 10) {
 						continue;
 					}
-
 
 					if(!world.getBlockState(pos).canEntitySpawn(world, pos, EntityType.ZOMBIE))continue;
 					boolean isAir = true;

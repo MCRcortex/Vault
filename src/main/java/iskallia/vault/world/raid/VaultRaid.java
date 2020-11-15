@@ -1,4 +1,4 @@
-package iskallia.vault.world.data;
+package iskallia.vault.world.raid;
 
 import iskallia.vault.Vault;
 import iskallia.vault.block.VaultPortalBlock;
