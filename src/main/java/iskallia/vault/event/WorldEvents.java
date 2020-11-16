@@ -16,6 +16,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -43,7 +44,9 @@ public class WorldEvents {
                     BlockPos pos = event.getPos();
 
                     BlockState blockState = world.getBlockState(pos);
-                    floodMine(player, world, blockState.getBlock(), pos, veinMinerAbility.getBlockLimit());
+                    if (floodMine(player, world, blockState.getBlock(), pos, veinMinerAbility.getBlockLimit())) {
+                        event.setCanceled(true);
+                    }
 
                     abilityTree.lockSwapping(true);
                 }
@@ -52,8 +55,15 @@ public class WorldEvents {
     }
 
     // "Forest Fire Algorithm" from https://en.wikipedia.org/wiki/Flood_fill
-    public static void floodMine(ServerPlayerEntity player, ServerWorld world, Block targetBlock, BlockPos pos, int limit) {
-        if (world.getBlockState(pos).getBlock() != targetBlock) return;
+    public static boolean floodMine(ServerPlayerEntity player, ServerWorld world, Block targetBlock, BlockPos pos, int limit) {
+        if (world.getBlockState(pos).getBlock() != targetBlock) return false;
+
+        ItemStack heldItem = player.getHeldItem(player.getActiveHand());
+
+        if (heldItem.isDamageable()) {
+            int usesLeft = heldItem.getMaxDamage() - heldItem.getDamage();
+            if (usesLeft <= 1) return false; // Tool will break anyways, let the event handle that
+        }
 
         int traversedBlocks = 0;
         List<ItemStack> itemDrops = new LinkedList<>();
@@ -84,14 +94,25 @@ public class WorldEvents {
         }
 
         itemDrops.forEach(stack -> Block.spawnAsEntity(world, pos, stack));
+        return true;
     }
 
     public static List<ItemStack> destroyBlockAs(ServerWorld world, BlockPos pos, PlayerEntity player) {
+        ItemStack heldItem = player.getHeldItem(player.getActiveHand());
+
+        if (heldItem.isDamageable()) {
+            int usesLeft = heldItem.getMaxDamage() - heldItem.getDamage();
+            if (usesLeft <= 1) {
+                return Collections.emptyList();
+            }
+            heldItem.damageItem(1, player, playerEntity -> {});
+        }
+
         List<ItemStack> drops = Block.getDrops(world.getBlockState(pos), world, pos,
                 world.getTileEntity(pos), player,
-                player.getHeldItem(player.getActiveHand()));
+                heldItem);
 
-        world.destroyBlock(pos, false);
+        world.destroyBlock(pos, false, player);
 
         return drops;
     }

@@ -1,6 +1,7 @@
-package iskallia.vault.world.data;
+package iskallia.vault.world.raid;
 
 import iskallia.vault.init.ModConfigs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -21,7 +22,7 @@ public class VaultSpawner {
 	}
 
 	public int getMaxMobs() {
-		return ModConfigs.VAULT_SCALE.getForLevel(this.raid.level).MAX_MOBS;
+		return ModConfigs.VAULT_MOBS.getForLevel(this.raid.level).MAX_MOBS;
 	}
 
 	public void tick(ServerPlayerEntity player) {
@@ -40,7 +41,7 @@ public class VaultSpawner {
 
 		while(this.mobs.size() < this.getMaxMobs() && spaces.size() > 0) {
 			 BlockPos pos = spaces.remove(player.getServerWorld().getRandom().nextInt(spaces.size()));
-			 this.spawn(player.getServerWorld(), EntityType.ZOMBIE.create(player.getServerWorld()), pos);
+			 this.spawn(player.getServerWorld(), pos);
 		}
 	}
 
@@ -56,7 +57,6 @@ public class VaultSpawner {
 					if(player.getDistanceSq(pos.getX(), pos.getY(), pos.getZ()) < 10 * 10) {
 						continue;
 					}
-
 
 					if(!world.getBlockState(pos).canEntitySpawn(world, pos, EntityType.ZOMBIE))continue;
 					boolean isAir = true;
@@ -78,15 +78,20 @@ public class VaultSpawner {
 		return spaces;
 	}
 
-	public void spawn(ServerWorld world, LivingEntity entity, BlockPos pos) {
-		entity.setLocationAndAngles(pos.getX() + 0.5F, pos.getY() + 0.2F, pos.getZ() + 0.5F, 0.0F, 0.0F);
-		world.summonEntity(entity);
+	public void spawn(ServerWorld world, BlockPos pos) {
+		Entity e = ModConfigs.VAULT_MOBS.getForLevel(this.raid.level).getRandomMob(world.rand).getType().create(world);
 
-		if (entity instanceof MobEntity) {
-			((MobEntity)entity).spawnExplosionParticle();
+		if(e instanceof LivingEntity) {
+			LivingEntity entity = (LivingEntity)e;
+			entity.setLocationAndAngles(pos.getX() + 0.5F, pos.getY() + 0.2F, pos.getZ() + 0.5F, 0.0F, 0.0F);
+			world.summonEntity(entity);
+
+			if(entity instanceof MobEntity) {
+				((MobEntity)entity).spawnExplosionParticle();
+			}
+
+			this.mobs.add(entity);
 		}
-
-		this.mobs.add(entity);
 	}
 
 }

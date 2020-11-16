@@ -37,7 +37,7 @@ public class DashAbility extends PlayerAbility {
 
         float initialYaw = (float) MathUtilities.extractYaw(dashVector);
 
-        dashVector = dashVector.rotateYaw(initialYaw);
+        dashVector = MathUtilities.rotateYaw(dashVector, initialYaw);
 
         double dashPitch = Math.toDegrees(MathUtilities.extractPitch(dashVector));
 
@@ -45,8 +45,8 @@ public class DashAbility extends PlayerAbility {
             dashVector = new Vector3d(0, 1, 0);
             dashPitch = 90;
         } else {
-            dashVector = dashVector.rotateRoll((float) Math.toRadians(-extraPitch));
-            dashVector = dashVector.rotateYaw(-initialYaw);
+            dashVector = MathUtilities.rotateRoll(dashVector, (float) Math.toRadians(-extraPitch));
+            dashVector = MathUtilities.rotateYaw(dashVector, -initialYaw);
             dashVector = dashVector.normalize();
         }
 

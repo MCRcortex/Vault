@@ -3,7 +3,7 @@ package iskallia.vault.world.gen.structure;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import iskallia.vault.Vault;
-import iskallia.vault.world.data.VaultRaid;
+import iskallia.vault.world.raid.VaultRaid;
 import net.minecraft.block.JigsawBlock;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;

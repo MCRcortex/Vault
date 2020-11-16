@@ -25,12 +25,12 @@ public class ResearchMessage {
     }
 
     public static void encode(ResearchMessage message, PacketBuffer buffer) {
-        buffer.writeString(message.researchName);
+        buffer.writeString(message.researchName, 32767);
     }
 
     public static ResearchMessage decode(PacketBuffer buffer) {
         ResearchMessage message = new ResearchMessage();
-        message.researchName = buffer.readString();
+        message.researchName = buffer.readString(32767);
         return message;
     }
 

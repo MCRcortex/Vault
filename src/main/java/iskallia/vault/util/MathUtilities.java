@@ -1,5 +1,6 @@
 package iskallia.vault.util;
 
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.Random;
@@ -20,6 +21,33 @@ public class MathUtilities {
 
     public static double extractPitch(Vector3d vec) {
         return Math.asin(vec.getY() / vec.length());
+    }
+
+    public static Vector3d rotatePitch(Vector3d vec, float pitch) {
+        float f = MathHelper.cos(pitch);
+        float f1 = MathHelper.sin(pitch);
+        double d0 = vec.getX();
+        double d1 = vec.getY() * (double) f + vec.getZ() * (double) f1;
+        double d2 = vec.getZ() * (double) f - vec.getY() * (double) f1;
+        return new Vector3d(d0, d1, d2);
+    }
+
+    public static Vector3d rotateYaw(Vector3d vec, float yaw) {
+        float f = MathHelper.cos(yaw);
+        float f1 = MathHelper.sin(yaw);
+        double d0 = vec.getX() * (double) f + vec.getZ() * (double) f1;
+        double d1 = vec.getY();
+        double d2 = vec.getZ() * (double) f - vec.getX() * (double) f1;
+        return new Vector3d(d0, d1, d2);
+    }
+
+    public static Vector3d rotateRoll(Vector3d vec, float roll) {
+        float f = MathHelper.cos(roll);
+        float f1 = MathHelper.sin(roll);
+        double d0 = vec.getX() * (double) f + vec.getY() * (double) f1;
+        double d1 = vec.getY() * (double) f - vec.getX() * (double) f1;
+        double d2 = vec.getZ();
+        return new Vector3d(d0, d1, d2);
     }
 
 }
