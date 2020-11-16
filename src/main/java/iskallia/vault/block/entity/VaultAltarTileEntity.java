@@ -1,12 +1,5 @@
 package iskallia.vault.block.entity;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.annotation.Nullable;
-
 import iskallia.vault.altar.AltarInfusion;
 import iskallia.vault.altar.RequiredItem;
 import iskallia.vault.init.ModBlocks;
@@ -15,6 +8,8 @@ import iskallia.vault.world.data.PlayerVaultAltarData;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
@@ -22,15 +17,30 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class VaultAltarTileEntity extends TileEntity implements ITickableTileEntity {
 
     private Map<UUID, RequiredItem[]> playerMap = new HashMap<>();
+    private ItemStackHandler itemHandler = createHandler();
+    private LazyOptional<IItemHandler> handler = LazyOptional.of(() -> itemHandler);
     private boolean containsVaultRock = false;
 
     public VaultAltarTileEntity() {
@@ -95,6 +105,7 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
         for (ItemEntity itemEntity : entities) {
             for (UUID id : playerMap.keySet()) {
                 RequiredItem[] items = data.getRequiredItems(id);
+                if (items == null) return;
                 for (RequiredItem required : items) {
                     if (required.getItem() == null)
                         break;
@@ -193,8 +204,58 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
         handleUpdateTag(getBlockState(), tag);
     }
 
+    private ItemStackHandler createHandler() {
+        return new ItemStackHandler(1) {
+
+            @Override
+            protected void onContentsChanged(int slot) {
+                // To make sure the TE persists when the chunk is saved later we need to
+                // mark it dirty every time the item handler changes
+                updateForClient();
+            }
+
+            @Override
+            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+                for (UUID id : playerMap.keySet()) {
+                    RequiredItem[] items = playerMap.get(id);
+                    for (RequiredItem item : items) {
+                        if (item.getItem().isItemEqualIgnoreDurability(stack)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            @Nonnull
+            @Override
+            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+
+                for (UUID id : playerMap.keySet()) {
+                    RequiredItem[] items = playerMap.get(id);
+                    for (RequiredItem item : items) {
+                        if (item.getItem().isItemEqualIgnoreDurability(stack)) {
+                            item.addAmount(stack.getCount());
+                            return ItemStack.EMPTY;
+                        }
+                    }
+                }
+                return stack;
+            }
+        };
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return handler.cast();
+        }
+        return super.getCapability(cap, side);
+    }
+
+
     public Map<UUID, RequiredItem[]> getNearbyPlayers() {
         return playerMap;
     }
-
 }

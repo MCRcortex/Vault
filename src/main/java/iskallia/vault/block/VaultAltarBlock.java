@@ -74,7 +74,7 @@ public class VaultAltarBlock extends Block {
         RequiredItem[] items = ModConfigs.VAULT_PEDESTAL.getRequiredItemsFromConfig();
 
         if (!data.playerExists(player.getUniqueID()))
-            data.getMap().put(player.getUniqueID(), items);
+            data.addPlayer(player.getUniqueID(), items);
 
         altar.setContainsVaultRock(true);
 
