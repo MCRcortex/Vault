@@ -115,7 +115,9 @@ public class VaultRaidData extends WorldSavedData {
             }
         }
 
-        if (removed) this.markDirty();
+        if (removed || this.activeRaids.size() > 0) {
+            this.markDirty();
+        }
     }
 
     @SubscribeEvent
