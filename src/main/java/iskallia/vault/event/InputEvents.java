@@ -1,6 +1,7 @@
 package iskallia.vault.event;
 
 import iskallia.vault.client.gui.overlay.AbilitiesOverlay;
+import iskallia.vault.client.gui.screen.RaffleScreen;
 import iskallia.vault.init.ModKeybinds;
 import iskallia.vault.network.ModNetwork;
 import iskallia.vault.network.message.AbilityKeyMessage;
@@ -30,7 +31,10 @@ public class InputEvents {
     }
 
     private static void onInput(Minecraft minecraft, int key, int action) {
-        if (minecraft.currentScreen == null && ModKeybinds.openAbilityTree.isPressed()) {
+        if (minecraft.currentScreen == null && ModKeybinds.openRaffleScreen.isPressed()) {
+            minecraft.displayGuiScreen(new RaffleScreen());
+
+        } else if (minecraft.currentScreen == null && ModKeybinds.openAbilityTree.isPressed()) {
             ModNetwork.channel.sendToServer(new OpenSkillTreeMessage());
 
         } else if (AbilitiesOverlay.cooldownTicks == 0 && ModKeybinds.abilityKey.getKey().getKeyCode() == key) {
