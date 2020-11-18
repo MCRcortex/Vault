@@ -1,5 +1,6 @@
 package iskallia.vault.block;
 
+import iskallia.vault.altar.AltarInfusionRecipe;
 import iskallia.vault.altar.RequiredItem;
 import iskallia.vault.block.entity.VaultAltarTileEntity;
 import iskallia.vault.init.ModBlocks;
@@ -22,6 +23,8 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+
+import java.util.List;
 
 public class VaultAltarBlock extends Block {
 
@@ -71,10 +74,10 @@ public class VaultAltarBlock extends Block {
         }
 
         PlayerVaultAltarData data = PlayerVaultAltarData.get((ServerWorld) worldIn);
-        RequiredItem[] items = ModConfigs.VAULT_PEDESTAL.getRequiredItemsFromConfig();
-
-        if (!data.playerExists(player.getUniqueID()))
-            data.addPlayer(player.getUniqueID(), items);
+        if (!data.getRecipes().containsKey(player.getUniqueID())) {
+            List<RequiredItem> items = ModConfigs.VAULT_PEDESTAL.getRequiredItemsFromConfig();
+            data.add(player.getUniqueID(), new AltarInfusionRecipe(player.getUniqueID(), items));
+        }
 
         altar.setContainsVaultRock(true);
 

@@ -1,6 +1,6 @@
 package iskallia.vault.block.entity;
 
-import iskallia.vault.altar.AltarInfusion;
+import iskallia.vault.altar.AltarInfusionRecipe;
 import iskallia.vault.altar.RequiredItem;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.util.VectorHelper;
@@ -9,10 +9,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
@@ -24,6 +23,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -33,15 +33,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class VaultAltarTileEntity extends TileEntity implements ITickableTileEntity {
 
-    private Map<UUID, RequiredItem[]> playerMap = new HashMap<>();
+    private HashMap<UUID, AltarInfusionRecipe> nearbyPlayerRecipes = new HashMap<>();
+    private boolean containsVaultRock = false;
+
     private ItemStackHandler itemHandler = createHandler();
     private LazyOptional<IItemHandler> handler = LazyOptional.of(() -> itemHandler);
-    private boolean containsVaultRock = false;
 
     public VaultAltarTileEntity() {
         super(ModBlocks.VAULT_ALTAR_TILE_ENTITY);
@@ -69,8 +69,8 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
 
         // do nothing if no vault rock/clear playerMap
         if (!containsVaultRock) {
-            if (!playerMap.isEmpty())
-                playerMap.clear();
+            if (!nearbyPlayerRecipes.isEmpty())
+                nearbyPlayerRecipes.clear();
             return;
         }
         double x = this.getPos().getX();
@@ -85,15 +85,15 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
     }
 
     private void getNearbyPlayers(World world, PlayerVaultAltarData data, double x, double y, double z, int range) {
-
+        nearbyPlayerRecipes.clear();
         List<PlayerEntity> players = world.getEntitiesWithinAABB(PlayerEntity.class, getAABB(range, x, y, z));
         for (PlayerEntity p : players) {
-            if (data.playerExists(p.getUniqueID())) {
-                RequiredItem[] items = data.getRequiredItems(p.getUniqueID());
-                playerMap.put(p.getUniqueID(), items);
-                updateForClient();
+            if (data.getRecipes().containsKey(p.getUniqueID())) {
+                AltarInfusionRecipe recipe = data.getPlayerRecipe(p.getUniqueID());
+                nearbyPlayerRecipes.put(p.getUniqueID(), recipe);
             }
         }
+        updateForClient();
     }
 
     private void pullNearbyItems(World world, PlayerVaultAltarData data, double x, double y, double z, int range) {
@@ -103,23 +103,24 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
 
         List<ItemEntity> entities = world.getEntitiesWithinAABB(ItemEntity.class, getAABB(range, x, y, z));
         for (ItemEntity itemEntity : entities) {
-            for (UUID id : playerMap.keySet()) {
-                RequiredItem[] items = data.getRequiredItems(id);
-                if (items == null) return;
-                for (RequiredItem required : items) {
-                    if (required.getItem() == null)
-                        break;
-
+            for (UUID id : nearbyPlayerRecipes.keySet()) {
+                AltarInfusionRecipe recipe = nearbyPlayerRecipes.get(id);
+                List<RequiredItem> itemsToPull = recipe.getRequiredItems();
+                if (itemsToPull == null) return;
+                for (RequiredItem required : itemsToPull) {
                     if (required.getItem().isItemEqualIgnoreDurability(itemEntity.getItem())) {
                         moveItemTowardPedestal(itemEntity, speed);
                         if (attemptCollectItem(itemEntity)) {
                             required.addAmount(itemEntity.getItem().getCount());
+                            data.remove(recipe.getPlayer());
+                            data.add(recipe.getPlayer(), recipe);
                             itemEntity.remove();
                         }
                     }
                 }
             }
         }
+        data.markDirty();
         updateForClient();
     }
 
@@ -148,42 +149,50 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
     @Override
     public CompoundNBT write(CompoundNBT compound) {
         compound.putBoolean("containsVaultRock", containsVaultRock);
-        ListNBT list = new ListNBT();
-        for (UUID uuid : playerMap.keySet()) {
-            CompoundNBT nbt = new CompoundNBT();
-            nbt.put(uuid.toString(), AltarInfusion.serialize(playerMap.get(uuid)));
-            list.add(nbt);
-        }
-        compound.put("players", list);
+        ListNBT playerList = new ListNBT();
+        ListNBT recipeList = new ListNBT();
+
+        this.nearbyPlayerRecipes.forEach((uuid, recipe) -> {
+            playerList.add(StringNBT.valueOf(uuid.toString()));
+            recipeList.add(AltarInfusionRecipe.serialize(recipe));
+        });
+
+        compound.put("PlayerEntries", playerList);
+        compound.put("AltarRecipeEntries", recipeList);
         return super.write(compound);
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT nbt) {
-        containsVaultRock = nbt.getBoolean("containsVaultRock");
-        ListNBT list = (ListNBT) nbt.get("players");
-        for (INBT compound : list) {
-            CompoundNBT c = (CompoundNBT) compound;
-            for (String s : c.keySet()) {
-                UUID id = UUID.fromString(s);
-                RequiredItem[] items = AltarInfusion.deserialize((CompoundNBT) c.get(s));
-                playerMap.put(id, items);
-            }
+    public void read(BlockState state, CompoundNBT compound) {
+        containsVaultRock = compound.getBoolean("containsVaultRock");
+        ListNBT playerList = compound.getList("PlayerEntries", Constants.NBT.TAG_STRING);
+        ListNBT recipeList = compound.getList("AltarRecipeEntries", Constants.NBT.TAG_COMPOUND);
+
+        if (playerList.size() != recipeList.size()) {
+            throw new IllegalStateException("Map doesn't have the same amount of keys as values");
         }
-        super.read(state, nbt);
+
+        for (int i = 0; i < playerList.size(); i++) {
+            UUID playerUUID = UUID.fromString(playerList.getString(i));
+            nearbyPlayerRecipes.put(playerUUID, AltarInfusionRecipe.deserialize(recipeList.getCompound(i)));
+        }
+        super.read(state, compound);
     }
 
     @Override
     public CompoundNBT getUpdateTag() {
         CompoundNBT tag = super.getUpdateTag();
         tag.putBoolean("containsVaultRock", containsVaultRock);
-        ListNBT list = new ListNBT();
-        for (UUID uuid : playerMap.keySet()) {
-            CompoundNBT nbt = new CompoundNBT();
-            nbt.put(uuid.toString(), AltarInfusion.serialize(playerMap.get(uuid)));
-            list.add(nbt);
-        }
-        tag.put("players", list);
+        ListNBT playerList = new ListNBT();
+        ListNBT recipeList = new ListNBT();
+
+        this.nearbyPlayerRecipes.forEach((uuid, recipe) -> {
+            playerList.add(StringNBT.valueOf(uuid.toString()));
+            recipeList.add(AltarInfusionRecipe.serialize(recipe));
+        });
+
+        tag.put("PlayerEntries", playerList);
+        tag.put("AltarRecipeEntries", recipeList);
         return tag;
     }
 
@@ -216,8 +225,9 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
 
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                for (UUID id : playerMap.keySet()) {
-                    RequiredItem[] items = playerMap.get(id);
+                for (UUID id : nearbyPlayerRecipes.keySet()) {
+                    AltarInfusionRecipe recipe = nearbyPlayerRecipes.get(id);
+                    List<RequiredItem> items = recipe.getRequiredItems();
                     for (RequiredItem item : items) {
                         if (item.getItem().isItemEqualIgnoreDurability(stack)) {
                             return true;
@@ -230,9 +240,9 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
             @Nonnull
             @Override
             public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-
-                for (UUID id : playerMap.keySet()) {
-                    RequiredItem[] items = playerMap.get(id);
+                for (UUID id : nearbyPlayerRecipes.keySet()) {
+                    AltarInfusionRecipe recipe = nearbyPlayerRecipes.get(id);
+                    List<RequiredItem> items = recipe.getRequiredItems();
                     for (RequiredItem item : items) {
                         if (item.getItem().isItemEqualIgnoreDurability(stack)) {
                             item.addAmount(stack.getCount());
@@ -255,7 +265,7 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
     }
 
 
-    public Map<UUID, RequiredItem[]> getNearbyPlayers() {
-        return playerMap;
+    public HashMap<UUID, AltarInfusionRecipe> getNearbyPlayerRecipes() {
+        return nearbyPlayerRecipes;
     }
 }

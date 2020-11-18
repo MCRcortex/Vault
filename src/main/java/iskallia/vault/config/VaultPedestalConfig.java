@@ -1,16 +1,15 @@
 package iskallia.vault.config;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import com.google.gson.annotations.Expose;
-
 import iskallia.vault.altar.RequiredItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class VaultPedestalConfig extends Config {
 
@@ -34,16 +33,16 @@ public class VaultPedestalConfig extends Config {
 
     }
 
-    public RequiredItem[] getRequiredItemsFromConfig() {
-        RequiredItem[] requiredItems = new RequiredItem[4];
+    public List<RequiredItem> getRequiredItemsFromConfig() {
+        List<RequiredItem> requiredItems = new ArrayList<>();
 
         List<PedestalConfigItem> configItems = new ArrayList<>(ITEMS);
 
-        for (int i = 0; i < requiredItems.length; i++) {
+        for (int i = 0; i < 4; i++) {
             PedestalConfigItem configItem = configItems.remove(rand.nextInt(configItems.size()));
             Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(configItem.ITEM_ID));
 
-            requiredItems[i] = new RequiredItem(new ItemStack(item), 0, getRandomInt(configItem.MIN, configItem.MAX));
+            requiredItems.add(new RequiredItem(new ItemStack(item), 0, getRandomInt(configItem.MIN, configItem.MAX)));
         }
 
         return requiredItems;
