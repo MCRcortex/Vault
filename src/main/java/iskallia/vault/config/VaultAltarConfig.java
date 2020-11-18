@@ -11,35 +11,46 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class VaultPedestalConfig extends Config {
+public class VaultAltarConfig extends Config {
 
     @Expose
-    public List<PedestalConfigItem> ITEMS = new ArrayList<>();
+    public List<AltarConfigItem> ITEMS = new ArrayList<>();
+    @Expose
+    public float PULL_SPEED;
+    @Expose
+    public int PLAYER_RANGE_CHECK;
+    @Expose
+    public int ITEM_RANGE_CHECK;
+
 
     private Random rand = new Random();
 
     @Override
     public String getName() {
-        return "pedestal_items";
+        return "vault_altar";
     }
 
     @Override
     protected void reset() {
 
-        ITEMS.add(new PedestalConfigItem("minecraft:stone", 1000, 32000));
-        ITEMS.add(new PedestalConfigItem("minecraft:cobblestone", 1000, 32000));
-        ITEMS.add(new PedestalConfigItem("minecraft:diamond", 1000, 32000));
-        ITEMS.add(new PedestalConfigItem("minecraft:gold_nugget", 1000, 32000));
+        ITEMS.add(new AltarConfigItem("minecraft:stone", 1000, 32000));
+        ITEMS.add(new AltarConfigItem("minecraft:cobblestone", 1000, 32000));
+        ITEMS.add(new AltarConfigItem("minecraft:diamond", 1000, 32000));
+        ITEMS.add(new AltarConfigItem("minecraft:gold_nugget", 1000, 32000));
+
+        PULL_SPEED = 1f;
+        PLAYER_RANGE_CHECK = 32;
+        ITEM_RANGE_CHECK = 8;
 
     }
 
     public List<RequiredItem> getRequiredItemsFromConfig() {
         List<RequiredItem> requiredItems = new ArrayList<>();
 
-        List<PedestalConfigItem> configItems = new ArrayList<>(ITEMS);
+        List<AltarConfigItem> configItems = new ArrayList<>(ITEMS);
 
         for (int i = 0; i < 4; i++) {
-            PedestalConfigItem configItem = configItems.remove(rand.nextInt(configItems.size()));
+            AltarConfigItem configItem = configItems.remove(rand.nextInt(configItems.size()));
             Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(configItem.ITEM_ID));
 
             requiredItems.add(new RequiredItem(new ItemStack(item), 0, getRandomInt(configItem.MIN, configItem.MAX)));
@@ -52,7 +63,7 @@ public class VaultPedestalConfig extends Config {
         return (int) (Math.random() * (max - min) + min);
     }
 
-    public class PedestalConfigItem {
+    public class AltarConfigItem {
 
         @Expose
         public String ITEM_ID;
@@ -61,7 +72,7 @@ public class VaultPedestalConfig extends Config {
         @Expose
         public int MAX;
 
-        public PedestalConfigItem(String item, int min, int max) {
+        public AltarConfigItem(String item, int min, int max) {
             ITEM_ID = item;
             MIN = min;
             MAX = max;

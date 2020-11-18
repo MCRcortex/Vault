@@ -3,6 +3,7 @@ package iskallia.vault.block.entity;
 import iskallia.vault.altar.AltarInfusionRecipe;
 import iskallia.vault.altar.RequiredItem;
 import iskallia.vault.init.ModBlocks;
+import iskallia.vault.init.ModConfigs;
 import iskallia.vault.util.VectorHelper;
 import iskallia.vault.world.data.PlayerVaultAltarData;
 import net.minecraft.block.BlockState;
@@ -78,8 +79,8 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
         double z = this.getPos().getZ();
 
         PlayerVaultAltarData data = PlayerVaultAltarData.get((ServerWorld) world);
-        getNearbyPlayers(world, data, x, y, z, 30);
-        pullNearbyItems(world, data, x, y, z, 8);
+        getNearbyPlayers(world, data, x, y, z, ModConfigs.VAULT_ALTAR.PLAYER_RANGE_CHECK);
+        pullNearbyItems(world, data, x, y, z, ModConfigs.VAULT_ALTAR.ITEM_RANGE_CHECK);
 
 
     }
@@ -98,7 +99,7 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
 
     private void pullNearbyItems(World world, PlayerVaultAltarData data, double x, double y, double z, int range) {
 
-        float speed = 1f / 20f; // blocks per second
+        float speed = ModConfigs.VAULT_ALTAR.PULL_SPEED / 20f; // blocks per second
 
 
         List<ItemEntity> entities = world.getEntitiesWithinAABB(ItemEntity.class, getAABB(range, x, y, z));

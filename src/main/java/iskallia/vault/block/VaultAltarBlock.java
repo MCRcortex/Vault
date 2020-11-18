@@ -75,7 +75,7 @@ public class VaultAltarBlock extends Block {
 
         PlayerVaultAltarData data = PlayerVaultAltarData.get((ServerWorld) worldIn);
         if (!data.getRecipes().containsKey(player.getUniqueID())) {
-            List<RequiredItem> items = ModConfigs.VAULT_PEDESTAL.getRequiredItemsFromConfig();
+            List<RequiredItem> items = ModConfigs.VAULT_ALTAR.getRequiredItemsFromConfig();
             data.add(player.getUniqueID(), new AltarInfusionRecipe(player.getUniqueID(), items));
         }
 

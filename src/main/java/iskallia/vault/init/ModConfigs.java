@@ -14,7 +14,7 @@ public class ModConfigs {
 	public static VaultOreConfig VAULT_ORES;
 	public static VaultMobsConfig VAULT_MOBS;
 	public static VaultItemsConfig VAULT_ITEMS;
-	public static VaultPedestalConfig VAULT_PEDESTAL;
+	public static VaultAltarConfig VAULT_ALTAR;
     public static VaultGeneralConfig VAULT_GENERAL;
 
 	public static void register() {
@@ -28,7 +28,7 @@ public class ModConfigs {
 		VAULT_ORES = (VaultOreConfig) new VaultOreConfig().readConfig();
 		VAULT_MOBS = (VaultMobsConfig) new VaultMobsConfig().readConfig();
 		VAULT_ITEMS = (VaultItemsConfig) new VaultItemsConfig().readConfig();
-		VAULT_PEDESTAL = (VaultPedestalConfig) new VaultPedestalConfig().readConfig();
+		VAULT_ALTAR = (VaultAltarConfig) new VaultAltarConfig().readConfig();
         VAULT_GENERAL = (VaultGeneralConfig) new VaultGeneralConfig().readConfig();
 	}
 
