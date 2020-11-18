@@ -28,7 +28,7 @@
             },
             {
               "type": "minecraft:item",
-              "name": "the_vault:gem_vault_rock",
+              "name": "the_vault:vault_rock",
               "functions": [
                 {
                   "function": "minecraft:apply_bonus",

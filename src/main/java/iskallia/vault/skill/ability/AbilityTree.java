@@ -242,8 +242,11 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
             focusedAbility.getAbility().onTick(event.player, isActive());
             int prevCooldownTicks = this.cooldownTicks;
             this.cooldownTicks = Math.max(0, this.cooldownTicks - 1);
-            if (prevCooldownTicks != this.cooldownTicks)
+            if (prevCooldownTicks != this.cooldownTicks) {
                 syncActivity(event.player.getServer());
+                if (this.cooldownTicks == 0)
+                    lockSwapping(false);
+            }
         }
     }
 
