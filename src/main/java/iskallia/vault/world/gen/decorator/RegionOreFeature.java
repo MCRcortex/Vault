@@ -62,7 +62,7 @@ public class RegionOreFeature extends OreFeature {
 	public static void register(RegistryEvent.Register<Feature<?>> event) {
 		INSTANCE = new RegionOreFeature(OreFeatureConfig.field_236566_a_);
 		INSTANCE.setRegistryName(Vault.id("vault_ore"));
-		 event.getRegistry().register(INSTANCE);
+		event.getRegistry().register(INSTANCE);
 	}
 
 }
