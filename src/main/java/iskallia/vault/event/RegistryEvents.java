@@ -27,7 +27,9 @@ public class RegistryEvents {
     }
 
     @SubscribeEvent
-    public static void onModelRegister(ModelRegistryEvent event) { }
+    public static void onModelRegister(ModelRegistryEvent event) {
+        ModModels.setupRenderLayers();
+    }
 
     @SubscribeEvent
     public static void onStructureRegister(RegistryEvent.Register<Structure<?>> event) {

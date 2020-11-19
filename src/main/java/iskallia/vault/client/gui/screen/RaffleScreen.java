@@ -101,7 +101,7 @@ public class RaffleScreen extends Screen {
         Rectangle bounds = new Rectangle();
         int midX = width / 2;
         int midY = height / 2;
-        bounds.x0 = midX + 65;
+        bounds.x0 = midX + 68;
         bounds.y0 = midY - leverHeight / 2 - 12;
         bounds.setWidth(leverWidth);
         bounds.setHeight(leverHeight);
@@ -300,6 +300,7 @@ public class RaffleScreen extends Screen {
         if (elapsedTicks >= spinTicks) {
             spinning = false;
             if (!popped) {
+                getMinecraft().getSoundHandler().play(SimpleSound.master(SoundEvents.ENTITY_FIREWORK_ROCKET_TWINKLE, 1.0F));
                 leftConfettiPopper.pop();
                 rightConfettiPopper.pop();
                 popped = true;
