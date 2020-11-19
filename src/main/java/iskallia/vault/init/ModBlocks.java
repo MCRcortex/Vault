@@ -27,16 +27,16 @@ public class ModBlocks {
     public static final OreBlock SPARKLETINE_ORE = new VaultOreBlock();
     public static final OreBlock WUTODIE_ORE = new VaultOreBlock();
     public static final OreBlock VAULT_ROCK_ORE = new VaultOreBlock();
-    public static final DoorBlock ALEXANDRITE_DOOR = new VaultDoorBlock(ModItems.POG);
-    public static final DoorBlock BENITOITE_DOOR = new VaultDoorBlock(ModItems.POG);
-    public static final DoorBlock LARIMAR_DOOR = new VaultDoorBlock(ModItems.POG);
-    public static final DoorBlock BLACK_OPAL_DOOR = new VaultDoorBlock(ModItems.POG);
-    public static final DoorBlock PAINITE_DOOR = new VaultDoorBlock(ModItems.POG);
-    public static final DoorBlock ISKALLIUM_DOOR = new VaultDoorBlock(ModItems.POG);
-    public static final DoorBlock RENIUM_DOOR = new VaultDoorBlock(ModItems.POG);
-    public static final DoorBlock GORGINITE_DOOR = new VaultDoorBlock(ModItems.POG);
-    public static final DoorBlock SPARKLETINE_DOOR = new VaultDoorBlock(ModItems.POG);
-    public static final DoorBlock WUTODIE_DOOR = new VaultDoorBlock(ModItems.POG);
+    public static final DoorBlock ALEXANDRITE_DOOR = new VaultDoorBlock(ModItems.ALEXANDRITE_KEY);
+    public static final DoorBlock BENITOITE_DOOR = new VaultDoorBlock(ModItems.BENITOITE_KEY);
+    public static final DoorBlock LARIMAR_DOOR = new VaultDoorBlock(ModItems.LARIMAR_KEY);
+    public static final DoorBlock BLACK_OPAL_DOOR = new VaultDoorBlock(ModItems.BLACK_OPAL_KEY);
+    public static final DoorBlock PAINITE_DOOR = new VaultDoorBlock(ModItems.PAINITE_KEY);
+    public static final DoorBlock ISKALLIUM_DOOR = new VaultDoorBlock(ModItems.ISKALLIUM_KEY);
+    public static final DoorBlock RENIUM_DOOR = new VaultDoorBlock(ModItems.RENIUM_KEY);
+    public static final DoorBlock GORGINITE_DOOR = new VaultDoorBlock(ModItems.GORGINITE_KEY);
+    public static final DoorBlock SPARKLETINE_DOOR = new VaultDoorBlock(ModItems.SPARKLETINE_KEY);
+    public static final DoorBlock WUTODIE_DOOR = new VaultDoorBlock(ModItems.WUTODIE_KEY);
 
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         registerBlock(event, VAULT_PORTAL, Vault.id("vault_portal"));

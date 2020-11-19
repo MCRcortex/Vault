@@ -4,6 +4,7 @@ import iskallia.vault.Vault;
 import iskallia.vault.item.ItemSkillOrbs;
 import iskallia.vault.item.ItemVaultBurger;
 import iskallia.vault.item.ItemVaultGem;
+import iskallia.vault.item.ItemVaultKey;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -33,6 +34,16 @@ public class ModItems {
     public static ItemVaultGem SPARKLETINE_GEM = new ItemVaultGem(VAULT_MOD_GROUP, Vault.id("gem_sparkletine"));
     public static ItemVaultGem WUTODIE_GEM = new ItemVaultGem(VAULT_MOD_GROUP, Vault.id("gem_wutodie"));
     public static ItemVaultGem POG = new ItemVaultGem(VAULT_MOD_GROUP, Vault.id("gem_pog"));
+    public static ItemVaultKey ALEXANDRITE_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_alexandrite"));
+    public static ItemVaultKey BENITOITE_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_benitoite"));
+    public static ItemVaultKey LARIMAR_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_larimar"));
+    public static ItemVaultKey BLACK_OPAL_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_black_opal"));
+    public static ItemVaultKey PAINITE_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_painite"));
+    public static ItemVaultKey ISKALLIUM_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_iskallium"));
+    public static ItemVaultKey RENIUM_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_renium"));
+    public static ItemVaultKey GORGINITE_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_gorginite"));
+    public static ItemVaultKey SPARKLETINE_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_sparkletine"));
+    public static ItemVaultKey WUTODIE_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_wutodie"));
 
     public static void registerItems(RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
@@ -50,6 +61,16 @@ public class ModItems {
         registry.register(WUTODIE_GEM);
         registry.register(VAULT_ROCK);
         registry.register(POG);
+        registry.register(ALEXANDRITE_KEY);
+        registry.register(BENITOITE_KEY);
+        registry.register(LARIMAR_KEY);
+        registry.register(BLACK_OPAL_KEY);
+        registry.register(PAINITE_KEY);
+        registry.register(ISKALLIUM_KEY);
+        registry.register(RENIUM_KEY);
+        registry.register(GORGINITE_KEY);
+        registry.register(SPARKLETINE_KEY);
+        registry.register(WUTODIE_KEY);
     }
 
 }

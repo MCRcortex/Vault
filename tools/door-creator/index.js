@@ -155,6 +155,13 @@ const modelTopHinge = `{
   }
 }`;
 
+const itemModel = `{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "the_vault:item/gem_painite"
+  }
+}`;
+
 const gems = [
   "alexandrite",
   "benitoite",
@@ -168,6 +175,19 @@ const gems = [
   "wutodie",
 ];
 
+const gemNames = {
+  alexandrite: "Alexandrite",
+  benitoite: "Benitoite",
+  larimar: "Larimar",
+  black_opal: "Black Opal",
+  painite: "Painite",
+  iskallium: "Iskallium",
+  renium: "Renium",
+  gorginite: "Gorginite",
+  sparkletine: "Sparkletine",
+  wutodie: "Wutodie",
+};
+
 const fs = require("fs");
 const pathLib = require("path");
 
@@ -180,43 +200,53 @@ function writeFile(path, data) {
 }
 
 for (let gem of gems) {
-  writeFile(
-    `./out/blockstates/door_${gem}.json`,
-    blockstate.replace(
-      /minecraft:block\/acacia_door/gi,
-      `the_vault:block/door_${gem}`
-    )
-  );
+  console.log(`"item.the_vault.key_${gem}": "${gemNames[gem]} Key",`);
 
-  writeFile(
-    `./out/models/block/door_${gem}_bottom.json`,
-    modelBottom.replace(
-      /minecraft:block\/acacia_door/gi,
-      `the_vault:block/door_${gem}`
-    )
-  );
+  // writeFile(
+  //   `./out/models/item/key_${gem}.json`,
+  //   itemModel.replace(
+  //     /the_vault:item\/gem_painite/gi,
+  //     `the_vault:item/key_${gem}`
+  //   )
+  // );
 
-  writeFile(
-    `./out/models/block/door_${gem}_bottom_hinge.json`,
-    modelBottomHinge.replace(
-      /minecraft:block\/acacia_door/gi,
-      `the_vault:block/door_${gem}`
-    )
-  );
+  // writeFile(
+  //   `./out/blockstates/door_${gem}.json`,
+  //   blockstate.replace(
+  //     /minecraft:block\/acacia_door/gi,
+  //     `the_vault:block/door_${gem}`
+  //   )
+  // );
 
-  writeFile(
-    `./out/models/block/door_${gem}_top.json`,
-    modelTop.replace(
-      /minecraft:block\/acacia_door/gi,
-      `the_vault:block/door_${gem}`
-    )
-  );
+  // writeFile(
+  //   `./out/models/block/door_${gem}_bottom.json`,
+  //   modelBottom.replace(
+  //     /minecraft:block\/acacia_door/gi,
+  //     `the_vault:block/door_${gem}`
+  //   )
+  // );
 
-  writeFile(
-    `./out/models/block/door_${gem}_top_hinge.json`,
-    modelTopHinge.replace(
-      /minecraft:block\/acacia_door/gi,
-      `the_vault:block/door_${gem}`
-    )
-  );
+  // writeFile(
+  //   `./out/models/block/door_${gem}_bottom_hinge.json`,
+  //   modelBottomHinge.replace(
+  //     /minecraft:block\/acacia_door/gi,
+  //     `the_vault:block/door_${gem}`
+  //   )
+  // );
+
+  // writeFile(
+  //   `./out/models/block/door_${gem}_top.json`,
+  //   modelTop.replace(
+  //     /minecraft:block\/acacia_door/gi,
+  //     `the_vault:block/door_${gem}`
+  //   )
+  // );
+
+  // writeFile(
+  //   `./out/models/block/door_${gem}_top_hinge.json`,
+  //   modelTopHinge.replace(
+  //     /minecraft:block\/acacia_door/gi,
+  //     `the_vault:block/door_${gem}`
+  //   )
+  // );
 }
