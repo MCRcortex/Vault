@@ -6,9 +6,11 @@ public class RaffleEntry {
 
     protected Rectangle bounds;
     protected String occupantName;
+    protected int typeIndex;
 
-    public RaffleEntry(String occupantName) {
+    public RaffleEntry(String occupantName, int typeIndex) {
         this.occupantName = occupantName;
+        this.typeIndex = typeIndex;
     }
 
     public void setBounds(Rectangle bounds) {
@@ -21,6 +23,10 @@ public class RaffleEntry {
 
     public String getOccupantName() {
         return occupantName;
+    }
+
+    public int getTypeIndex() {
+        return typeIndex;
     }
 
 }
