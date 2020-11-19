@@ -28,6 +28,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
@@ -74,9 +75,9 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
                 nearbyPlayerRecipes.clear();
             return;
         }
-        double x = this.getPos().getX();
-        double y = this.getPos().getY();
-        double z = this.getPos().getZ();
+        double x = this.getPos().getX() + 0.5d;
+        double y = this.getPos().getY() + 0.5d;
+        double z = this.getPos().getZ() + 0.5d;
 
         PlayerVaultAltarData data = PlayerVaultAltarData.get((ServerWorld) world);
         getNearbyPlayers(world, data, x, y, z, ModConfigs.VAULT_ALTAR.PLAYER_RANGE_CHECK);
@@ -85,7 +86,7 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
 
     }
 
-    private void getNearbyPlayers(World world, PlayerVaultAltarData data, double x, double y, double z, int range) {
+    private void getNearbyPlayers(World world, PlayerVaultAltarData data, double x, double y, double z, double range) {
         nearbyPlayerRecipes.clear();
         List<PlayerEntity> players = world.getEntitiesWithinAABB(PlayerEntity.class, getAABB(range, x, y, z));
         for (PlayerEntity p : players) {
@@ -97,10 +98,9 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
         updateForClient();
     }
 
-    private void pullNearbyItems(World world, PlayerVaultAltarData data, double x, double y, double z, int range) {
+    private void pullNearbyItems(World world, PlayerVaultAltarData data, double x, double y, double z, double range) {
 
         float speed = ModConfigs.VAULT_ALTAR.PULL_SPEED / 20f; // blocks per second
-
 
         List<ItemEntity> entities = world.getEntitiesWithinAABB(ItemEntity.class, getAABB(range, x, y, z));
         for (ItemEntity itemEntity : entities) {
@@ -109,19 +109,27 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
                 List<RequiredItem> itemsToPull = recipe.getRequiredItems();
                 if (itemsToPull == null) return;
                 for (RequiredItem required : itemsToPull) {
-                    if (required.getItem().isItemEqualIgnoreDurability(itemEntity.getItem())) {
+                    if (required.reachedAmountRequired()) {
+                        continue;
+                    }
+                    if (required.isItemEqual(itemEntity.getItem())) {
+                        int excess = required.getRemainder(itemEntity.getItem().getCount());
                         moveItemTowardPedestal(itemEntity, speed);
-                        if (attemptCollectItem(itemEntity)) {
-                            required.addAmount(itemEntity.getItem().getCount());
-                            data.remove(recipe.getPlayer());
-                            data.add(recipe.getPlayer(), recipe);
-                            itemEntity.remove();
+                        if (isItemInRange(itemEntity)) {
+                            if (excess > 0) {
+                                required.setCurrentAmount(required.getAmountRequired());
+                                itemEntity.getItem().setCount(excess);
+                            } else {
+                                required.addAmount(itemEntity.getItem().getCount());
+                                itemEntity.getItem().setCount(excess);
+                                itemEntity.remove();
+                            }
+                            data.update(recipe.getPlayer(), recipe);
                         }
                     }
                 }
             }
         }
-        data.markDirty();
         updateForClient();
     }
 
@@ -134,7 +142,7 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
         itemEntity.addVelocity(velocity.x, velocity.y, velocity.z);
     }
 
-    private boolean attemptCollectItem(ItemEntity itemEntity) {
+    private boolean isItemInRange(ItemEntity itemEntity) {
         BlockPos itemPos = itemEntity.getPosition();
 
         if (itemPos.distanceSq(getPos()) <= (2 * 2)) {
@@ -143,7 +151,7 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
         return false;
     }
 
-    private AxisAlignedBB getAABB(int range, double x, double y, double z) {
+    private AxisAlignedBB getAABB(double range, double x, double y, double z) {
         return new AxisAlignedBB(x - range, y - range, z - range, x + range, y + range, z + range);
     }
 
@@ -230,7 +238,7 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
                     AltarInfusionRecipe recipe = nearbyPlayerRecipes.get(id);
                     List<RequiredItem> items = recipe.getRequiredItems();
                     for (RequiredItem item : items) {
-                        if (item.getItem().isItemEqualIgnoreDurability(stack)) {
+                        if (item.isItemEqual(stack)) {
                             return true;
                         }
                     }
@@ -245,9 +253,20 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
                     AltarInfusionRecipe recipe = nearbyPlayerRecipes.get(id);
                     List<RequiredItem> items = recipe.getRequiredItems();
                     for (RequiredItem item : items) {
-                        if (item.getItem().isItemEqualIgnoreDurability(stack)) {
-                            item.addAmount(stack.getCount());
-                            return ItemStack.EMPTY;
+                        if (item.reachedAmountRequired()) {
+                            return stack;
+                        }
+                        if (item.isItemEqual(stack)) {
+                            int amount = stack.getCount();
+                            int excess = item.getRemainder(amount);
+                            if (excess > 0) {
+                                item.setCurrentAmount(item.getAmountRequired());
+                                stack.setCount(excess);
+                                return ItemHandlerHelper.copyStackWithSize(stack, excess);
+                            } else {
+                                item.addAmount(stack.getCount());
+                                return ItemStack.EMPTY;
+                            }
                         }
                     }
                 }
@@ -255,6 +274,7 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
             }
         };
     }
+
 
     @Nonnull
     @Override

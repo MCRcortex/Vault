@@ -63,6 +63,15 @@ public class PlayerVaultAltarData extends WorldSavedData {
         return this;
     }
 
+    public PlayerVaultAltarData update(UUID id, AltarInfusionRecipe recipe) {
+        this.remove(id);
+        this.add(id, recipe);
+
+
+        markDirty();
+        return this;
+    }
+
     @Override
     public void read(CompoundNBT nbt) {
         ListNBT playerList = nbt.getList("PlayerEntries", Constants.NBT.TAG_STRING);

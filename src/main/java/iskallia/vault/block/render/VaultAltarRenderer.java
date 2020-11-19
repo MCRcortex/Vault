@@ -77,6 +77,11 @@ public class VaultAltarRenderer extends TileEntityRenderer<VaultAltarTileEntity>
                 //render amount required for the item
                 matrixStack.push();
                 StringTextComponent text = new StringTextComponent(String.valueOf(requiredItem.getAmountRequired() - requiredItem.getCurrentAmount()));
+                int color = 0xffffff;
+                if (requiredItem.reachedAmountRequired()) {
+                    text = new StringTextComponent("Complete");
+                    color = 0x00ff00;
+                }
                 float scale = 0.01f;
                 int opacity = (int) (.4f * 255.0F) << 24;
                 float offset = (float) (-fontRenderer.getStringPropertyWidth(text) / 2);
@@ -86,23 +91,20 @@ public class VaultAltarRenderer extends TileEntityRenderer<VaultAltarTileEntity>
                 matrixStack.scale(scale, scale, scale);
                 matrixStack.rotate(mc.getRenderManager().getCameraOrientation());
                 matrixStack.rotate(Vector3f.ZP.rotationDegrees(180.0F));
-                fontRenderer.func_243247_a(text, offset, 0, 0xffffff, false, matrix4f, buffer, false, opacity, lightLevel);
+                fontRenderer.func_243247_a(text, offset, 0, color, false, matrix4f, buffer, false, opacity, lightLevel);
                 matrixStack.pop();
 
             }
-
-
-            // a change
-            //render vault rock
-            matrixStack.push();
-            matrixStack.translate(.5f, 1.60f, .5f);
-            matrixStack.rotate(Vector3f.YP.rotationDegrees(180.0F - player.rotationYaw));
-            ItemStack vaultRock = new ItemStack(ModItems.VAULT_ROCK);
-            IBakedModel ibakedmodel = itemRenderer.getItemModelWithOverrides(vaultRock, altar.getWorld(), null);
-            itemRenderer.renderItem(vaultRock, ItemCameraTransforms.TransformType.GROUND, true, matrixStack, buffer, lightLevel, combinedOverlay, ibakedmodel);
-            matrixStack.pop();
-
         }
+
+        //render vault rock
+        matrixStack.push();
+        matrixStack.translate(.5f, 1.60f, .5f);
+        matrixStack.rotate(Vector3f.YP.rotationDegrees(180.0F - player.rotationYaw));
+        ItemStack vaultRock = new ItemStack(ModItems.VAULT_ROCK);
+        IBakedModel ibakedmodel = itemRenderer.getItemModelWithOverrides(vaultRock, altar.getWorld(), null);
+        itemRenderer.renderItem(vaultRock, ItemCameraTransforms.TransformType.GROUND, true, matrixStack, buffer, lightLevel, combinedOverlay, ibakedmodel);
+        matrixStack.pop();
     }
 
     private float getAngle(ClientPlayerEntity player, float partialTicks) {

@@ -18,9 +18,9 @@ public class VaultAltarConfig extends Config {
     @Expose
     public float PULL_SPEED;
     @Expose
-    public int PLAYER_RANGE_CHECK;
+    public double PLAYER_RANGE_CHECK;
     @Expose
-    public int ITEM_RANGE_CHECK;
+    public double ITEM_RANGE_CHECK;
 
 
     private Random rand = new Random();
@@ -39,8 +39,8 @@ public class VaultAltarConfig extends Config {
         ITEMS.add(new AltarConfigItem("minecraft:gold_nugget", 1000, 32000));
 
         PULL_SPEED = 1f;
-        PLAYER_RANGE_CHECK = 32;
-        ITEM_RANGE_CHECK = 8;
+        PLAYER_RANGE_CHECK = 32d;
+        ITEM_RANGE_CHECK = 8d;
 
     }
 
