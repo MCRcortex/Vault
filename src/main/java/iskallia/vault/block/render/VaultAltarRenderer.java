@@ -10,7 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
@@ -19,6 +18,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.LightType;
@@ -31,6 +31,7 @@ import java.util.UUID;
 
 public class VaultAltarRenderer extends TileEntityRenderer<VaultAltarTileEntity> {
 
+    private Minecraft mc = Minecraft.getInstance();
     private float currentTick = 0;
 
     public VaultAltarRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
@@ -46,64 +47,67 @@ public class VaultAltarRenderer extends TileEntityRenderer<VaultAltarTileEntity>
         if (!altar.containsVaultRock())
             return;
 
-        Minecraft mc = Minecraft.getInstance();
         ClientPlayerEntity player = mc.player;
-
-        ItemRenderer itemRenderer = mc.getItemRenderer();
-        FontRenderer fontRenderer = mc.fontRenderer;
-        //float angle = getAngle(player, partialTicks);
         int lightLevel = getLightAtPos(altar.getWorld(), altar.getPos().up());
 
+        // render vault rock for all players
+        renderItem(new ItemStack(ModItems.VAULT_ROCK),
+                new double[]{.5d, 1.60d, .5d},
+                Vector3f.YP.rotationDegrees(180.0F - player.rotationYaw),
+                matrixStack, buffer, partialTicks, combinedOverlay, lightLevel);
+
+        // render recipe for specific player if they have one
         HashMap<UUID, AltarInfusionRecipe> recipes = altar.getNearbyPlayerRecipes();
         for (UUID id : recipes.keySet()) {
-
             if (!id.equals(player.getUniqueID())) {
                 continue;
             }
             AltarInfusionRecipe recipe = recipes.get(id);
             List<RequiredItem> items = recipe.getRequiredItems();
             for (int i = 0; i < items.size(); i++) {
+                double[] translation = getTranslation(i);
                 RequiredItem requiredItem = items.get(i);
                 ItemStack stack = requiredItem.getItem();
-                //render item at index
-                matrixStack.push();
-                double[] corner = getCorner(i);
-                matrixStack.translate(corner[0], corner[1], corner[2]);
-                matrixStack.rotate(Vector3f.YP.rotationDegrees(getAngle(player, partialTicks) * 5f));
-                IBakedModel ibakedmodel = itemRenderer.getItemModelWithOverrides(stack, altar.getWorld(), null);
-                itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.GROUND, true, matrixStack, buffer, lightLevel, combinedOverlay, ibakedmodel);
-                matrixStack.pop();
-
-                //render amount required for the item
-                matrixStack.push();
                 StringTextComponent text = new StringTextComponent(String.valueOf(requiredItem.getAmountRequired() - requiredItem.getCurrentAmount()));
-                int color = 0xffffff;
+                int textColor = 0xffffff;
                 if (requiredItem.reachedAmountRequired()) {
                     text = new StringTextComponent("Complete");
-                    color = 0x00ff00;
+                    textColor = 0x00ff00;
                 }
-                float scale = 0.01f;
-                int opacity = (int) (.4f * 255.0F) << 24;
-                float offset = (float) (-fontRenderer.getStringPropertyWidth(text) / 2);
-                Matrix4f matrix4f = matrixStack.getLast().getMatrix();
 
-                matrixStack.translate(corner[0], corner[1] + .4f, corner[2]);
-                matrixStack.scale(scale, scale, scale);
-                matrixStack.rotate(mc.getRenderManager().getCameraOrientation());
-                matrixStack.rotate(Vector3f.ZP.rotationDegrees(180.0F));
-                fontRenderer.func_243247_a(text, offset, 0, color, false, matrix4f, buffer, false, opacity, lightLevel);
-                matrixStack.pop();
-
+                renderItem(stack, translation,
+                        Vector3f.YP.rotationDegrees(getAngle(player, partialTicks) * 5f),
+                        matrixStack, buffer, partialTicks, combinedOverlay, lightLevel);
+                renderLabel(requiredItem, matrixStack, buffer, lightLevel, translation, text, textColor);
             }
         }
 
-        //render vault rock
+    }
+
+    private void renderItem(ItemStack stack, double[] translation, Quaternion rotation, MatrixStack matrixStack, IRenderTypeBuffer buffer, float partialTicks, int combinedOverlay, int lightLevel) {
         matrixStack.push();
-        matrixStack.translate(.5f, 1.60f, .5f);
-        matrixStack.rotate(Vector3f.YP.rotationDegrees(180.0F - player.rotationYaw));
-        ItemStack vaultRock = new ItemStack(ModItems.VAULT_ROCK);
-        IBakedModel ibakedmodel = itemRenderer.getItemModelWithOverrides(vaultRock, altar.getWorld(), null);
-        itemRenderer.renderItem(vaultRock, ItemCameraTransforms.TransformType.GROUND, true, matrixStack, buffer, lightLevel, combinedOverlay, ibakedmodel);
+        matrixStack.translate(translation[0], translation[1], translation[2]);
+        matrixStack.rotate(rotation);
+        IBakedModel ibakedmodel = mc.getItemRenderer().getItemModelWithOverrides(stack, null, null);
+        mc.getItemRenderer().renderItem(stack, ItemCameraTransforms.TransformType.GROUND, true, matrixStack, buffer, lightLevel, combinedOverlay, ibakedmodel);
+        matrixStack.pop();
+    }
+
+    private void renderLabel(RequiredItem item, MatrixStack matrixStack, IRenderTypeBuffer buffer, int lightLevel, double[] corner, StringTextComponent text, int color) {
+        FontRenderer fontRenderer = mc.fontRenderer;
+
+        //render amount required for the item
+        matrixStack.push();
+        float scale = 0.01f;
+        int opacity = (int) (.4f * 255.0F) << 24;
+        float offset = (float) (-fontRenderer.getStringPropertyWidth(text) / 2);
+        Matrix4f matrix4f = matrixStack.getLast().getMatrix();
+
+        matrixStack.translate(corner[0], corner[1] + .4f, corner[2]);
+        matrixStack.scale(scale, scale, scale);
+        matrixStack.rotate(mc.getRenderManager().getCameraOrientation()); // face the camera
+        matrixStack.rotate(Vector3f.ZP.rotationDegrees(180.0F)); // flip vertical
+        fontRenderer.func_243247_a(text, offset, 0, color, false, matrix4f, buffer, false, opacity, lightLevel);
         matrixStack.pop();
     }
 
@@ -119,7 +123,7 @@ public class VaultAltarRenderer extends TileEntityRenderer<VaultAltarTileEntity>
         return LightTexture.packLight(blockLight, skyLight);
     }
 
-    private double[] getCorner(int index) {
+    private double[] getTranslation(int index) {
         switch (index) {
             case 0:
                 return new double[]{.875, 1.1, 0.125};
