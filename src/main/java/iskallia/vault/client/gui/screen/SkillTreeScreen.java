@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
 import iskallia.vault.client.gui.component.AbilityDialog;
 import iskallia.vault.client.gui.component.ResearchDialog;
+import iskallia.vault.client.gui.component.ScrollableContainer;
 import iskallia.vault.client.gui.component.TalentDialog;
 import iskallia.vault.client.gui.helper.FontHelper;
 import iskallia.vault.client.gui.helper.Rectangle;
@@ -171,7 +172,18 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        this.activeTab.mouseScrolled(mouseX, mouseY, delta);
+        if (getContainerBounds().contains((int) mouseX, (int) mouseY)) {
+            this.activeTab.mouseScrolled(mouseX, mouseY, delta);
+
+        } else if (activeTab instanceof ResearchesTab) {
+            this.researchDialog.mouseScrolled(mouseX, mouseY, delta);
+
+        } else if (activeTab instanceof TalentsTab) {
+            this.talentDialog.mouseScrolled(mouseX, mouseY, delta);
+
+        } else if (activeTab instanceof AbilitiesTab) {
+            this.abilityDialog.mouseScrolled(mouseX, mouseY, delta);
+        }
 
         return super.mouseScrolled(mouseX, mouseY, delta);
     }

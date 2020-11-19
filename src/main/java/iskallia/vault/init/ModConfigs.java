@@ -10,6 +10,7 @@ public class ModConfigs {
     public static TalentsGUIConfig TALENTS_GUI;
     public static ResearchConfig RESEARCHES;
     public static ResearchesGUIConfig RESEARCHES_GUI;
+    public static SkillDescriptionsConfig SKILL_DESCRIPTIONS;
     public static VaultLevelsConfig LEVELS_META;
     public static VaultOreConfig VAULT_ORES;
     public static VaultMobsConfig VAULT_MOBS;
@@ -23,6 +24,7 @@ public class ModConfigs {
         TALENTS_GUI = (TalentsGUIConfig) new TalentsGUIConfig().readConfig();
         RESEARCHES = (ResearchConfig) new ResearchConfig().readConfig();
         RESEARCHES_GUI = (ResearchesGUIConfig) new ResearchesGUIConfig().readConfig();
+        SKILL_DESCRIPTIONS = (SkillDescriptionsConfig) new SkillDescriptionsConfig().readConfig();
         LEVELS_META = (VaultLevelsConfig) new VaultLevelsConfig().readConfig();
         VAULT_ORES = (VaultOreConfig) new VaultOreConfig().readConfig();
         VAULT_MOBS = (VaultMobsConfig) new VaultMobsConfig().readConfig();

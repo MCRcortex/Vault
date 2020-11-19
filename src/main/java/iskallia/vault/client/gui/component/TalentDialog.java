@@ -1,6 +1,7 @@
 package iskallia.vault.client.gui.component;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.client.gui.helper.FontHelper;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.client.gui.helper.UIHelper;
@@ -19,6 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
 public class TalentDialog extends AbstractGui {
@@ -28,6 +30,7 @@ public class TalentDialog extends AbstractGui {
     private TalentTree talentTree;
 
     private TalentWidget abilityWidget;
+    private ScrollableContainer descriptionComponent;
     private Button abilityUpgradeButton;
 
     public TalentDialog(TalentTree talentTree) {
@@ -55,6 +58,8 @@ public class TalentDialog extends AbstractGui {
                     (button) -> { upgradeAbility(); },
                     (button, matrixStack, x, y) -> { }
             );
+
+            this.descriptionComponent = new ScrollableContainer(this::renderDescriptions);
 
             PlayerTalent ability = talentNode.getTalent();
             int cost = ability == null ? talentGroup.learningCost() : ability.getCost();
@@ -89,7 +94,7 @@ public class TalentDialog extends AbstractGui {
         descriptionsBounds.x0 = headingBounds.x0;
         descriptionsBounds.y0 = headingBounds.y1 + 10;
         descriptionsBounds.x1 = headingBounds.x1;
-        descriptionsBounds.y1 = (bounds.y1 - 150);
+        descriptionsBounds.y1 = bounds.getHeight() - 50;
         return descriptionsBounds;
     }
 
@@ -113,6 +118,11 @@ public class TalentDialog extends AbstractGui {
         }
     }
 
+    public void mouseScrolled(double mouseX, double mouseY, double delta) {
+        if (!bounds.contains((int) mouseX, (int) mouseY)) return;
+        descriptionComponent.mouseScrolled(mouseX, mouseY, delta);
+    }
+
     public void upgradeAbility() {
         TalentNode<?> talentNode = this.talentTree.getNodeOf(talentGroup);
 
@@ -134,9 +144,14 @@ public class TalentDialog extends AbstractGui {
         if (talentGroup == null) return;
 
         matrixStack.translate(bounds.x0 + 5, bounds.y0 + 5, 0);
+
         renderHeading(matrixStack, mouseX, mouseY, partialTicks);
-//        renderDescriptions(matrixStack, mouseX, mouseY, partialTicks);
+
+        descriptionComponent.setBounds(getDescriptionsBounds());
+        descriptionComponent.render(matrixStack, mouseX, mouseY, partialTicks);
+
         renderFooter(matrixStack, mouseX, mouseY, partialTicks);
+
         matrixStack.push();
     }
 
@@ -241,15 +256,16 @@ public class TalentDialog extends AbstractGui {
 
     private void
     renderDescriptions(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        Minecraft.getInstance().getTextureManager().bindTexture(SkillTreeScreen.UI_RESOURCE);
+        Rectangle renderableBounds = descriptionComponent.getRenderableBounds();
 
-        UIHelper.renderContainerBorder(this, matrixStack,
-                getDescriptionsBounds(),
-                14, 44,
-                2, 2, 2, 2,
-                0xFF_8B8B8B);
+        IFormattableTextComponent description = ModConfigs.SKILL_DESCRIPTIONS.getDescriptionFor(talentGroup.getParentName());
 
-        // TODO: Description spans
+        int renderedLineCount = UIHelper.renderWrappedText(matrixStack,
+                description, renderableBounds.getWidth(), 10);
+
+        descriptionComponent.setInnerHeight(renderedLineCount * 10 + 20);
+
+        RenderSystem.enableDepthTest();
     }
 
     private void

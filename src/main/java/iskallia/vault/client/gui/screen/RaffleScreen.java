@@ -172,6 +172,7 @@ public class RaffleScreen extends Screen {
             RenderSystem.enableDepthTest();
 
             if (entryBounds.y1 - yOffset < 0) {
+                // TODO: Play tick sound fx!
                 entryBounds.y0 += 10 * (20 + 1);
                 entryBounds.y1 += 10 * (20 + 1);
             }
