@@ -7,10 +7,12 @@ import iskallia.vault.client.gui.helper.ConfettiParticles;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.client.gui.helper.UIHelper;
 import iskallia.vault.client.gui.widget.RaffleEntry;
+import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.datafix.fixes.SwapHandsFix;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.text.StringTextComponent;
@@ -23,8 +25,8 @@ import java.util.List;
 public class RaffleScreen extends Screen {
 
     public static final ResourceLocation UI_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/raffle.png");
-    public static final int containerWidth = 62;
-    public static final int containerHeight = 20;
+    public static final int containerWidth = 62, containerHeight = 20;
+    public static final int leverWidth = 44, leverHeight = 61;
 
     protected ConfettiParticles leftConfettiPopper = new ConfettiParticles()
             .angleRange(200 + 90, 265 + 90)
@@ -52,9 +54,7 @@ public class RaffleScreen extends Screen {
 
     protected int spinTicks, distance;
     protected double elapsedTicks;
-    private double C, N;
-
-    private Button button;
+    private double C;
 
     public RaffleScreen() {
         super(new StringTextComponent("Raffle Screen"));
@@ -95,26 +95,16 @@ public class RaffleScreen extends Screen {
         }
 
         this.C = 0.5 * spinTicks * spinTicks;
-
-        this.button = new Button(
-                10, 10,
-                100, 20,
-                new StringTextComponent("Spin Thingy"),
-                button -> {
-                    if (spinning) {
-                        spinning = false;
-                        elapsedTicks = 0;
-                    } else {
-                        spinning = true;
-                    }
-                }
-        );
     }
 
     public Rectangle getLeverBounds() {
         Rectangle bounds = new Rectangle();
         int midX = width / 2;
         int midY = height / 2;
+        bounds.x0 = midX + 65;
+        bounds.y0 = midY - leverHeight / 2 - 12;
+        bounds.setWidth(leverWidth);
+        bounds.setHeight(leverHeight);
         return bounds;
     }
 
@@ -140,30 +130,33 @@ public class RaffleScreen extends Screen {
     }
 
     @Override
-    public void mouseMoved(double mouseX, double mouseY) {
-        this.button.mouseMoved(mouseX, mouseY);
-    }
+    public void mouseMoved(double mouseX, double mouseY) { }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return this.button.mouseClicked(mouseX, mouseY, button);
+        Rectangle leverBounds = getLeverBounds();
+
+        if (!spinning && !popped && leverBounds.contains((int) mouseX, (int) mouseY)) {
+            spinning = true;
+            return true;
+        }
+
+        return false;
     }
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        return this.button.mouseReleased(mouseX, mouseY, button);
+        return false;
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        return this.button.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        return false;
     }
 
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         renderBackground(matrixStack, 0x00_000000);
-
-        this.button.render(matrixStack, mouseX, mouseY, partialTicks);
 
         int midX = width / 2;
         int midY = height / 2;
@@ -192,6 +185,17 @@ public class RaffleScreen extends Screen {
         blit(matrixStack, midX - 42, midY - indicatorHeight / 2,
                 0, 174, indicatorWidth, indicatorHeight);
 
+        renderLever(matrixStack, mouseX, mouseY);
+
+        if (popped) {
+            String winnerText = String.format("Winner is %s!", winner);
+            int textWidth = font.getStringWidth(winnerText);
+            font.drawStringWithShadow(matrixStack, winnerText,
+                    midX - textWidth / 2f,
+                    midY + crystalHeight / 2f + 10,
+                    0xFF_b5e8ff);
+        }
+
         leftConfettiPopper.spawnedPosition(
                 10,
                 midY
@@ -208,6 +212,24 @@ public class RaffleScreen extends Screen {
 
         if (spinning) {
             elapsedTicks += partialTicks;
+        }
+    }
+
+    protected void renderLever(MatrixStack matrixStack, int mouseX, int mouseY) {
+        Rectangle leverBounds = getLeverBounds();
+
+        getMinecraft().textureManager.bindTexture(UI_RESOURCE);
+        if (spinning || popped) {
+            blit(matrixStack, leverBounds.x0, leverBounds.y0 + 21,
+                    98, 192, leverWidth, leverHeight);
+
+        } else if (leverBounds.contains(mouseX, mouseY)) {
+            blit(matrixStack, leverBounds.x0 - 2, leverBounds.y0 - 2,
+                    47, 190, leverWidth + 4, leverHeight + 4);
+
+        } else {
+            blit(matrixStack, leverBounds.x0, leverBounds.y0,
+                    0, 192, leverWidth, leverHeight);
         }
     }
 
@@ -267,7 +289,7 @@ public class RaffleScreen extends Screen {
             matrixStack.pop();
 
             if (entryBounds.y1 - yOffset < 0) {
-                button.playDownSound(getMinecraft().getSoundHandler());
+                getMinecraft().getSoundHandler().play(SimpleSound.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                 entryBounds.y0 += this.raffleWidgets.size() * (containerHeight + 1);
                 entryBounds.y1 += this.raffleWidgets.size() * (containerHeight + 1);
             }
