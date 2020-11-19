@@ -4,7 +4,6 @@ import com.google.gson.annotations.Expose;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.world.gen.ruletest.VaultRuleTest;
 import iskallia.vault.world.raid.VaultRaid;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.ResourceLocation;
@@ -21,7 +20,6 @@ public class VaultOreConfig extends Config {
 
 	@Expose private int ORES_PER_VAULT;
 	@Expose private List<Ore> ORES = new ArrayList<>();
-	@Expose private List<String> STONE_WHITELIST = new ArrayList<>();
 	private int totalWeight;
 
 	@Override
@@ -66,10 +64,6 @@ public class VaultOreConfig extends Config {
 		return current;
 	}
 
-	public boolean checkStone(Block block) {
-		return this.STONE_WHITELIST.contains(block.getRegistryName().toString());
-	}
-
 	@Override
 	protected void reset() {
 		this.ORES_PER_VAULT = 2;
@@ -84,11 +78,6 @@ public class VaultOreConfig extends Config {
 		ORES.add(new Ore(ModBlocks.GORGINITE_ORE.getRegistryName().toString(), 128, 5, 1));
 		ORES.add(new Ore(ModBlocks.SPARKLETINE_ORE.getRegistryName().toString(), 128, 5, 1));
 		ORES.add(new Ore(ModBlocks.WUTODIE_ORE.getRegistryName().toString(), 128, 5, 1));
-
-		STONE_WHITELIST.add(Blocks.BEDROCK.getRegistryName().toString());
-		STONE_WHITELIST.add(Blocks.STONE.getRegistryName().toString());
-		STONE_WHITELIST.add(Blocks.COBBLESTONE.getRegistryName().toString());
-		STONE_WHITELIST.add(Blocks.ANDESITE.getRegistryName().toString());
 	}
 
 	public static class Ore {

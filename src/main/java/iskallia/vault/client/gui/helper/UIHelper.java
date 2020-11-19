@@ -6,9 +6,12 @@ import iskallia.vault.Vault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.*;
 import org.lwjgl.opengl.GL11;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class UIHelper {
@@ -155,6 +158,55 @@ public class UIHelper {
                 14 + gap, 9, 0xFF_443a1b);
 
         matrixStack.pop();
+    }
+
+    public static int
+    renderWrappedText(MatrixStack matrixStack, IFormattableTextComponent text, int maxWidth, int padding) {
+        Minecraft minecraft = Minecraft.getInstance();
+        FontRenderer fontRenderer = minecraft.fontRenderer;
+
+        List<ITextProperties> lines = getLines(
+                TextComponentUtils.func_240648_a_(text.deepCopy(), text.getStyle()),
+                maxWidth - 3 * padding
+        );
+        List<IReorderingProcessor> processors = LanguageMap.getInstance()
+                .func_244260_a(lines);
+
+        for (int i = 0; i < processors.size(); i++) {
+            fontRenderer.func_238422_b_(matrixStack, processors.get(i),
+                    padding, (10 * i) + padding, 0xFF_192022);
+        }
+
+        return processors.size();
+    }
+
+    private static final int[] LINE_BREAK_VALUES = new int[]{0, 10, -10, 25, -25};
+
+    private static List<ITextProperties> getLines(ITextComponent component, int maxWidth) {
+        Minecraft minecraft = Minecraft.getInstance();
+
+        CharacterManager charactermanager = minecraft.fontRenderer.getCharacterManager();
+        List<ITextProperties> list = null;
+        float f = Float.MAX_VALUE;
+
+        for (int i : LINE_BREAK_VALUES) {
+            List<ITextProperties> list1 = charactermanager.func_238362_b_(component, maxWidth - i, Style.EMPTY);
+            float f1 = Math.abs(getTextWidth(charactermanager, list1) - (float) maxWidth);
+            if (f1 <= 10.0F) {
+                return list1;
+            }
+
+            if (f1 < f) {
+                f = f1;
+                list = list1;
+            }
+        }
+
+        return list;
+    }
+
+    private static float getTextWidth(CharacterManager manager, List<ITextProperties> text) {
+        return (float) text.stream().mapToDouble(manager::func_238356_a_).max().orElse(0.0D);
     }
 
 }

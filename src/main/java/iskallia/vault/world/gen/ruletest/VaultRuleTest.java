@@ -2,7 +2,6 @@ package iskallia.vault.world.gen.ruletest;
 
 import com.mojang.serialization.Codec;
 import iskallia.vault.Vault;
-import iskallia.vault.init.ModConfigs;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.registry.Registry;
@@ -19,7 +18,7 @@ public class VaultRuleTest extends RuleTest {
 
 	@Override
 	public boolean test(BlockState state, Random random) {
-		return ModConfigs.VAULT_ORES.checkStone(state.getBlock());
+		return state.isSolid() && state.getMaterial() == Material.ROCK;
 	}
 
 	@Override
