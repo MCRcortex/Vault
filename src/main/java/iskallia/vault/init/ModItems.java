@@ -1,10 +1,7 @@
 package iskallia.vault.init;
 
 import iskallia.vault.Vault;
-import iskallia.vault.item.ItemSkillOrbs;
-import iskallia.vault.item.ItemVaultBurger;
-import iskallia.vault.item.ItemVaultGem;
-import iskallia.vault.item.ItemVaultKey;
+import iskallia.vault.item.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -16,7 +13,7 @@ public class ModItems {
     public static ItemGroup VAULT_MOD_GROUP = new ItemGroup(Vault.MOD_ID) {
         @Override
         public ItemStack createIcon() {
-            return new ItemStack(SKILL_ORBS);
+            return new ItemStack(VAULT_BURGER);
         }
     };
 
@@ -44,6 +41,11 @@ public class ModItems {
     public static ItemVaultKey GORGINITE_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_gorginite"));
     public static ItemVaultKey SPARKLETINE_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_sparkletine"));
     public static ItemVaultKey WUTODIE_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_wutodie"));
+    public static ItemBit BIT_100 = new ItemBit(VAULT_MOD_GROUP, Vault.id("bit_100"), 100);
+    public static ItemBit BIT_500 = new ItemBit(VAULT_MOD_GROUP, Vault.id("bit_500"), 500);
+    public static ItemBit BIT_1000 = new ItemBit(VAULT_MOD_GROUP, Vault.id("bit_1000"), 1000);
+    public static ItemBit BIT_5000 = new ItemBit(VAULT_MOD_GROUP, Vault.id("bit_5000"), 5000);
+    public static ItemBit BIT_10000 = new ItemBit(VAULT_MOD_GROUP, Vault.id("bit_10000"), 10000);
 
     public static void registerItems(RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
@@ -71,6 +73,11 @@ public class ModItems {
         registry.register(GORGINITE_KEY);
         registry.register(SPARKLETINE_KEY);
         registry.register(WUTODIE_KEY);
+        registry.register(BIT_100);
+        registry.register(BIT_500);
+        registry.register(BIT_1000);
+        registry.register(BIT_5000);
+        registry.register(BIT_10000);
     }
 
 }

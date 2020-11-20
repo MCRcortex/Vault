@@ -199,9 +199,20 @@ function writeFile(path, data) {
   });
 }
 
-for (let gem of gems) {
-  console.log(`"item.the_vault.key_${gem}": "${gemNames[gem]} Key",`);
+for (let cnt of [100, 500, 1000, 5000, 10000]) {
+  writeFile(
+    `./out/models/item/bit_${cnt}.json`,
+    `{
+      "parent": "item/generated",
+      "textures": {
+          "layer0": "the_vault:item/bit_${cnt}"
+      }
+  }`
+  );
+}
 
+for (let gem of gems) {
+  // console.log(`"item.the_vault.key_${gem}": "${gemNames[gem]} Key",`);
   // writeFile(
   //   `./out/models/item/key_${gem}.json`,
   //   itemModel.replace(
@@ -209,7 +220,6 @@ for (let gem of gems) {
   //     `the_vault:item/key_${gem}`
   //   )
   // );
-
   // writeFile(
   //   `./out/blockstates/door_${gem}.json`,
   //   blockstate.replace(
@@ -217,7 +227,6 @@ for (let gem of gems) {
   //     `the_vault:block/door_${gem}`
   //   )
   // );
-
   // writeFile(
   //   `./out/models/block/door_${gem}_bottom.json`,
   //   modelBottom.replace(
@@ -225,7 +234,6 @@ for (let gem of gems) {
   //     `the_vault:block/door_${gem}`
   //   )
   // );
-
   // writeFile(
   //   `./out/models/block/door_${gem}_bottom_hinge.json`,
   //   modelBottomHinge.replace(
@@ -233,7 +241,6 @@ for (let gem of gems) {
   //     `the_vault:block/door_${gem}`
   //   )
   // );
-
   // writeFile(
   //   `./out/models/block/door_${gem}_top.json`,
   //   modelTop.replace(
@@ -241,7 +248,6 @@ for (let gem of gems) {
   //     `the_vault:block/door_${gem}`
   //   )
   // );
-
   // writeFile(
   //   `./out/models/block/door_${gem}_top_hinge.json`,
   //   modelTopHinge.replace(
