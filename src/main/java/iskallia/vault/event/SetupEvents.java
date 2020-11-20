@@ -1,11 +1,7 @@
 package iskallia.vault.event;
 
 import iskallia.vault.Vault;
-import iskallia.vault.init.ModConfigs;
-import iskallia.vault.init.ModEntities;
-import iskallia.vault.init.ModKeybinds;
-import iskallia.vault.init.ModScreens;
-import iskallia.vault.network.ModNetwork;
+import iskallia.vault.init.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

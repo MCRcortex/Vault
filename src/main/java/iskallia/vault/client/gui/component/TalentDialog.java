@@ -10,7 +10,7 @@ import iskallia.vault.client.gui.screen.SkillTreeScreen;
 import iskallia.vault.client.gui.widget.TalentWidget;
 import iskallia.vault.config.entry.SkillStyle;
 import iskallia.vault.init.ModConfigs;
-import iskallia.vault.network.ModNetwork;
+import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.TalentUpgradeMessage;
 import iskallia.vault.skill.talent.TalentGroup;
 import iskallia.vault.skill.talent.TalentNode;
@@ -132,7 +132,7 @@ public class TalentDialog extends AbstractGui {
         talentTree.upgradeTalent(null, talentNode);
         refreshWidgets();
 
-        ModNetwork.channel.sendToServer(new TalentUpgradeMessage(this.talentGroup.getParentName()));
+        ModNetwork.CHANNEL.sendToServer(new TalentUpgradeMessage(this.talentGroup.getParentName()));
     }
 
     public void

@@ -1,7 +1,7 @@
 package iskallia.vault.skill.ability;
 
 import iskallia.vault.init.ModConfigs;
-import iskallia.vault.network.ModNetwork;
+import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.AbilityActivityMessage;
 import iskallia.vault.network.message.AbilityFocusMessage;
 import iskallia.vault.network.message.AbilityKnownOnesMessage;
@@ -258,7 +258,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
 
     public void syncTree(MinecraftServer server) {
         NetcodeUtils.runIfPresent(server, this.uuid, player -> {
-            ModNetwork.channel.sendTo(
+            ModNetwork.CHANNEL.sendTo(
                     new AbilityKnownOnesMessage(this),
                     player.connection.netManager,
                     NetworkDirection.PLAY_TO_CLIENT
@@ -268,7 +268,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
 
     public void syncFocusedIndex(MinecraftServer server) {
         NetcodeUtils.runIfPresent(server, this.uuid, player -> {
-            ModNetwork.channel.sendTo(
+            ModNetwork.CHANNEL.sendTo(
                     new AbilityFocusMessage(this.focusedAbilityIndex),
                     player.connection.netManager,
                     NetworkDirection.PLAY_TO_CLIENT
@@ -278,7 +278,7 @@ public class AbilityTree implements INBTSerializable<CompoundNBT> {
 
     public void syncActivity(MinecraftServer server) {
         NetcodeUtils.runIfPresent(server, this.uuid, player -> {
-            ModNetwork.channel.sendTo(
+            ModNetwork.CHANNEL.sendTo(
                     new AbilityActivityMessage(this.cooldownTicks, this.active),
                     player.connection.netManager,
                     NetworkDirection.PLAY_TO_CLIENT

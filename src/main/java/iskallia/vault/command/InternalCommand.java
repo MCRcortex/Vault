@@ -28,12 +28,12 @@ public class InternalCommand extends Command {
 	public void build(LiteralArgumentBuilder<CommandSource> builder) {
 		builder.then(literal("add_sub")
 				.then(argument("subscriber", StringArgumentType.word())
-				.executes(context -> this.addSub(context, StringArgumentType.getString(context, "subscriber")))));
+						.executes(context -> this.addSub(context, StringArgumentType.getString(context, "subscriber")))));
 
 		builder.then(literal("add_dono")
 				.then(argument("donator", StringArgumentType.word())
 				.then(argument("amount", IntegerArgumentType.integer())
-				.executes(context -> this.addDono(context, StringArgumentType.getString(context, "donator"), IntegerArgumentType.getInteger(context, "amount"))))));
+						.executes(context -> this.addDono(context, StringArgumentType.getString(context, "donator"), IntegerArgumentType.getInteger(context, "amount"))))));
 	}
 
 	private int addSub(CommandContext<CommandSource> context, String subscriber) throws CommandSyntaxException {

@@ -3,7 +3,7 @@ package iskallia.vault.world.data;
 import iskallia.vault.Vault;
 import iskallia.vault.init.ModFeatures;
 import iskallia.vault.init.ModStructures;
-import iskallia.vault.world.raid.VaultRaid;
+import iskallia.vault.world.raid.ArenaRaid;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -29,38 +29,38 @@ import java.util.Map;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class VaultRaidData extends WorldSavedData {
+public class ArenaRaidData extends WorldSavedData {
 
-    protected static final String DATA_NAME = Vault.MOD_ID + "_VaultRaid";
+    protected static final String DATA_NAME = Vault.MOD_ID + "_ArenaRaid";
 
-    private Map<UUID, VaultRaid> activeRaids = new HashMap<>();
+    private Map<UUID, ArenaRaid> activeRaids = new HashMap<>();
     private int xOffset = 0;
 
-    public VaultRaidData() {
+    public ArenaRaidData() {
         this(DATA_NAME);
     }
 
-    public VaultRaidData(String name) {
+    public ArenaRaidData(String name) {
         super(name);
     }
 
-    public VaultRaid getAt(BlockPos pos) {
+    public ArenaRaid getAt(BlockPos pos) {
         return this.activeRaids.values().stream().filter(raid -> raid.box.isVecInside(pos)).findFirst().orElse(null);
     }
 
-    public VaultRaid getActiveFor(ServerPlayerEntity player) {
+    public ArenaRaid getActiveFor(ServerPlayerEntity player) {
         return this.activeRaids.get(player.getUniqueID());
     }
 
-    public VaultRaid startNew(ServerPlayerEntity player) {
-        player.sendStatusMessage(new StringTextComponent("Generating vault, please wait...").mergeStyle(TextFormatting.GREEN), true);
+    public ArenaRaid startNew(ServerPlayerEntity player) {
+        player.sendStatusMessage(new StringTextComponent("Generating arena, please wait...").mergeStyle(TextFormatting.GREEN), true);
 
-        VaultRaid raid = new VaultRaid(player.getUniqueID(), new MutableBoundingBox(
-                this.xOffset, 0, 0, this.xOffset += VaultRaid.REGION_SIZE, 256, VaultRaid.REGION_SIZE
-        ), PlayerVaultStatsData.get(player.getServerWorld()).getVaultStats(player).getVaultLevel());
+        ArenaRaid raid = new ArenaRaid(player.getUniqueID(), new MutableBoundingBox(
+                this.xOffset, 0, 0, this.xOffset += ArenaRaid.REGION_SIZE, 256, ArenaRaid.REGION_SIZE
+        ));
 
-        if (this.activeRaids.containsKey(player.getUniqueID())) {
-            this.activeRaids.get(player.getUniqueID()).ticksLeft = 0;
+        if(this.activeRaids.containsKey(player.getUniqueID())) {
+            //TODO: The hell do we do if an arena raid is already ongoing?
         }
 
         this.activeRaids.put(raid.getPlayerId(), raid);
@@ -68,27 +68,27 @@ public class VaultRaidData extends WorldSavedData {
 
         player.getServer().runAsync(() -> {
             try {
-                ServerWorld world = player.getServer().getWorld(Vault.VAULT_KEY);
+                ServerWorld world = player.getServer().getWorld(Vault.ARENA_KEY);
                 ChunkPos chunkPos = new ChunkPos((raid.box.minX + raid.box.getXSize() / 2) >> 4, (raid.box.minZ + raid.box.getZSize() / 2) >> 4);
 
                 StructureSeparationSettings settings = new StructureSeparationSettings(1, 0, -1);
 
-                StructureStart<?> start = ModFeatures.VAULT_FEATURE.func_242771_a(world.func_241828_r(),
+                StructureStart<?> start = ModFeatures.ARENA_FEATURE.func_242771_a(world.func_241828_r(),
                         world.getChunkProvider().generator, world.getChunkProvider().generator.getBiomeProvider(),
                         world.getStructureTemplateManager(), world.getSeed(), chunkPos,
                         BiomeRegistry.PLAINS, 0, settings);
 
                 //This is some cursed calculations, don't ask me how it works.
-                int chunkRadius = VaultRaid.REGION_SIZE >> 5;
+                int chunkRadius = ArenaRaid.REGION_SIZE >> 5;
 
-                for (int x = -chunkRadius; x <= chunkRadius; x += 17) {
-                    for (int z = -chunkRadius; z <= chunkRadius; z += 17) {
-                        world.getChunk(chunkPos.x + x, chunkPos.z + z, ChunkStatus.EMPTY, true).func_230344_a_(ModStructures.VAULT, start);
+                for(int x = -chunkRadius; x <= chunkRadius; x += 17) {
+                    for(int z = -chunkRadius; z <= chunkRadius; z += 17) {
+                        world.getChunk(chunkPos.x + x, chunkPos.z + z, ChunkStatus.EMPTY, true).func_230344_a_(ModStructures.ARENA, start);
                     }
                 }
 
                 raid.start(world, player, chunkPos);
-            } catch (Exception e) {
+            } catch(Exception e) {
                 e.printStackTrace();
             }
         });
@@ -101,22 +101,21 @@ public class VaultRaidData extends WorldSavedData {
 
         boolean removed = false;
 
-        for (VaultRaid raid : this.activeRaids.values()) {
-            if (raid.isComplete()) {
-                raid.syncTicksLeft(world.getServer());
+        for(ArenaRaid raid : this.activeRaids.values()) {
+            if(raid.isComplete()) {
                 removed |= this.activeRaids.values().remove(raid);
             }
         }
 
-        if (removed || this.activeRaids.size() > 0) {
+        if(removed || this.activeRaids.size() > 0) {
             this.markDirty();
         }
     }
 
     @SubscribeEvent
     public static void onTick(TickEvent.WorldTickEvent event) {
-        if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START && event.world.getDimensionKey() == Vault.VAULT_KEY) {
-            get((ServerWorld) event.world).tick((ServerWorld) event.world);
+        if(event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START && event.world.getDimensionKey() == Vault.ARENA_KEY) {
+            get((ServerWorld)event.world).tick((ServerWorld)event.world);
         }
     }
 
@@ -125,7 +124,7 @@ public class VaultRaidData extends WorldSavedData {
         this.activeRaids.clear();
 
         nbt.getList("ActiveRaids", Constants.NBT.TAG_COMPOUND).forEach(raidNBT -> {
-            VaultRaid raid = VaultRaid.fromNBT((CompoundNBT) raidNBT);
+            ArenaRaid raid = ArenaRaid.fromNBT((CompoundNBT)raidNBT);
             this.activeRaids.put(raid.getPlayerId(), raid);
         });
 
@@ -142,8 +141,8 @@ public class VaultRaidData extends WorldSavedData {
         return nbt;
     }
 
-    public static VaultRaidData get(ServerWorld world) {
-        return world.getServer().func_241755_D_().getSavedData().getOrCreate(VaultRaidData::new, DATA_NAME);
+    public static ArenaRaidData get(ServerWorld world) {
+        return world.getServer().func_241755_D_().getSavedData().getOrCreate(ArenaRaidData::new, DATA_NAME);
     }
 
 }

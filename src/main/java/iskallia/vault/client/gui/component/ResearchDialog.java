@@ -10,7 +10,7 @@ import iskallia.vault.client.gui.screen.SkillTreeScreen;
 import iskallia.vault.client.gui.widget.ResearchWidget;
 import iskallia.vault.config.entry.SkillStyle;
 import iskallia.vault.init.ModConfigs;
-import iskallia.vault.network.ModNetwork;
+import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.ResearchMessage;
 import iskallia.vault.research.ResearchTree;
 import iskallia.vault.skill.talent.TalentTree;
@@ -103,7 +103,7 @@ public class ResearchDialog extends AbstractGui {
         researchTree.research(researchName);
         refreshWidgets();
 
-        ModNetwork.channel.sendToServer(new ResearchMessage(researchName));
+        ModNetwork.CHANNEL.sendToServer(new ResearchMessage(researchName));
     }
 
     public void mouseMoved(int screenX, int screenY) {

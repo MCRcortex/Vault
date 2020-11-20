@@ -1,7 +1,7 @@
 package iskallia.vault.research;
 
 import iskallia.vault.init.ModConfigs;
-import iskallia.vault.network.ModNetwork;
+import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.ResearchTreeMessage;
 import iskallia.vault.research.type.Research;
 import iskallia.vault.util.NetcodeUtils;
@@ -71,7 +71,7 @@ public class ResearchTree implements INBTSerializable<CompoundNBT> {
 
     public void sync(MinecraftServer server) {
         NetcodeUtils.runIfPresent(server, this.playerUUID, player -> {
-            ModNetwork.channel.sendTo(
+            ModNetwork.CHANNEL.sendTo(
                     new ResearchTreeMessage(this, player.getUniqueID()),
                     player.connection.netManager,
                     NetworkDirection.PLAY_TO_CLIENT

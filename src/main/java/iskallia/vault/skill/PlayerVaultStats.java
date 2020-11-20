@@ -1,7 +1,7 @@
 package iskallia.vault.skill;
 
 import iskallia.vault.init.ModConfigs;
-import iskallia.vault.network.ModNetwork;
+import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.VaultLevelMessage;
 import iskallia.vault.util.NetcodeUtils;
 import net.minecraft.nbt.CompoundNBT;
@@ -90,7 +90,7 @@ public class PlayerVaultStats implements INBTSerializable<CompoundNBT> {
 
     public void sync(MinecraftServer server) {
         NetcodeUtils.runIfPresent(server, this.uuid, player -> {
-            ModNetwork.channel.sendTo(
+            ModNetwork.CHANNEL.sendTo(
                     new VaultLevelMessage(this.vaultLevel, this.exp, this.getTnl(), this.unspentSkillPts),
                     player.connection.netManager,
                     NetworkDirection.PLAY_TO_CLIENT

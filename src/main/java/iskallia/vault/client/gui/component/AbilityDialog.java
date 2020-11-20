@@ -10,7 +10,7 @@ import iskallia.vault.client.gui.screen.SkillTreeScreen;
 import iskallia.vault.client.gui.widget.AbilityWidget;
 import iskallia.vault.config.entry.SkillStyle;
 import iskallia.vault.init.ModConfigs;
-import iskallia.vault.network.ModNetwork;
+import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.AbilityUpgradeMessage;
 import iskallia.vault.skill.ability.AbilityGroup;
 import iskallia.vault.skill.ability.AbilityNode;
@@ -132,7 +132,7 @@ public class AbilityDialog extends AbstractGui {
         abilityTree.upgradeAbility(null, abilityNode);
         refreshWidgets();
 
-        ModNetwork.channel.sendToServer(new AbilityUpgradeMessage(this.abilityGroup.getParentName()));
+        ModNetwork.CHANNEL.sendToServer(new AbilityUpgradeMessage(this.abilityGroup.getParentName()));
     }
 
     public void

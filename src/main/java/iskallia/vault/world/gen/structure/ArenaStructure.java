@@ -89,13 +89,12 @@ public class ArenaStructure extends Structure<ArenaStructure.Config> {
     public static class Pools {
         public static final JigsawPattern START = JigsawPatternRegistry.func_244094_a(
                 new JigsawPattern(Vault.id("arena/starts"), new ResourceLocation("empty"), ImmutableList.of(
-                        Pair.of(JigsawPiece.func_242861_b(Vault.sId("arena/arena1/n_n"), ProcessorLists.field_244101_a), 1)
+                        Pair.of(JigsawPiece.func_242861_b(Vault.sId("arena/arena1/p_p"), ProcessorLists.field_244101_a), 1)
                 ), JigsawPattern.PlacementBehaviour.RIGID));
 
         public static void init() {
 
         }
     }
-
 
 }
