@@ -53,4 +53,8 @@ public class RegistryEvents {
         ModEntities.register(event);
     }
 
+
+    @SubscribeEvent
+    public static void onTileEntityRegister(RegistryEvent.Register<TileEntityType<?>> event) { ModBlocks.registerTileEntities(event); }
+
 }
