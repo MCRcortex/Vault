@@ -1,5 +1,7 @@
 package iskallia.vault.entity;
 
+import iskallia.vault.init.ModNetwork;
+import iskallia.vault.network.message.FighterSizeMessage;
 import iskallia.vault.util.SkinProfile;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -17,6 +19,7 @@ import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.lang.reflect.Field;
 
@@ -109,8 +112,8 @@ public class FighterEntity extends ZombieEntity {
 		}
 	}
 
-	public void changeSize(float m) {
-		if(m == this.sizeMultiplier)return;
+	public FighterEntity changeSize(float m) {
+		if(m == this.sizeMultiplier)return this;
 		Field sizeField = Entity.class.getDeclaredFields()[79]; //Entity.size
 		sizeField.setAccessible(true);
 
@@ -121,6 +124,12 @@ public class FighterEntity extends ZombieEntity {
 		}
 
 		this.recalculateSize();
+
+		if(!this.world.isRemote) {
+			ModNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new FighterSizeMessage(this));
+		}
+
+		return this;
 	}
 
 	@Override

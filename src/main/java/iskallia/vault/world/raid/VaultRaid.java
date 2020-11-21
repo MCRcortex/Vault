@@ -4,7 +4,7 @@ import iskallia.vault.Vault;
 import iskallia.vault.block.VaultPortalBlock;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModConfigs;
-import iskallia.vault.network.ModNetwork;
+import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.VaultRaidTickMessage;
 import iskallia.vault.util.NetcodeUtils;
 import iskallia.vault.world.gen.structure.VaultStructure;
@@ -69,7 +69,12 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         if(this.ticksLeft <= 0) {
             this.runIfPresent(world, playerEntity -> {
                 playerEntity.sendMessage(new StringTextComponent("Time has run out!").mergeStyle(TextFormatting.GREEN), this.playerId);
-                this.teleportToStart(world, playerEntity);
+                //this.teleportToStart(world, playerEntity);
+                playerEntity.inventory.func_234564_a_(stack -> true, -1, playerEntity.container.func_234641_j_());
+                playerEntity.openContainer.detectAndSendChanges();
+                playerEntity.container.onCraftMatrixChanged(playerEntity.inventory);
+                playerEntity.updateHeldItem();
+                playerEntity.onKillCommand();
             });
         } else {
             this.runIfPresent(world, playerEntity -> {
@@ -88,7 +93,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 
     public void syncTicksLeft(MinecraftServer server) {
         NetcodeUtils.runIfPresent(server, this.playerId, player -> {
-            ModNetwork.channel.sendTo(
+            ModNetwork.CHANNEL.sendTo(
                     new VaultRaidTickMessage(this.ticksLeft),
                     player.connection.netManager,
                     NetworkDirection.PLAY_TO_CLIENT

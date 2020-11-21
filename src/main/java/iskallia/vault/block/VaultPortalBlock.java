@@ -57,7 +57,7 @@ public class VaultPortalBlock extends NetherPortalBlock {
 		VoxelShape playerVoxel = VoxelShapes.create(player.getBoundingBox().offset(-pos.getX(), -pos.getY(), -pos.getZ()));
 
 		if(VoxelShapes.compare(playerVoxel, state.getShape(world, pos), IBooleanFunction.AND)) {
-			RegistryKey<World> worldKey = world.getDimensionKey() == Vault.WORLD_KEY ? World.OVERWORLD : Vault.WORLD_KEY;
+			RegistryKey<World> worldKey = world.getDimensionKey() == Vault.VAULT_KEY ? World.OVERWORLD : Vault.VAULT_KEY;
 			ServerWorld destination = ((ServerWorld)world).getServer().getWorld(worldKey);
 
 			if(destination == null)return;
@@ -89,7 +89,7 @@ public class VaultPortalBlock extends NetherPortalBlock {
 					} else {
 						this.moveToSpawn(destination, player);
 					}
-				} else if(worldKey == Vault.WORLD_KEY) {
+				} else if(worldKey == Vault.VAULT_KEY) {
 					VaultRaidData.get(destination).startNew(player);
 				}
 			});

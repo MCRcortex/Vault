@@ -1,10 +1,7 @@
 package iskallia.vault.init;
 
 import iskallia.vault.Vault;
-import iskallia.vault.item.ItemSkillOrbs;
-import iskallia.vault.item.ItemVaultBurger;
-import iskallia.vault.item.ItemVaultCrystal;
-import iskallia.vault.item.ItemVaultGem;
+import iskallia.vault.item.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -16,7 +13,7 @@ public class ModItems {
     public static ItemGroup VAULT_MOD_GROUP = new ItemGroup(Vault.MOD_ID) {
         @Override
         public ItemStack createIcon() {
-            return new ItemStack(SKILL_ORBS);
+            return new ItemStack(VAULT_BURGER);
         }
     };
 
@@ -38,6 +35,21 @@ public class ModItems {
     public static ItemVaultCrystal VAULT_CRYSTAL_RARE = new ItemVaultCrystal(VAULT_MOD_GROUP, Vault.id("vault_crystal_rare"), ItemVaultCrystal.CrystalRarity.RARE);
     public static ItemVaultCrystal VAULT_CRYSTAL_EPIC = new ItemVaultCrystal(VAULT_MOD_GROUP, Vault.id("vault_crystal_epic"), ItemVaultCrystal.CrystalRarity.EPIC);
     public static ItemVaultCrystal VAULT_CRYSTAL_OMEGA = new ItemVaultCrystal(VAULT_MOD_GROUP, Vault.id("vault_crystal_omega"), ItemVaultCrystal.CrystalRarity.OMEGA);
+    public static ItemVaultKey ALEXANDRITE_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_alexandrite"));
+    public static ItemVaultKey BENITOITE_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_benitoite"));
+    public static ItemVaultKey LARIMAR_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_larimar"));
+    public static ItemVaultKey BLACK_OPAL_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_black_opal"));
+    public static ItemVaultKey PAINITE_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_painite"));
+    public static ItemVaultKey ISKALLIUM_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_iskallium"));
+    public static ItemVaultKey RENIUM_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_renium"));
+    public static ItemVaultKey GORGINITE_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_gorginite"));
+    public static ItemVaultKey SPARKLETINE_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_sparkletine"));
+    public static ItemVaultKey WUTODIE_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_wutodie"));
+    public static ItemBit BIT_100 = new ItemBit(VAULT_MOD_GROUP, Vault.id("bit_100"), 100);
+    public static ItemBit BIT_500 = new ItemBit(VAULT_MOD_GROUP, Vault.id("bit_500"), 500);
+    public static ItemBit BIT_1000 = new ItemBit(VAULT_MOD_GROUP, Vault.id("bit_1000"), 1000);
+    public static ItemBit BIT_5000 = new ItemBit(VAULT_MOD_GROUP, Vault.id("bit_5000"), 5000);
+    public static ItemBit BIT_10000 = new ItemBit(VAULT_MOD_GROUP, Vault.id("bit_10000"), 10000);
 
     public static void registerItems(RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
@@ -59,5 +71,20 @@ public class ModItems {
         registry.register(VAULT_CRYSTAL_RARE);
         registry.register(VAULT_CRYSTAL_EPIC);
         registry.register(VAULT_CRYSTAL_OMEGA);
+        registry.register(ALEXANDRITE_KEY);
+        registry.register(BENITOITE_KEY);
+        registry.register(LARIMAR_KEY);
+        registry.register(BLACK_OPAL_KEY);
+        registry.register(PAINITE_KEY);
+        registry.register(ISKALLIUM_KEY);
+        registry.register(RENIUM_KEY);
+        registry.register(GORGINITE_KEY);
+        registry.register(SPARKLETINE_KEY);
+        registry.register(WUTODIE_KEY);
+        registry.register(BIT_100);
+        registry.register(BIT_500);
+        registry.register(BIT_1000);
+        registry.register(BIT_5000);
+        registry.register(BIT_10000);
     }
 }

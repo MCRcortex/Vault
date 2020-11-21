@@ -3,6 +3,7 @@ package iskallia.vault.command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import iskallia.vault.world.data.ArenaRaidData;
 import iskallia.vault.world.data.VaultRaidData;
 import net.minecraft.command.CommandSource;
 
@@ -22,18 +23,30 @@ public class RaidCommand extends Command {
 
 	@Override
 	public void build(LiteralArgumentBuilder<CommandSource> builder) {
-		builder.then(literal("start").executes(this::startRaid));
+		for(Type type: Type.values()) {
+			builder.then(literal(type.name().toUpperCase())
+					.then(literal("start")
+							.executes(context -> this.startRaid(context, type))));
+		}
 	}
 
-	private int startRaid(CommandContext<CommandSource> context) throws CommandSyntaxException {
-		VaultRaidData.get(context.getSource().getWorld()).startNew(context.getSource().asPlayer());
-		//context.getSource().sendFeedback(new StringTextComponent( "Generating vault, please wait...").mergeStyle(TextFormatting.GREEN), true);
+	private int startRaid(CommandContext<CommandSource> context, Type type) throws CommandSyntaxException {
+		if(type == Type.VAULT) {
+			VaultRaidData.get(context.getSource().getWorld()).startNew(context.getSource().asPlayer());
+		} else if(type == Type.ARENA) {
+			ArenaRaidData.get(context.getSource().getWorld()).startNew(context.getSource().asPlayer());
+		}
+
 		return 0;
 	}
 
 	@Override
 	public boolean isDedicatedServerOnly() {
 		return false;
+	}
+
+	public enum Type {
+		VAULT, ARENA
 	}
 
 }

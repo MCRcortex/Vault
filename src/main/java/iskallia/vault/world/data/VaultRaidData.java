@@ -7,7 +7,6 @@ import iskallia.vault.world.raid.VaultRaid;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
@@ -28,7 +27,6 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class VaultRaidData extends WorldSavedData {
@@ -36,7 +34,6 @@ public class VaultRaidData extends WorldSavedData {
     protected static final String DATA_NAME = Vault.MOD_ID + "_VaultRaid";
 
     private Map<UUID, VaultRaid> activeRaids = new HashMap<>();
-    private Map<UUID, Integer> playerLevels = new HashMap<>();
     private int xOffset = 0;
 
     public VaultRaidData() {
@@ -55,10 +52,6 @@ public class VaultRaidData extends WorldSavedData {
         return this.activeRaids.get(player.getUniqueID());
     }
 
-    public int getLevel(ServerPlayerEntity player) {
-        return this.playerLevels.computeIfAbsent(player.getUniqueID(), uuid -> 0);
-    }
-
     public VaultRaid startNew(ServerPlayerEntity player) {
         player.sendStatusMessage(new StringTextComponent("Generating vault, please wait...").mergeStyle(TextFormatting.GREEN), true);
 
@@ -75,7 +68,7 @@ public class VaultRaidData extends WorldSavedData {
 
         player.getServer().runAsync(() -> {
             try {
-                ServerWorld world = player.getServer().getWorld(Vault.WORLD_KEY);
+                ServerWorld world = player.getServer().getWorld(Vault.VAULT_KEY);
                 ChunkPos chunkPos = new ChunkPos((raid.box.minX + raid.box.getXSize() / 2) >> 4, (raid.box.minZ + raid.box.getZSize() / 2) >> 4);
 
                 StructureSeparationSettings settings = new StructureSeparationSettings(1, 0, -1);
@@ -122,7 +115,7 @@ public class VaultRaidData extends WorldSavedData {
 
     @SubscribeEvent
     public static void onTick(TickEvent.WorldTickEvent event) {
-        if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START && event.world.getDimensionKey() == Vault.WORLD_KEY) {
+        if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START && event.world.getDimensionKey() == Vault.VAULT_KEY) {
             get((ServerWorld) event.world).tick((ServerWorld) event.world);
         }
     }
@@ -130,16 +123,10 @@ public class VaultRaidData extends WorldSavedData {
     @Override
     public void read(CompoundNBT nbt) {
         this.activeRaids.clear();
-        this.playerLevels.clear();
 
         nbt.getList("ActiveRaids", Constants.NBT.TAG_COMPOUND).forEach(raidNBT -> {
             VaultRaid raid = VaultRaid.fromNBT((CompoundNBT) raidNBT);
             this.activeRaids.put(raid.getPlayerId(), raid);
-        });
-
-        nbt.getList("PlayerLevels", Constants.NBT.TAG_STRING).forEach(levelNBT -> {
-            String[] data = levelNBT.getString().split(Pattern.quote("@"));
-            this.playerLevels.put(UUID.fromString(data[0]), Integer.parseInt(data[1]));
         });
 
         this.xOffset = nbt.getInt("XOffset");
@@ -150,10 +137,6 @@ public class VaultRaidData extends WorldSavedData {
         ListNBT raidsList = new ListNBT();
         this.activeRaids.values().forEach(raid -> raidsList.add(raid.serializeNBT()));
         nbt.put("ActiveRaids", raidsList);
-
-        ListNBT levelsList = new ListNBT();
-        this.playerLevels.forEach((uuid, level) -> levelsList.add(StringNBT.valueOf(uuid.toString() + "@" + level)));
-        nbt.put("PlayerLevels", levelsList);
 
         nbt.putInt("XOffset", this.xOffset);
         return nbt;

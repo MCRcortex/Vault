@@ -2,6 +2,7 @@ package iskallia.vault.event;
 
 import iskallia.vault.Vault;
 import iskallia.vault.init.*;
+import iskallia.vault.init.*;
 import iskallia.vault.network.ModNetwork;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -26,7 +27,6 @@ public class SetupEvents {
     @SubscribeEvent
     public static void setupCommon(final FMLCommonSetupEvent event) {
         Vault.LOGGER.info("setupCommon()");
-
         ModConfigs.register();
         ModNetwork.initialize();
     }

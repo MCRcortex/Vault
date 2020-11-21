@@ -28,7 +28,8 @@ public class Vault {
     public static final String MOD_ID = "the_vault";
     public static final Logger LOGGER = LogManager.getLogger();
 
-    public static RegistryKey<World> WORLD_KEY = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(MOD_ID, "vault"));
+    public static RegistryKey<World> VAULT_KEY = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, Vault.id("vault"));
+	public static RegistryKey<World> ARENA_KEY = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, Vault.id("arena"));
 
     public Vault() {
 	    MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, this::onCommandRegister);

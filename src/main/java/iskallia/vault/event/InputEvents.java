@@ -3,7 +3,7 @@ package iskallia.vault.event;
 import iskallia.vault.client.gui.overlay.AbilitiesOverlay;
 import iskallia.vault.client.gui.screen.RaffleScreen;
 import iskallia.vault.init.ModKeybinds;
-import iskallia.vault.network.ModNetwork;
+import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.AbilityKeyMessage;
 import iskallia.vault.network.message.OpenSkillTreeMessage;
 import net.minecraft.client.Minecraft;
@@ -35,14 +35,14 @@ public class InputEvents {
             minecraft.displayGuiScreen(new RaffleScreen());
 
         } else if (minecraft.currentScreen == null && ModKeybinds.openAbilityTree.isPressed()) {
-            ModNetwork.channel.sendToServer(new OpenSkillTreeMessage());
+            ModNetwork.CHANNEL.sendToServer(new OpenSkillTreeMessage());
 
         } else if (AbilitiesOverlay.cooldownTicks == 0 && ModKeybinds.abilityKey.getKey().getKeyCode() == key) {
             if (action == GLFW.GLFW_RELEASE) {
-                ModNetwork.channel.sendToServer(new AbilityKeyMessage(true, false, false, false));
+                ModNetwork.CHANNEL.sendToServer(new AbilityKeyMessage(true, false, false, false));
 
             } else if (action == GLFW.GLFW_PRESS) {
-                ModNetwork.channel.sendToServer(new AbilityKeyMessage(false, true, false, false));
+                ModNetwork.CHANNEL.sendToServer(new AbilityKeyMessage(false, true, false, false));
             }
         }
     }
@@ -58,10 +58,10 @@ public class InputEvents {
         if (ModKeybinds.abilityKey.isKeyDown()) {
             if (AbilitiesOverlay.cooldownTicks == 0) {
                 if (scrollDelta < 0) {
-                    ModNetwork.channel.sendToServer(new AbilityKeyMessage(false, false, false, true));
+                    ModNetwork.CHANNEL.sendToServer(new AbilityKeyMessage(false, false, false, true));
 
                 } else {
-                    ModNetwork.channel.sendToServer(new AbilityKeyMessage(false, false, true, false));
+                    ModNetwork.CHANNEL.sendToServer(new AbilityKeyMessage(false, false, true, false));
                 }
             }
             event.setCanceled(true);

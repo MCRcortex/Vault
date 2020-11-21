@@ -7,10 +7,6 @@
       "biome": "the_vault:yarrr",
       "features": true,
       "layers": [
-        {
-          "block": "minecraft:lava",
-          "height": 1
-        }
       ],
       "structures": {
         "structures": {}
