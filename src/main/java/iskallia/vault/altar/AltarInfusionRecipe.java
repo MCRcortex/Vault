@@ -55,4 +55,12 @@ public class AltarInfusionRecipe {
         return requiredItems;
     }
 
+    public boolean isComplete() {
+        for (RequiredItem item : requiredItems) {
+            if (!item.reachedAmountRequired()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

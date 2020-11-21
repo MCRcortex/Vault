@@ -21,6 +21,8 @@ public class VaultAltarConfig extends Config {
     public double PLAYER_RANGE_CHECK;
     @Expose
     public double ITEM_RANGE_CHECK;
+    @Expose
+    public int INFUSION_TIME;
 
 
     private Random rand = new Random();
@@ -41,6 +43,7 @@ public class VaultAltarConfig extends Config {
         PULL_SPEED = 1f;
         PLAYER_RANGE_CHECK = 32d;
         ITEM_RANGE_CHECK = 8d;
+        INFUSION_TIME = 5;
 
     }
 

@@ -12,11 +12,16 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -24,12 +29,27 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class VaultAltarBlock extends Block {
+    public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
     public VaultAltarBlock() {
         super(Properties.create(Material.ROCK, MaterialColor.DIAMOND).setRequiresTool().hardnessAndResistance(3f, 3f));
+        this.setDefaultState(this.stateContainer.getBaseState().with(POWERED, Boolean.valueOf(false)));
+
+    }
+
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+        return this.getDefaultState().with(POWERED, Boolean.valueOf(false));
+    }
+
+    @Override
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(POWERED);
     }
 
     @Override
@@ -53,22 +73,18 @@ public class VaultAltarBlock extends Block {
         if (altar == null)
             return ActionResultType.SUCCESS;
 
-        if (player.isSneaking()) {
-            if (altar.containsVaultRock()) {
-                altar.setContainsVaultRock(false);
-                if (!player.inventory.addItemStackToInventory(new ItemStack(ModItems.VAULT_ROCK))) {
-                    ItemEntity e = new ItemEntity(worldIn, pos.getX() + 0.5d, pos.getY() + 1.5d, pos.getZ() + 0.5d);
-                    e.setItem(new ItemStack(ModItems.VAULT_ROCK));
-                    worldIn.addEntity(e);
-                }
-            }
-            altar.updateForClient();
+        if (player.isSneaking() && altar.containsVaultRock() && player.getHeldItemMainhand().getItem() == Items.AIR) {
+
+            player.setHeldItem(Hand.MAIN_HAND, new ItemStack(ModItems.VAULT_ROCK));
+            altar.setContainsVaultRock(false);
+
+            altar.sendUpdates();
             return ActionResultType.SUCCESS;
         }
 
         ItemStack heldItem = player.getHeldItemMainhand();
         if (heldItem.getItem() != ModItems.VAULT_ROCK) {
-            altar.updateForClient();
+            altar.sendUpdates();
 
             return ActionResultType.SUCCESS;
         }
@@ -82,10 +98,41 @@ public class VaultAltarBlock extends Block {
         altar.setContainsVaultRock(true);
 
         heldItem.setCount(heldItem.getCount() - 1);
-        altar.updateForClient();
+        altar.sendUpdates();
         return ActionResultType.SUCCESS;
     }
 
+    @Override
+    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+        if (worldIn.isRemote) return;
+        boolean powered = worldIn.isBlockPowered(pos);
+        if (powered != state.get(POWERED)) {
+            if (powered) {
+                VaultAltarTileEntity altar = getAltarTileEntity(worldIn, pos);
+                if (altar != null && altar.containsVaultRock()) {
+                    PlayerEntity player = worldIn.getClosestPlayer(altar.getPos().getX(), altar.getPos().getY(), altar.getPos().getZ(), ModConfigs.VAULT_ALTAR.PLAYER_RANGE_CHECK, null);
+                    if (player != null) {
+                        PlayerVaultAltarData data = PlayerVaultAltarData.get((ServerWorld) worldIn);
+                        AltarInfusionRecipe recipe = data.getRecipe(player);
+                        if (recipe != null && recipe.isComplete()) {
+                            data.remove(player.getUniqueID());
+                            altar.startInfusionTimer(ModConfigs.VAULT_ALTAR.INFUSION_TIME);
+
+                            //TODO: complete altar infusion
+
+                        }
+                    }
+                }
+            }
+        }
+        worldIn.setBlockState(pos, state.with(POWERED, Boolean.valueOf(powered)), 3);
+    }
+
+
+    @Override
+    public boolean canConnectRedstone(BlockState state, IBlockReader world, BlockPos pos, @Nullable Direction side) {
+        return true;
+    }
 
     private VaultAltarTileEntity getAltarTileEntity(World worldIn, BlockPos pos) {
         TileEntity te = worldIn.getTileEntity(pos);

@@ -103,7 +103,4 @@ public class PlayerVaultAltarData extends WorldSavedData {
         return nbt;
     }
 
-    public AltarInfusionRecipe getPlayerRecipe(UUID uuid) {
-        return playerMap.get(uuid);
-    }
 }

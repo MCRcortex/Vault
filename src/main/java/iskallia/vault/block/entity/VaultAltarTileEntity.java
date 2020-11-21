@@ -4,6 +4,7 @@ import iskallia.vault.altar.AltarInfusionRecipe;
 import iskallia.vault.altar.RequiredItem;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModConfigs;
+import iskallia.vault.item.ItemVaultCrystal;
 import iskallia.vault.util.VectorHelper;
 import iskallia.vault.world.data.PlayerVaultAltarData;
 import net.minecraft.block.BlockState;
@@ -41,6 +42,7 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
 
     private HashMap<UUID, AltarInfusionRecipe> nearbyPlayerRecipes = new HashMap<>();
     private boolean containsVaultRock = false;
+    private int infusionTimer = -1;
 
     private ItemStackHandler itemHandler = createHandler();
     private LazyOptional<IItemHandler> handler = LazyOptional.of(() -> itemHandler);
@@ -57,7 +59,7 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
         return containsVaultRock;
     }
 
-    public void updateForClient() {
+    public void sendUpdates() {
         this.world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
         this.world.notifyNeighborsOfStateChange(pos, this.getBlockState().getBlock());
         markDirty();
@@ -82,8 +84,29 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
         PlayerVaultAltarData data = PlayerVaultAltarData.get((ServerWorld) world);
         getNearbyPlayers(world, data, x, y, z, ModConfigs.VAULT_ALTAR.PLAYER_RANGE_CHECK);
         pullNearbyItems(world, data, x, y, z, ModConfigs.VAULT_ALTAR.ITEM_RANGE_CHECK);
+        sendUpdates();
+
+        if (infusionTimer > 0) {
+            infusionTimer--;
+        } else if (infusionTimer == 0) {
+            completeInfusion(world);
+            infusionTimer = -1;
+        }
 
 
+    }
+
+    private void completeInfusion(World world) {
+        this.containsVaultRock = false;
+        ItemStack crystal = ItemVaultCrystal.getRandomCrystal();
+
+        world.addEntity(new ItemEntity(world, getPos().getX() + .5d, pos.getY() + 1.5d, pos.getZ() + .5d, crystal));
+
+    }
+
+    public void startInfusionTimer(int seconds) {
+        System.out.println("Start Infusion");
+        infusionTimer = seconds * 20;
     }
 
     private void getNearbyPlayers(World world, PlayerVaultAltarData data, double x, double y, double z, double range) {
@@ -91,11 +114,10 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
         List<PlayerEntity> players = world.getEntitiesWithinAABB(PlayerEntity.class, getAABB(range, x, y, z));
         for (PlayerEntity p : players) {
             if (data.getRecipes().containsKey(p.getUniqueID())) {
-                AltarInfusionRecipe recipe = data.getPlayerRecipe(p.getUniqueID());
+                AltarInfusionRecipe recipe = data.getRecipe(p.getUniqueID());
                 nearbyPlayerRecipes.put(p.getUniqueID(), recipe);
             }
         }
-        updateForClient();
     }
 
     private void pullNearbyItems(World world, PlayerVaultAltarData data, double x, double y, double z, double range) {
@@ -130,7 +152,6 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
                 }
             }
         }
-        updateForClient();
     }
 
     private void moveItemTowardPedestal(ItemEntity itemEntity, float speed) {
@@ -151,7 +172,7 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
         return false;
     }
 
-    private AxisAlignedBB getAABB(double range, double x, double y, double z) {
+    public AxisAlignedBB getAABB(double range, double x, double y, double z) {
         return new AxisAlignedBB(x - range, y - range, z - range, x + range, y + range, z + range);
     }
 
@@ -229,7 +250,7 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
             protected void onContentsChanged(int slot) {
                 // To make sure the TE persists when the chunk is saved later we need to
                 // mark it dirty every time the item handler changes
-                updateForClient();
+                sendUpdates();
             }
 
             @Override
