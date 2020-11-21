@@ -100,8 +100,6 @@ public class StageManager {
 
         String restrictedBy = researchTree.restrictedBy(usedItem, Restrictions.Type.USABILITY);
 
-        System.out.println(restrictedBy);
-
         if (restrictedBy == null)
             return; // Doesn't restrict usability of this item, so stop here.
 

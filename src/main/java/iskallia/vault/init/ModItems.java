@@ -15,6 +15,11 @@ public class ModItems {
         public ItemStack createIcon() {
             return new ItemStack(VAULT_BURGER);
         }
+
+        @Override
+        public boolean hasSearchBar() {
+            return true;
+        }
     };
 
     public static ItemVaultBurger VAULT_BURGER = new ItemVaultBurger(VAULT_MOD_GROUP);
@@ -50,6 +55,26 @@ public class ModItems {
     public static ItemBit BIT_1000 = new ItemBit(VAULT_MOD_GROUP, Vault.id("bit_1000"), 1000);
     public static ItemBit BIT_5000 = new ItemBit(VAULT_MOD_GROUP, Vault.id("bit_5000"), 5000);
     public static ItemBit BIT_10000 = new ItemBit(VAULT_MOD_GROUP, Vault.id("bit_10000"), 10000);
+    public static ItemVaultRelicPart DRAGON_HEAD_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_dragon_head"), "Dragon Set");
+    public static ItemVaultRelicPart DRAGON_TAIL_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_dragon_tail"), "Dragon Set");
+    public static ItemVaultRelicPart DRAGON_FOOT_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_dragon_foot"), "Dragon Set");
+    public static ItemVaultRelicPart DRAGON_CHEST_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_dragon_chest"), "Dragon Set");
+    public static ItemVaultRelicPart DRAGON_BREATH_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_dragon_breath"), "Dragon Set");
+    public static ItemVaultRelicPart MINERS_DELIGHT_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_miners_delight"), "Miner's Set");
+    public static ItemVaultRelicPart MINERS_LIGHT_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_miners_light"), "Miner's Set");
+    public static ItemVaultRelicPart PICKAXE_HANDLE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_pickaxe_handle"), "Miner's Set");
+    public static ItemVaultRelicPart PICKAXE_HEAD_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_pickaxe_head"), "Miner's Set");
+    public static ItemVaultRelicPart PICKAXE_TOOL_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_pickaxe_tool"), "Miner's Set");
+    public static ItemVaultRelicPart SWORD_BLADE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_sword_blade"), "Warror's Set");
+    public static ItemVaultRelicPart SWORD_HANDLE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_sword_handle"), "Warror's Set");
+    public static ItemVaultRelicPart SWORD_STICK_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_sword_stick"), "Warror's Set");
+    public static ItemVaultRelicPart WARRIORS_ARMOUR_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_warriors_armour"), "Warror's Set");
+    public static ItemVaultRelicPart WARRIORS_CHARM_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_warriors_charm"), "Warror's Set");
+    public static ItemVaultRelicPart DIAMOND_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_diamond_essence"), "Richity Set");
+    public static ItemVaultRelicPart GOLD_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_gold_essence"), "Richity Set");
+    public static ItemVaultRelicPart MYSTIC_GEM_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_mystic_gem_essence"), "Richity Set");
+    public static ItemVaultRelicPart NETHERITE_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_netherite_essence"), "Richity Set");
+    public static ItemVaultRelicPart PLATINUM_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_platinum_essence"), "Richity Set");
 
     public static void registerItems(RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
@@ -86,5 +111,25 @@ public class ModItems {
         registry.register(BIT_1000);
         registry.register(BIT_5000);
         registry.register(BIT_10000);
+        registry.register(DRAGON_HEAD_RELIC);
+        registry.register(DRAGON_TAIL_RELIC);
+        registry.register(DRAGON_FOOT_RELIC);
+        registry.register(DRAGON_CHEST_RELIC);
+        registry.register(DRAGON_BREATH_RELIC);
+        registry.register(MINERS_DELIGHT_RELIC);
+        registry.register(MINERS_LIGHT_RELIC);
+        registry.register(PICKAXE_HANDLE_RELIC);
+        registry.register(PICKAXE_HEAD_RELIC);
+        registry.register(PICKAXE_TOOL_RELIC);
+        registry.register(SWORD_BLADE_RELIC);
+        registry.register(SWORD_HANDLE_RELIC);
+        registry.register(SWORD_STICK_RELIC);
+        registry.register(WARRIORS_ARMOUR_RELIC);
+        registry.register(WARRIORS_CHARM_RELIC);
+        registry.register(DIAMOND_ESSENCE_RELIC);
+        registry.register(GOLD_ESSENCE_RELIC);
+        registry.register(MYSTIC_GEM_ESSENCE_RELIC);
+        registry.register(NETHERITE_ESSENCE_RELIC);
+        registry.register(PLATINUM_ESSENCE_RELIC);
     }
 }
