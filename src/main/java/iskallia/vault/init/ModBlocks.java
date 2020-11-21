@@ -2,20 +2,26 @@ package iskallia.vault.init;
 
 import iskallia.vault.Vault;
 import iskallia.vault.block.VaultDoorBlock;
+import iskallia.vault.block.VaultAltarBlock;
 import iskallia.vault.block.VaultOreBlock;
 import iskallia.vault.block.VaultPortalBlock;
+import iskallia.vault.block.entity.VaultAltarTileEntity;
+import iskallia.vault.block.render.VaultAltarRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.DoorBlock;
 import net.minecraft.block.OreBlock;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.TallBlockItem;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 
 public class ModBlocks {
 
     public static final VaultPortalBlock VAULT_PORTAL = new VaultPortalBlock();
+    public static final VaultAltarBlock VAULT_ALTAR = new VaultAltarBlock();
     public static final OreBlock ALEXANDRITE_ORE = new VaultOreBlock();
     public static final OreBlock BENITOITE_ORE = new VaultOreBlock();
     public static final OreBlock LARIMAR_ORE = new VaultOreBlock();
@@ -38,8 +44,11 @@ public class ModBlocks {
     public static final DoorBlock SPARKLETINE_DOOR = new VaultDoorBlock(ModItems.SPARKLETINE_KEY);
     public static final DoorBlock WUTODIE_DOOR = new VaultDoorBlock(ModItems.WUTODIE_KEY);
 
+    public static final TileEntityType<VaultAltarTileEntity> VAULT_ALTAR_TILE_ENTITY = TileEntityType.Builder.create(VaultAltarTileEntity::new, VAULT_ALTAR).build(null);
+
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         registerBlock(event, VAULT_PORTAL, Vault.id("vault_portal"));
+        registerBlock(event, VAULT_ALTAR, Vault.id("vault_altar"));
         registerBlock(event, ALEXANDRITE_ORE, Vault.id("ore_alexandrite"));
         registerBlock(event, BENITOITE_ORE, Vault.id("ore_benitoite"));
         registerBlock(event, LARIMAR_ORE, Vault.id("ore_larimar"));
@@ -63,8 +72,17 @@ public class ModBlocks {
         registerBlock(event, WUTODIE_DOOR, Vault.id("door_wutodie"));
     }
 
+    public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
+        registerTileEntity(event, VAULT_ALTAR_TILE_ENTITY, Vault.id("vault_altar_tile_entity"));
+    }
+
+    public static void registerTileEntityRenderers() {
+        VaultAltarRenderer.register();
+    }
+
     public static void registerBlockItems(RegistryEvent.Register<Item> event) {
         registerBlockItem(event, VAULT_PORTAL);
+        registerBlockItem(event, VAULT_ALTAR);
         registerBlockItem(event, ALEXANDRITE_ORE);
         registerBlockItem(event, BENITOITE_ORE);
         registerBlockItem(event, LARIMAR_ORE);
@@ -93,11 +111,13 @@ public class ModBlocks {
         event.getRegistry().register(block);
     }
 
+    private static <T extends TileEntity> void registerTileEntity(RegistryEvent.Register<TileEntityType<?>> event, TileEntityType<?> type, ResourceLocation id) {
+        type.setRegistryName(id);
+        event.getRegistry().register(type);
+    }
+
     private static void registerBlockItem(RegistryEvent.Register<Item> event, Block block) {
-        BlockItem blockItem = new BlockItem(block, new Item.Properties()
-                .group(ModItems.VAULT_MOD_GROUP)
-                .maxStackSize(64)
-        );
+        BlockItem blockItem = new BlockItem(block, new Item.Properties().group(ModItems.VAULT_MOD_GROUP).maxStackSize(64));
         blockItem.setRegistryName(block.getRegistryName());
         event.getRegistry().register(blockItem);
     }
