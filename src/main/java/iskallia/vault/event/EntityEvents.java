@@ -89,7 +89,7 @@ public class EntityEvents {
 	public static void onEntityTick4(LivingEvent.LivingUpdateEvent event) {
 		if(event.getEntity().world.isRemote
 				|| event.getEntity().world.getDimensionKey() != Vault.VAULT_KEY
-				|| event.getEntity().getTags().contains("vault_boss"))return;
+				|| !event.getEntity().getTags().contains("vault_boss"))return;
 
 		Entity entity = event.getEntity();
 
@@ -104,12 +104,12 @@ public class EntityEvents {
 	public static void onEntityDeath(LivingDeathEvent event) {
 		if(event.getEntity().world.isRemote
 				|| event.getEntity().world.getDimensionKey() != Vault.VAULT_KEY
-				|| event.getEntity().getTags().contains("VaultBoss"))return;
+				|| !event.getEntity().getTags().contains("VaultBoss"))return;
 
 		ServerWorld world = (ServerWorld)event.getEntityLiving().world;
 		VaultRaid raid = VaultRaidData.get(world).getAt(event.getEntity().getPosition());
 
-		raid.runIfPresent(world, player -> {
+		raid.runIfPresent(world.getServer(), player -> {
 			LootContext.Builder builder = (new LootContext.Builder(world)).withRandom(world.rand)
 					.withParameter(LootParameters.THIS_ENTITY, event.getEntity())
 					.withParameter(LootParameters.field_237457_g_, event.getEntity().getPositionVec())

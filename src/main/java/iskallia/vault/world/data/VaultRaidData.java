@@ -4,6 +4,7 @@ import iskallia.vault.Vault;
 import iskallia.vault.init.ModFeatures;
 import iskallia.vault.init.ModStructures;
 import iskallia.vault.world.raid.VaultRaid;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -46,6 +47,11 @@ public class VaultRaidData extends WorldSavedData {
 
     public VaultRaid getAt(BlockPos pos) {
         return this.activeRaids.values().stream().filter(raid -> raid.box.isVecInside(pos)).findFirst().orElse(null);
+    }
+
+    public void remove(ServerPlayerEntity player) {
+        VaultRaid v = this.activeRaids.remove(player.getUniqueID());
+        if(v != null)v.ticksLeft = 0;
     }
 
     public VaultRaid getActiveFor(ServerPlayerEntity player) {

@@ -1,6 +1,5 @@
 package iskallia.vault.event;
 
-import iskallia.vault.Vault;
 import iskallia.vault.skill.ability.AbilityNode;
 import iskallia.vault.skill.ability.AbilityTree;
 import iskallia.vault.skill.ability.type.PlayerAbility;
@@ -12,12 +11,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.Collections;
@@ -27,17 +23,6 @@ import java.util.Queue;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class WorldEvents {
-
-    @SubscribeEvent
-    public static void onWorldTick(TickEvent.WorldTickEvent event) {
-        if(event.side == LogicalSide.CLIENT
-                || event.world.getDimensionKey() != Vault.VAULT_KEY
-                || event.phase != TickEvent.Phase.START)return;
-
-        if(event.world.getGameRules().get(GameRules.DO_FIRE_TICK).get()) {
-            event.world.getGameRules().get(GameRules.DO_FIRE_TICK).set(false, event.world.getServer());
-        }
-    }
 
     @SubscribeEvent
     public static void onBlockMined(BlockEvent.BreakEvent event) {

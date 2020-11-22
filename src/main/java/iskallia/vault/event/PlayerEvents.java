@@ -16,6 +16,7 @@ public class PlayerEvents {
 	@SubscribeEvent
 	public static void onStartTracking(PlayerEvent.StartTracking event) {
 		Entity target = event.getTarget();
+
 		if(!(target instanceof FighterEntity) || target.world.isRemote)return;
 
 		FighterEntity fighter = (FighterEntity)target;

@@ -7,20 +7,21 @@ import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.VaultRaidTickMessage;
 import iskallia.vault.util.NetcodeUtils;
+import iskallia.vault.world.data.VaultRaidData;
+import iskallia.vault.world.gen.PortalPlacer;
 import iskallia.vault.world.gen.structure.VaultStructure;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Direction;
+import net.minecraft.util.concurrent.TickDelayedTask;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -30,6 +31,17 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 public class VaultRaid implements INBTSerializable<CompoundNBT> {
+
+    public static final PortalPlacer PORTAL_PLACER = new PortalPlacer((pos, random, facing) -> {
+        return ModBlocks.VAULT_PORTAL.getDefaultState().with(VaultPortalBlock.AXIS, facing.getAxis());
+    }, (pos, random, facing) -> {
+        Block[] blocks = {
+                Blocks.BLACKSTONE, Blocks.BLACKSTONE, Blocks.POLISHED_BLACKSTONE,
+                Blocks.POLISHED_BLACKSTONE_BRICKS, Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS
+        };
+
+        return blocks[random.nextInt(blocks.length)].getDefaultState();
+    });
 
     public static final int REGION_SIZE = 1 << 11;
 
@@ -67,7 +79,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         this.syncTicksLeft(world.getServer());
 
         if(this.ticksLeft <= 0) {
-            this.runIfPresent(world, playerEntity -> {
+            this.runIfPresent(world.getServer(), playerEntity -> {
                 playerEntity.sendMessage(new StringTextComponent("Time has run out!").mergeStyle(TextFormatting.GREEN), this.playerId);
                 playerEntity.inventory.func_234564_a_(stack -> true, -1, playerEntity.container.func_234641_j_());
                 playerEntity.openContainer.detectAndSendChanges();
@@ -76,16 +88,22 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
                 playerEntity.onKillCommand();
             });
         } else {
-            this.runIfPresent(world, playerEntity -> {
-                this.spawner.tick(playerEntity);
+            this.runIfPresent(world.getServer(), player -> {
+                this.spawner.tick(player);
+
+                if(this.ticksLeft + 20 < ModConfigs.VAULT_GENERAL.getTickCounter() && player.world.getDimensionKey() != Vault.VAULT_KEY) {
+                    world.getServer().enqueue(new TickDelayedTask(world.getServer().getTickCounter() + 1, () -> {
+                        VaultRaidData.get(world).remove(player);
+                    }));
+                }
             });
         }
     }
 
-    public boolean runIfPresent(ServerWorld world, Consumer<ServerPlayerEntity> action) {
-        if (world == null) return false;
-        ServerPlayerEntity player = (ServerPlayerEntity) world.getPlayerByUuid(this.playerId);
-        if (player == null) return false;
+    public boolean runIfPresent(MinecraftServer world, Consumer<ServerPlayerEntity> action) {
+        if(world == null)return false;
+        ServerPlayerEntity player = world.getPlayerList().getPlayerByUUID(this.playerId);
+        if(player == null)return false;
         action.accept(player);
         return true;
     }
@@ -172,7 +190,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
                         }
 
                         if (count != 1) {
-                            makePortal(world, pos, this.facing = direction, count, count + 1);
+                            PORTAL_PLACER.place(world, pos, this.facing = direction, count, count + 1);
                             break loop;
                         }
                     }
@@ -183,7 +201,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         this.teleportToStart(world, player);
         player.func_242279_ag();
 
-        this.runIfPresent(world, playerEntity -> {
+        this.runIfPresent(world.getServer(), playerEntity -> {
             long seconds = (this.ticksLeft / 20) % 60;
             long minutes = ((this.ticksLeft / 20) / 60) % 60;
             String duration = String.format("%02d:%02d", minutes, seconds);
@@ -191,27 +209,6 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
             playerEntity.sendMessage(new StringTextComponent("You have " + duration + " minutes to complete the raid.").mergeStyle(TextFormatting.GREEN), this.playerId);
             playerEntity.sendMessage(new StringTextComponent("Good luck ").append(player.getName()).append(new StringTextComponent("!")).mergeStyle(TextFormatting.GREEN), this.playerId);
         });
-    }
-
-    public static void makePortal(IWorld world, BlockPos pos, Direction facing, int width, int height) {
-        Block[] blocks = {
-                Blocks.BLACKSTONE, Blocks.POLISHED_BLACKSTONE, Blocks.POLISHED_BLACKSTONE_BRICKS, Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS
-        };
-
-        pos = pos.offset(Direction.DOWN).offset(facing.getOpposite());
-
-        for (int y = 0; y < height + 2; y++) {
-            world.setBlockState(pos.up(y), blocks[world.getRandom().nextInt(blocks.length)].getDefaultState(), 1);
-            world.setBlockState(pos.offset(facing, width + 1).up(y), blocks[world.getRandom().nextInt(blocks.length)].getDefaultState(), 1);
-
-            BlockState state = y == 0 || y == height + 1
-                    ? blocks[world.getRandom().nextInt(blocks.length)].getDefaultState()
-                    : ModBlocks.VAULT_PORTAL.getDefaultState().with(VaultPortalBlock.AXIS, facing.getAxis());
-
-            for (int x = 1; x < width + 1; x++) {
-                world.setBlockState(pos.offset(facing, x).up(y), state, 1);
-            }
-        }
     }
 
 }
