@@ -73,6 +73,8 @@ public class VaultAltarBlock extends Block {
         if (altar == null)
             return ActionResultType.SUCCESS;
 
+        if (altar.getInfusionTimer() != -1) return ActionResultType.SUCCESS;
+
         if (player.isSneaking() && altar.containsVaultRock() && player.getHeldItemMainhand().getItem() == Items.AIR) {
 
             player.setHeldItem(Hand.MAIN_HAND, new ItemStack(ModItems.VAULT_ROCK));
@@ -110,6 +112,7 @@ public class VaultAltarBlock extends Block {
             if (powered) {
                 VaultAltarTileEntity altar = getAltarTileEntity(worldIn, pos);
                 if (altar != null && altar.containsVaultRock()) {
+                    if (altar.getInfusionTimer() != -1) return;
                     PlayerEntity player = worldIn.getClosestPlayer(altar.getPos().getX(), altar.getPos().getY(), altar.getPos().getZ(), ModConfigs.VAULT_ALTAR.PLAYER_RANGE_CHECK, null);
                     if (player != null) {
                         PlayerVaultAltarData data = PlayerVaultAltarData.get((ServerWorld) worldIn);

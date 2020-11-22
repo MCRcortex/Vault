@@ -59,6 +59,10 @@ public class VaultAltarTileEntity extends TileEntity implements ITickableTileEnt
         return containsVaultRock;
     }
 
+    public int getInfusionTimer() {
+        return infusionTimer;
+    }
+
     public void sendUpdates() {
         this.world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
         this.world.notifyNeighborsOfStateChange(pos, this.getBlockState().getBlock());
