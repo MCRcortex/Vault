@@ -69,7 +69,6 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         if(this.ticksLeft <= 0) {
             this.runIfPresent(world, playerEntity -> {
                 playerEntity.sendMessage(new StringTextComponent("Time has run out!").mergeStyle(TextFormatting.GREEN), this.playerId);
-                //this.teleportToStart(world, playerEntity);
                 playerEntity.inventory.func_234564_a_(stack -> true, -1, playerEntity.container.func_234641_j_());
                 playerEntity.openContainer.detectAndSendChanges();
                 playerEntity.container.onCraftMatrixChanged(playerEntity.inventory);

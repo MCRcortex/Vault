@@ -35,7 +35,8 @@ public class FighterEntity extends ZombieEntity {
 		this.setCustomName(new StringTextComponent(this.lastName));
 
 		if(!this.world.isRemote) {
-			this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.rand.nextFloat() * 0.25d + 0.25d);
+			this.changeSize(this.sizeMultiplier);
+			this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.rand.nextFloat() * 0.25D + 0.25D);
 		} else {
 			this.skin = new SkinProfile();
 		}
@@ -113,7 +114,6 @@ public class FighterEntity extends ZombieEntity {
 	}
 
 	public FighterEntity changeSize(float m) {
-		if(m == this.sizeMultiplier)return this;
 		Field sizeField = Entity.class.getDeclaredFields()[79]; //Entity.size
 		sizeField.setAccessible(true);
 

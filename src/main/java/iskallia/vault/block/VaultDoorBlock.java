@@ -17,7 +17,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class VaultDoorBlock extends DoorBlock {
+
+    public static final List<VaultDoorBlock> VAULT_DOORS = new ArrayList<>();
 
     protected Item keyItem;
 
@@ -33,6 +38,7 @@ public class VaultDoorBlock extends DoorBlock {
                 .with(POWERED, Boolean.FALSE)
                 .with(HALF, DoubleBlockHalf.LOWER));
         this.keyItem = keyItem;
+        VAULT_DOORS.add(this);
     }
 
     public Item getKeyItem() {
@@ -40,13 +46,13 @@ public class VaultDoorBlock extends DoorBlock {
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         ItemStack heldStack = player.getHeldItem(hand);
         Boolean isOpen = state.get(OPEN);
 
         if (!isOpen && heldStack.getItem() == getKeyItem()) {
             heldStack.shrink(1);
-            return super.onBlockActivated(state, worldIn, pos, player, hand, hit);
+            return super.onBlockActivated(state, world, pos, player, hand, hit);
         }
 
         return ActionResultType.PASS;
