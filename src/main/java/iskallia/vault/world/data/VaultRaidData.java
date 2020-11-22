@@ -3,8 +3,8 @@ package iskallia.vault.world.data;
 import iskallia.vault.Vault;
 import iskallia.vault.init.ModFeatures;
 import iskallia.vault.init.ModStructures;
+import iskallia.vault.item.ItemVaultCrystal;
 import iskallia.vault.world.raid.VaultRaid;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -51,19 +51,27 @@ public class VaultRaidData extends WorldSavedData {
 
     public void remove(ServerPlayerEntity player) {
         VaultRaid v = this.activeRaids.remove(player.getUniqueID());
-        if(v != null)v.ticksLeft = 0;
+
+        if(v != null) {
+            v.ticksLeft = 0;
+            v.finish(player);
+        }
     }
 
     public VaultRaid getActiveFor(ServerPlayerEntity player) {
         return this.activeRaids.get(player.getUniqueID());
     }
 
-    public VaultRaid startNew(ServerPlayerEntity player) {
+    public VaultRaid startNew(ServerPlayerEntity player, ItemVaultCrystal crystal) {
+        return this.startNew(player, crystal.getRarity().ordinal());
+    }
+
+    public VaultRaid startNew(ServerPlayerEntity player, int rarity) {
         player.sendStatusMessage(new StringTextComponent("Generating vault, please wait...").mergeStyle(TextFormatting.GREEN), true);
 
         VaultRaid raid = new VaultRaid(player.getUniqueID(), new MutableBoundingBox(
                 this.xOffset, 0, 0, this.xOffset += VaultRaid.REGION_SIZE, 256, VaultRaid.REGION_SIZE
-        ), PlayerVaultStatsData.get(player.getServerWorld()).getVaultStats(player).getVaultLevel());
+        ), PlayerVaultStatsData.get(player.getServerWorld()).getVaultStats(player).getVaultLevel(), rarity);
 
         if (this.activeRaids.containsKey(player.getUniqueID())) {
             this.activeRaids.get(player.getUniqueID()).ticksLeft = 0;

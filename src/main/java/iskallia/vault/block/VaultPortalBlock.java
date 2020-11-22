@@ -1,15 +1,15 @@
 package iskallia.vault.block;
 
 import iskallia.vault.Vault;
+import iskallia.vault.item.ItemVaultCrystal;
 import iskallia.vault.world.data.VaultRaidData;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.NetherPortalBlock;
+import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.state.IntegerProperty;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.RegistryKey;
@@ -34,8 +34,11 @@ import java.util.Random;
 
 public class VaultPortalBlock extends NetherPortalBlock {
 
+	public static final IntegerProperty RARITY = IntegerProperty.create("rarity", 0, ItemVaultCrystal.Rarity.values().length - 1);
+
 	public VaultPortalBlock() {
 		super(AbstractBlock.Properties.from(Blocks.NETHER_PORTAL));
+		this.setDefaultState(this.stateContainer.getBaseState().with(AXIS, Direction.Axis.X).with(RARITY, ItemVaultCrystal.Rarity.OMEGA.ordinal()));
 	}
 
 	@Override
@@ -90,7 +93,7 @@ public class VaultPortalBlock extends NetherPortalBlock {
 						this.moveToSpawn(destination, player);
 					}
 				} else if(worldKey == Vault.VAULT_KEY) {
-					VaultRaidData.get(destination).startNew(player);
+					VaultRaidData.get(destination).startNew(player, state.get(RARITY));
 				}
 			});
 		}
@@ -196,6 +199,11 @@ public class VaultPortalBlock extends NetherPortalBlock {
 			world.addParticle(ParticleTypes.ASH, d0, d1, d2, d3, d4, d5);
 		}
 
+	}
+
+	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+		super.fillStateContainer(builder);
+		builder.add(RARITY);
 	}
 
 }

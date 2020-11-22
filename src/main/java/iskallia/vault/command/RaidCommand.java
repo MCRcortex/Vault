@@ -3,6 +3,7 @@ package iskallia.vault.command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import iskallia.vault.init.ModItems;
 import iskallia.vault.world.data.ArenaRaidData;
 import iskallia.vault.world.data.VaultRaidData;
 import net.minecraft.command.CommandSource;
@@ -32,7 +33,7 @@ public class RaidCommand extends Command {
 
 	private int startRaid(CommandContext<CommandSource> context, Type type) throws CommandSyntaxException {
 		if(type == Type.VAULT) {
-			VaultRaidData.get(context.getSource().getWorld()).startNew(context.getSource().asPlayer());
+			VaultRaidData.get(context.getSource().getWorld()).startNew(context.getSource().asPlayer(), ModItems.VAULT_CRYSTAL_OMEGA);
 		} else if(type == Type.ARENA) {
 			ArenaRaidData.get(context.getSource().getWorld()).startNew(context.getSource().asPlayer());
 		}

@@ -36,10 +36,10 @@ public class ModItems {
     public static ItemVaultGem SPARKLETINE_GEM = new ItemVaultGem(VAULT_MOD_GROUP, Vault.id("gem_sparkletine"));
     public static ItemVaultGem WUTODIE_GEM = new ItemVaultGem(VAULT_MOD_GROUP, Vault.id("gem_wutodie"));
     public static ItemVaultGem POG = new ItemVaultGem(VAULT_MOD_GROUP, Vault.id("gem_pog"));
-    public static ItemVaultCrystal VAULT_CRYSTAL_NORMAL = new ItemVaultCrystal(VAULT_MOD_GROUP, Vault.id("vault_crystal_normal"), ItemVaultCrystal.CrystalRarity.NORMAL);
-    public static ItemVaultCrystal VAULT_CRYSTAL_RARE = new ItemVaultCrystal(VAULT_MOD_GROUP, Vault.id("vault_crystal_rare"), ItemVaultCrystal.CrystalRarity.RARE);
-    public static ItemVaultCrystal VAULT_CRYSTAL_EPIC = new ItemVaultCrystal(VAULT_MOD_GROUP, Vault.id("vault_crystal_epic"), ItemVaultCrystal.CrystalRarity.EPIC);
-    public static ItemVaultCrystal VAULT_CRYSTAL_OMEGA = new ItemVaultCrystal(VAULT_MOD_GROUP, Vault.id("vault_crystal_omega"), ItemVaultCrystal.CrystalRarity.OMEGA);
+    public static ItemVaultCrystal VAULT_CRYSTAL_NORMAL = new ItemVaultCrystal(VAULT_MOD_GROUP, Vault.id("vault_crystal_normal"), ItemVaultCrystal.Rarity.NORMAL);
+    public static ItemVaultCrystal VAULT_CRYSTAL_RARE = new ItemVaultCrystal(VAULT_MOD_GROUP, Vault.id("vault_crystal_rare"), ItemVaultCrystal.Rarity.RARE);
+    public static ItemVaultCrystal VAULT_CRYSTAL_EPIC = new ItemVaultCrystal(VAULT_MOD_GROUP, Vault.id("vault_crystal_epic"), ItemVaultCrystal.Rarity.EPIC);
+    public static ItemVaultCrystal VAULT_CRYSTAL_OMEGA = new ItemVaultCrystal(VAULT_MOD_GROUP, Vault.id("vault_crystal_omega"), ItemVaultCrystal.Rarity.OMEGA);
     public static ItemVaultKey ALEXANDRITE_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_alexandrite"));
     public static ItemVaultKey BENITOITE_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_benitoite"));
     public static ItemVaultKey LARIMAR_KEY = new ItemVaultKey(VAULT_MOD_GROUP, Vault.id("key_larimar"));

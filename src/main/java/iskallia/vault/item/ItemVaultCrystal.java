@@ -16,9 +16,9 @@ import java.util.Random;
 
 public class ItemVaultCrystal extends Item {
 
-    private CrystalRarity rarity;
+    private Rarity rarity;
 
-    public ItemVaultCrystal(ItemGroup group, ResourceLocation id, CrystalRarity rarity) {
+    public ItemVaultCrystal(ItemGroup group, ResourceLocation id, Rarity rarity) {
         super(new Properties()
                 .group(group)
                 .maxStackSize(1));
@@ -43,7 +43,7 @@ public class ItemVaultCrystal extends Item {
         }
         Random rand = new Random();
         int randomIndex = weights.get(rand.nextInt(weights.size()));
-        CrystalRarity rarity = CrystalRarity.values()[randomIndex];
+        Rarity rarity = Rarity.values()[randomIndex];
         switch (rarity) {
             case NORMAL:
                 return new ItemStack(ModItems.VAULT_CRYSTAL_NORMAL);
@@ -76,11 +76,11 @@ public class ItemVaultCrystal extends Item {
         return super.getDisplayName(stack);
     }
 
-    public CrystalRarity getRarity() {
+    public Rarity getRarity() {
         return rarity;
     }
 
-    public enum CrystalRarity {
+    public enum Rarity {
         NORMAL(TextFormatting.WHITE),
         RARE(TextFormatting.YELLOW),
         EPIC(TextFormatting.LIGHT_PURPLE),
@@ -88,7 +88,7 @@ public class ItemVaultCrystal extends Item {
 
         public final TextFormatting color;
 
-        CrystalRarity(TextFormatting color) {
+        Rarity(TextFormatting color) {
             this.color = color;
         }
     }

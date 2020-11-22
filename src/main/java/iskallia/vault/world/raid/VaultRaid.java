@@ -14,6 +14,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.scoreboard.ScoreCriteria;
+import net.minecraft.scoreboard.ScoreObjective;
+import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.concurrent.TickDelayedTask;
@@ -48,6 +51,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
     private UUID playerId;
     public MutableBoundingBox box;
     public int level;
+    private int rarity;
     public int ticksLeft = ModConfigs.VAULT_GENERAL.getTickCounter();
 
     public BlockPos start;
@@ -59,10 +63,11 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 
     }
 
-    public VaultRaid(UUID playerId, MutableBoundingBox box, int level) {
+    public VaultRaid(UUID playerId, MutableBoundingBox box, int level, int rarity) {
         this.playerId = playerId;
         this.box = box;
         this.level = level;
+        this.rarity = rarity;
     }
 
     public UUID getPlayerId() {
@@ -86,6 +91,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
                 playerEntity.container.onCraftMatrixChanged(playerEntity.inventory);
                 playerEntity.updateHeldItem();
                 playerEntity.onKillCommand();
+                this.finish(playerEntity);
             });
         } else {
             this.runIfPresent(world.getServer(), player -> {
@@ -98,6 +104,20 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
                 }
             });
         }
+    }
+
+    public void finish(ServerPlayerEntity player) {
+        Scoreboard scoreboard = player.getWorldScoreboard();
+        ScoreObjective objective = getOrCreateObjective(scoreboard, "VaultRarity", ScoreCriteria.DUMMY, ScoreCriteria.RenderType.INTEGER);
+        scoreboard.removeObjectiveFromEntity(player.getName().getString(), objective);
+    }
+
+    public static ScoreObjective getOrCreateObjective(Scoreboard scoreboard, String name, ScoreCriteria criteria, ScoreCriteria.RenderType renderType) {
+        if(!scoreboard.func_197897_d().contains(name)) {
+            scoreboard.addObjective(name, criteria, new StringTextComponent(name), renderType);
+        }
+
+        return scoreboard.getObjective(name);
     }
 
     public boolean runIfPresent(MinecraftServer world, Consumer<ServerPlayerEntity> action) {
@@ -124,6 +144,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         nbt.putUniqueId("PlayerId", this.playerId);
         nbt.put("Box", this.box.toNBTTagIntArray());
         nbt.putInt("Level", this.level);
+        nbt.putInt("Rarity", this.rarity);
         nbt.putInt("TicksLeft", this.ticksLeft);
 
         if(this.start != null) {
@@ -142,6 +163,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         this.playerId = nbt.getUniqueId("PlayerId");
         this.box = new MutableBoundingBox(nbt.getIntArray("Box"));
         this.level = nbt.getInt("Level");
+        this.rarity = nbt.getInt("Rarity");
         this.ticksLeft = nbt.getInt("TicksLeft");
 
         if(nbt.contains("Start", Constants.NBT.TAG_COMPOUND)) {
@@ -200,6 +222,10 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 
         this.teleportToStart(world, player);
         player.func_242279_ag();
+
+        Scoreboard scoreboard = player.getWorldScoreboard();
+        ScoreObjective objective = getOrCreateObjective(scoreboard, "VaultRarity", ScoreCriteria.DUMMY, ScoreCriteria.RenderType.INTEGER);
+        scoreboard.getOrCreateScore(player.getName().getString(), objective).setScorePoints(this.rarity);
 
         this.runIfPresent(world.getServer(), playerEntity -> {
             long seconds = (this.ticksLeft / 20) % 60;

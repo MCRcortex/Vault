@@ -7,16 +7,20 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.entity.passive.ChickenEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.BossInfo;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerBossInfo;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -29,6 +33,8 @@ public class FighterEntity extends ZombieEntity {
 	public String lastName = "Fighter";
 	public float sizeMultiplier = 1.0F;
 
+	public final ServerBossInfo bossInfo;
+
 	public FighterEntity(EntityType<? extends ZombieEntity> type, World world) {
 		super(type, world);
 
@@ -40,7 +46,12 @@ public class FighterEntity extends ZombieEntity {
 		} else {
 			this.skin = new SkinProfile();
 		}
+
+		this.bossInfo = new ServerBossInfo(this.getDisplayName(), BossInfo.Color.PURPLE, BossInfo.Overlay.PROGRESS);
+		this.bossInfo.setDarkenSky(true);
+		this.bossInfo.setVisible(false);
 	}
+
 
 	public ResourceLocation getLocationSkin() {
 		return this.skin.getLocationSkin();
@@ -77,7 +88,15 @@ public class FighterEntity extends ZombieEntity {
 			} else {
 				this.setSprinting(false);
 			}
+
+			this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
 		}
+	}
+
+	@Override
+	public void setCustomName(ITextComponent name) {
+		super.setCustomName(name);
+		this.bossInfo.setName(this.getDisplayName());
 	}
 
 	@Override
@@ -93,11 +112,20 @@ public class FighterEntity extends ZombieEntity {
 		if(compound.contains("SizeMultiplier", Constants.NBT.TAG_FLOAT)) {
 			this.changeSize(compound.getFloat("SizeMultiplier"));
 		}
+
+		this.bossInfo.setName(this.getDisplayName());
 	}
 
 	@Override
-	public float getRenderScale() {
-		return super.getRenderScale();
+	public void addTrackingPlayer(ServerPlayerEntity player) {
+		super.addTrackingPlayer(player);
+		this.bossInfo.addPlayer(player);
+	}
+
+	@Override
+	public void removeTrackingPlayer(ServerPlayerEntity player) {
+		super.removeTrackingPlayer(player);
+		this.bossInfo.removePlayer(player);
 	}
 
 	@Override

@@ -1,8 +1,8 @@
 package iskallia.vault.init;
 
 import iskallia.vault.Vault;
-import iskallia.vault.block.VaultDoorBlock;
 import iskallia.vault.block.VaultAltarBlock;
+import iskallia.vault.block.VaultDoorBlock;
 import iskallia.vault.block.VaultOreBlock;
 import iskallia.vault.block.VaultPortalBlock;
 import iskallia.vault.block.entity.VaultAltarTileEntity;
