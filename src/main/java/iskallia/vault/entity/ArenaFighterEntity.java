@@ -18,7 +18,7 @@ public class ArenaFighterEntity extends FighterEntity {
 	protected void applyEntityAI() {
 		super.applyEntityAI();
 		this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, ArenaBossEntity.class, false));
-		this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(50.0D);
+		this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(100.0D);
 	}
 
 }

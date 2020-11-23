@@ -38,8 +38,6 @@ public class FighterEntity extends ZombieEntity {
 	public FighterEntity(EntityType<? extends ZombieEntity> type, World world) {
 		super(type, world);
 
-		this.setCustomName(new StringTextComponent(this.lastName));
-
 		if(!this.world.isRemote) {
 			this.changeSize(this.sizeMultiplier);
 			this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.rand.nextFloat() * 0.25D + 0.25D);
@@ -50,8 +48,10 @@ public class FighterEntity extends ZombieEntity {
 		this.bossInfo = new ServerBossInfo(this.getDisplayName(), BossInfo.Color.PURPLE, BossInfo.Overlay.PROGRESS);
 		this.bossInfo.setDarkenSky(true);
 		this.bossInfo.setVisible(false);
-	}
 
+
+		this.setCustomName(new StringTextComponent(this.lastName));
+	}
 
 	public ResourceLocation getLocationSkin() {
 		return this.skin.getLocationSkin();

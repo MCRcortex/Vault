@@ -1,20 +1,14 @@
 {
   "name": "the_vault:vault/starts",
-  "fallback": "the_vault:vault/decor/guards",
+  "fallback": "the_vault:vault/decor/bosses",
   "elements": [
     {
       "weight": 10,
       "element": {
-        "location": "the_vault:vault/mobs/guard1",
+        "location": "the_vault:vault/mobs/boss",
         "processors": "minecraft:empty",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
-      }
-    },
-    {
-      "weight": 20,
-      "element": {
-        "element_type": "minecraft:empty_pool_element"
       }
     }
   ]

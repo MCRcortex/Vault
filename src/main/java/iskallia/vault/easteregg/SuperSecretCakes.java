@@ -2,7 +2,6 @@ package iskallia.vault.easteregg;
 
 import iskallia.vault.Vault;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.Minecraft;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.text.Color;

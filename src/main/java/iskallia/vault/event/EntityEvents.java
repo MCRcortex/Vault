@@ -16,8 +16,11 @@ import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameterSets;
 import net.minecraft.loot.LootParameters;
+import net.minecraft.state.properties.DoubleBlockHalf;
+import net.minecraft.util.concurrent.TickDelayedTask;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -56,29 +59,32 @@ public class EntityEvents {
 	}
 
 	@SubscribeEvent
-	public static void onEntityTick3(LivingEvent.LivingUpdateEvent event) {
+	public static void onEntityTick3(EntityEvent.EntityConstructing event) {
 		if(event.getEntity().world.isRemote
 				|| !(event.getEntity() instanceof AreaEffectCloudEntity)
-				|| event.getEntity().world.getDimensionKey() != Vault.VAULT_KEY
-				|| event.getEntity().getTags().contains("vault_door"))return;
+				|| event.getEntity().world.getDimensionKey() != Vault.VAULT_KEY)return;
 
-		for(int y = 0; y < 2; y++) {
-			BlockPos pos = event.getEntityLiving().getPosition().up(y);
-			BlockState state = event.getEntityLiving().world.getBlockState(pos);
+		event.getEntity().getServer().enqueue(new TickDelayedTask(event.getEntity().getServer().getTickCounter() + 2, () -> {
+			if(!event.getEntity().getTags().contains("vault_door"))return;
+
+			BlockPos pos = event.getEntity().getPosition();
+			BlockState state = event.getEntity().world.getBlockState(pos);
 
 			if(state.getBlock() == Blocks.IRON_DOOR) {
-				BlockState newState = VaultDoorBlock.VAULT_DOORS.get(event.getEntityLiving().world.rand.nextInt(VaultDoorBlock.VAULT_DOORS.size())).getDefaultState()
+				BlockState newState = VaultDoorBlock.VAULT_DOORS.get(event.getEntity().world.rand.nextInt(VaultDoorBlock.VAULT_DOORS.size())).getDefaultState()
 						.with(DoorBlock.FACING, state.get(DoorBlock.FACING))
 						.with(DoorBlock.OPEN, state.get(DoorBlock.OPEN))
 						.with(DoorBlock.HINGE, state.get(DoorBlock.HINGE))
 						.with(DoorBlock.POWERED, state.get(DoorBlock.POWERED))
 						.with(DoorBlock.HALF, state.get(DoorBlock.HALF));
 
-				event.getEntityLiving().world.setBlockState(pos, newState);
+				event.getEntity().world.setBlockState(pos.up(), Blocks.AIR.getDefaultState(), 27);
+				event.getEntity().world.setBlockState(pos, newState, 11);
+				event.getEntity().world.setBlockState(pos.up(), newState.with(DoorBlock.HALF, DoubleBlockHalf.UPPER), 11);
 			}
-		}
 
-		event.getEntityLiving().remove();
+			event.getEntity().remove();
+		}));
 	}
 
 	@SubscribeEvent

@@ -1,7 +1,6 @@
 package iskallia.vault.config;
 
 import com.google.gson.annotations.Expose;
-import iskallia.vault.Vault;
 import iskallia.vault.init.ModItems;
 import iskallia.vault.item.ItemVaultRelicPart;
 import net.minecraft.util.ResourceLocation;
