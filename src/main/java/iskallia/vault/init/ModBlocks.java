@@ -1,10 +1,7 @@
 package iskallia.vault.init;
 
 import iskallia.vault.Vault;
-import iskallia.vault.block.VaultAltarBlock;
-import iskallia.vault.block.VaultDoorBlock;
-import iskallia.vault.block.VaultOreBlock;
-import iskallia.vault.block.VaultPortalBlock;
+import iskallia.vault.block.*;
 import iskallia.vault.block.entity.VaultAltarTileEntity;
 import iskallia.vault.block.render.VaultAltarRenderer;
 import net.minecraft.block.Block;
@@ -43,6 +40,7 @@ public class ModBlocks {
     public static final DoorBlock GORGINITE_DOOR = new VaultDoorBlock(ModItems.GORGINITE_KEY);
     public static final DoorBlock SPARKLETINE_DOOR = new VaultDoorBlock(ModItems.SPARKLETINE_KEY);
     public static final DoorBlock WUTODIE_DOOR = new VaultDoorBlock(ModItems.WUTODIE_KEY);
+    public static final VaultGateBlock VAULT_GATE = new VaultGateBlock();
 
     public static final TileEntityType<VaultAltarTileEntity> VAULT_ALTAR_TILE_ENTITY = TileEntityType.Builder.create(VaultAltarTileEntity::new, VAULT_ALTAR).build(null);
 
@@ -70,6 +68,7 @@ public class ModBlocks {
         registerBlock(event, GORGINITE_DOOR, Vault.id("door_gorginite"));
         registerBlock(event, SPARKLETINE_DOOR, Vault.id("door_sparkletine"));
         registerBlock(event, WUTODIE_DOOR, Vault.id("door_wutodie"));
+        registerBlock(event, VAULT_GATE, Vault.id("vault_gate"));
     }
 
     public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
@@ -104,6 +103,7 @@ public class ModBlocks {
         registerTallBlockItem(event, GORGINITE_DOOR);
         registerTallBlockItem(event, SPARKLETINE_DOOR);
         registerTallBlockItem(event, WUTODIE_DOOR);
+        registerBlockItem(event, VAULT_GATE);
     }
 
     private static void registerBlock(RegistryEvent.Register<Block> event, Block block, ResourceLocation id) {

@@ -73,8 +73,10 @@ public class VaultAltarBlock extends Block {
         if (altar == null)
             return ActionResultType.SUCCESS;
 
+        //infusion in process.. do nothing
         if (altar.getInfusionTimer() != -1) return ActionResultType.SUCCESS;
 
+        //remove vault rock
         if (player.isSneaking() && altar.containsVaultRock() && player.getHeldItemMainhand().getItem() == Items.AIR) {
 
             player.setHeldItem(Hand.MAIN_HAND, new ItemStack(ModItems.VAULT_ROCK));
@@ -85,13 +87,12 @@ public class VaultAltarBlock extends Block {
         }
 
         ItemStack heldItem = player.getHeldItemMainhand();
-        if (heldItem.getItem() != ModItems.VAULT_ROCK) {
-            altar.sendUpdates();
-
+        if (heldItem.getItem() != ModItems.VAULT_ROCK)
             return ActionResultType.SUCCESS;
-        }
 
         PlayerVaultAltarData data = PlayerVaultAltarData.get((ServerWorld) worldIn);
+
+        // player has no recipe, give them one.
         if (!data.getRecipes().containsKey(player.getUniqueID())) {
             List<RequiredItem> items = ModConfigs.VAULT_ALTAR.getRequiredItemsFromConfig();
             data.add(player.getUniqueID(), new AltarInfusionRecipe(player.getUniqueID(), items));
@@ -120,9 +121,6 @@ public class VaultAltarBlock extends Block {
                         if (recipe != null && recipe.isComplete()) {
                             data.remove(player.getUniqueID());
                             altar.startInfusionTimer(ModConfigs.VAULT_ALTAR.INFUSION_TIME);
-
-                            //TODO: complete altar infusion
-
                         }
                     }
                 }
