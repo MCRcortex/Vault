@@ -55,6 +55,7 @@ public class ModItems {
     public static ItemBit BIT_1000 = new ItemBit(VAULT_MOD_GROUP, Vault.id("bit_1000"), 1000);
     public static ItemBit BIT_5000 = new ItemBit(VAULT_MOD_GROUP, Vault.id("bit_5000"), 5000);
     public static ItemBit BIT_10000 = new ItemBit(VAULT_MOD_GROUP, Vault.id("bit_10000"), 10000);
+    public static ItemRelicBoosterPack RELIC_BOOSTER_PACK = new ItemRelicBoosterPack(VAULT_MOD_GROUP, Vault.id("relic_booster_pack"));
     public static ItemVaultRelicPart DRAGON_HEAD_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_dragon_head"), "Dragon Set");
     public static ItemVaultRelicPart DRAGON_TAIL_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_dragon_tail"), "Dragon Set");
     public static ItemVaultRelicPart DRAGON_FOOT_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_dragon_foot"), "Dragon Set");
@@ -111,6 +112,7 @@ public class ModItems {
         registry.register(BIT_1000);
         registry.register(BIT_5000);
         registry.register(BIT_10000);
+        registry.register(RELIC_BOOSTER_PACK);
         registry.register(DRAGON_HEAD_RELIC);
         registry.register(DRAGON_TAIL_RELIC);
         registry.register(DRAGON_FOOT_RELIC);
