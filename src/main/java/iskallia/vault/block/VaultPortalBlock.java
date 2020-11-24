@@ -116,7 +116,7 @@ public class VaultPortalBlock extends NetherPortalBlock {
             RegistryKey<World> worldKey = world.getDimensionKey() == Vault.VAULT_KEY ? World.OVERWORLD : Vault.VAULT_KEY;
             ServerWorld destination = ((ServerWorld) world).getServer().getWorld(worldKey);
 
-            if (destination == null) return;
+            if (destination == null)return;
 
             //Reset cooldown.
             if (player.func_242280_ah()) {
@@ -125,7 +125,7 @@ public class VaultPortalBlock extends NetherPortalBlock {
             }
 
             world.getServer().runAsync(() -> {
-                if (worldKey == World.OVERWORLD) {
+                if(worldKey == World.OVERWORLD) {
                     ServerPlayerEntity playerEntity = (ServerPlayerEntity) entity;
                     BlockPos blockPos = playerEntity.func_241140_K_();
                     Optional<Vector3d> spawn = blockPos == null ? Optional.empty() : PlayerEntity.func_242374_a(destination,
@@ -135,7 +135,7 @@ public class VaultPortalBlock extends NetherPortalBlock {
                         BlockState blockstate = destination.getBlockState(blockPos);
                         Vector3d vector3d = spawn.get();
 
-                        if (!blockstate.isIn(BlockTags.BEDS) && !blockstate.isIn(Blocks.RESPAWN_ANCHOR)) {
+                        if(!blockstate.isIn(BlockTags.BEDS) && !blockstate.isIn(Blocks.RESPAWN_ANCHOR)) {
                             playerEntity.teleport(destination, vector3d.x, vector3d.y, vector3d.z, playerEntity.func_242109_L(), 0.0F);
                         } else {
                             Vector3d vector3d1 = Vector3d.copyCenteredHorizontally(blockPos).subtract(vector3d).normalize();
@@ -145,10 +145,12 @@ public class VaultPortalBlock extends NetherPortalBlock {
                     } else {
                         this.moveToSpawn(destination, player);
                     }
-                } else if (worldKey == Vault.VAULT_KEY) {
+                } else if(worldKey == Vault.VAULT_KEY) {
                     VaultRaidData.get(destination).startNew(player, state.get(RARITY));
                 }
             });
+
+            player.func_242279_ag();
         }
     }
 

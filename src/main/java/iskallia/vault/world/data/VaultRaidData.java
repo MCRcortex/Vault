@@ -80,9 +80,10 @@ public class VaultRaidData extends WorldSavedData {
         this.activeRaids.put(raid.getPlayerId(), raid);
         this.markDirty();
 
+        ServerWorld world = player.getServer().getWorld(Vault.VAULT_KEY);
+
         player.getServer().runAsync(() -> {
             try {
-                ServerWorld world = player.getServer().getWorld(Vault.VAULT_KEY);
                 ChunkPos chunkPos = new ChunkPos((raid.box.minX + raid.box.getXSize() / 2) >> 4, (raid.box.minZ + raid.box.getZSize() / 2) >> 4);
 
                 StructureSeparationSettings settings = new StructureSeparationSettings(1, 0, -1);
