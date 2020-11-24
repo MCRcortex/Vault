@@ -10,6 +10,7 @@ import iskallia.vault.client.gui.widget.RaffleEntry;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.vector.Vector2f;
@@ -24,7 +25,6 @@ public class RaffleScreen extends Screen {
 
     public static final ResourceLocation UI_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/raffle.png");
     public static final int containerWidth = 62, containerHeight = 20;
-    public static final int leverWidth = 44, leverHeight = 61;
 
     protected ConfettiParticles leftConfettiPopper = new ConfettiParticles()
             .angleRange(200 + 90, 265 + 90)
@@ -49,6 +49,7 @@ public class RaffleScreen extends Screen {
     protected String winner;
 
     protected List<RaffleEntry> raffleWidgets;
+    protected Button raffleButton;
 
     protected int spinTicks, distance;
     protected double elapsedTicks;
@@ -78,13 +79,14 @@ public class RaffleScreen extends Screen {
         int winnerIndex = occupants.indexOf(winner);
 
         this.spinTicks = 5 * 20; // ticks
-        this.distance = 5 * (occupants.size() * containerHeight + (occupants.size() - 1) + 1)
-                + (winnerIndex - 1) * (containerHeight + 1); // pixels
+        int freeSpinCount = 5;
+        this.distance = freeSpinCount * (occupants.size() * containerHeight + (occupants.size() - 1) + 1)
+                + (winnerIndex - 2) * (containerHeight + 1); // pixels
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < names.length; i++) {
             RaffleEntry entry = new RaffleEntry(occupants.get(i), i % 5);
             Rectangle bounds = new Rectangle();
-            bounds.x0 = 3;
+            bounds.x0 = 0;
             bounds.y0 = i * (containerHeight + 1);
             bounds.setWidth(containerWidth);
             bounds.setHeight(containerHeight);
@@ -95,25 +97,26 @@ public class RaffleScreen extends Screen {
         this.C = 0.5 * spinTicks * spinTicks;
     }
 
-    public Rectangle getLeverBounds() {
-        Rectangle bounds = new Rectangle();
+    @Override
+    protected void init() {
+        super.init();
+
         int midX = width / 2;
         int midY = height / 2;
-        bounds.x0 = midX + 68;
-        bounds.y0 = midY - leverHeight / 2 - 12;
-        bounds.setWidth(leverWidth);
-        bounds.setHeight(leverHeight);
-        return bounds;
+
+        this.raffleButton = new Button(midX - 50, midY + 40, 100, 20,
+                new StringTextComponent("Raffle!"),
+                this::onRaffleButtonClick);
     }
 
     public Rectangle getViewportBounds() {
         Rectangle bounds = new Rectangle();
         int midX = width / 2;
         int midY = height / 2;
-        bounds.x0 = midX - 34;
-        bounds.y0 = midY - 25;
-        bounds.setWidth(68);
-        bounds.setHeight(50);
+        bounds.x0 = midX - 32;
+        bounds.y0 = midY - 60;
+        bounds.setWidth(62);
+        bounds.setHeight(90);
         return bounds;
     }
 
@@ -128,28 +131,27 @@ public class RaffleScreen extends Screen {
     }
 
     @Override
-    public void mouseMoved(double mouseX, double mouseY) { }
+    public void mouseMoved(double mouseX, double mouseY) {
+        this.raffleButton.mouseMoved(mouseX, mouseY);
+    }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        Rectangle leverBounds = getLeverBounds();
-
-        if (!spinning && !popped && leverBounds.contains((int) mouseX, (int) mouseY)) {
-            spinning = true;
-            return true;
-        }
-
-        return false;
+        return this.raffleButton.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        return false;
+        return this.raffleButton.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        return false;
+        return this.raffleButton.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    public void onRaffleButtonClick(Button button) {
+        spinning = true;
     }
 
     @Override
@@ -159,38 +161,46 @@ public class RaffleScreen extends Screen {
         int midX = width / 2;
         int midY = height / 2;
 
-        int crystalWidth = 136;
-        int crystalHeight = 174;
+        int crystalWidth = 114;
+        int crystalHeight = 130;
 
+        matrixStack.push();
+        matrixStack.translate(midX, midY, 0);
+        matrixStack.scale(1.5f, 1.5f, 1.5f);
         getMinecraft().textureManager.bindTexture(UI_RESOURCE);
-        blit(matrixStack, midX - crystalWidth / 2, midY - crystalHeight / 2,
+        blit(matrixStack, -crystalWidth / 2, -crystalHeight / 2,
                 0, 0, crystalWidth, crystalHeight);
+        matrixStack.pop();
 
         UIHelper.renderOverflowHidden(matrixStack,
                 this::renderWheelBackground,
                 this::renderWheel);
 
-        int plateWidth = 74;
-        int plateHeight = 124;
-
+        Rectangle viewportBounds = getViewportBounds();
         getMinecraft().textureManager.bindTexture(UI_RESOURCE);
-        blit(matrixStack, midX - plateWidth / 2, midY - plateHeight / 2,
-                136, 0, plateWidth, plateHeight);
+        RenderSystem.enableBlend();
+        UIHelper.renderContainerBorder(this, matrixStack, viewportBounds,
+                115, 0,
+                7, 7, 7, 7,
+                0x00_000000);
 
         int indicatorWidth = 17;
         int indicatorHeight = 15;
 
-        blit(matrixStack, midX - 42, midY - indicatorHeight / 2,
-                0, 174, indicatorWidth, indicatorHeight);
+        Vector2f viewpointMidpoint = viewportBounds.midpoint();
+        blit(matrixStack, midX - 42,
+                (int) (viewpointMidpoint.y - indicatorHeight / 2),
+                115, 18, indicatorWidth, indicatorHeight);
 
-        renderLever(matrixStack, mouseX, mouseY);
+        this.raffleButton.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.raffleButton.active = !spinning && !popped;
 
         if (popped) {
             String winnerText = String.format("Winner is %s!", winner);
             int textWidth = font.getStringWidth(winnerText);
             font.drawStringWithShadow(matrixStack, winnerText,
                     midX - textWidth / 2f,
-                    midY + crystalHeight / 2f + 10,
+                    midY + crystalHeight / 2f + 33,
                     0xFF_b5e8ff);
         }
 
@@ -210,24 +220,6 @@ public class RaffleScreen extends Screen {
 
         if (spinning) {
             elapsedTicks += partialTicks;
-        }
-    }
-
-    protected void renderLever(MatrixStack matrixStack, int mouseX, int mouseY) {
-        Rectangle leverBounds = getLeverBounds();
-
-        getMinecraft().textureManager.bindTexture(UI_RESOURCE);
-        if (spinning || popped) {
-            blit(matrixStack, leverBounds.x0, leverBounds.y0 + 21,
-                    98, 192, leverWidth, leverHeight);
-
-        } else if (leverBounds.contains(mouseX, mouseY)) {
-            blit(matrixStack, leverBounds.x0 - 2, leverBounds.y0 - 2,
-                    47, 190, leverWidth + 4, leverHeight + 4);
-
-        } else {
-            blit(matrixStack, leverBounds.x0, leverBounds.y0,
-                    0, 192, leverWidth, leverHeight);
         }
     }
 
@@ -258,12 +250,12 @@ public class RaffleScreen extends Screen {
             blit(matrixStack,
                     entryBounds.x0,
                     entryBounds.y0,
-                    142, 124 + raffleWidget.getTypeIndex() * containerHeight,
+                    190, 3 + raffleWidget.getTypeIndex() * containerHeight,
                     containerWidth, containerHeight
             );
             boolean isTargeted = entryBounds.contains(
                     entryBounds.x0 + 2,
-                    (int) (midpoint.y + yOffset)
+                    (int) (bounds.y1 - midpoint.y + yOffset)
             );
 
             matrixStack.push();

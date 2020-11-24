@@ -21,6 +21,10 @@ public class VaultRelicsConfig extends Config {
         return "vault_relics";
     }
 
+    public int getExtraTickPerSet() {
+        return extraTickPerSet;
+    }
+
     public ItemVaultRelicPart getRandomPart() {
         relicDrops.sort(Comparator.comparingInt(a -> a.WEIGHT));
 

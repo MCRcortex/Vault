@@ -41,8 +41,8 @@ public class Rectangle {
 
     public Vector2f midpoint() {
         return new Vector2f(
-                (x1 - x0) / 2f,
-                (y1 - y0) / 2f
+                (x1 + x0) / 2f,
+                (y1 + y0) / 2f
         );
     }
 
