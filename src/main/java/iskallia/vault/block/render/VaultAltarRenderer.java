@@ -38,10 +38,6 @@ public class VaultAltarRenderer extends TileEntityRenderer<VaultAltarTileEntity>
         super(rendererDispatcherIn);
     }
 
-    public static void register() {
-        ClientRegistry.bindTileEntityRenderer(ModBlocks.VAULT_ALTAR_TILE_ENTITY, VaultAltarRenderer::new);
-    }
-
     @Override
     public void render(VaultAltarTileEntity altar, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
         if (!altar.containsVaultRock())
