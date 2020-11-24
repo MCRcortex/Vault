@@ -1,17 +1,24 @@
 package iskallia.vault.item;
 
+import iskallia.vault.block.VaultPortalSize;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModItems;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 public class ItemVaultCrystal extends Item {
@@ -55,6 +62,31 @@ public class ItemVaultCrystal extends Item {
                 return new ItemStack(ModItems.VAULT_CRYSTAL_OMEGA);
         }
         return new ItemStack(ModItems.VAULT_CRYSTAL_NORMAL);
+    }
+
+    @Override
+    public ActionResultType onItemUse(ItemUseContext context) {
+        if (context.getWorld().isRemote) return super.onItemUse(context);
+
+        Item item = context.getPlayer().getHeldItemMainhand().getItem();
+        if (item instanceof ItemVaultCrystal) {
+            ItemVaultCrystal crystal = (ItemVaultCrystal) item;
+            if (tryCreatePortal(crystal, context.getWorld(), context.getPos(), context.getFace())) {
+                context.getItem().shrink(1);
+                return ActionResultType.SUCCESS;
+            }
+
+        }
+        return super.onItemUse(context);
+    }
+
+    private boolean tryCreatePortal(ItemVaultCrystal crystal, World world, BlockPos pos, Direction facing) {
+        Optional<VaultPortalSize> optional = VaultPortalSize.getPortalSize(world, pos.offset(facing), Direction.Axis.X);
+        if (optional.isPresent()) {
+            optional.get().placePortalBlocks(crystal);
+            return true;
+        }
+        return false;
     }
 
     @Override
