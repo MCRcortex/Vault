@@ -83,10 +83,24 @@ public class VaultPortalBlock extends NetherPortalBlock {
 
     @Override
     public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
-        Direction.Axis direction$axis = facing.getAxis();
-        Direction.Axis direction$axis1 = stateIn.get(AXIS);
-        boolean flag = direction$axis1 != direction$axis && direction$axis.isHorizontal();
-        return !flag && !facingState.isIn(this) && !(new VaultPortalSize(worldIn, currentPos, direction$axis1)).validatePortal() ? Blocks.AIR.getDefaultState() : super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+        World world = null;
+        if (worldIn instanceof World)
+            world = (World) worldIn;
+
+
+        //if in overworld, allow the portal to break when frame is broken. like a nether portal.
+        if (world != null) {
+            if (world.getDimensionKey() == World.OVERWORLD) {
+                Direction.Axis direction$axis = facing.getAxis();
+                Direction.Axis direction$axis1 = stateIn.get(AXIS);
+                boolean flag = direction$axis1 != direction$axis && direction$axis.isHorizontal();
+                return !flag && !facingState.isIn(this) && !(new VaultPortalSize(worldIn, currentPos, direction$axis1)).validatePortal() ? Blocks.AIR.getDefaultState() : super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+
+            }
+        }
+
+        // otherwise, as commented before: yeet auto-connections
+        return stateIn;
 
     }
 

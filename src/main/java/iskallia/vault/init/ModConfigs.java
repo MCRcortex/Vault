@@ -19,6 +19,7 @@ public class ModConfigs {
     public static VaultAltarConfig VAULT_ALTAR;
     public static VaultGeneralConfig VAULT_GENERAL;
     public static VaultCrystalConfig VAULT_CRYSTAL;
+    public static VaultPortalConfig VAULT_PORTAL;
 
     public static void register() {
         ABILITIES = (AbilitiesConfig) new AbilitiesConfig().readConfig();
@@ -36,6 +37,7 @@ public class ModConfigs {
         VAULT_ALTAR = (VaultAltarConfig) new VaultAltarConfig().readConfig();
         VAULT_GENERAL = (VaultGeneralConfig) new VaultGeneralConfig().readConfig();
         VAULT_CRYSTAL = (VaultCrystalConfig) new VaultCrystalConfig().readConfig();
+        VAULT_PORTAL = (VaultPortalConfig) new VaultPortalConfig().readConfig();
     }
 
 

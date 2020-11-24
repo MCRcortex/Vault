@@ -1,11 +1,10 @@
 package iskallia.vault.block;
 
 import iskallia.vault.init.ModBlocks;
+import iskallia.vault.init.ModConfigs;
 import iskallia.vault.item.ItemVaultCrystal;
 import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
@@ -17,13 +16,8 @@ import java.util.function.Predicate;
 
 public class VaultPortalSize {
 
-    public static final Block[] validBlocks = new Block[]{
-            Blocks.BLACKSTONE, Blocks.POLISHED_BLACKSTONE,
-            Blocks.POLISHED_BLACKSTONE_BRICKS, Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS
-
-    };
     private static final AbstractBlock.IPositionPredicate POSITION_PREDICATE = (state, blockReader, pos) -> {
-        return Arrays.stream(validBlocks).anyMatch(b -> b == state.getBlock());
+        return Arrays.stream(ModConfigs.VAULT_PORTAL.getValidFrameBlocks()).anyMatch(b -> b == state.getBlock());
     };
 
     private final IWorld world;

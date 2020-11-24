@@ -29,7 +29,7 @@ public class PortalPlacer {
     }
 
     protected void place(IWorld world, BlockPos pos, BlockState state) {
-        world.setBlockState(pos, state, 3);
+        world.setBlockState(pos, state, 1);
     }
 
     protected void place(IWorld world, BlockPos pos, Direction direction, BlockPlacer provider) {
