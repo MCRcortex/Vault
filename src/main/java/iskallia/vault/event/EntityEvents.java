@@ -12,6 +12,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.DoorBlock;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameterSets;
@@ -19,6 +20,7 @@ import net.minecraft.loot.LootParameters;
 import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.util.concurrent.TickDelayedTask;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -95,11 +97,22 @@ public class EntityEvents {
 
 		Entity entity = event.getEntity();
 
-		FighterEntity boss = ModEntities.FIGHTER.create(event.getEntity().world).changeSize(3.0F);
+		FighterEntity boss = ModEntities.FIGHTER.create(event.getEntity().world).changeSize(2.0F);
 		boss.setLocationAndAngles(entity.getPosX(), entity.getPosY(), entity.getPosZ(), entity.rotationYaw, entity.rotationPitch);
 		((ServerWorld)entity.world).summonEntity(boss);
+
 		boss.getTags().add("VaultBoss");
 		boss.bossInfo.setVisible(true);
+		boss.setCustomName(new StringTextComponent("Boss"));
+		boss.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100.0F);
+		boss.setHealth(100.0F);
+
+		VaultRaid raid = VaultRaidData.get((ServerWorld)entity.world).getAt(entity.getPosition());
+
+		if(raid != null) {
+			EntityScaler.scale(boss, raid.level + 5, new Random());
+		}
+
 		entity.remove();
 	}
 
@@ -112,25 +125,27 @@ public class EntityEvents {
 		ServerWorld world = (ServerWorld)event.getEntityLiving().world;
 		VaultRaid raid = VaultRaidData.get(world).getAt(event.getEntity().getPosition());
 
-		raid.runIfPresent(world.getServer(), player -> {
-			LootContext.Builder builder = (new LootContext.Builder(world)).withRandom(world.rand)
-					.withParameter(LootParameters.THIS_ENTITY, event.getEntity())
-					.withParameter(LootParameters.field_237457_g_, event.getEntity().getPositionVec())
-					.withParameter(LootParameters.DAMAGE_SOURCE, event.getSource())
-					.withNullableParameter(LootParameters.KILLER_ENTITY, event.getSource().getTrueSource())
-					.withNullableParameter(LootParameters.DIRECT_KILLER_ENTITY, event.getSource().getImmediateSource())
-					.withParameter(LootParameters.LAST_DAMAGE_PLAYER, player).withLuck(player.getLuck());
+		if(raid != null) {
+			raid.runIfPresent(world.getServer(), player -> {
+				LootContext.Builder builder = (new LootContext.Builder(world)).withRandom(world.rand)
+						.withParameter(LootParameters.THIS_ENTITY, event.getEntity())
+						.withParameter(LootParameters.field_237457_g_, event.getEntity().getPositionVec())
+						.withParameter(LootParameters.DAMAGE_SOURCE, event.getSource())
+						.withNullableParameter(LootParameters.KILLER_ENTITY, event.getSource().getTrueSource())
+						.withNullableParameter(LootParameters.DIRECT_KILLER_ENTITY, event.getSource().getImmediateSource())
+						.withParameter(LootParameters.LAST_DAMAGE_PLAYER, player).withLuck(player.getLuck());
 
-			LootContext ctx = builder.build(LootParameterSets.ENTITY);
+				LootContext ctx = builder.build(LootParameterSets.ENTITY);
 
-			world.getServer().getLootTableManager().getLootTableFromLocation(Vault.id("chest/boss")).generate(ctx).forEach(stack -> {
-				if(!player.addItemStackToInventory(stack)) {
-					//TODO: drop the item at spawn
-				}
+				world.getServer().getLootTableManager().getLootTableFromLocation(Vault.id("chest/boss")).generate(ctx).forEach(stack -> {
+					if(!player.addItemStackToInventory(stack)) {
+						//TODO: drop the item at spawn
+					}
+				});
+
+				raid.teleportToStart(world, player);
 			});
-
-			raid.teleportToStart(world, player);
-		});
+		}
 	}
 
 	@SubscribeEvent
