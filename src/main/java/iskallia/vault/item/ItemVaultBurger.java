@@ -34,13 +34,15 @@ public class ItemVaultBurger extends Item {
         if (!world.isRemote) {
             ServerPlayerEntity player = (ServerPlayerEntity) entityLiving;
 
-            PlayerVaultStats stats = PlayerVaultStatsData.get((ServerWorld) world).getVaultStats(player);
+            PlayerVaultStatsData statsData = PlayerVaultStatsData.get((ServerWorld) world);
+
+            PlayerVaultStats stats = statsData.getVaultStats(player);
 
             float randomPercentage = MathUtilities.randomFloat(
                     ModConfigs.VAULT_ITEMS.VAULT_BURGER.minExpPercent,
                     ModConfigs.VAULT_ITEMS.VAULT_BURGER.maxExpPercent);
 
-            stats.addVaultExp(player.getServer(), (int) (stats.getTnl() * randomPercentage));
+            statsData.addVaultExp(player, (int) (stats.getTnl() * randomPercentage));
         }
 
         return super.onItemUseFinish(stack, world, entityLiving);
