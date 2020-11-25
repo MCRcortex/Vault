@@ -66,7 +66,7 @@ public class StageManager {
         if (restrictedBy == null)
             return; // Doesn't restrict craftability of this item, so stop here.
 
-        if (!event.getPlayer().world.isRemote) {
+        if (event.getPlayer().world.isRemote) {
             warnResearchRequirement(restrictedBy, "craft");
         }
 
