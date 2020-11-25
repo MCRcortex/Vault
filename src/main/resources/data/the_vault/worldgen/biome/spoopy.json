@@ -5,7 +5,7 @@
   "temperature": 2,
   "downfall": 0,
   "precipitation": "none",
-  "category": "nether",
+  "category": "none",
   "player_spawn_friendly": true,
   "effects": {
     "sky_color": 6840166,

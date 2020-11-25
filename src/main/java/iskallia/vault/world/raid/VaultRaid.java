@@ -95,12 +95,12 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
             });
         } else {
             this.runIfPresent(world.getServer(), player -> {
-                this.spawner.tick(player);
-
                 if(this.ticksLeft + 20 < ModConfigs.VAULT_GENERAL.getTickCounter() && player.world.getDimensionKey() != Vault.VAULT_KEY) {
                     world.getServer().enqueue(new TickDelayedTask(world.getServer().getTickCounter() + 1, () -> {
                         VaultRaidData.get(world).remove(player);
                     }));
+                } else {
+                    this.spawner.tick(player);
                 }
             });
         }
