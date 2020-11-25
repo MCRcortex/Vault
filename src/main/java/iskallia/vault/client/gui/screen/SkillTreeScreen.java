@@ -122,14 +122,17 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
             Rectangle researchesTabBounds = getTabBounds(2, activeTab instanceof ResearchesTab);
 
             if (abilitiesTabBounds.contains((int) mouseX, (int) mouseY)) {
+                this.activeTab.onClose();
                 this.activeTab = new AbilitiesTab(this);
                 this.refreshWidgets();
 
             } else if (talentsTabBounds.contains(((int) mouseX), ((int) mouseY))) {
+                this.activeTab.onClose();
                 this.activeTab = new TalentsTab(this);
                 this.refreshWidgets();
 
             } else if (researchesTabBounds.contains(((int) mouseX), ((int) mouseY))) {
+                this.activeTab.onClose();
                 this.activeTab = new ResearchesTab(this);
                 this.refreshWidgets();
 
@@ -185,6 +188,11 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
         }
 
         return super.mouseScrolled(mouseX, mouseY, delta);
+    }
+
+    @Override
+    public void onClose() {
+        this.activeTab.onClose();
     }
 
     /* --------------------------------------------------- */
