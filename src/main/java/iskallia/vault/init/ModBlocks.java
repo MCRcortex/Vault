@@ -10,6 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.DoorBlock;
 import net.minecraft.block.OreBlock;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.HangingEntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.TallBlockItem;
 import net.minecraft.tileentity.TileEntity;
@@ -44,6 +45,22 @@ public class ModBlocks {
     public static final DoorBlock SPARKLETINE_DOOR = new VaultDoorBlock(ModItems.SPARKLETINE_KEY);
     public static final DoorBlock WUTODIE_DOOR = new VaultDoorBlock(ModItems.WUTODIE_KEY);
     public static final VaultRuneBlock VAULT_RUNE_BLOCK = new VaultRuneBlock();
+    public static final VaultArtifactBlock ARTIFACT_1 = new VaultArtifactBlock(1);
+    public static final VaultArtifactBlock ARTIFACT_2 = new VaultArtifactBlock(2);
+    public static final VaultArtifactBlock ARTIFACT_3 = new VaultArtifactBlock(3);
+    public static final VaultArtifactBlock ARTIFACT_4 = new VaultArtifactBlock(4);
+    public static final VaultArtifactBlock ARTIFACT_5 = new VaultArtifactBlock(5);
+    public static final VaultArtifactBlock ARTIFACT_6 = new VaultArtifactBlock(6);
+    public static final VaultArtifactBlock ARTIFACT_7 = new VaultArtifactBlock(7);
+    public static final VaultArtifactBlock ARTIFACT_8 = new VaultArtifactBlock(8);
+    public static final VaultArtifactBlock ARTIFACT_9 = new VaultArtifactBlock(9);
+    public static final VaultArtifactBlock ARTIFACT_10 = new VaultArtifactBlock(10);
+    public static final VaultArtifactBlock ARTIFACT_11 = new VaultArtifactBlock(11);
+    public static final VaultArtifactBlock ARTIFACT_12 = new VaultArtifactBlock(12);
+    public static final VaultArtifactBlock ARTIFACT_13 = new VaultArtifactBlock(13);
+    public static final VaultArtifactBlock ARTIFACT_14 = new VaultArtifactBlock(14);
+    public static final VaultArtifactBlock ARTIFACT_15 = new VaultArtifactBlock(15);
+    public static final VaultArtifactBlock ARTIFACT_16 = new VaultArtifactBlock(16);
 
     public static final TileEntityType<VaultAltarTileEntity> VAULT_ALTAR_TILE_ENTITY = TileEntityType.Builder.create(VaultAltarTileEntity::new, VAULT_ALTAR).build(null);
     public static final TileEntityType<VaultRuneTileEntity> VAULT_RUNE_TILE_ENTITY = TileEntityType.Builder.create(VaultRuneTileEntity::new, VAULT_RUNE_BLOCK).build(null);
@@ -73,6 +90,22 @@ public class ModBlocks {
         registerBlock(event, SPARKLETINE_DOOR, Vault.id("door_sparkletine"));
         registerBlock(event, WUTODIE_DOOR, Vault.id("door_wutodie"));
         registerBlock(event, VAULT_RUNE_BLOCK, Vault.id("vault_rune_block"));
+        registerBlock(event, ARTIFACT_1, Vault.id("artifact_1"));
+        registerBlock(event, ARTIFACT_2, Vault.id("artifact_2"));
+        registerBlock(event, ARTIFACT_3, Vault.id("artifact_3"));
+        registerBlock(event, ARTIFACT_4, Vault.id("artifact_4"));
+        registerBlock(event, ARTIFACT_5, Vault.id("artifact_5"));
+        registerBlock(event, ARTIFACT_6, Vault.id("artifact_6"));
+        registerBlock(event, ARTIFACT_7, Vault.id("artifact_7"));
+        registerBlock(event, ARTIFACT_8, Vault.id("artifact_8"));
+        registerBlock(event, ARTIFACT_9, Vault.id("artifact_9"));
+        registerBlock(event, ARTIFACT_10, Vault.id("artifact_10"));
+        registerBlock(event, ARTIFACT_11, Vault.id("artifact_11"));
+        registerBlock(event, ARTIFACT_12, Vault.id("artifact_12"));
+        registerBlock(event, ARTIFACT_13, Vault.id("artifact_13"));
+        registerBlock(event, ARTIFACT_14, Vault.id("artifact_14"));
+        registerBlock(event, ARTIFACT_15, Vault.id("artifact_15"));
+        registerBlock(event, ARTIFACT_16, Vault.id("artifact_16"));
     }
 
     public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
@@ -110,6 +143,22 @@ public class ModBlocks {
         registerTallBlockItem(event, SPARKLETINE_DOOR);
         registerTallBlockItem(event, WUTODIE_DOOR);
         registerBlockItem(event, VAULT_RUNE_BLOCK);
+        registerBlockItem(event, ARTIFACT_1);
+        registerBlockItem(event, ARTIFACT_2);
+        registerBlockItem(event, ARTIFACT_3);
+        registerBlockItem(event, ARTIFACT_4);
+        registerBlockItem(event, ARTIFACT_5);
+        registerBlockItem(event, ARTIFACT_6);
+        registerBlockItem(event, ARTIFACT_7);
+        registerBlockItem(event, ARTIFACT_8);
+        registerBlockItem(event, ARTIFACT_9);
+        registerBlockItem(event, ARTIFACT_10);
+        registerBlockItem(event, ARTIFACT_11);
+        registerBlockItem(event, ARTIFACT_12);
+        registerBlockItem(event, ARTIFACT_13);
+        registerBlockItem(event, ARTIFACT_14);
+        registerBlockItem(event, ARTIFACT_15);
+        registerBlockItem(event, ARTIFACT_16);
     }
 
     private static void registerBlock(RegistryEvent.Register<Block> event, Block block, ResourceLocation id) {

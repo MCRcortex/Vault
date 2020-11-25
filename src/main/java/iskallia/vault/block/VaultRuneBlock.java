@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 
 public class VaultRuneBlock extends Block {
 
-    public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty RUNE_PLACED = BooleanProperty.create("rune_placed");
 
     public VaultRuneBlock() {
