@@ -35,10 +35,35 @@ public class VaultAltarConfig extends Config {
     @Override
     protected void reset() {
 
-        ITEMS.add(new AltarConfigItem("minecraft:stone", 1000, 32000));
-        ITEMS.add(new AltarConfigItem("minecraft:cobblestone", 1000, 32000));
-        ITEMS.add(new AltarConfigItem("minecraft:diamond", 1000, 32000));
-        ITEMS.add(new AltarConfigItem("minecraft:gold_nugget", 1000, 32000));
+        ITEMS.add(new AltarConfigItem("minecraft:cobblestone", 1000, 6000));
+        ITEMS.add(new AltarConfigItem("minecraft:gold_ingot", 300, 900));
+        ITEMS.add(new AltarConfigItem("minecraft:iron_ingot", 400, 1300));
+        ITEMS.add(new AltarConfigItem("minecraft:sugar_cane", 800, 1600));
+        ITEMS.add(new AltarConfigItem("minecraft:oak_log", 400, 800));
+        ITEMS.add(new AltarConfigItem("minecraft:spruce_log", 400, 800));
+        ITEMS.add(new AltarConfigItem("minecraft:acacia_log", 400, 800));
+        ITEMS.add(new AltarConfigItem("minecraft:jungle_log", 400, 800));
+        ITEMS.add(new AltarConfigItem("minecraft:dark_oak_log", 400, 800));
+        ITEMS.add(new AltarConfigItem("minecraft:apple", 400, 800));
+        ITEMS.add(new AltarConfigItem("minecraft:redstone", 400, 1000));
+        ITEMS.add(new AltarConfigItem("minecraft:ink_sac", 300, 600));
+        ITEMS.add(new AltarConfigItem("minecraft:slime_ball", 200, 800));
+        ITEMS.add(new AltarConfigItem("minecraft:rotten_flesh", 500, 1500));
+        ITEMS.add(new AltarConfigItem("minecraft:blaze_rod", 80, 190));
+        ITEMS.add(new AltarConfigItem("minecraft:brick", 500, 1500));
+        ITEMS.add(new AltarConfigItem("minecraft:bone", 500, 1500));
+        ITEMS.add(new AltarConfigItem("minecraft:spider_eye", 150, 400));
+        ITEMS.add(new AltarConfigItem("minecraft:melon_slice", 1000, 5000));
+        ITEMS.add(new AltarConfigItem("minecraft:pumpkin", 1000, 5000));
+        ITEMS.add(new AltarConfigItem("minecraft:sand", 1000, 5000));
+        ITEMS.add(new AltarConfigItem("minecraft:gravel", 1000, 5000));
+        ITEMS.add(new AltarConfigItem("minecraft:wheat", 1000, 2000));
+        ITEMS.add(new AltarConfigItem("minecraft:wheat_seeds", 1000, 2000));
+        ITEMS.add(new AltarConfigItem("minecraft:carrot", 1000, 2000));
+        ITEMS.add(new AltarConfigItem("minecraft:potato", 1000, 2000));
+        ITEMS.add(new AltarConfigItem("minecraft:obsidian", 100, 300));
+        ITEMS.add(new AltarConfigItem("minecraft:leather", 300, 800));
+        ITEMS.add(new AltarConfigItem("minecraft:string", 500, 1200));
 
         PULL_SPEED = 1f;
         PLAYER_RANGE_CHECK = 32d;

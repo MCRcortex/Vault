@@ -106,7 +106,18 @@ public class VaultStructure extends Structure<VaultStructure.Config> {
                         Pair.of(JigsawPiece.func_242861_b(Vault.sId("vault/rooms/start15"), ProcessorLists.field_244101_a), 1),
                         Pair.of(JigsawPiece.func_242861_b(Vault.sId("vault/rooms/start16"), ProcessorLists.field_244101_a), 1),
                         Pair.of(JigsawPiece.func_242861_b(Vault.sId("vault/rooms/start17"), ProcessorLists.field_244101_a), 1),
-                        Pair.of(JigsawPiece.func_242861_b(Vault.sId("vault/rooms/start18"), ProcessorLists.field_244101_a), 1)
+                        Pair.of(JigsawPiece.func_242861_b(Vault.sId("vault/rooms/start18"), ProcessorLists.field_244101_a), 1),
+                        Pair.of(JigsawPiece.func_242861_b(Vault.sId("vault/rooms/start19"), ProcessorLists.field_244101_a), 1),
+                        Pair.of(JigsawPiece.func_242861_b(Vault.sId("vault/rooms/start20"), ProcessorLists.field_244101_a), 1),
+                        Pair.of(JigsawPiece.func_242861_b(Vault.sId("vault/rooms/start21"), ProcessorLists.field_244101_a), 1),
+                        Pair.of(JigsawPiece.func_242861_b(Vault.sId("vault/rooms/start22"), ProcessorLists.field_244101_a), 1),
+                        Pair.of(JigsawPiece.func_242861_b(Vault.sId("vault/rooms/start23"), ProcessorLists.field_244101_a), 1),
+                        Pair.of(JigsawPiece.func_242861_b(Vault.sId("vault/rooms/start24"), ProcessorLists.field_244101_a), 1),
+                        Pair.of(JigsawPiece.func_242861_b(Vault.sId("vault/rooms/start25"), ProcessorLists.field_244101_a), 1),
+                        Pair.of(JigsawPiece.func_242861_b(Vault.sId("vault/rooms/start26"), ProcessorLists.field_244101_a), 1),
+                        Pair.of(JigsawPiece.func_242861_b(Vault.sId("vault/rooms/start27"), ProcessorLists.field_244101_a), 1),
+                        Pair.of(JigsawPiece.func_242861_b(Vault.sId("vault/rooms/start28"), ProcessorLists.field_244101_a), 1),
+                        Pair.of(JigsawPiece.func_242861_b(Vault.sId("vault/rooms/start29"), ProcessorLists.field_244101_a), 1)
                 ), JigsawPattern.PlacementBehaviour.RIGID));
 
         public static void init() {

@@ -23,7 +23,7 @@ public class ModFeatures {
     public static ConfiguredFeature<?, ?> VAULT_ORE;
 
     public static void registerStructureFeatures() {
-        VAULT_FEATURE = register("vault", ModStructures.VAULT.func_236391_a_(new VaultStructure.Config(() -> VaultStructure.Pools.START, 5)));
+        VAULT_FEATURE = register("vault", ModStructures.VAULT.func_236391_a_(new VaultStructure.Config(() -> VaultStructure.Pools.START, 7)));
         ARENA_FEATURE = register("arena", ModStructures.ARENA.func_236391_a_(new ArenaStructure.Config(() -> ArenaStructure.Pools.START, 8)));
     }
 
