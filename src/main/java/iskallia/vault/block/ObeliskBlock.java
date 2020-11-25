@@ -35,7 +35,7 @@ public class ObeliskBlock extends Block {
 	public static final IntegerProperty COMPLETION = IntegerProperty.create("completion", 0, 4);
 
 	public ObeliskBlock() {
-		super(Properties.create(Material.ROCK).sound(SoundType.METAL));
+		super(Properties.create(Material.ROCK).sound(SoundType.METAL).hardnessAndResistance(-1.0F, 3600000.0F).noDrops());
 		this.setDefaultState(this.stateContainer.getBaseState().with(COMPLETION, 0));
 	}
 
