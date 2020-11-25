@@ -12,8 +12,10 @@ import iskallia.vault.world.gen.PortalPlacer;
 import iskallia.vault.world.gen.structure.VaultStructure;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.command.impl.TitleCommand;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.play.server.STitlePacket;
 import net.minecraft.scoreboard.ScoreCriteria;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
@@ -23,8 +25,7 @@ import net.minecraft.util.concurrent.TickDelayedTask;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -83,7 +84,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 
         this.syncTicksLeft(world.getServer());
 
-        if(this.ticksLeft <= 0) {
+        if (this.ticksLeft <= 0) {
             this.runIfPresent(world.getServer(), playerEntity -> {
                 playerEntity.sendMessage(new StringTextComponent("Time has run out!").mergeStyle(TextFormatting.GREEN), this.playerId);
                 playerEntity.inventory.func_234564_a_(stack -> true, -1, playerEntity.container.func_234641_j_());
@@ -95,7 +96,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
             });
         } else {
             this.runIfPresent(world.getServer(), player -> {
-                if(this.ticksLeft + 20 < ModConfigs.VAULT_GENERAL.getTickCounter() && player.world.getDimensionKey() != Vault.VAULT_KEY) {
+                if (this.ticksLeft + 20 < ModConfigs.VAULT_GENERAL.getTickCounter() && player.world.getDimensionKey() != Vault.VAULT_KEY) {
                     world.getServer().enqueue(new TickDelayedTask(world.getServer().getTickCounter() + 1, () -> {
                         VaultRaidData.get(world).remove(player);
                     }));
@@ -113,7 +114,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
     }
 
     public static ScoreObjective getOrCreateObjective(Scoreboard scoreboard, String name, ScoreCriteria criteria, ScoreCriteria.RenderType renderType) {
-        if(!scoreboard.func_197897_d().contains(name)) {
+        if (!scoreboard.func_197897_d().contains(name)) {
             scoreboard.addObjective(name, criteria, new StringTextComponent(name), renderType);
         }
 
@@ -121,9 +122,9 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
     }
 
     public boolean runIfPresent(MinecraftServer world, Consumer<ServerPlayerEntity> action) {
-        if(world == null)return false;
+        if (world == null) return false;
         ServerPlayerEntity player = world.getPlayerList().getPlayerByUUID(this.playerId);
-        if(player == null)return false;
+        if (player == null) return false;
         action.accept(player);
         return true;
     }
@@ -147,7 +148,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         nbt.putInt("Rarity", this.rarity);
         nbt.putInt("TicksLeft", this.ticksLeft);
 
-        if(this.start != null) {
+        if (this.start != null) {
             CompoundNBT startNBT = new CompoundNBT();
             startNBT.putInt("x", this.start.getX());
             startNBT.putInt("y", this.start.getY());
@@ -166,7 +167,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         this.rarity = nbt.getInt("Rarity");
         this.ticksLeft = nbt.getInt("TicksLeft");
 
-        if(nbt.contains("Start", Constants.NBT.TAG_COMPOUND)) {
+        if (nbt.contains("Start", Constants.NBT.TAG_COMPOUND)) {
             CompoundNBT startNBT = nbt.getCompound("Start");
             this.start = new BlockPos(startNBT.getInt("x"), startNBT.getInt("y"), startNBT.getInt("z"));
         }
@@ -231,9 +232,22 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
             long seconds = (this.ticksLeft / 20) % 60;
             long minutes = ((this.ticksLeft / 20) / 60) % 60;
             String duration = String.format("%02d:%02d", minutes, seconds);
-            playerEntity.sendMessage(new StringTextComponent("Welcome to the Vault!").mergeStyle(TextFormatting.GREEN), this.playerId);
-            playerEntity.sendMessage(new StringTextComponent("You have " + duration + " minutes to complete the raid.").mergeStyle(TextFormatting.GREEN), this.playerId);
-            playerEntity.sendMessage(new StringTextComponent("Good luck ").append(player.getName()).append(new StringTextComponent("!")).mergeStyle(TextFormatting.GREEN), this.playerId);
+
+            StringTextComponent title = new StringTextComponent("The Vault");
+            title.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_ddd01e)));
+
+            IFormattableTextComponent subtitle = new StringTextComponent("Good luck, ").append(player.getName()).append(new StringTextComponent("!"));
+            subtitle.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_ddd01e)));
+
+            StringTextComponent actionBar = new StringTextComponent("You have " + duration + " minutes to complete the raid.");
+            actionBar.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_ddd01e)));
+
+            STitlePacket titlePacket = new STitlePacket(STitlePacket.Type.TITLE, title);
+            STitlePacket subtitlePacket = new STitlePacket(STitlePacket.Type.SUBTITLE, subtitle);
+
+            playerEntity.connection.sendPacket(titlePacket);
+            playerEntity.connection.sendPacket(subtitlePacket);
+            playerEntity.sendStatusMessage(actionBar, true);
         });
     }
 

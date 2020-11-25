@@ -5,9 +5,14 @@ import iskallia.vault.world.gen.structure.ArenaStructure;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.play.server.STitlePacket;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
+import net.minecraft.util.text.Color;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -52,14 +57,14 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
     }
 
     public void tick(ServerWorld world) {
-        if(this.isComplete()) {
+        if (this.isComplete()) {
             //TODO: stuffs
         }
     }
 
     public boolean runIfPresent(ServerWorld world, Consumer<ServerPlayerEntity> action) {
         if (world == null) return false;
-        ServerPlayerEntity player = (ServerPlayerEntity)world.getPlayerByUuid(this.playerId);
+        ServerPlayerEntity player = (ServerPlayerEntity) world.getPlayerByUuid(this.playerId);
         if (player == null) return false;
         action.accept(player);
         return true;
@@ -72,7 +77,7 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
         nbt.put("Box", this.box.toNBTTagIntArray());
         nbt.putBoolean("Completed", this.isComplete());
 
-        if(this.start != null) {
+        if (this.start != null) {
             CompoundNBT startNBT = new CompoundNBT();
             startNBT.putInt("x", this.start.getX());
             startNBT.putInt("y", this.start.getY());
@@ -89,7 +94,7 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
         this.box = new MutableBoundingBox(nbt.getIntArray("Box"));
         this.isComplete = nbt.getBoolean("Completed");
 
-        if(nbt.contains("Start", Constants.NBT.TAG_COMPOUND)) {
+        if (nbt.contains("Start", Constants.NBT.TAG_COMPOUND)) {
             CompoundNBT startNBT = nbt.getCompound("Start");
             this.start = new BlockPos(startNBT.getInt("x"), startNBT.getInt("y"), startNBT.getInt("z"));
         }
@@ -115,11 +120,11 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
 
     public void start(ServerWorld world, ServerPlayerEntity player, ChunkPos chunkPos) {
         loop:
-        for(int x = -48; x < 48; x++) {
-            for(int z = -48; z < 48; z++) {
-                for(int y = 0; y < 48; y++) {
+        for (int x = -48; x < 48; x++) {
+            for (int z = -48; z < 48; z++) {
+                for (int y = 0; y < 48; y++) {
                     BlockPos pos = chunkPos.asBlockPos().add(x, ArenaStructure.START_Y + y, z);
-                    if(world.getBlockState(pos).getBlock() != Blocks.CRIMSON_PRESSURE_PLATE)continue;
+                    if (world.getBlockState(pos).getBlock() != Blocks.CRIMSON_PRESSURE_PLATE) continue;
                     world.setBlockState(pos, Blocks.AIR.getDefaultState());
                     this.start = pos;
                     break loop;
@@ -129,7 +134,26 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
 
         this.teleportToStart(world, player);
         player.func_242279_ag();
+
         this.spawner.start(world);
+
+        this.runIfPresent(world, playerEntity -> {
+            StringTextComponent title = new StringTextComponent("The Arena");
+            title.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_91ee3e)));
+
+            IFormattableTextComponent subtitle = new StringTextComponent("Let the fight begin!");
+            subtitle.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_91ee3e)));
+
+            StringTextComponent actionBar = new StringTextComponent("You have " + spawner.getFighterCount() + " subscribers on your side.");
+            actionBar.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_91ee3e)));
+
+            STitlePacket titlePacket = new STitlePacket(STitlePacket.Type.TITLE, title);
+            STitlePacket subtitlePacket = new STitlePacket(STitlePacket.Type.SUBTITLE, subtitle);
+
+            playerEntity.connection.sendPacket(titlePacket);
+            playerEntity.connection.sendPacket(subtitlePacket);
+            playerEntity.sendStatusMessage(actionBar, true);
+        });
     }
 
 }
