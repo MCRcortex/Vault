@@ -24,7 +24,10 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
@@ -32,75 +35,81 @@ import java.util.Random;
 
 public class ObeliskBlock extends Block {
 
-	public static final IntegerProperty COMPLETION = IntegerProperty.create("completion", 0, 4);
+    public static final IntegerProperty COMPLETION = IntegerProperty.create("completion", 0, 4);
 
-	public ObeliskBlock() {
-		super(Properties.create(Material.ROCK).sound(SoundType.METAL).hardnessAndResistance(-1.0F, 3600000.0F).noDrops());
-		this.setDefaultState(this.stateContainer.getBaseState().with(COMPLETION, 0));
-	}
+    public ObeliskBlock() {
+        super(Properties.create(Material.ROCK).sound(SoundType.METAL).hardnessAndResistance(-1.0F, 3600000.0F).noDrops());
+        this.setDefaultState(this.stateContainer.getBaseState().with(COMPLETION, 0));
+    }
 
-	@Override
-	public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
-		ItemStack heldStack = player.getHeldItem(hand);
+    @Override
+    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+        return Block.makeCuboidShape(4f, 0f, 4f, 12f, 32f, 12f);
+//        return super.getShape(state, worldIn, pos, context);
+    }
 
-		if(heldStack.getItem() instanceof ObeliskInscriptionItem) {
-			if(!player.isCreative()) {
-				heldStack.shrink(1);
-			}
+    @Override
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+        ItemStack heldStack = player.getHeldItem(hand);
 
-			if(world.isRemote) {
-				return ActionResultType.SUCCESS;
-			}
-		} else {
-			return ActionResultType.PASS;
-		}
+        if (heldStack.getItem() instanceof ObeliskInscriptionItem) {
+            if (!player.isCreative()) {
+                heldStack.shrink(1);
+            }
 
-		BlockState newState = state.with(COMPLETION, MathHelper.clamp(state.get(COMPLETION) + 1, 0, 4));
-		world.setBlockState(pos, newState);
+            if (world.isRemote) {
+                return ActionResultType.SUCCESS;
+            }
+        } else {
+            return ActionResultType.PASS;
+        }
 
-		this.spawnParticles(world, pos);
+        BlockState newState = state.with(COMPLETION, MathHelper.clamp(state.get(COMPLETION) + 1, 0, 4));
+        world.setBlockState(pos, newState);
 
-		if(newState.get(COMPLETION) == 4) {
-			FighterEntity boss = ModEntities.FIGHTER.create(world).changeSize(2.0F);
-			boss.setLocationAndAngles(pos.getX() + 0.5D, pos.getY() + 0.2D, pos.getZ() + 0.5D, 0.0F, 0.0F);
-			((ServerWorld)world).summonEntity(boss);
+        this.spawnParticles(world, pos);
 
-			boss.getTags().add("VaultBoss");
-			boss.bossInfo.setVisible(true);
-			boss.setCustomName(new StringTextComponent("Boss"));
-			boss.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100.0F);
-			boss.setHealth(100.0F);
+        if (newState.get(COMPLETION) == 4) {
+            FighterEntity boss = ModEntities.FIGHTER.create(world).changeSize(2.0F);
+            boss.setLocationAndAngles(pos.getX() + 0.5D, pos.getY() + 0.2D, pos.getZ() + 0.5D, 0.0F, 0.0F);
+            ((ServerWorld) world).summonEntity(boss);
 
-			VaultRaid raid = VaultRaidData.get((ServerWorld)world).getAt(pos);
+            boss.getTags().add("VaultBoss");
+            boss.bossInfo.setVisible(true);
+            boss.setCustomName(new StringTextComponent("Boss"));
+            boss.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100.0F);
+            boss.setHealth(100.0F);
 
-			if(raid != null) {
-				EntityScaler.scale(boss, raid.level + 5, new Random());
-			}
+            VaultRaid raid = VaultRaidData.get((ServerWorld) world).getAt(pos);
 
-			world.setBlockState(pos, Blocks.AIR.getDefaultState());
-		}
+            if (raid != null) {
+                EntityScaler.scale(boss, raid.level + 5, new Random());
+            }
 
-		return ActionResultType.SUCCESS;
-	}
+            world.setBlockState(pos, Blocks.AIR.getDefaultState());
+        }
 
-	private void spawnParticles(World world, BlockPos pos) {
-		for(int i = 0; i < 20; ++i) {
-			double d0 = world.rand.nextGaussian() * 0.02D;
-			double d1 = world.rand.nextGaussian() * 0.02D;
-			double d2 = world.rand.nextGaussian() * 0.02D;
+        return ActionResultType.SUCCESS;
+    }
 
-			((ServerWorld)world).spawnParticle(ParticleTypes.POOF,
-					pos.getX() + world.rand.nextDouble() - d0,
-					pos.getY() + world.rand.nextDouble() - d1,
-					pos.getZ() + world.rand.nextDouble() - d2, 10, d0, d1, d2, 1.0D);
-		}
+    private void spawnParticles(World world, BlockPos pos) {
+        for (int i = 0; i < 20; ++i) {
+            double d0 = world.rand.nextGaussian() * 0.02D;
+            double d1 = world.rand.nextGaussian() * 0.02D;
+            double d2 = world.rand.nextGaussian() * 0.02D;
 
-		world.playSound(null, pos, SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
-	}
+            ((ServerWorld) world).spawnParticle(ParticleTypes.POOF,
+                    pos.getX() + world.rand.nextDouble() - d0,
+                    pos.getY() + world.rand.nextDouble() - d1,
+                    pos.getZ() + world.rand.nextDouble() - d2, 10, d0, d1, d2, 1.0D);
+        }
 
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-		super.fillStateContainer(builder);
-		builder.add(COMPLETION);
-	}
+        world.playSound(null, pos, SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
+    }
+
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        super.fillStateContainer(builder);
+        builder.add(COMPLETION);
+    }
 
 }
