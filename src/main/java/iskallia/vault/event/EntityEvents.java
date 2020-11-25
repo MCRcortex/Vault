@@ -4,6 +4,7 @@ import iskallia.vault.Vault;
 import iskallia.vault.block.VaultDoorBlock;
 import iskallia.vault.entity.EntityScaler;
 import iskallia.vault.entity.FighterEntity;
+import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModEntities;
 import iskallia.vault.world.data.VaultRaidData;
 import iskallia.vault.world.raid.VaultRaid;
@@ -114,6 +115,16 @@ public class EntityEvents {
 		}
 
 		entity.remove();
+	}
+
+	@SubscribeEvent
+	public static void onEntityTick5(LivingEvent.LivingUpdateEvent event) {
+		if(event.getEntity().world.isRemote
+				|| event.getEntity().world.getDimensionKey() != Vault.VAULT_KEY
+				|| !event.getEntity().getTags().contains("vault_obelisk"))return;
+
+		event.getEntityLiving().world.setBlockState(event.getEntityLiving().getPosition(), ModBlocks.OBELISK.getDefaultState());
+		event.getEntityLiving().remove();
 	}
 
 	@SubscribeEvent

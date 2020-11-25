@@ -77,6 +77,7 @@ public class ModItems {
     public static ItemVaultRelicPart NETHERITE_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_netherite_essence"), "Richity Set");
     public static ItemVaultRelicPart PLATINUM_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_platinum_essence"), "Richity Set");
     public static ItemVaultRune VAULT_RUNE = new ItemVaultRune(VAULT_MOD_GROUP, Vault.id("vault_rune"));
+    public static ObeliskInscriptionItem OBELISK_INSCRIPTION = new ObeliskInscriptionItem(VAULT_MOD_GROUP, Vault.id("obelisk_inscription"));
 
     public static void registerItems(RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
@@ -135,5 +136,6 @@ public class ModItems {
         registry.register(NETHERITE_ESSENCE_RELIC);
         registry.register(PLATINUM_ESSENCE_RELIC);
         registry.register(VAULT_RUNE);
+        registry.register(OBELISK_INSCRIPTION);
     }
 }

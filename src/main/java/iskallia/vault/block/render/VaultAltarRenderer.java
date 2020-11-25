@@ -4,7 +4,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import iskallia.vault.altar.AltarInfusionRecipe;
 import iskallia.vault.altar.RequiredItem;
 import iskallia.vault.block.entity.VaultAltarTileEntity;
-import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -23,7 +22,6 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import java.util.HashMap;
 import java.util.List;

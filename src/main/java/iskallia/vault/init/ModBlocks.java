@@ -62,6 +62,7 @@ public class ModBlocks {
     public static final VaultArtifactBlock ARTIFACT_15 = new VaultArtifactBlock(15);
     public static final VaultArtifactBlock ARTIFACT_16 = new VaultArtifactBlock(16);
     public static final VaultCrateBlock VAULT_CRATE = new VaultCrateBlock();
+    public static final ObeliskBlock OBELISK = new ObeliskBlock();
 
     public static final TileEntityType<VaultAltarTileEntity> VAULT_ALTAR_TILE_ENTITY = TileEntityType.Builder.create(VaultAltarTileEntity::new, VAULT_ALTAR).build(null);
     public static final TileEntityType<VaultRuneTileEntity> VAULT_RUNE_TILE_ENTITY = TileEntityType.Builder.create(VaultRuneTileEntity::new, VAULT_RUNE_BLOCK).build(null);
@@ -109,6 +110,7 @@ public class ModBlocks {
         registerBlock(event, ARTIFACT_15, Vault.id("artifact_15"));
         registerBlock(event, ARTIFACT_16, Vault.id("artifact_16"));
         registerBlock(event, VAULT_CRATE, Vault.id("vault_crate"));
+        registerBlock(event, OBELISK, Vault.id("obelisk"));
     }
 
     public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
@@ -164,6 +166,7 @@ public class ModBlocks {
         registerBlockItem(event, ARTIFACT_15);
         registerBlockItem(event, ARTIFACT_16);
         registerBlockItem(event, VAULT_CRATE, 1);
+        registerBlockItem(event, OBELISK, 1);
     }
 
     private static void registerBlock(RegistryEvent.Register<Block> event, Block block, ResourceLocation id) {
