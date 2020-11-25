@@ -1,7 +1,10 @@
 package iskallia.vault.block.entity;
 
+import iskallia.vault.block.VaultCrateBlock;
 import iskallia.vault.init.ModBlocks;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -54,7 +57,10 @@ public class VaultCrateTileEntity extends TileEntity {
 
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-
+                if (Block.getBlockFromItem(stack.getItem()) instanceof ShulkerBoxBlock ||
+                        Block.getBlockFromItem(stack.getItem()) instanceof VaultCrateBlock) {
+                    return false;
+                }
                 return true;
             }
 
