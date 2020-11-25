@@ -32,6 +32,10 @@ public class VaultRaidOverlay {
         if (remainingTicks == 0)
             return; // Timed out, stop here
 
+        if(Minecraft.getInstance().world == null || Minecraft.getInstance().world.getDimensionKey() != Vault.VAULT_KEY) {
+            return;
+        }
+
         MatrixStack matrixStack = event.getMatrixStack();
         Minecraft minecraft = Minecraft.getInstance();
         int bottom = minecraft.getMainWindow().getScaledHeight();
