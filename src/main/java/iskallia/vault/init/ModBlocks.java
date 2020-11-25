@@ -124,7 +124,7 @@ public class ModBlocks {
 
     public static void registerBlockItems(RegistryEvent.Register<Item> event) {
         registerBlockItem(event, VAULT_PORTAL);
-        registerBlockItem(event, VAULT_ALTAR);
+        registerBlockItem(event, VAULT_ALTAR, 1);
         registerBlockItem(event, ALEXANDRITE_ORE);
         registerBlockItem(event, BENITOITE_ORE);
         registerBlockItem(event, LARIMAR_ORE);
@@ -163,7 +163,7 @@ public class ModBlocks {
         registerBlockItem(event, ARTIFACT_14);
         registerBlockItem(event, ARTIFACT_15);
         registerBlockItem(event, ARTIFACT_16);
-        registerBlockItem(event, VAULT_CRATE);
+        registerBlockItem(event, VAULT_CRATE, 1);
     }
 
     private static void registerBlock(RegistryEvent.Register<Block> event, Block block, ResourceLocation id) {
@@ -178,6 +178,12 @@ public class ModBlocks {
 
     private static void registerBlockItem(RegistryEvent.Register<Item> event, Block block) {
         BlockItem blockItem = new BlockItem(block, new Item.Properties().group(ModItems.VAULT_MOD_GROUP).maxStackSize(64));
+        blockItem.setRegistryName(block.getRegistryName());
+        event.getRegistry().register(blockItem);
+    }
+
+    private static void registerBlockItem(RegistryEvent.Register<Item> event, Block block, int maxStackSize) {
+        BlockItem blockItem = new BlockItem(block, new Item.Properties().group(ModItems.VAULT_MOD_GROUP).maxStackSize(maxStackSize));
         blockItem.setRegistryName(block.getRegistryName());
         event.getRegistry().register(blockItem);
     }

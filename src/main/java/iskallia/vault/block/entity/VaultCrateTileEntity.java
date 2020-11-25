@@ -76,4 +76,12 @@ public class VaultCrateTileEntity extends TileEntity {
         }
         return super.getCapability(cap, side);
     }
+
+    public CompoundNBT saveToNbt() {
+        return itemHandler.serializeNBT();
+    }
+
+    public void loadFromNBT(CompoundNBT nbt) {
+        itemHandler.deserializeNBT(nbt);
+    }
 }
