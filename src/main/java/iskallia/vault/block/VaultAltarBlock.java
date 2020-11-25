@@ -12,6 +12,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
@@ -151,4 +152,18 @@ public class VaultAltarBlock extends Block {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
     }
 
+    @Override
+    public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+        VaultAltarTileEntity altar = getAltarTileEntity(worldIn, pos);
+        if (altar == null) return;
+
+        if (altar.containsVaultRock()) {
+            ItemEntity entity = new ItemEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(ModItems.VAULT_ROCK));
+            worldIn.addEntity(entity);
+        }
+        ItemEntity entity = new ItemEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(ModBlocks.VAULT_ALTAR));
+        worldIn.addEntity(entity);
+
+        super.onReplaced(state, worldIn, pos, newState, isMoving);
+    }
 }
