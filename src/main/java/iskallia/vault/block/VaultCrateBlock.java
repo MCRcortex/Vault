@@ -38,12 +38,12 @@ public class VaultCrateBlock extends Block {
         super(Properties.create(Material.IRON, MaterialColor.IRON).hardnessAndResistance(2.0F).sound(SoundType.METAL));
     }
 
-    public static ItemStack getCrateWithLoot(NonNullList<ItemStack> items) {
+    public static ItemStack getCrateWithLoot(VaultCrateBlock crateType, NonNullList<ItemStack> items) {
         if (items.size() > 27) {
             Vault.LOGGER.error("Attempted to get a crate with more than 27 items. Check crate loot table.");
             return ItemStack.EMPTY;
         }
-        ItemStack crate = new ItemStack(ModBlocks.VAULT_CRATE);
+        ItemStack crate = new ItemStack(crateType);
         CompoundNBT nbt = new CompoundNBT();
         ItemStackHelper.saveAllItems(nbt, items);
         if (!nbt.isEmpty()) {
@@ -93,7 +93,7 @@ public class VaultCrateBlock extends Block {
         if (tileentity instanceof VaultCrateTileEntity) {
             VaultCrateTileEntity crate = (VaultCrateTileEntity) tileentity;
 
-            ItemStack itemstack = new ItemStack(ModBlocks.VAULT_CRATE);
+            ItemStack itemstack = new ItemStack(ModBlocks.VAULT_CRATE_NORMAL);
             CompoundNBT compoundnbt = crate.saveToNbt();
             if (!compoundnbt.isEmpty()) {
                 itemstack.setTagInfo("BlockEntityTag", compoundnbt);
