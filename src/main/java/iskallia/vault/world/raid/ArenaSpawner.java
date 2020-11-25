@@ -51,6 +51,10 @@ public class ArenaSpawner {
 		}
 	}
 
+	public int getFighterCount() {
+		return this.fighters.size();
+	}
+
 	public BlockPos toTop(ServerWorld world, BlockPos pos) {
 		return world.getHeight(Heightmap.Type.MOTION_BLOCKING, pos);
 	}
