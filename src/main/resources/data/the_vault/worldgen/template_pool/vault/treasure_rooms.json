@@ -299,10 +299,51 @@
       }
     },
     {
-      "weight": 20,
+      "weight": 1,
+      "element": {
+        "location": "the_vault:vault/rooms/treasure33",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "the_vault:vault/rooms/treasure34",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "the_vault:vault/rooms/treasure35",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "the_vault:vault/rooms/treasure36",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 100,
       "element": {
         "element_type": "minecraft:empty_pool_element"
       }
     }
+
+
+
+
+
   ]
 }
