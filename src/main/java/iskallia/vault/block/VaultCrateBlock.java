@@ -6,7 +6,6 @@ import iskallia.vault.container.VaultCrateContainer;
 import iskallia.vault.init.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
@@ -19,7 +18,6 @@ import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -27,7 +25,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
@@ -63,21 +60,6 @@ public class VaultCrateBlock extends Block {
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return ModBlocks.VAULT_CRATE_TILE_ENTITY.create();
-    }
-
-
-    // for loot testing purposes
-    @Override
-    public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
-        NonNullList<ItemStack> list = NonNullList.withSize(27, new ItemStack(Items.AIR));
-        list.set(1, new ItemStack(Blocks.STONE));
-        list.set(2, new ItemStack(Blocks.GRASS_BLOCK));
-        list.set(3, new ItemStack(Blocks.DIRT));
-        list.set(5, new ItemStack(Blocks.OAK_PLANKS));
-        list.set(8, new ItemStack(Blocks.SAND));
-        list.set(13, new ItemStack(Blocks.GRAVEL));
-        list.set(21, new ItemStack(Blocks.LAPIS_ORE));
-        return getCrateWithLoot(list);
     }
 
     @Override
