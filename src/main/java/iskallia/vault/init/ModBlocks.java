@@ -7,6 +7,7 @@ import iskallia.vault.block.entity.VaultCrateTileEntity;
 import iskallia.vault.block.entity.VaultRuneTileEntity;
 import iskallia.vault.block.render.VaultAltarRenderer;
 import iskallia.vault.block.render.VaultRuneRenderer;
+import iskallia.vault.util.VaultRarity;
 import net.minecraft.block.Block;
 import net.minecraft.block.DoorBlock;
 import net.minecraft.block.OreBlock;
@@ -61,11 +62,11 @@ public class ModBlocks {
     public static final VaultArtifactBlock ARTIFACT_14 = new VaultArtifactBlock(14);
     public static final VaultArtifactBlock ARTIFACT_15 = new VaultArtifactBlock(15);
     public static final VaultArtifactBlock ARTIFACT_16 = new VaultArtifactBlock(16);
-    public static final VaultCrateBlock VAULT_CRATE_NORMAL = new VaultCrateBlock();
-    public static final VaultCrateBlock VAULT_CRATE_RARE = new VaultCrateBlock();
-    public static final VaultCrateBlock VAULT_CRATE_EPIC = new VaultCrateBlock();
-    public static final VaultCrateBlock VAULT_CRATE_OMEGA = new VaultCrateBlock();
-    public static final VaultCrateBlock VAULT_CRATE_ARENA = new VaultCrateBlock();
+    public static final VaultCrateBlock VAULT_CRATE_NORMAL = new VaultCrateBlock(VaultRarity.NORMAL);
+    public static final VaultCrateBlock VAULT_CRATE_RARE = new VaultCrateBlock(VaultRarity.RARE);
+    public static final VaultCrateBlock VAULT_CRATE_EPIC = new VaultCrateBlock(VaultRarity.EPIC);
+    public static final VaultCrateBlock VAULT_CRATE_OMEGA = new VaultCrateBlock(VaultRarity.OMEGA);
+    public static final VaultCrateBlock VAULT_CRATE_ARENA = new VaultCrateBlock(null);
     public static final ObeliskBlock OBELISK = new ObeliskBlock();
 
     public static final TileEntityType<VaultAltarTileEntity> VAULT_ALTAR_TILE_ENTITY = TileEntityType.Builder.create(VaultAltarTileEntity::new, VAULT_ALTAR).build(null);
