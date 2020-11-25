@@ -15,9 +15,7 @@ import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.Color;
@@ -25,6 +23,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
 import javax.annotation.Nullable;
 
@@ -83,6 +82,16 @@ public class VaultRuneBlock extends Block {
                     if (heldStack.getItem() == ModItems.VAULT_RUNE) {
                         BlockState blockState = world.getBlockState(pos);
                         world.setBlockState(pos, blockState.with(RUNE_PLACED, true), 3);
+                        heldStack.shrink(1);
+                        ((ServerWorld) world).playSound(
+                                null,
+                                pos.getX(),
+                                pos.getY(),
+                                pos.getZ(),
+                                SoundEvents.BLOCK_END_PORTAL_FRAME_FILL,
+                                SoundCategory.BLOCKS,
+                                1f, 1f
+                        );
                     }
 
                 } else {
