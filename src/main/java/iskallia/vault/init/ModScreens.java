@@ -5,6 +5,7 @@ import iskallia.vault.client.gui.overlay.HyperBarOverlay;
 import iskallia.vault.client.gui.overlay.VaultBarOverlay;
 import iskallia.vault.client.gui.overlay.VaultRaidOverlay;
 import iskallia.vault.client.gui.screen.SkillTreeScreen;
+import iskallia.vault.client.gui.screen.VaultCrateScreen;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -17,6 +18,7 @@ public class ModScreens {
         MinecraftForge.EVENT_BUS.register(VaultRaidOverlay.class);
         MinecraftForge.EVENT_BUS.register(HyperBarOverlay.class);
         ScreenManager.registerFactory(ModContainers.SKILL_TREE_CONTAINER, SkillTreeScreen::new);
+        ScreenManager.registerFactory(ModContainers.VAULT_CRATE_CONTAINER, VaultCrateScreen::new);
     }
 
 }

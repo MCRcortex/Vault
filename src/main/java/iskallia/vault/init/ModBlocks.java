@@ -3,6 +3,7 @@ package iskallia.vault.init;
 import iskallia.vault.Vault;
 import iskallia.vault.block.*;
 import iskallia.vault.block.entity.VaultAltarTileEntity;
+import iskallia.vault.block.entity.VaultCrateTileEntity;
 import iskallia.vault.block.entity.VaultRuneTileEntity;
 import iskallia.vault.block.render.VaultAltarRenderer;
 import iskallia.vault.block.render.VaultRuneRenderer;
@@ -10,7 +11,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.DoorBlock;
 import net.minecraft.block.OreBlock;
 import net.minecraft.item.BlockItem;
-import net.minecraft.item.HangingEntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.TallBlockItem;
 import net.minecraft.tileentity.TileEntity;
@@ -61,9 +61,11 @@ public class ModBlocks {
     public static final VaultArtifactBlock ARTIFACT_14 = new VaultArtifactBlock(14);
     public static final VaultArtifactBlock ARTIFACT_15 = new VaultArtifactBlock(15);
     public static final VaultArtifactBlock ARTIFACT_16 = new VaultArtifactBlock(16);
+    public static final VaultCrateBlock VAULT_CRATE = new VaultCrateBlock();
 
     public static final TileEntityType<VaultAltarTileEntity> VAULT_ALTAR_TILE_ENTITY = TileEntityType.Builder.create(VaultAltarTileEntity::new, VAULT_ALTAR).build(null);
     public static final TileEntityType<VaultRuneTileEntity> VAULT_RUNE_TILE_ENTITY = TileEntityType.Builder.create(VaultRuneTileEntity::new, VAULT_RUNE_BLOCK).build(null);
+    public static final TileEntityType<VaultCrateTileEntity> VAULT_CRATE_TILE_ENTITY = TileEntityType.Builder.create(VaultCrateTileEntity::new, VAULT_CRATE).build(null);
 
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         registerBlock(event, VAULT_PORTAL, Vault.id("vault_portal"));
@@ -106,11 +108,13 @@ public class ModBlocks {
         registerBlock(event, ARTIFACT_14, Vault.id("artifact_14"));
         registerBlock(event, ARTIFACT_15, Vault.id("artifact_15"));
         registerBlock(event, ARTIFACT_16, Vault.id("artifact_16"));
+        registerBlock(event, VAULT_CRATE, Vault.id("vault_crate"));
     }
 
     public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
         registerTileEntity(event, VAULT_ALTAR_TILE_ENTITY, Vault.id("vault_altar_tile_entity"));
         registerTileEntity(event, VAULT_RUNE_TILE_ENTITY, Vault.id("vault_rune_tile_entity"));
+        registerTileEntity(event, VAULT_CRATE_TILE_ENTITY, Vault.id("vault_crate_tile_entity"));
     }
 
     public static void registerTileEntityRenderers() {
@@ -159,6 +163,7 @@ public class ModBlocks {
         registerBlockItem(event, ARTIFACT_14);
         registerBlockItem(event, ARTIFACT_15);
         registerBlockItem(event, ARTIFACT_16);
+        registerBlockItem(event, VAULT_CRATE);
     }
 
     private static void registerBlock(RegistryEvent.Register<Block> event, Block block, ResourceLocation id) {
