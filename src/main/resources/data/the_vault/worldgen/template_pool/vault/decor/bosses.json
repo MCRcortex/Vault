@@ -3,12 +3,9 @@
   "fallback": "the_vault:vault/decor/bosses",
   "elements": [
     {
-      "weight": 10,
+      "weight": 1,
       "element": {
-        "location": "the_vault:vault/mobs/boss",
-        "processors": "minecraft:empty",
-        "projection": "rigid",
-        "element_type": "minecraft:single_pool_element"
+        "element_type": "minecraft:empty_pool_element"
       }
     }
   ]

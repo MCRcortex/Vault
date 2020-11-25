@@ -84,7 +84,7 @@ public class FighterEntity extends ZombieEntity {
 
 			if(amplitude > 0.004D) {
 				this.setSprinting(true);
-				this.getJumpController().setJumping();
+				//this.getJumpController().setJumping();
 			} else {
 				this.setSprinting(false);
 			}
