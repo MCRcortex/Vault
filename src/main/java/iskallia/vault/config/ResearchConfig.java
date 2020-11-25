@@ -69,7 +69,7 @@ public class ResearchConfig extends Config {
         this.MOD_RESEARCHES.add(new ModResearch("Energetic", 2, ""));
         this.MOD_RESEARCHES.add(new ModResearch("Thermal Technician", 10, ""));
         this.MOD_RESEARCHES.add(new ModResearch("Plastic Technician", 8, ""));
-        this.MOD_RESEARCHES.add(new ModResearch("Extended Possibilities", 3, ""));
+//        this.MOD_RESEARCHES.add(new ModResearch("Extended Possibilities", 3, "")); // Disabled by the Iskallman
         this.MOD_RESEARCHES.add(new ModResearch("Power Overwhelming", 6, ""));
         this.MOD_RESEARCHES.add(new ModResearch("Nuclear Power", 6, ""));
 
