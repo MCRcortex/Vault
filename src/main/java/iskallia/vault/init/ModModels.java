@@ -16,6 +16,22 @@ public class ModModels {
         RenderTypeLookup.setRenderLayer(ModBlocks.GORGINITE_DOOR, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.SPARKLETINE_DOOR, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.WUTODIE_DOOR, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_1, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_2, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_3, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_4, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_5, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_6, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_7, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_8, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_9, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_10, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_11, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_12, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_13, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_14, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_15, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_16, RenderType.getCutout());
     }
 
 }
