@@ -6,9 +6,16 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.text.ITextComponent;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class SkillTab extends Screen {
 
     protected SkillTreeScreen parentScreen;
+
+    // HOW TO PATCH SEMI-PERSISTENCY HAXX 101
+    protected static Map<Class<? extends SkillTab>, Vector2f> persistedTranslations = new HashMap<>();
+    protected static Map<Class<? extends SkillTab>, Float> persistedScales = new HashMap<>();
 
     protected Vector2f viewportTranslation;
     protected float viewportScale;
@@ -18,8 +25,8 @@ public abstract class SkillTab extends Screen {
     protected SkillTab(SkillTreeScreen parentScreen, ITextComponent title) {
         super(title);
         this.parentScreen = parentScreen;
-        this.viewportTranslation = new Vector2f(0, 0);
-        this.viewportScale = 1f;
+        this.viewportTranslation = persistedTranslations.computeIfAbsent(getClass(), clazz -> new Vector2f(0, 0));
+        this.viewportScale = persistedScales.computeIfAbsent(getClass(), clazz -> 1f);
         this.dragging = false;
         this.grabbedPos = new Vector2f(0, 0);
     }
@@ -73,6 +80,13 @@ public abstract class SkillTab extends Screen {
         );
 
         return mouseScrolled;
+    }
+
+    @Override
+    public void onClose() {
+        System.out.println(getClass().getSimpleName() + " closed.");
+        persistedTranslations.put(getClass(), viewportTranslation);
+        persistedScales.put(getClass(), viewportScale);
     }
 
 }
