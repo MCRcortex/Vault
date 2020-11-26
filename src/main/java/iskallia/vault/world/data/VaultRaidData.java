@@ -8,6 +8,7 @@ import iskallia.vault.world.raid.VaultRaid;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
@@ -25,9 +26,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class VaultRaidData extends WorldSavedData {
@@ -49,12 +48,12 @@ public class VaultRaidData extends WorldSavedData {
         return this.activeRaids.values().stream().filter(raid -> raid.box.isVecInside(pos)).findFirst().orElse(null);
     }
 
-    public void remove(ServerPlayerEntity player) {
-        VaultRaid v = this.activeRaids.remove(player.getUniqueID());
+    public void remove(ServerWorld server, UUID playerId) {
+        VaultRaid v = this.activeRaids.remove(playerId);
 
         if(v != null) {
             v.ticksLeft = 0;
-            v.finish(player);
+            v.finish(server, playerId);
         }
     }
 
@@ -116,12 +115,17 @@ public class VaultRaidData extends WorldSavedData {
 
         boolean removed = false;
 
+        List<Runnable> tasks = new ArrayList<>();
+
         for (VaultRaid raid : this.activeRaids.values()) {
-            if (raid.isComplete()) {
+            if(raid.isComplete()) {
                 raid.syncTicksLeft(world.getServer());
-                removed |= this.activeRaids.values().remove(raid);
+                tasks.add(() -> this.remove(world, raid.playerId));
+                removed = true;
             }
         }
+
+        tasks.forEach(Runnable::run);
 
         if (removed || this.activeRaids.size() > 0) {
             this.markDirty();

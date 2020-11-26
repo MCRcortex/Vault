@@ -7,6 +7,7 @@ import iskallia.vault.entity.FighterEntity;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModEntities;
 import iskallia.vault.world.data.VaultRaidData;
+import iskallia.vault.world.gen.PortalPlacer;
 import iskallia.vault.world.raid.VaultRaid;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -19,6 +20,8 @@ import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameterSets;
 import net.minecraft.loot.LootParameters;
 import net.minecraft.state.properties.DoubleBlockHalf;
+import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.concurrent.TickDelayedTask;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
@@ -81,9 +84,31 @@ public class EntityEvents {
 						.with(DoorBlock.POWERED, state.get(DoorBlock.POWERED))
 						.with(DoorBlock.HALF, state.get(DoorBlock.HALF));
 
+				PortalPlacer placer = new PortalPlacer((pos1, random, facing) -> null, (pos1, random, facing) -> Blocks.BEDROCK.getDefaultState());
+				placer.place(event.getEntity().world, pos, state.get(DoorBlock.FACING).rotateYCCW(), 1, 2);
+				placer.place(event.getEntity().world, pos.offset(state.get(DoorBlock.FACING).getOpposite()), state.get(DoorBlock.FACING).rotateYCCW(), 1, 2);
+
 				event.getEntity().world.setBlockState(pos.up(), Blocks.AIR.getDefaultState(), 27);
 				event.getEntity().world.setBlockState(pos, newState, 11);
 				event.getEntity().world.setBlockState(pos.up(), newState.with(DoorBlock.HALF, DoubleBlockHalf.UPPER), 11);
+			}
+
+			for(int x = -20; x <= 20; x++) {
+				for(int z = -20; z <= 20; z++) {
+					for(int y = -10; y <= 10; y++) {
+						BlockPos c = pos.add(x, z, y);
+						BlockState s = event.getEntity().world.getBlockState(c);
+
+						if(s.getBlock() == Blocks.PINK_WOOL) {
+							event.getEntity().world.setBlockState(c, Blocks.CHEST.getDefaultState(), 2);
+							TileEntity te = event.getEntity().world.getTileEntity(c);
+
+							if(te instanceof ChestTileEntity) {
+								((ChestTileEntity)te).setLootTable(Vault.id("chest/treasure"), 0L);
+							}
+						}
+					}
+				}
 			}
 
 			event.getEntity().remove();

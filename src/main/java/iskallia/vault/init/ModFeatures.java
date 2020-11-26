@@ -1,6 +1,7 @@
 package iskallia.vault.init;
 
 import iskallia.vault.Vault;
+import iskallia.vault.world.gen.decorator.BreadcrumbFeature;
 import iskallia.vault.world.gen.decorator.RegionOreFeature;
 import iskallia.vault.world.gen.ruletest.VaultRuleTest;
 import iskallia.vault.world.gen.structure.ArenaStructure;
@@ -21,6 +22,7 @@ public class ModFeatures {
     public static StructureFeature<VaultStructure.Config, ? extends Structure<VaultStructure.Config>> VAULT_FEATURE;
     public static StructureFeature<ArenaStructure.Config, ? extends Structure<ArenaStructure.Config>> ARENA_FEATURE;
     public static ConfiguredFeature<?, ?> VAULT_ORE;
+    public static ConfiguredFeature<?, ?> BREADCRUMB_CHEST;
 
     public static void registerStructureFeatures() {
         VAULT_FEATURE = register("vault", ModStructures.VAULT.func_236391_a_(new VaultStructure.Config(() -> VaultStructure.Pools.START, 7)));
@@ -29,7 +31,9 @@ public class ModFeatures {
 
     public static void registerFeatures(RegistryEvent.Register<Feature<?>> event) {
         RegionOreFeature.register(event);
+        BreadcrumbFeature.register(event);
         VAULT_ORE = register("vault_ore", RegionOreFeature.INSTANCE.withConfiguration(new OreFeatureConfig(VaultRuleTest.INSTANCE, Blocks.DIORITE.getDefaultState(), 0)).func_242731_b(1));
+        BREADCRUMB_CHEST = register("breadcrumb_chest", BreadcrumbFeature.INSTANCE.withConfiguration(NoFeatureConfig.field_236559_b_));
     }
 
     private static <FC extends IFeatureConfig, F extends Feature<FC>> ConfiguredFeature<FC, F> register(String name, ConfiguredFeature<FC, F> feature) {

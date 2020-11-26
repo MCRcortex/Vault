@@ -50,7 +50,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 
     public static final int REGION_SIZE = 1 << 11;
 
-    private UUID playerId;
+    public UUID playerId;
     public MutableBoundingBox box;
     public int level;
     private int rarity;
@@ -60,6 +60,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
     public Direction facing;
 
     public VaultSpawner spawner = new VaultSpawner(this);
+    public boolean finished = false;
 
     protected VaultRaid() {
 
@@ -77,10 +78,11 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
     }
 
     public boolean isComplete() {
-        return this.ticksLeft <= 0;
+        return this.ticksLeft <= 0 || this.finished;
     }
 
     public void tick(ServerWorld world) {
+        if(this.finished)return;
         this.ticksLeft--;
 
         this.syncTicksLeft(world.getServer());
@@ -93,14 +95,12 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
                 playerEntity.container.onCraftMatrixChanged(playerEntity.inventory);
                 playerEntity.updateHeldItem();
                 playerEntity.onKillCommand();
-                this.finish(playerEntity);
+                this.finish(world, this.playerId);
             });
         } else {
             this.runIfPresent(world.getServer(), player -> {
-                if (this.ticksLeft + 20 < ModConfigs.VAULT_GENERAL.getTickCounter() && player.world.getDimensionKey() != Vault.VAULT_KEY) {
-                    world.getServer().enqueue(new TickDelayedTask(world.getServer().getTickCounter() + 1, () -> {
-                        VaultRaidData.get(world).remove(player);
-                    }));
+                if(this.ticksLeft + 20 < ModConfigs.VAULT_GENERAL.getTickCounter() && player.world.getDimensionKey() != Vault.VAULT_KEY) {
+                    this.finished = true;
                 } else {
                     this.spawner.tick(player);
                 }
@@ -108,10 +108,10 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         }
     }
 
-    public void finish(ServerPlayerEntity player) {
-        Scoreboard scoreboard = player.getWorldScoreboard();
+    public void finish(ServerWorld server, UUID playerId) {
+        Scoreboard scoreboard = server.getScoreboard();
         ScoreObjective objective = getOrCreateObjective(scoreboard, "VaultRarity", ScoreCriteria.DUMMY, ScoreCriteria.RenderType.INTEGER);
-        scoreboard.removeObjectiveFromEntity(player.getName().getString(), objective);
+        scoreboard.removeObjectiveFromEntity(playerId.toString(), objective);
     }
 
     public static ScoreObjective getOrCreateObjective(Scoreboard scoreboard, String name, ScoreCriteria criteria, ScoreCriteria.RenderType renderType) {
