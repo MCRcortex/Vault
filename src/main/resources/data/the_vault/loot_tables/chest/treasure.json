@@ -1489,7 +1489,7 @@
         {
           "type": "minecraft:item",
           "weight": 3,
-          "name": "the_vault:vault:burger",
+          "name": "the_vault:vault_burger",
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -1549,7 +1549,7 @@
         {
           "type": "minecraft:item",
           "weight": 2,
-          "name": "the_vault:gem_beniotite",
+          "name": "the_vault:gem_benitoite",
           "functions": [
             {
               "function": "minecraft:set_count",
