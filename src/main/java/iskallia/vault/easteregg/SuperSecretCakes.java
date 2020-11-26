@@ -1,9 +1,14 @@
 package iskallia.vault.easteregg;
 
 import iskallia.vault.Vault;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
+import net.minecraft.command.impl.AdvancementCommand;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.Color;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
@@ -40,7 +45,7 @@ public class SuperSecretCakes {
             "This is caketastic!",
             "An actual pie chart",
             "Arrr! I'm a Pie-rate",
-            "Not every pies in the world is round, sometimes... πr ²",
+            "Not every pies in the world is round, sometimes... pi * r ^ 2",
             "HALLO!",
             "#NeverLeaving cause cake sticks to you",
             "Tell me lies, tell me sweet little pies",
@@ -73,8 +78,11 @@ public class SuperSecretCakes {
 
             } else {
                 event.getPlayer().addPotionEffect(new EffectInstance(Effects.ABSORPTION, 20 * 60, 0));
-                // TODO: Break cake
-                // TODO: Progress in the Advancement
+                event.getWorld().destroyBlock(event.getPos(), false);
+                Advancement advancement = event.getPlayer().getServer().getAdvancementManager().getAdvancement(Vault.id("super_secret_cakes"));
+                ((ServerPlayerEntity) event.getPlayer()).getAdvancements()
+                        .grantCriterion(advancement, "cake_consumed");
+                event.setCanceled(true);
             }
         }
     }

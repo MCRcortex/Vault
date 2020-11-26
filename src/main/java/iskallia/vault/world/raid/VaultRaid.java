@@ -10,6 +10,7 @@ import iskallia.vault.util.NetcodeUtils;
 import iskallia.vault.world.data.VaultRaidData;
 import iskallia.vault.world.gen.PortalPlacer;
 import iskallia.vault.world.gen.structure.VaultStructure;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.command.impl.TitleCommand;
@@ -248,6 +249,9 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
             playerEntity.connection.sendPacket(titlePacket);
             playerEntity.connection.sendPacket(subtitlePacket);
             playerEntity.sendStatusMessage(actionBar, true);
+
+            Advancement advancement = player.getServer().getAdvancementManager().getAdvancement(Vault.id("root"));
+            player.getAdvancements().grantCriterion(advancement, "entered_vault");
         });
     }
 
