@@ -4,8 +4,16 @@ import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.VaultLevelMessage;
 import iskallia.vault.util.NetcodeUtils;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.network.NetworkDirection;
 
@@ -56,11 +64,32 @@ public class PlayerVaultStats implements INBTSerializable<CompoundNBT> {
             this.vaultLevel++;
             this.unspentSkillPts++;
             this.exp -= tnl; // Carry extra exp to next level!
+            NetcodeUtils.runIfPresent(server, uuid, this::fancyLevelUpEffects);
         }
 
         sync(server);
 
         return this;
+    }
+
+    protected void fancyLevelUpEffects(ServerPlayerEntity player) {
+        World world = player.world;
+
+        Vector3d pos = player.getPositionVec();
+
+        for (int i = 0; i < 20; ++i) {
+            double d0 = world.rand.nextGaussian() * 1D;
+            double d1 = world.rand.nextGaussian() * 1D;
+            double d2 = world.rand.nextGaussian() * 1D;
+
+            ((ServerWorld) world).spawnParticle(ParticleTypes.TOTEM_OF_UNDYING,
+                    pos.getX() + world.rand.nextDouble() - 0.5,
+                    pos.getY() + world.rand.nextDouble() - 0.5 + 3,
+                    pos.getZ() + world.rand.nextDouble() - 0.5, 10, d0, d1, d2, 0.25D);
+        }
+
+        world.playSound(null, player.getPosition(), SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS,
+                1.0F, world.rand.nextFloat() * 0.75f);
     }
 
     public PlayerVaultStats spendSkillPoints(MinecraftServer server, int amount) {
