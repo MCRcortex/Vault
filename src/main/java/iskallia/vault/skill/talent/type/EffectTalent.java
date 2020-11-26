@@ -1,9 +1,11 @@
 package iskallia.vault.skill.talent.type;
 
 import com.google.gson.annotations.Expose;
+import iskallia.vault.Vault;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 
@@ -40,9 +42,21 @@ public class EffectTalent extends PlayerTalent {
         return Type.fromString(this.type);
     }
 
+    private boolean disabledInVaults() {
+        return getEffect() == Effects.REGENERATION;
+    }
+
     @Override
     public void tick(PlayerEntity player) {
         EffectInstance activeEffect = player.getActivePotionEffect(this.getEffect());
+
+        if (player.world.getDimensionKey() == Vault.VAULT_KEY && disabledInVaults()) {
+            if (activeEffect != null) {
+                player.removePotionEffect(this.getEffect());
+            }
+            return;
+        }
+
         EffectInstance newEffect = new EffectInstance(this.getEffect(), Integer.MAX_VALUE, this.getAmplifier(),
                 false, this.getType().showParticles, this.getType().showIcon);
 
