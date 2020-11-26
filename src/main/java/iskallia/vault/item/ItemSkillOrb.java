@@ -15,14 +15,14 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
-public class ItemSkillOrbs extends Item {
+public class ItemSkillOrb extends Item {
 
-    public ItemSkillOrbs(ItemGroup group) {
+    public ItemSkillOrb(ItemGroup group) {
         super(new Properties()
                 .group(group)
                 .maxStackSize(64));
 
-        this.setRegistryName(Vault.id("skill_orbs"));
+        this.setRegistryName(Vault.id("skill_orb"));
     }
 
     @Override

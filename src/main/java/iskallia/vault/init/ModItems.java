@@ -24,7 +24,7 @@ public class ModItems {
     };
 
     public static ItemVaultBurger VAULT_BURGER = new ItemVaultBurger(VAULT_MOD_GROUP);
-    public static ItemSkillOrbs SKILL_ORBS = new ItemSkillOrbs(VAULT_MOD_GROUP);
+    public static ItemSkillOrb SKILL_ORB = new ItemSkillOrb(VAULT_MOD_GROUP);
     public static ItemVaultGem VAULT_ROCK = new ItemVaultGem(VAULT_MOD_GROUP, Vault.id("vault_rock"));
     public static ItemVaultGem ALEXANDRITE_GEM = new ItemVaultGem(VAULT_MOD_GROUP, Vault.id("gem_alexandrite"));
     public static ItemVaultGem BENITOITE_GEM = new ItemVaultGem(VAULT_MOD_GROUP, Vault.id("gem_benitoite"));
@@ -83,7 +83,7 @@ public class ModItems {
     public static void registerItems(RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
         registry.register(VAULT_BURGER);
-        registry.register(SKILL_ORBS);
+        registry.register(SKILL_ORB);
         registry.register(ALEXANDRITE_GEM);
         registry.register(BENITOITE_GEM);
         registry.register(LARIMAR_GEM);

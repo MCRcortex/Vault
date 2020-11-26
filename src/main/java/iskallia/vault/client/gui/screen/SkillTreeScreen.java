@@ -19,6 +19,7 @@ import iskallia.vault.research.ResearchTree;
 import iskallia.vault.skill.ability.AbilityTree;
 import iskallia.vault.skill.talent.TalentTree;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
@@ -30,6 +31,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
 
+    public static final ResourceLocation HUD_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/vault-hud.png");
     public static final ResourceLocation UI_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-tree.png");
     public static final ResourceLocation BACKGROUNDS_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/ability-tree-bgs.png");
 
@@ -225,10 +227,13 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
         Rectangle containerBounds = getContainerBounds();
 
         if (VaultBarOverlay.unspentSkillPoints > 0) {
-            UIHelper.renderLabelAtRight(this, matrixStack,
-                    VaultBarOverlay.unspentSkillPoints + " unspent skill point(s)",
-                    containerBounds.x1,
-                    containerBounds.y0 + containerBounds.getHeight() - 28);
+            getMinecraft().getTextureManager().bindTexture(HUD_RESOURCE);
+            int toastWidth = 160;
+            int right = getMinecraft().getMainWindow().getScaledWidth();
+            blit(matrixStack, right - toastWidth - 1, 1,
+                    3, 171, toastWidth, 32);
+            font.drawString(matrixStack, VaultBarOverlay.unspentSkillPoints + " unspent skill point(s)",
+                    right - toastWidth + 29, 14, 0xFF_a18959);
         }
         renderContainerBorders(matrixStack);
         renderContainerTabs(matrixStack);
