@@ -469,7 +469,7 @@
         {
           "type": "minecraft:item",
           "weight": 1,
-          "name": "ironfurnaces:iron_chest",
+          "name": "ironchest:iron_chest",
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -501,7 +501,7 @@
           ],
           "conditions": [
             {
-              "condition": "mekanism:basic_bin",
+              "condition": "minecraft:random_chance",
               "chance": 0.05
             }
           ]
