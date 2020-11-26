@@ -42,20 +42,9 @@ public class EffectTalent extends PlayerTalent {
         return Type.fromString(this.type);
     }
 
-    private boolean disabledInVaults() {
-        return getEffect() == Effects.REGENERATION;
-    }
-
     @Override
     public void tick(PlayerEntity player) {
         EffectInstance activeEffect = player.getActivePotionEffect(this.getEffect());
-
-        if (player.world.getDimensionKey() == Vault.VAULT_KEY && disabledInVaults()) {
-            if (activeEffect != null) {
-                player.removePotionEffect(this.getEffect());
-            }
-            return;
-        }
 
         EffectInstance newEffect = new EffectInstance(this.getEffect(), Integer.MAX_VALUE, this.getAmplifier(),
                 false, this.getType().showParticles, this.getType().showIcon);
