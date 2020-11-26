@@ -7,7 +7,6 @@ import iskallia.vault.block.entity.VaultCrateTileEntity;
 import iskallia.vault.block.entity.VaultRuneTileEntity;
 import iskallia.vault.block.render.VaultAltarRenderer;
 import iskallia.vault.block.render.VaultRuneRenderer;
-import iskallia.vault.util.VaultRarity;
 import net.minecraft.block.Block;
 import net.minecraft.block.DoorBlock;
 import net.minecraft.block.OreBlock;
@@ -62,17 +61,14 @@ public class ModBlocks {
     public static final VaultArtifactBlock ARTIFACT_14 = new VaultArtifactBlock(14);
     public static final VaultArtifactBlock ARTIFACT_15 = new VaultArtifactBlock(15);
     public static final VaultArtifactBlock ARTIFACT_16 = new VaultArtifactBlock(16);
-    public static final VaultCrateBlock VAULT_CRATE_NORMAL = new VaultCrateBlock(VaultRarity.NORMAL);
-    public static final VaultCrateBlock VAULT_CRATE_RARE = new VaultCrateBlock(VaultRarity.RARE);
-    public static final VaultCrateBlock VAULT_CRATE_EPIC = new VaultCrateBlock(VaultRarity.EPIC);
-    public static final VaultCrateBlock VAULT_CRATE_OMEGA = new VaultCrateBlock(VaultRarity.OMEGA);
-    public static final VaultCrateBlock VAULT_CRATE_ARENA = new VaultCrateBlock(null);
+    public static final VaultCrateBlock VAULT_CRATE = new VaultCrateBlock();
+    public static final VaultCrateBlock VAULT_CRATE_ARENA = new VaultCrateBlock();
     public static final ObeliskBlock OBELISK = new ObeliskBlock();
 
     public static final TileEntityType<VaultAltarTileEntity> VAULT_ALTAR_TILE_ENTITY = TileEntityType.Builder.create(VaultAltarTileEntity::new, VAULT_ALTAR).build(null);
     public static final TileEntityType<VaultRuneTileEntity> VAULT_RUNE_TILE_ENTITY = TileEntityType.Builder.create(VaultRuneTileEntity::new, VAULT_RUNE_BLOCK).build(null);
     public static final TileEntityType<VaultCrateTileEntity> VAULT_CRATE_TILE_ENTITY = TileEntityType.Builder.
-            create(VaultCrateTileEntity::new, VAULT_CRATE_NORMAL, VAULT_CRATE_RARE, VAULT_CRATE_EPIC, VAULT_CRATE_OMEGA, VAULT_CRATE_ARENA).build(null);
+            create(VaultCrateTileEntity::new, VAULT_CRATE, VAULT_CRATE_ARENA).build(null);
 
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         registerBlock(event, VAULT_PORTAL, Vault.id("vault_portal"));
@@ -115,10 +111,7 @@ public class ModBlocks {
         registerBlock(event, ARTIFACT_14, Vault.id("artifact_14"));
         registerBlock(event, ARTIFACT_15, Vault.id("artifact_15"));
         registerBlock(event, ARTIFACT_16, Vault.id("artifact_16"));
-        registerBlock(event, VAULT_CRATE_NORMAL, Vault.id("vault_crate_normal"));
-        registerBlock(event, VAULT_CRATE_RARE, Vault.id("vault_crate_rare"));
-        registerBlock(event, VAULT_CRATE_EPIC, Vault.id("vault_crate_epic"));
-        registerBlock(event, VAULT_CRATE_OMEGA, Vault.id("vault_crate_omega"));
+        registerBlock(event, VAULT_CRATE, Vault.id("vault_crate"));
         registerBlock(event, VAULT_CRATE_ARENA, Vault.id("vault_crate_arena"));
         registerBlock(event, OBELISK, Vault.id("obelisk"));
     }
@@ -175,10 +168,7 @@ public class ModBlocks {
         registerBlockItem(event, ARTIFACT_14, 1);
         registerBlockItem(event, ARTIFACT_15, 1);
         registerBlockItem(event, ARTIFACT_16, 1);
-        registerBlockItem(event, VAULT_CRATE_NORMAL, 1);
-        registerBlockItem(event, VAULT_CRATE_RARE, 1);
-        registerBlockItem(event, VAULT_CRATE_EPIC, 1);
-        registerBlockItem(event, VAULT_CRATE_OMEGA, 1);
+        registerBlockItem(event, VAULT_CRATE, 1);
         registerBlockItem(event, VAULT_CRATE_ARENA, 1);
         registerBlockItem(event, OBELISK, 1);
     }

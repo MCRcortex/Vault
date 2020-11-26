@@ -4,7 +4,6 @@ import iskallia.vault.Vault;
 import iskallia.vault.block.entity.VaultCrateTileEntity;
 import iskallia.vault.container.VaultCrateContainer;
 import iskallia.vault.init.ModBlocks;
-import iskallia.vault.util.VaultRarity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -36,11 +35,9 @@ import javax.annotation.Nullable;
 
 public class VaultCrateBlock extends Block {
 
-    private VaultRarity vaultRarity;
 
-    public VaultCrateBlock(VaultRarity vaultRarity) {
+    public VaultCrateBlock() {
         super(Properties.create(Material.IRON, MaterialColor.IRON).hardnessAndResistance(2.0F).sound(SoundType.METAL));
-        this.vaultRarity = vaultRarity;
     }
 
     public static ItemStack getCrateWithLoot(VaultCrateBlock crateType, NonNullList<ItemStack> items) {
@@ -94,7 +91,7 @@ public class VaultCrateBlock extends Block {
     public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
         if (worldIn.isRemote) super.onBlockHarvested(worldIn, pos, state, player);
 
-        VaultCrateBlock block = getBlockByRarity();
+        VaultCrateBlock block = getBlockVariant();
         TileEntity tileentity = worldIn.getTileEntity(pos);
         if (tileentity instanceof VaultCrateTileEntity) {
             VaultCrateTileEntity crate = (VaultCrateTileEntity) tileentity;
@@ -114,18 +111,9 @@ public class VaultCrateBlock extends Block {
         super.onBlockHarvested(worldIn, pos, state, player);
     }
 
-    private VaultCrateBlock getBlockByRarity() {
-        if (this.vaultRarity == null) return ModBlocks.VAULT_CRATE_ARENA;
-        switch (this.vaultRarity) {
-            case RARE:
-                return ModBlocks.VAULT_CRATE_RARE;
-            case EPIC:
-                return ModBlocks.VAULT_CRATE_EPIC;
-            case OMEGA:
-                return ModBlocks.VAULT_CRATE_OMEGA;
-            default:
-                return ModBlocks.VAULT_CRATE_NORMAL;
-        }
+    private VaultCrateBlock getBlockVariant() {
+        if (this.getBlock() == ModBlocks.VAULT_CRATE) return ModBlocks.VAULT_CRATE;
+        else return ModBlocks.VAULT_CRATE_ARENA;
     }
 
     @Override
@@ -150,9 +138,5 @@ public class VaultCrateBlock extends Block {
             return null;
         VaultCrateTileEntity crate = (VaultCrateTileEntity) worldIn.getTileEntity(pos);
         return crate;
-    }
-
-    public VaultRarity getVaultRarity() {
-        return vaultRarity;
     }
 }
