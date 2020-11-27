@@ -11,6 +11,7 @@ import iskallia.vault.world.gen.PortalPlacer;
 import iskallia.vault.world.raid.VaultRaid;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.ChestBlock;
 import net.minecraft.block.DoorBlock;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.Entity;
@@ -22,6 +23,7 @@ import net.minecraft.loot.LootParameters;
 import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.concurrent.TickDelayedTask;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
@@ -93,14 +95,15 @@ public class EntityEvents {
 				event.getEntity().world.setBlockState(pos.up(), newState.with(DoorBlock.HALF, DoubleBlockHalf.UPPER), 11);
 			}
 
-			for(int x = -20; x <= 20; x++) {
-				for(int z = -20; z <= 20; z++) {
+			for(int x = -30; x <= 30; x++) {
+				for(int z = -30; z <= 30; z++) {
 					for(int y = -10; y <= 10; y++) {
-						BlockPos c = pos.add(x, z, y);
+						BlockPos c = pos.add(x, y, z);
 						BlockState s = event.getEntity().world.getBlockState(c);
 
 						if(s.getBlock() == Blocks.PINK_WOOL) {
-							event.getEntity().world.setBlockState(c, Blocks.CHEST.getDefaultState(), 2);
+							event.getEntity().world.setBlockState(c, Blocks.CHEST.getDefaultState()
+									.with(ChestBlock.FACING, Direction.byHorizontalIndex(event.getEntity().world.rand.nextInt(4))), 2);
 							TileEntity te = event.getEntity().world.getTileEntity(c);
 
 							if(te instanceof ChestTileEntity) {

@@ -62,7 +62,7 @@ public class VaultSpawner {
 					boolean isAir = true;
 
 					for(int o = 1; o <= 2; o++) {
-						if(world.getBlockState(pos.up(o)).causesSuffocation(world, pos)) {
+						if(world.getBlockState(pos.up(o)).isSuffocating(world, pos)) {
 							isAir = false;
 							break;
 						}

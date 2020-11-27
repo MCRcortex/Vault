@@ -218,10 +218,15 @@ public class JigsawGenerator {
 
 											p_236831_1_.addJunction(new JigsawJunction(blockpos2.getX(), i3 - j + j3, blockpos2.getZ(), l1, jigsawpattern$placementbehaviour1));
 											abstractvillagepiece.addJunction(new JigsawJunction(blockpos1.getX(), i3 - k1 + l2, blockpos1.getZ(), -l1, jigsawpattern$placementbehaviour));
-											this.structurePieces.add(abstractvillagepiece);
-											if (p_236831_4_ + 1 <= this.maxDepth) {
-												this.availablePieces.addLast(new Entry(abstractvillagepiece, mutableobject1, l, p_236831_4_ + 1));
+
+											if(abstractvillagepiece.getBoundingBox().minY > 0 && abstractvillagepiece.getBoundingBox().maxY < 256) {
+												this.structurePieces.add(abstractvillagepiece);
+
+												if(p_236831_4_ + 1 <= this.maxDepth) {
+													this.availablePieces.addLast(new Entry(abstractvillagepiece, mutableobject1, l, p_236831_4_ + 1));
+												}
 											}
+
 											continue label139;
 										}
 									}

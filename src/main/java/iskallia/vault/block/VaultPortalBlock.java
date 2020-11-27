@@ -147,6 +147,7 @@ public class VaultPortalBlock extends NetherPortalBlock {
                     }
                 } else if (worldKey == Vault.VAULT_KEY) {
                     VaultRaidData.get(destination).startNew(player, state.get(RARITY));
+                    world.setBlockState(pos, Blocks.AIR.getDefaultState());
                 }
             });
 
