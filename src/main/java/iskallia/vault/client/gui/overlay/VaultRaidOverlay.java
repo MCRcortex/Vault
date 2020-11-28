@@ -32,7 +32,7 @@ public class VaultRaidOverlay {
         if (remainingTicks == 0)
             return; // Timed out, stop here
 
-        if(Minecraft.getInstance().world == null || Minecraft.getInstance().world.getDimensionKey() != Vault.VAULT_KEY) {
+        if (Minecraft.getInstance().world == null || Minecraft.getInstance().world.getDimensionKey() != Vault.VAULT_KEY) {
             return;
         }
 
@@ -44,7 +44,7 @@ public class VaultRaidOverlay {
         int panicTicks = 30 * 20;
 
         matrixStack.push();
-        matrixStack.translate(10, bottom - barHeight, 0);
+        matrixStack.translate(barWidth, bottom, 0);
         FontHelper.drawStringWithBorder(matrixStack,
                 formatTimeString(),
                 18, -12,
