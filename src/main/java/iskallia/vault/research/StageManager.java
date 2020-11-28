@@ -1,6 +1,7 @@
 package iskallia.vault.research;
 
 import iskallia.vault.Vault;
+import iskallia.vault.util.SideOnlyFixer;
 import iskallia.vault.world.data.PlayerResearchesData;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -79,7 +80,7 @@ public class StageManager {
             }
         }
 
-        int slot = player.inventory.getSlotFor(craftedItemStack);
+        int slot = SideOnlyFixer.getSlotFor(player.inventory, craftedItemStack);
 
         if (slot != -1) {
             player.inventory.getStackInSlot(slot).shrink(1);
