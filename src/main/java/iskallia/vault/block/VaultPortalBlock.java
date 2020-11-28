@@ -1,6 +1,7 @@
 package iskallia.vault.block;
 
 import iskallia.vault.Vault;
+import iskallia.vault.init.ModBlocks;
 import iskallia.vault.util.VaultRarity;
 import iskallia.vault.world.data.VaultRaidData;
 import net.minecraft.block.*;
@@ -11,6 +12,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
@@ -20,6 +22,7 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.GameType;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -39,6 +42,16 @@ public class VaultPortalBlock extends NetherPortalBlock {
     public VaultPortalBlock() {
         super(AbstractBlock.Properties.from(Blocks.NETHER_PORTAL));
         this.setDefaultState(this.stateContainer.getBaseState().with(AXIS, Direction.Axis.X).with(RARITY, VaultRarity.OMEGA.ordinal()));
+    }
+
+    @Override
+    public boolean hasTileEntity(BlockState state) {
+        return true;
+    }
+
+    @Override
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+        return ModBlocks.VAULT_PORTAL_TILE_ENTITY.create();
     }
 
     protected static BlockPos getSpawnPoint(ServerWorld p_241092_0_, int p_241092_1_, int p_241092_2_, boolean p_241092_3_) {
