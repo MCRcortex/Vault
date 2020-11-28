@@ -20,13 +20,12 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ArenaRaidData extends WorldSavedData {
@@ -46,6 +45,14 @@ public class ArenaRaidData extends WorldSavedData {
 
     public ArenaRaid getAt(BlockPos pos) {
         return this.activeRaids.values().stream().filter(raid -> raid.box.isVecInside(pos)).findFirst().orElse(null);
+    }
+
+    public void remove(ServerWorld server, UUID playerId) {
+        ArenaRaid v = this.activeRaids.remove(playerId);
+
+        if(v != null) {
+            v.finish(server, server.getServer().getPlayerList().getPlayerByUUID(playerId));
+        }
     }
 
     public ArenaRaid getActiveFor(ServerPlayerEntity player) {
@@ -101,13 +108,18 @@ public class ArenaRaidData extends WorldSavedData {
 
         boolean removed = false;
 
-        for(ArenaRaid raid : this.activeRaids.values()) {
+        List<Runnable> tasks = new ArrayList<>();
+
+        for (ArenaRaid raid : this.activeRaids.values()) {
             if(raid.isComplete()) {
-                removed |= this.activeRaids.values().remove(raid);
+                tasks.add(() -> this.remove(world, raid.getPlayerId()));
+                removed = true;
             }
         }
 
-        if(removed || this.activeRaids.size() > 0) {
+        tasks.forEach(Runnable::run);
+
+        if (removed || this.activeRaids.size() > 0) {
             this.markDirty();
         }
     }
@@ -117,6 +129,13 @@ public class ArenaRaidData extends WorldSavedData {
         if(event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START && event.world.getDimensionKey() == Vault.ARENA_KEY) {
             get((ServerWorld)event.world).tick((ServerWorld)event.world);
         }
+    }
+
+    @SubscribeEvent
+    public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+        if(event.getEntity().world.isRemote)return;
+        ArenaRaidData data = ArenaRaidData.get((ServerWorld) event.getEntity().world);
+        data.remove((ServerWorld)event.getPlayer().world, event.getPlayer().getUniqueID());
     }
 
     @Override

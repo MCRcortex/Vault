@@ -29,7 +29,9 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
     private boolean isComplete;
 
     public BlockPos start;
-    private ArenaSpawner spawner = new ArenaSpawner(this, 3);
+    public ArenaSpawner spawner = new ArenaSpawner(this, 3);
+    public ArenaScoreboard scoreboard = new ArenaScoreboard(this);
+    public ReturnInfo returnInfo = new ReturnInfo();
 
     protected ArenaRaid() {
 
@@ -44,10 +46,6 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
         return this.playerId;
     }
 
-    public void finish() {
-        this.isComplete = true;
-    }
-
     public boolean isComplete() {
         return this.isComplete;
     }
@@ -57,9 +55,13 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
     }
 
     public void tick(ServerWorld world) {
-        if (this.isComplete()) {
-            //TODO: stuffs
-        }
+        if(this.isComplete())return;
+        //TODO: stuffs
+    }
+
+    public void finish(ServerWorld world, ServerPlayerEntity player) {
+        if(player != null)this.returnInfo.apply(world, player);
+        this.isComplete = true;
     }
 
     public boolean runIfPresent(ServerWorld world, Consumer<ServerPlayerEntity> action) {
@@ -85,6 +87,8 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
             nbt.put("Start", startNBT);
         }
 
+        nbt.put("Scoreboard", this.scoreboard.serializeNBT());
+        nbt.put("ReturnInfo", this.returnInfo.serializeNBT());
         return nbt;
     }
 
@@ -94,9 +98,17 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
         this.box = new MutableBoundingBox(nbt.getIntArray("Box"));
         this.isComplete = nbt.getBoolean("Completed");
 
-        if (nbt.contains("Start", Constants.NBT.TAG_COMPOUND)) {
+        if(nbt.contains("Start", Constants.NBT.TAG_COMPOUND)) {
             CompoundNBT startNBT = nbt.getCompound("Start");
             this.start = new BlockPos(startNBT.getInt("x"), startNBT.getInt("y"), startNBT.getInt("z"));
+        }
+
+        if(nbt.contains("Scoreboard", Constants.NBT.TAG_COMPOUND)) {
+            this.scoreboard.deserializeNBT(nbt.getCompound("Scoreboard"));
+        }
+
+        if(nbt.contains("ReturnInfo", Constants.NBT.TAG_COMPOUND)) {
+            this.returnInfo.deserializeNBT(nbt.getCompound("ReturnInfo"));
         }
     }
 
@@ -119,6 +131,8 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
     }
 
     public void start(ServerWorld world, ServerPlayerEntity player, ChunkPos chunkPos) {
+        this.returnInfo = new ReturnInfo(player);
+
         loop:
         for (int x = -48; x < 48; x++) {
             for (int z = -48; z < 48; z++) {
