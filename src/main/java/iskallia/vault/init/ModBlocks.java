@@ -64,6 +64,7 @@ public class ModBlocks {
     public static final VaultCrateBlock VAULT_CRATE = new VaultCrateBlock();
     public static final VaultCrateBlock VAULT_CRATE_ARENA = new VaultCrateBlock();
     public static final ObeliskBlock OBELISK = new ObeliskBlock();
+    public static final MVPCrownBlock MVP_CROWN = new MVPCrownBlock();
 
     public static final TileEntityType<VaultAltarTileEntity> VAULT_ALTAR_TILE_ENTITY = TileEntityType.Builder.create(VaultAltarTileEntity::new, VAULT_ALTAR).build(null);
     public static final TileEntityType<VaultRuneTileEntity> VAULT_RUNE_TILE_ENTITY = TileEntityType.Builder.create(VaultRuneTileEntity::new, VAULT_RUNE_BLOCK).build(null);
@@ -114,6 +115,7 @@ public class ModBlocks {
         registerBlock(event, VAULT_CRATE, Vault.id("vault_crate"));
         registerBlock(event, VAULT_CRATE_ARENA, Vault.id("vault_crate_arena"));
         registerBlock(event, OBELISK, Vault.id("obelisk"));
+        registerBlock(event, MVP_CROWN, Vault.id("mvp_crown"));
     }
 
     public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
@@ -171,7 +173,10 @@ public class ModBlocks {
         registerBlockItem(event, VAULT_CRATE, 1);
         registerBlockItem(event, VAULT_CRATE_ARENA, 1);
         registerBlockItem(event, OBELISK, 1);
+        registerBlockItem(event, MVP_CROWN, 1);
     }
+
+    /* --------------------------------------------- */
 
     private static void registerBlock(RegistryEvent.Register<Block> event, Block block, ResourceLocation id) {
         block.setRegistryName(id);

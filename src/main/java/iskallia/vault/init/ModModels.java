@@ -16,6 +16,7 @@ public class ModModels {
         RenderTypeLookup.setRenderLayer(ModBlocks.GORGINITE_DOOR, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.SPARKLETINE_DOOR, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.WUTODIE_DOOR, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.VAULT_ALTAR, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_1, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_2, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_3, RenderType.getCutout());
@@ -32,6 +33,7 @@ public class ModModels {
         RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_14, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_15, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_16, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.MVP_CROWN, RenderType.getCutout());
     }
 
 }
