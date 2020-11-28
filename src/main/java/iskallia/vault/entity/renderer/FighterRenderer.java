@@ -3,6 +3,7 @@ package iskallia.vault.entity.renderer;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
+import iskallia.vault.client.gui.overlay.ArenaScoreboardOverlay;
 import iskallia.vault.entity.FighterEntity;
 import iskallia.vault.entity.model.FighterModel;
 import net.minecraft.client.Minecraft;
@@ -60,7 +61,9 @@ public class FighterRenderer extends LivingRenderer<FighterEntity, FighterModel>
     @Override
     public void render(FighterEntity entity, float entityYaw, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLightIn) {
         this.setModelVisibilities(entity);
-        renderCrown(entity, matrixStack, buffer);
+        String nickname = entity.getDisplayName().getString();
+        if (nickname.equals(ArenaScoreboardOverlay.scoreboard.getMVP()))
+            renderCrown(entity, matrixStack, buffer);
         super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLightIn);
     }
 

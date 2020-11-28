@@ -2,12 +2,17 @@ package iskallia.vault.world.raid;
 
 import com.google.common.collect.ImmutableMap;
 import iskallia.vault.entity.ArenaFighterEntity;
+import iskallia.vault.init.ModNetwork;
+import iskallia.vault.network.message.ScoreboardDamageMessage;
+import iskallia.vault.util.NetcodeUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.FloatNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.network.NetworkDirection;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +33,12 @@ public class ArenaScoreboard implements INBTSerializable<CompoundNBT> {
 	public void onDamage(ArenaFighterEntity fighter, float amount) {
 		String name = fighter.getDisplayName().getString();
 		this.damageMap.put(name, this.damageMap.getOrDefault(name, 0.0F) + amount);
+
+		NetcodeUtils.runIfPresent(fighter.world.getServer(), this.raid.getPlayerId(), player -> {
+			ModNetwork.CHANNEL.sendTo(new ScoreboardDamageMessage(name, amount),
+					player.connection.netManager,
+					NetworkDirection.PLAY_TO_CLIENT);
+		});
 	}
 
 	@Override

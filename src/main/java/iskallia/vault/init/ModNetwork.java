@@ -8,7 +8,7 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class ModNetwork {
 
-    private static final String NETWORK_VERSION = "0.10.0";
+    private static final String NETWORK_VERSION = "0.11.0";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(Vault.MOD_ID, "network"),
@@ -77,6 +77,11 @@ public class ModNetwork {
                 FighterSizeMessage::encode,
                 FighterSizeMessage::decode,
                 FighterSizeMessage::handle);
+
+        CHANNEL.registerMessage(12, ScoreboardDamageMessage.class,
+                ScoreboardDamageMessage::encode,
+                ScoreboardDamageMessage::decode,
+                ScoreboardDamageMessage::handle);
     }
 
 }

@@ -16,6 +16,7 @@ public class SetupEvents {
     public static void setupClient(final FMLClientSetupEvent event) {
         Vault.LOGGER.info("setupClient()");
         ModScreens.register(event);
+        ModScreens.registerOverlays();
         ModKeybinds.register(event);
         ModEntities.Renderers.register(event);
         MinecraftForge.EVENT_BUS.register(InputEvents.class);
