@@ -21,8 +21,8 @@ public class ArenaScoreboardOverlay {
     @SubscribeEvent
     public static void
     onPostRender(RenderGameOverlayEvent.Post event) {
-        if (event.getType() != RenderGameOverlayEvent.ElementType.HOTBAR)
-            return; // Render only on HOTBAR
+        if (event.getType() != RenderGameOverlayEvent.ElementType.POTION_ICONS)
+            return; // Render only on POTION_ICONS
 
         Minecraft minecraft = Minecraft.getInstance();
 
@@ -34,12 +34,13 @@ public class ArenaScoreboardOverlay {
 
         MatrixStack matrixStack = event.getMatrixStack();
 
+        int right = minecraft.getMainWindow().getScaledWidth();
         int midY = minecraft.getMainWindow().getScaledHeight() / 2;
         int scoreboardWidth = 81;
         int scoreboardHeight = 99;
 
         matrixStack.push();
-        matrixStack.translate(1, midY - scoreboardHeight / 2f, 0);
+        matrixStack.translate(right - 1 - scoreboardWidth, midY - scoreboardHeight / 2f, 0);
 
         minecraft.getTextureManager().bindTexture(HUD_RESOURCE);
         minecraft.ingameGUI.blit(matrixStack,

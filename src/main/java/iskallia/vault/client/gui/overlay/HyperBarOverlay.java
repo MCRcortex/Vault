@@ -34,9 +34,13 @@ public class HyperBarOverlay {
         if (event.getType() != RenderGameOverlayEvent.ElementType.HOTBAR)
             return; // Render only on HOTBAR
 
-        MatrixStack matrixStack = event.getMatrixStack();
-
         Minecraft minecraft = Minecraft.getInstance();
+
+        if (minecraft.world == null || minecraft.world.getDimensionKey() == Vault.ARENA_KEY) {
+            return;
+        }
+
+        MatrixStack matrixStack = event.getMatrixStack();
 
         int right = minecraft.getMainWindow().getScaledWidth();
         int bottom = minecraft.getMainWindow().getScaledHeight();
