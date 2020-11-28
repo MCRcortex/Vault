@@ -133,9 +133,9 @@ public class ArenaRaidData extends WorldSavedData {
 
     @SubscribeEvent
     public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        if(event.getEntity().world.isRemote)return;
-        ArenaRaidData data = ArenaRaidData.get((ServerWorld) event.getEntity().world);
-        data.remove((ServerWorld)event.getPlayer().world, event.getPlayer().getUniqueID());
+        //if(event.getEntity().world.isRemote)return;
+        //ArenaRaidData data = ArenaRaidData.get((ServerWorld) event.getEntity().world);
+        //data.remove((ServerWorld)event.getPlayer().world, event.getPlayer().getUniqueID());
     }
 
     @Override

@@ -15,6 +15,7 @@ import net.minecraft.util.text.Color;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
+import net.minecraft.world.GameType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -59,22 +60,26 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
     public void tick(ServerWorld world) {
         if(this.isComplete())return;
 
-        boolean bossLeft = false;
+        if(this.spawner.hasStarted()) {
+            boolean bossLeft = false;
 
-        for(UUID uuid : this.spawner.bosses) {
-            Entity entity = world.getEntityByUuid(uuid);
+            for(UUID uuid : this.spawner.bosses) {
+                Entity entity = world.getEntityByUuid(uuid);
 
-            if(entity instanceof ArenaBossEntity) {
-                bossLeft = true;
-                break;
+                if(entity instanceof ArenaBossEntity) {
+                    bossLeft = true;
+                    break;
+                }
+            }
+
+            if(!bossLeft) {
+                this.isComplete = true;
             }
         }
-
-        if(!bossLeft)this.isComplete = true;
     }
 
     public void finish(ServerWorld world, ServerPlayerEntity player) {
-        if(player != null)this.returnInfo.apply(world, player);
+        if(player != null)this.returnInfo.apply(world.getServer(), player);
     }
 
     public boolean runIfPresent(ServerWorld world, Consumer<ServerPlayerEntity> action) {
@@ -163,6 +168,7 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
         player.func_242279_ag();
 
         this.spawner.start(world);
+        player.setGameType(GameType.SPECTATOR);
 
         this.runIfPresent(world, playerEntity -> {
             StringTextComponent title = new StringTextComponent("The Arena");

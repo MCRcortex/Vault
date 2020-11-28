@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+//TODO: NBT
 public class ArenaSpawner {
 
 	private final ArenaRaid raid;
@@ -17,9 +18,15 @@ public class ArenaSpawner {
 	public final List<UUID> bosses = new ArrayList<>();
 	private final int bossCount;
 
+	private boolean started;
+
 	public ArenaSpawner(ArenaRaid raid, int bossCount) {
 		this.raid = raid;
 		this.bossCount = bossCount;
+	}
+
+	public boolean hasStarted() {
+		return this.started;
 	}
 
 	public void start(ServerWorld world) {
@@ -46,9 +53,10 @@ public class ArenaSpawner {
 			FighterEntity fighter = ModEntities.ARENA_FIGHTER.create(world).changeSize(1.2F);
 			fighter.setLocationAndAngles(pos.getX() + 0.5F, pos.getY() + 0.2F, pos.getZ() + 0.5F, 0.0F, 0.0F);
 			this.fighters.add(fighter.getUniqueID());
-			world.getChunk(pos); //Force chunk loading.
 			world.summonEntity(fighter);
 		}
+
+		this.started = true;
 	}
 
 	public int getFighterCount() {
@@ -56,6 +64,7 @@ public class ArenaSpawner {
 	}
 
 	public BlockPos toTop(ServerWorld world, BlockPos pos) {
+		world.getChunk(pos); //Force chunk loading.
 		return world.getHeight(Heightmap.Type.MOTION_BLOCKING, pos);
 	}
 

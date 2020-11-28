@@ -27,6 +27,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.util.text.*;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -83,9 +84,14 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 
     public void tick(ServerWorld world) {
         if(this.finished)return;
-        this.ticksLeft--;
 
-        this.syncTicksLeft(world.getServer());
+        this.runIfPresent(world.getServer(), player -> {
+            if(player.world.getDimensionKey() != Vault.ARENA_KEY) {
+                this.ticksLeft--;
+            }
+
+            this.syncTicksLeft(world.getServer());
+        });
 
         if (this.ticksLeft <= 0) {
             this.runIfPresent(world.getServer(), playerEntity -> {
@@ -96,11 +102,18 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
                 playerEntity.updateHeldItem();
                 playerEntity.onKillCommand();
                 this.finish(world, this.playerId);
+                this.finished = true;
             });
         } else {
             this.runIfPresent(world.getServer(), player -> {
-                if(this.ticksLeft + 20 < ModConfigs.VAULT_GENERAL.getTickCounter() && player.world.getDimensionKey() != Vault.VAULT_KEY) {
-                    this.finished = true;
+                if(this.ticksLeft + 20 < ModConfigs.VAULT_GENERAL.getTickCounter()
+                        && player.world.getDimensionKey() != Vault.VAULT_KEY
+                        && player.world.getDimensionKey() != Vault.ARENA_KEY) {
+                    if(player.world.getDimensionKey() == World.OVERWORLD) {
+                        this.finished = true;
+                    } else {
+                        this.ticksLeft = 1;
+                    }
                 } else {
                     this.spawner.tick(player);
                 }
@@ -122,9 +135,9 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         return scoreboard.getObjective(name);
     }
 
-    public boolean runIfPresent(MinecraftServer world, Consumer<ServerPlayerEntity> action) {
-        if (world == null) return false;
-        ServerPlayerEntity player = world.getPlayerList().getPlayerByUUID(this.playerId);
+    public boolean runIfPresent(MinecraftServer server, Consumer<ServerPlayerEntity> action) {
+        if (server == null) return false;
+        ServerPlayerEntity player = server.getPlayerList().getPlayerByUUID(this.playerId);
         if (player == null) return false;
         action.accept(player);
         return true;

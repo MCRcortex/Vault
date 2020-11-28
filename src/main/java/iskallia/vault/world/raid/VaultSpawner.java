@@ -1,5 +1,6 @@
 package iskallia.vault.world.raid;
 
+import iskallia.vault.Vault;
 import iskallia.vault.init.ModConfigs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -26,6 +27,8 @@ public class VaultSpawner {
 	}
 
 	public void tick(ServerPlayerEntity player) {
+		if(player.world.getDimensionKey() != Vault.VAULT_KEY)return;
+
 		this.mobs.removeIf(entity -> {
 			if(entity.getDistanceSq(player) > 24 * 24) {
 				entity.remove();
