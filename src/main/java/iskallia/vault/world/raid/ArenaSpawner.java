@@ -13,8 +13,8 @@ import java.util.UUID;
 public class ArenaSpawner {
 
 	private final ArenaRaid raid;
-	private final List<UUID> fighters = new ArrayList<>();
-	private final List<UUID> bosses = new ArrayList<>();
+	public final List<UUID> fighters = new ArrayList<>();
+	public final List<UUID> bosses = new ArrayList<>();
 	private final int bossCount;
 
 	public ArenaSpawner(ArenaRaid raid, int bossCount) {

@@ -1,8 +1,10 @@
 package iskallia.vault.world.raid;
 
 import iskallia.vault.Vault;
+import iskallia.vault.entity.ArenaBossEntity;
 import iskallia.vault.world.gen.structure.ArenaStructure;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.play.server.STitlePacket;
@@ -56,12 +58,23 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
 
     public void tick(ServerWorld world) {
         if(this.isComplete())return;
-        //TODO: stuffs
+
+        boolean bossLeft = false;
+
+        for(UUID uuid : this.spawner.bosses) {
+            Entity entity = world.getEntityByUuid(uuid);
+
+            if(entity instanceof ArenaBossEntity) {
+                bossLeft = true;
+                break;
+            }
+        }
+
+        if(!bossLeft)this.isComplete = true;
     }
 
     public void finish(ServerWorld world, ServerPlayerEntity player) {
         if(player != null)this.returnInfo.apply(world, player);
-        this.isComplete = true;
     }
 
     public boolean runIfPresent(ServerWorld world, Consumer<ServerPlayerEntity> action) {
