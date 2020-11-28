@@ -8,6 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -70,8 +71,15 @@ public class ItemVaultCrystal extends Item {
 
         Item item = context.getPlayer().getHeldItemMainhand().getItem();
         if (item instanceof ItemVaultCrystal) {
+            String playerBossName = "";
+            if (context.getItem().hasTag()) {
+                CompoundNBT tag = context.getItem().getTag();
+                if (tag.keySet().contains("playerBossName")) {
+                    playerBossName = tag.getString("playerBossName");
+                }
+            }
             ItemVaultCrystal crystal = (ItemVaultCrystal) item;
-            if (tryCreatePortal(crystal, context.getWorld(), context.getPos(), context.getFace())) {
+            if (tryCreatePortal(crystal, context.getWorld(), context.getPos(), context.getFace(), playerBossName)) {
                 context.getItem().shrink(1);
                 return ActionResultType.SUCCESS;
             }
@@ -80,10 +88,10 @@ public class ItemVaultCrystal extends Item {
         return super.onItemUse(context);
     }
 
-    private boolean tryCreatePortal(ItemVaultCrystal crystal, World world, BlockPos pos, Direction facing) {
+    private boolean tryCreatePortal(ItemVaultCrystal crystal, World world, BlockPos pos, Direction facing, String playerBossName) {
         Optional<VaultPortalSize> optional = VaultPortalSize.getPortalSize(world, pos.offset(facing), Direction.Axis.X);
         if (optional.isPresent()) {
-            optional.get().placePortalBlocks(crystal);
+            optional.get().placePortalBlocks(crystal, playerBossName);
             return true;
         }
         return false;

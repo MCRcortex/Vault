@@ -1,10 +1,12 @@
 package iskallia.vault.block;
 
+import iskallia.vault.block.entity.VaultPortalTileEntity;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.item.ItemVaultCrystal;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
@@ -153,10 +155,17 @@ public class VaultPortalSize {
         return this.bottomLeft != null && this.width >= 2 && this.width <= 21 && this.height >= 3 && this.height <= 21;
     }
 
-    public void placePortalBlocks(ItemVaultCrystal item) {
+    public void placePortalBlocks(ItemVaultCrystal item, String playerBossName) {
         BlockState blockstate = ModBlocks.VAULT_PORTAL.getDefaultState().with(VaultPortalBlock.AXIS, this.axis).with(VaultPortalBlock.RARITY, item.getRarity().ordinal());
         BlockPos.getAllInBoxMutable(this.bottomLeft, this.bottomLeft.offset(Direction.UP, this.height - 1).offset(this.rightDir, this.width - 1)).forEach((pos) -> {
+
             this.world.setBlockState(pos, blockstate, 3);
+            TileEntity te = this.world.getTileEntity(pos);
+            if (te == null || !(te instanceof VaultPortalTileEntity))
+                return;
+            VaultPortalTileEntity portal = (VaultPortalTileEntity) this.world.getTileEntity(pos);
+            portal.setPlayerBossName(playerBossName);
+
         });
     }
 

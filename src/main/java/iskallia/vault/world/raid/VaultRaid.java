@@ -7,13 +7,11 @@ import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.VaultRaidTickMessage;
 import iskallia.vault.util.NetcodeUtils;
-import iskallia.vault.world.data.VaultRaidData;
 import iskallia.vault.world.gen.PortalPlacer;
 import iskallia.vault.world.gen.structure.VaultStructure;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.command.impl.TitleCommand;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.play.server.STitlePacket;
@@ -22,7 +20,6 @@ import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Direction;
-import net.minecraft.util.concurrent.TickDelayedTask;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
@@ -55,6 +52,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
     public int level;
     private int rarity;
     public int ticksLeft = ModConfigs.VAULT_GENERAL.getTickCounter();
+    public String playerBossName;
 
     public BlockPos start;
     public Direction facing;
@@ -66,11 +64,12 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 
     }
 
-    public VaultRaid(UUID playerId, MutableBoundingBox box, int level, int rarity) {
+    public VaultRaid(UUID playerId, MutableBoundingBox box, int level, int rarity, String playerBossName) {
         this.playerId = playerId;
         this.box = box;
         this.level = level;
         this.rarity = rarity;
+        this.playerBossName = playerBossName;
     }
 
     public UUID getPlayerId() {
@@ -148,6 +147,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         nbt.putInt("Level", this.level);
         nbt.putInt("Rarity", this.rarity);
         nbt.putInt("TicksLeft", this.ticksLeft);
+        nbt.putString("PlayerBossName", playerBossName);
 
         if (this.start != null) {
             CompoundNBT startNBT = new CompoundNBT();
@@ -167,6 +167,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         this.level = nbt.getInt("Level");
         this.rarity = nbt.getInt("Rarity");
         this.ticksLeft = nbt.getInt("TicksLeft");
+        this.playerBossName = nbt.getString("PlayerBossName");
 
         if (nbt.contains("Start", Constants.NBT.TAG_COMPOUND)) {
             CompoundNBT startNBT = nbt.getCompound("Start");

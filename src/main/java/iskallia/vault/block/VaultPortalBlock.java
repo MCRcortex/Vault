@@ -1,6 +1,7 @@
 package iskallia.vault.block;
 
 import iskallia.vault.Vault;
+import iskallia.vault.block.entity.VaultPortalTileEntity;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.util.VaultRarity;
 import iskallia.vault.world.data.VaultRaidData;
@@ -44,16 +45,6 @@ public class VaultPortalBlock extends NetherPortalBlock {
         this.setDefaultState(this.stateContainer.getBaseState().with(AXIS, Direction.Axis.X).with(RARITY, VaultRarity.OMEGA.ordinal()));
     }
 
-    @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
-    }
-
-    @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return ModBlocks.VAULT_PORTAL_TILE_ENTITY.create();
-    }
-
     protected static BlockPos getSpawnPoint(ServerWorld p_241092_0_, int p_241092_1_, int p_241092_2_, boolean p_241092_3_) {
         BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable(p_241092_1_, 0, p_241092_2_);
         Biome biome = p_241092_0_.getBiome(blockpos$mutable);
@@ -87,6 +78,16 @@ public class VaultPortalBlock extends NetherPortalBlock {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean hasTileEntity(BlockState state) {
+        return true;
+    }
+
+    @Override
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+        return ModBlocks.VAULT_PORTAL_TILE_ENTITY.create();
     }
 
     @Override
@@ -158,9 +159,13 @@ public class VaultPortalBlock extends NetherPortalBlock {
                     } else {
                         this.moveToSpawn(destination, player);
                     }
-                } else if(worldKey == Vault.VAULT_KEY) {
+                } else if (worldKey == Vault.VAULT_KEY) {
+                    VaultPortalTileEntity portal = getPortalTileEntity(world, pos);
+                    String playerBossName = "";
+                    if (portal != null)
+                        playerBossName = portal.getPlayerBossName();
                     world.setBlockState(pos, Blocks.AIR.getDefaultState());
-                    VaultRaidData.get(destination).startNew(player, state.get(RARITY));
+                    VaultRaidData.get(destination).startNew(player, state.get(RARITY), playerBossName);
                 }
             });
 
@@ -238,6 +243,15 @@ public class VaultPortalBlock extends NetherPortalBlock {
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         super.fillStateContainer(builder);
         builder.add(RARITY);
+    }
+
+
+    private VaultPortalTileEntity getPortalTileEntity(World worldIn, BlockPos pos) {
+        TileEntity te = worldIn.getTileEntity(pos);
+        if (te == null || !(te instanceof VaultPortalTileEntity))
+            return null;
+        VaultPortalTileEntity portal = (VaultPortalTileEntity) worldIn.getTileEntity(pos);
+        return portal;
     }
 
 }
