@@ -31,7 +31,9 @@ public class PlayerStatueRenderer extends TileEntityRenderer<PlayerStatueTileEnt
 
     @Override
     public void render(PlayerStatueTileEntity tileEntity, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
-        if (tileEntity.getSkin().getLatestNickname().equals(""))
+        String latestNickname = tileEntity.getSkin().getLatestNickname();
+
+        if (latestNickname == null || latestNickname.equals(""))
             return;
 
         ResourceLocation skinLocation = tileEntity.getSkin().getLocationSkin();

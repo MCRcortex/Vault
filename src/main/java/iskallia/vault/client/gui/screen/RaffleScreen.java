@@ -280,7 +280,7 @@ public class RaffleScreen extends Screen {
             matrixStack.pop();
 
             if (entryBounds.y1 - yOffset < 0) {
-                getMinecraft().getSoundHandler().play(SimpleSound.master(ModSounds.RAFFLE_SFX, 1.0F, 1F));
+                getMinecraft().getSoundHandler().play(SimpleSound.master(ModSounds.RAFFLE_SFX, 1.2F, 1F));
                 entryBounds.y0 += this.raffleWidgets.size() * (containerHeight + 1);
                 entryBounds.y1 += this.raffleWidgets.size() * (containerHeight + 1);
             }

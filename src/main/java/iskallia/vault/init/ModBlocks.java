@@ -3,6 +3,7 @@ package iskallia.vault.init;
 import iskallia.vault.Vault;
 import iskallia.vault.block.*;
 import iskallia.vault.block.entity.*;
+import iskallia.vault.block.item.PlayerStatueBlockItem;
 import iskallia.vault.block.render.PlayerStatueRenderer;
 import iskallia.vault.block.render.VaultAltarRenderer;
 import iskallia.vault.block.render.VaultRuneRenderer;
@@ -76,6 +77,8 @@ public class ModBlocks {
             TileEntityType.Builder.create(VaultPortalTileEntity::new, VAULT_PORTAL).build(null);
     public static final TileEntityType<PlayerStatueTileEntity> PLAYER_STATUE_TILE_ENTITY =
             TileEntityType.Builder.create(PlayerStatueTileEntity::new, PLAYER_STATUE).build(null);
+
+    public static final PlayerStatueBlockItem PLAYER_STATUE_BLOCK_ITEM = new PlayerStatueBlockItem();
 
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         registerBlock(event, VAULT_PORTAL, Vault.id("vault_portal"));
@@ -185,7 +188,7 @@ public class ModBlocks {
         registerBlockItem(event, VAULT_CRATE_ARENA, 1);
         registerBlockItem(event, OBELISK, 1);
         registerBlockItem(event, MVP_CROWN, 1);
-        registerBlockItem(event, PLAYER_STATUE, 1);
+        registerBlockItem(event, PLAYER_STATUE, PLAYER_STATUE_BLOCK_ITEM);
     }
 
     /* --------------------------------------------- */
@@ -208,6 +211,11 @@ public class ModBlocks {
 
     private static void registerBlockItem(RegistryEvent.Register<Item> event, Block block, int maxStackSize) {
         BlockItem blockItem = new BlockItem(block, new Item.Properties().group(ModItems.VAULT_MOD_GROUP).maxStackSize(maxStackSize));
+        blockItem.setRegistryName(block.getRegistryName());
+        event.getRegistry().register(blockItem);
+    }
+
+    private static void registerBlockItem(RegistryEvent.Register<Item> event, Block block, BlockItem blockItem) {
         blockItem.setRegistryName(block.getRegistryName());
         event.getRegistry().register(blockItem);
     }
