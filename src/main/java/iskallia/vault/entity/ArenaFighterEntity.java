@@ -9,16 +9,16 @@ import net.minecraft.world.World;
 
 public class ArenaFighterEntity extends FighterEntity {
 
-	public ArenaFighterEntity(EntityType<? extends ZombieEntity> type, World world) {
-		super(type, world);
-		this.setCustomName(new StringTextComponent("Subscriber"));
-	}
+    public ArenaFighterEntity(EntityType<? extends ZombieEntity> type, World world) {
+        super(type, world);
+        this.setCustomName(new StringTextComponent("Subscriber" + (int) (Math.random() * 100)));
+    }
 
-	@Override
-	protected void applyEntityAI() {
-		super.applyEntityAI();
-		this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, ArenaBossEntity.class, false));
-		this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(100.0D);
-	}
+    @Override
+    protected void applyEntityAI() {
+        super.applyEntityAI();
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, ArenaBossEntity.class, false));
+        this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(100.0D);
+    }
 
 }

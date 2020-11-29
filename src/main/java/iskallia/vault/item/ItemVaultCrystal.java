@@ -1,13 +1,13 @@
 package iskallia.vault.item;
 
 import iskallia.vault.block.VaultPortalSize;
-import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModItems;
 import iskallia.vault.util.VaultRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -16,10 +16,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 public class ItemVaultCrystal extends Item {
 
@@ -35,22 +32,7 @@ public class ItemVaultCrystal extends Item {
     }
 
     public static ItemStack getRandomCrystal() {
-        List<Integer> weights = new ArrayList<>();
-        for (int normal = 0; normal < ModConfigs.VAULT_CRYSTAL.NORMAL_WEIGHT; normal++) {
-            weights.add(0);
-        }
-        for (int rare = 0; rare < ModConfigs.VAULT_CRYSTAL.RARE_WEIGHT; rare++) {
-            weights.add(1);
-        }
-        for (int epic = 0; epic < ModConfigs.VAULT_CRYSTAL.EPIC_WEIGHT; epic++) {
-            weights.add(2);
-        }
-        for (int omega = 0; omega < ModConfigs.VAULT_CRYSTAL.OMEGA_WEIGHT; omega++) {
-            weights.add(3);
-        }
-        Random rand = new Random();
-        int randomIndex = weights.get(rand.nextInt(weights.size()));
-        VaultRarity vaultRarity = VaultRarity.values()[randomIndex];
+        VaultRarity vaultRarity = VaultRarity.getWeightedRandom();
         switch (vaultRarity) {
             case NORMAL:
                 return new ItemStack(ModItems.VAULT_CRYSTAL_NORMAL);
@@ -64,14 +46,31 @@ public class ItemVaultCrystal extends Item {
         return new ItemStack(ModItems.VAULT_CRYSTAL_NORMAL);
     }
 
+    public static ItemStack getCrystalWithBoss(String playerBossName) {
+        ItemStack stack = new ItemStack(ModItems.VAULT_CRYSTAL_NORMAL);
+        CompoundNBT nbt = stack.getOrCreateTag();
+        nbt.putString("playerBossName", playerBossName);
+        stack.setTag(nbt);
+        return stack;
+    }
+
     @Override
     public ActionResultType onItemUse(ItemUseContext context) {
         if (context.getWorld().isRemote) return super.onItemUse(context);
 
-        Item item = context.getPlayer().getHeldItemMainhand().getItem();
+        ItemStack stack = context.getPlayer().getHeldItemMainhand();
+        Item item = stack.getItem();
+
         if (item instanceof ItemVaultCrystal) {
             ItemVaultCrystal crystal = (ItemVaultCrystal) item;
-            if (tryCreatePortal(crystal, context.getWorld(), context.getPos(), context.getFace())) {
+
+            String playerBossName = "";
+            CompoundNBT tag = stack.getOrCreateTag();
+            if (tag.keySet().contains("playerBossName")) {
+                playerBossName = tag.getString("playerBossName");
+            }
+
+            if (tryCreatePortal(crystal, context.getWorld(), context.getPos(), context.getFace(), playerBossName)) {
                 context.getItem().shrink(1);
                 return ActionResultType.SUCCESS;
             }
@@ -80,10 +79,10 @@ public class ItemVaultCrystal extends Item {
         return super.onItemUse(context);
     }
 
-    private boolean tryCreatePortal(ItemVaultCrystal crystal, World world, BlockPos pos, Direction facing) {
+    private boolean tryCreatePortal(ItemVaultCrystal crystal, World world, BlockPos pos, Direction facing, String playerBossName) {
         Optional<VaultPortalSize> optional = VaultPortalSize.getPortalSize(world, pos.offset(facing), Direction.Axis.X);
         if (optional.isPresent()) {
-            optional.get().placePortalBlocks(crystal);
+            optional.get().placePortalBlocks(crystal, playerBossName);
             return true;
         }
         return false;
@@ -93,6 +92,12 @@ public class ItemVaultCrystal extends Item {
     public ITextComponent getDisplayName(ItemStack stack) {
         if (stack.getItem() instanceof ItemVaultCrystal) {
             ItemVaultCrystal item = (ItemVaultCrystal) stack.getItem();
+
+            CompoundNBT tag = stack.getOrCreateTag();
+            if (tag.keySet().contains("playerBossName")) {
+                return new StringTextComponent(item.getRarity().color + "Vault Crystal (" + tag.getString("playerBossName") + ")");
+            }
+
             switch (item.getRarity()) {
                 case NORMAL:
                     return new StringTextComponent(item.getRarity().color + "Vault Crystal (normal)");

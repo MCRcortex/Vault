@@ -2,9 +2,8 @@ package iskallia.vault.init;
 
 import iskallia.vault.Vault;
 import iskallia.vault.block.*;
-import iskallia.vault.block.entity.VaultAltarTileEntity;
-import iskallia.vault.block.entity.VaultCrateTileEntity;
-import iskallia.vault.block.entity.VaultRuneTileEntity;
+import iskallia.vault.block.entity.*;
+import iskallia.vault.block.render.PlayerStatueRenderer;
 import iskallia.vault.block.render.VaultAltarRenderer;
 import iskallia.vault.block.render.VaultRuneRenderer;
 import net.minecraft.block.Block;
@@ -64,11 +63,19 @@ public class ModBlocks {
     public static final VaultCrateBlock VAULT_CRATE = new VaultCrateBlock();
     public static final VaultCrateBlock VAULT_CRATE_ARENA = new VaultCrateBlock();
     public static final ObeliskBlock OBELISK = new ObeliskBlock();
+    public static final MVPCrownBlock MVP_CROWN = new MVPCrownBlock();
+    public static final PlayerStatueBlock PLAYER_STATUE = new PlayerStatueBlock();
 
-    public static final TileEntityType<VaultAltarTileEntity> VAULT_ALTAR_TILE_ENTITY = TileEntityType.Builder.create(VaultAltarTileEntity::new, VAULT_ALTAR).build(null);
-    public static final TileEntityType<VaultRuneTileEntity> VAULT_RUNE_TILE_ENTITY = TileEntityType.Builder.create(VaultRuneTileEntity::new, VAULT_RUNE_BLOCK).build(null);
-    public static final TileEntityType<VaultCrateTileEntity> VAULT_CRATE_TILE_ENTITY = TileEntityType.Builder.
-            create(VaultCrateTileEntity::new, VAULT_CRATE, VAULT_CRATE_ARENA).build(null);
+    public static final TileEntityType<VaultAltarTileEntity> VAULT_ALTAR_TILE_ENTITY =
+            TileEntityType.Builder.create(VaultAltarTileEntity::new, VAULT_ALTAR).build(null);
+    public static final TileEntityType<VaultRuneTileEntity> VAULT_RUNE_TILE_ENTITY =
+            TileEntityType.Builder.create(VaultRuneTileEntity::new, VAULT_RUNE_BLOCK).build(null);
+    public static final TileEntityType<VaultCrateTileEntity> VAULT_CRATE_TILE_ENTITY =
+            TileEntityType.Builder.create(VaultCrateTileEntity::new, VAULT_CRATE, VAULT_CRATE_ARENA).build(null);
+    public static final TileEntityType<VaultPortalTileEntity> VAULT_PORTAL_TILE_ENTITY =
+            TileEntityType.Builder.create(VaultPortalTileEntity::new, VAULT_PORTAL).build(null);
+    public static final TileEntityType<PlayerStatueTileEntity> PLAYER_STATUE_TILE_ENTITY =
+            TileEntityType.Builder.create(PlayerStatueTileEntity::new, PLAYER_STATUE).build(null);
 
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         registerBlock(event, VAULT_PORTAL, Vault.id("vault_portal"));
@@ -114,17 +121,23 @@ public class ModBlocks {
         registerBlock(event, VAULT_CRATE, Vault.id("vault_crate"));
         registerBlock(event, VAULT_CRATE_ARENA, Vault.id("vault_crate_arena"));
         registerBlock(event, OBELISK, Vault.id("obelisk"));
+        registerBlock(event, MVP_CROWN, Vault.id("mvp_crown"));
+        registerBlock(event, PLAYER_STATUE, Vault.id("player_statue"));
     }
 
     public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
         registerTileEntity(event, VAULT_ALTAR_TILE_ENTITY, Vault.id("vault_altar_tile_entity"));
         registerTileEntity(event, VAULT_RUNE_TILE_ENTITY, Vault.id("vault_rune_tile_entity"));
         registerTileEntity(event, VAULT_CRATE_TILE_ENTITY, Vault.id("vault_crate_tile_entity"));
+        registerTileEntity(event, VAULT_PORTAL_TILE_ENTITY, Vault.id("vault_portal_tile_entity"));
+        registerTileEntity(event, PLAYER_STATUE_TILE_ENTITY, Vault.id("player_statue_tile_entity"));
     }
 
     public static void registerTileEntityRenderers() {
         ClientRegistry.bindTileEntityRenderer(ModBlocks.VAULT_ALTAR_TILE_ENTITY, VaultAltarRenderer::new);
         ClientRegistry.bindTileEntityRenderer(ModBlocks.VAULT_RUNE_TILE_ENTITY, VaultRuneRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(ModBlocks.VAULT_RUNE_TILE_ENTITY, VaultRuneRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(ModBlocks.PLAYER_STATUE_TILE_ENTITY, PlayerStatueRenderer::new);
     }
 
     public static void registerBlockItems(RegistryEvent.Register<Item> event) {
@@ -171,7 +184,11 @@ public class ModBlocks {
         registerBlockItem(event, VAULT_CRATE, 1);
         registerBlockItem(event, VAULT_CRATE_ARENA, 1);
         registerBlockItem(event, OBELISK, 1);
+        registerBlockItem(event, MVP_CROWN, 1);
+        registerBlockItem(event, PLAYER_STATUE, 1);
     }
+
+    /* --------------------------------------------- */
 
     private static void registerBlock(RegistryEvent.Register<Block> event, Block block, ResourceLocation id) {
         block.setRegistryName(id);

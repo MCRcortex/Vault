@@ -8,7 +8,6 @@ import iskallia.vault.world.raid.VaultRaid;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
@@ -62,15 +61,15 @@ public class VaultRaidData extends WorldSavedData {
     }
 
     public VaultRaid startNew(ServerPlayerEntity player, ItemVaultCrystal crystal) {
-        return this.startNew(player, crystal.getRarity().ordinal());
+        return this.startNew(player, crystal.getRarity().ordinal(), "");
     }
 
-    public VaultRaid startNew(ServerPlayerEntity player, int rarity) {
+    public VaultRaid startNew(ServerPlayerEntity player, int rarity, String playerBossName) {
         player.sendStatusMessage(new StringTextComponent("Generating vault, please wait...").mergeStyle(TextFormatting.GREEN), true);
 
         VaultRaid raid = new VaultRaid(player.getUniqueID(), new MutableBoundingBox(
                 this.xOffset, 0, 0, this.xOffset += VaultRaid.REGION_SIZE, 256, VaultRaid.REGION_SIZE
-        ), PlayerVaultStatsData.get(player.getServerWorld()).getVaultStats(player).getVaultLevel(), rarity);
+        ), PlayerVaultStatsData.get(player.getServerWorld()).getVaultStats(player).getVaultLevel(), rarity, playerBossName);
 
         if (this.activeRaids.containsKey(player.getUniqueID())) {
             this.activeRaids.get(player.getUniqueID()).ticksLeft = 0;
