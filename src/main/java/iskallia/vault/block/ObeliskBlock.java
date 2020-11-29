@@ -1,5 +1,6 @@
 package iskallia.vault.block;
 
+import iskallia.vault.entity.ArenaBossEntity;
 import iskallia.vault.entity.EntityScaler;
 import iskallia.vault.entity.FighterEntity;
 import iskallia.vault.init.ModEntities;
@@ -70,7 +71,8 @@ public class ObeliskBlock extends Block {
         this.spawnParticles(world, pos);
 
         if (newState.get(COMPLETION) == 4) {
-            FighterEntity boss = ModEntities.FIGHTER.create(world).changeSize(2.0F);
+            ArenaBossEntity boss = ModEntities.ARENA_BOSS.create(world);
+            boss.changeSize(2.0F);
             boss.setLocationAndAngles(pos.getX() + 0.5D, pos.getY() + 0.2D, pos.getZ() + 0.5D, 0.0F, 0.0F);
             ((ServerWorld) world).summonEntity(boss);
 
