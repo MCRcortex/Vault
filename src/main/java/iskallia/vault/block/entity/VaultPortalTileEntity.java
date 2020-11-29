@@ -10,7 +10,7 @@ public class VaultPortalTileEntity extends TileEntity {
     private String playerBossName;
 
     public VaultPortalTileEntity() {
-        super(ModBlocks.VAULT_CRATE_TILE_ENTITY);
+        super(ModBlocks.VAULT_PORTAL_TILE_ENTITY);
     }
 
 
@@ -22,7 +22,8 @@ public class VaultPortalTileEntity extends TileEntity {
 
     @Override
     public CompoundNBT write(CompoundNBT compound) {
-        compound.putString("playerBossName", playerBossName);
+        if (playerBossName != null)
+            compound.putString("playerBossName", playerBossName);
         return super.write(compound);
     }
 

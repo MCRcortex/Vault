@@ -9,9 +9,9 @@ import iskallia.vault.init.ModItems;
 import iskallia.vault.world.data.PlayerVaultAltarData;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
@@ -145,17 +145,11 @@ public class VaultAltarBlock extends Block {
     }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-        if (worldIn.isRemote)
-            return;
-
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-    }
-
-    @Override
     public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         VaultAltarTileEntity altar = getAltarTileEntity(worldIn, pos);
         if (altar == null) return;
+
+        if (newState.getBlock() != Blocks.AIR) return;
 
         if (altar.containsVaultRock()) {
             ItemEntity entity = new ItemEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(ModItems.VAULT_ROCK));
