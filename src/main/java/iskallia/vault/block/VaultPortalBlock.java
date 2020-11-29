@@ -164,7 +164,6 @@ public class VaultPortalBlock extends NetherPortalBlock {
                     String playerBossName = "";
                     if (portal != null)
                         playerBossName = portal.getPlayerBossName();
-                    world.setBlockState(pos, Blocks.AIR.getDefaultState());
                     VaultRaidData.get(destination).startNew(player, state.get(RARITY), playerBossName);
                 }
             });
