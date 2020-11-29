@@ -6,6 +6,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -30,6 +31,11 @@ public class RegistryEvents {
     @SubscribeEvent
     public static void onModelRegister(ModelRegistryEvent event) {
         ModModels.setupRenderLayers();
+    }
+
+    @SubscribeEvent
+    public static void onSoundRegister(RegistryEvent.Register<SoundEvent> event) {
+        ModSounds.registerSounds(event);
     }
 
     @SubscribeEvent
