@@ -7,6 +7,7 @@ import iskallia.vault.client.gui.helper.ConfettiParticles;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.client.gui.helper.UIHelper;
 import iskallia.vault.client.gui.widget.RaffleEntry;
+import iskallia.vault.init.ModSounds;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.Screen;
@@ -279,7 +280,7 @@ public class RaffleScreen extends Screen {
             matrixStack.pop();
 
             if (entryBounds.y1 - yOffset < 0) {
-                getMinecraft().getSoundHandler().play(SimpleSound.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                getMinecraft().getSoundHandler().play(SimpleSound.master(ModSounds.RAFFLE_SFX, 1.0F, 1F));
                 entryBounds.y0 += this.raffleWidgets.size() * (containerHeight + 1);
                 entryBounds.y1 += this.raffleWidgets.size() * (containerHeight + 1);
             }

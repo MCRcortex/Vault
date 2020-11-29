@@ -1,0 +1,14 @@
+{
+  "raffle": {
+    "category": "master",
+    "sounds": [
+      "the_vault:raffle"
+    ]
+  },
+  "timer_kill": {
+    "category": "master",
+    "sounds": [
+      "the_vault:timer_kill"
+    ]
+  }
+}

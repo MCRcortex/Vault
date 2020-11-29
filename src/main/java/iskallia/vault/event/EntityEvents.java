@@ -6,6 +6,7 @@ import iskallia.vault.entity.EntityScaler;
 import iskallia.vault.entity.FighterEntity;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModEntities;
+import iskallia.vault.init.ModSounds;
 import iskallia.vault.world.data.VaultRaidData;
 import iskallia.vault.world.gen.PortalPlacer;
 import iskallia.vault.world.raid.VaultRaid;
@@ -15,8 +16,11 @@ import net.minecraft.block.ChestBlock;
 import net.minecraft.block.DoorBlock;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameterSets;
 import net.minecraft.loot.LootParameters;
@@ -24,8 +28,10 @@ import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.concurrent.TickDelayedTask;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -200,6 +206,22 @@ public class EntityEvents {
 			event.setCanceled(true);
 		} else if(event.getEntity().getEntityWorld().getDimensionKey() == Vault.ARENA_KEY) {
 			event.setCanceled(true);
+		}
+	}
+
+	@SubscribeEvent
+	public static void onPlayerDeathInVaults(LivingDeathEvent event) {
+		LivingEntity entityLiving = event.getEntityLiving();
+
+		if (entityLiving.world.isRemote) return;
+
+		if (entityLiving.world.getDimensionKey() != Vault.VAULT_KEY) return;
+
+		if (entityLiving instanceof ServerPlayerEntity) {
+			ServerPlayerEntity playerEntity = (ServerPlayerEntity) entityLiving;
+            Vector3d position = playerEntity.getPositionVec();
+            playerEntity.getServerWorld().playSound(null, position.x, position.y, position.z,
+                    ModSounds.TIMER_KILL_SFX, SoundCategory.MASTER, 1F, 0.75F);
 		}
 	}
 
