@@ -34,7 +34,7 @@ public class VendingMachineTileEntity extends TileEntity {
     public CompoundNBT write(CompoundNBT compound) {
         ListNBT list = new ListNBT();
         for (TraderCore core : cores) {
-            list.add(core.serializeNBT());
+            list.add(TraderCore.writeToNBT(core));
         }
         compound.put("coresList", list);
         return super.write(compound);
@@ -45,7 +45,7 @@ public class VendingMachineTileEntity extends TileEntity {
         ListNBT list = nbt.getList("coresList", Constants.NBT.TAG_COMPOUND);
         for (INBT tag : list) {
             CompoundNBT coreNBT = (CompoundNBT) tag;
-            TraderCore core = TraderCore.getCoreFromNBT(coreNBT);
+            TraderCore core = TraderCore.readFromNBT(coreNBT);
             cores.add(core);
         }
         super.read(state, nbt);

@@ -1,14 +1,20 @@
 package iskallia.vault.vending;
 
 import com.google.gson.annotations.Expose;
+import iskallia.vault.Vault;
+import iskallia.vault.util.nbt.INBTSerializable;
+import iskallia.vault.util.nbt.NBTSerialize;
+import iskallia.vault.util.nbt.NBTSerializer;
+import iskallia.vault.util.nbt.UnserializableClassException;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraftforge.common.util.INBTSerializable;
 
-public class TraderCore implements INBTSerializable<CompoundNBT> {
+public class TraderCore implements INBTSerializable {
 
     @Expose
+    @NBTSerialize
     private String NAME;
     @Expose
+    @NBTSerialize
     private Trade TRADE;
 
     public TraderCore(String name, Trade trade) {
@@ -16,13 +22,37 @@ public class TraderCore implements INBTSerializable<CompoundNBT> {
         this.TRADE = trade;
     }
 
-    private TraderCore() {
+    public TraderCore() {
 
     }
 
-    public static TraderCore getCoreFromNBT(CompoundNBT nbt) {
-        TraderCore core = new TraderCore();
-        core.deserializeNBT(nbt);
+    public static CompoundNBT writeToNBT(TraderCore core) {
+        CompoundNBT nbt;
+        try {
+            nbt = NBTSerializer.serialize(core);
+        } catch (UnserializableClassException | IllegalAccessException e) {
+            if (e instanceof UnserializableClassException) {
+                Vault.LOGGER.error("Failed to serialize: " + ((UnserializableClassException) e).getOffendingClass());
+            } else {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        return nbt;
+    }
+
+    public static TraderCore readFromNBT(CompoundNBT nbt) {
+        TraderCore core;
+        try {
+            core = NBTSerializer.deserialize(TraderCore.class, nbt);
+        } catch (UnserializableClassException | IllegalAccessException | InstantiationException e) {
+            if (e instanceof UnserializableClassException) {
+                Vault.LOGGER.error("Failed to deserialize: " + ((UnserializableClassException) e).getOffendingClass());
+            } else {
+                e.printStackTrace();
+            }
+            return null;
+        }
         return core;
     }
 
@@ -42,20 +72,4 @@ public class TraderCore implements INBTSerializable<CompoundNBT> {
         this.TRADE = trade;
     }
 
-    @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT nbt = new CompoundNBT();
-        if (this.NAME != null)
-            nbt.putString("name", this.NAME);
-        if (this.TRADE != null)
-            nbt.put("trade", this.TRADE.serializeNBT());
-        return nbt;
-    }
-
-    @Override
-    public void deserializeNBT(CompoundNBT nbt) {
-        this.NAME = nbt.getString("name");
-        this.TRADE = new Trade();
-        this.TRADE.deserializeNBT(nbt.getCompound("trade"));
-    }
 }

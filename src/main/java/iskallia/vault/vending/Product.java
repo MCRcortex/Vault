@@ -1,25 +1,29 @@
 package iskallia.vault.vending;
 
 import com.google.gson.annotations.Expose;
+import iskallia.vault.util.nbt.INBTSerializable;
+import iskallia.vault.util.nbt.NBTSerialize;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class Product implements INBTSerializable<CompoundNBT> {
+public class Product implements INBTSerializable {
 
     protected Item itemCache;
     protected CompoundNBT nbtCache;
 
     @Expose
-    protected String name;
+    @NBTSerialize
+    protected String id;
     @Expose
+    @NBTSerialize
     protected String nbt;
     @Expose
+    @NBTSerialize
     protected int amount;
 
     public Product() {
@@ -29,7 +33,7 @@ public class Product implements INBTSerializable<CompoundNBT> {
     public Product(Item item, int amount, CompoundNBT nbt) {
         this.itemCache = item;
         if (this.itemCache != null)
-            this.name = item.getRegistryName().toString();
+            this.id = item.getRegistryName().toString();
         this.nbtCache = nbt;
         if (this.nbtCache != null)
             this.nbt = this.nbtCache.toString();
@@ -65,14 +69,14 @@ public class Product implements INBTSerializable<CompoundNBT> {
     public Item getItem() {
         if (this.itemCache != null)
             return this.itemCache;
-        this.itemCache = ForgeRegistries.ITEMS.getValue(new ResourceLocation(this.name));
+        this.itemCache = ForgeRegistries.ITEMS.getValue(new ResourceLocation(this.id));
         if (this.itemCache == null)
-            System.out.println("Unknown item " + this.name + ".");
+            System.out.println("Unknown item " + this.id + ".");
         return this.itemCache;
     }
 
-    public String getName() {
-        return this.name;
+    public String getId() {
+        return this.id;
     }
 
     public CompoundNBT getNBT() {
@@ -83,7 +87,7 @@ public class Product implements INBTSerializable<CompoundNBT> {
                 this.nbtCache = JsonToNBT.getTagFromJson(this.nbt);
         } catch (Exception e) {
             this.nbtCache = null;
-            System.out.println("Unknown NBT for item " + this.name + ".");
+            System.out.println("Unknown NBT for item " + this.id + ".");
         }
         return this.nbtCache;
     }
@@ -109,29 +113,9 @@ public class Product implements INBTSerializable<CompoundNBT> {
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT nbt = new CompoundNBT();
-        if (this.name != null)
-            nbt.putString("name", this.name);
-        if (this.nbt != null)
-            nbt.putString("nbt", this.nbt);
-        nbt.putInt("amount", this.amount);
-        return nbt;
-    }
-
-    @Override
-    public void deserializeNBT(CompoundNBT nbt) {
-        if (nbt.contains("name"))
-            this.name = nbt.getString("name");
-        if (nbt.contains("nbt"))
-            this.nbt = nbt.getString("nbt");
-        this.amount = nbt.getInt("amount");
-    }
-
-    @Override
     public String toString() {
         return "{" +
-                " name='" + name + '\'' +
+                " id='" + id + '\'' +
                 ", nbt='" + nbt + '\'' +
                 ", amount=" + amount +
                 '}';

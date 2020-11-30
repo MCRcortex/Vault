@@ -1,16 +1,19 @@
 package iskallia.vault.vending;
 
 import com.google.gson.annotations.Expose;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraftforge.common.util.INBTSerializable;
+import iskallia.vault.util.nbt.INBTSerializable;
+import iskallia.vault.util.nbt.NBTSerialize;
 
-public class Trade implements INBTSerializable<CompoundNBT> {
+public class Trade implements INBTSerializable {
 
     @Expose
+    @NBTSerialize
     protected Product buy;
     @Expose
+    @NBTSerialize
     protected Product extra;
     @Expose
+    @NBTSerialize
     protected Product sell;
     private int hashCode;
 
@@ -59,29 +62,4 @@ public class Trade implements INBTSerializable<CompoundNBT> {
         return trade.sell.equals(this.sell) && trade.buy.equals(this.buy);
     }
 
-    @Override
-    public CompoundNBT serializeNBT() {
-
-        CompoundNBT nbt = new CompoundNBT();
-        if (this.buy != null)
-            nbt.put("buy", buy.serializeNBT());
-        if (this.extra != null)
-            nbt.put("extra", extra.serializeNBT());
-        if (this.sell != null)
-            nbt.put("sell", sell.serializeNBT());
-        return nbt;
-    }
-
-    @Override
-    public void deserializeNBT(CompoundNBT nbt) {
-        this.buy = new Product();
-        this.extra = new Product();
-        this.sell = new Product();
-        if (nbt.contains("buy")) buy.deserializeNBT(nbt.getCompound("buy"));
-        else buy = null;
-        if (nbt.contains("extra")) extra.deserializeNBT(nbt.getCompound("extra"));
-        else extra = null;
-        if (nbt.contains("sell")) sell.deserializeNBT(nbt.getCompound("sell"));
-        else sell = null;
-    }
 }

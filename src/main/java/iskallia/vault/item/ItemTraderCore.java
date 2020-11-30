@@ -31,7 +31,7 @@ public class ItemTraderCore extends Item {
 
     public static ItemStack getStack(TraderCore core) {
         CompoundNBT nbt = new CompoundNBT();
-        nbt.put("core", core.serializeNBT());
+        nbt.put("core", TraderCore.writeToNBT(core));
         ItemStack stack = new ItemStack(ModItems.TRADER_CORE, 1);
         stack.setTag(nbt);
         return stack;
@@ -41,26 +41,29 @@ public class ItemTraderCore extends Item {
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         CompoundNBT nbt = stack.getOrCreateTag();
         if (nbt.contains("core")) {
-            TraderCore core = TraderCore.getCoreFromNBT((CompoundNBT) nbt.get("core"));
+            TraderCore core = TraderCore.readFromNBT((CompoundNBT) nbt.get("core"));
+
             Trade trade = core.getTrade();
+            if (!trade.isValid()) return;
+
             Product buy = trade.getBuy();
             Product extra = trade.getExtra();
             Product sell = trade.getSell();
             tooltip.add(new StringTextComponent("Name: " + core.getName()));
             tooltip.add(new StringTextComponent("Trades: "));
-            if (buy != null) {
+            if (buy != null && buy.isValid()) {
                 StringTextComponent comp = new StringTextComponent(" - Buy: ");
                 comp.append(new TranslationTextComponent(buy.getItem().getTranslationKey()))
                         .append(new StringTextComponent(" x" + buy.getAmount()));
                 tooltip.add(comp);
             }
-            if (extra != null) {
+            if (extra != null && extra.isValid()) {
                 StringTextComponent comp = new StringTextComponent(" - Extra: ");
                 comp.append(new TranslationTextComponent(extra.getItem().getTranslationKey()))
                         .append(new StringTextComponent(" x" + extra.getAmount()));
                 tooltip.add(comp);
             }
-            if (sell != null) {
+            if (sell != null && sell.isValid()) {
                 StringTextComponent comp = new StringTextComponent(" - Sell: ");
                 comp.append(new TranslationTextComponent(sell.getItem().getTranslationKey()))
                         .append(new StringTextComponent(" x" + sell.getAmount()));
