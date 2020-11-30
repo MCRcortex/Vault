@@ -24,13 +24,13 @@
     ]
   },
   "vault_gem_hit": {
-    "category": "master",
+    "category": "block",
     "sounds": [
       "the_vault:vault_gem_hit"
     ]
   },
   "vault_gem_break": {
-    "category": "master",
+    "category": "block",
     "sounds": [
       "the_vault:vault_gem_break"
     ]

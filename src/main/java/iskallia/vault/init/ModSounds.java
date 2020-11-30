@@ -1,7 +1,7 @@
 package iskallia.vault.init;
 
 import iskallia.vault.Vault;
-import net.minecraft.block.SoundType;
+import iskallia.vault.util.LazySoundType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -15,7 +15,7 @@ public class ModSounds {
     public static SoundEvent VAULT_GEM_HIT;
     public static SoundEvent VAULT_GEM_BREAK;
 
-    public static SoundType VAULT_GEM;
+    public static LazySoundType VAULT_GEM = new LazySoundType();
 
     public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
         RAFFLE_SFX = registerSound(event, "raffle");
@@ -27,7 +27,7 @@ public class ModSounds {
     }
 
     public static void registerSoundTypes() {
-        VAULT_GEM = new SoundType(1f, 1f, VAULT_GEM_BREAK, VAULT_GEM_HIT, VAULT_GEM_HIT, VAULT_GEM_HIT, VAULT_GEM_HIT);
+        VAULT_GEM.initialize(0.75f, 1f, VAULT_GEM_BREAK, VAULT_GEM_HIT, VAULT_GEM_HIT, VAULT_GEM_HIT, VAULT_GEM_HIT);
     }
 
     /* ---------------------------- */
