@@ -7,6 +7,7 @@ import iskallia.vault.block.item.PlayerStatueBlockItem;
 import iskallia.vault.block.render.PlayerStatueRenderer;
 import iskallia.vault.block.render.VaultAltarRenderer;
 import iskallia.vault.block.render.VaultRuneRenderer;
+import iskallia.vault.block.render.VendingMachineRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.DoorBlock;
 import net.minecraft.block.OreBlock;
@@ -66,6 +67,7 @@ public class ModBlocks {
     public static final ObeliskBlock OBELISK = new ObeliskBlock();
     public static final MVPCrownBlock MVP_CROWN = new MVPCrownBlock();
     public static final PlayerStatueBlock PLAYER_STATUE = new PlayerStatueBlock();
+    public static final VendingMachineBlock VENDING_MACHINE = new VendingMachineBlock();
 
     public static final TileEntityType<VaultAltarTileEntity> VAULT_ALTAR_TILE_ENTITY =
             TileEntityType.Builder.create(VaultAltarTileEntity::new, VAULT_ALTAR).build(null);
@@ -77,6 +79,8 @@ public class ModBlocks {
             TileEntityType.Builder.create(VaultPortalTileEntity::new, VAULT_PORTAL).build(null);
     public static final TileEntityType<PlayerStatueTileEntity> PLAYER_STATUE_TILE_ENTITY =
             TileEntityType.Builder.create(PlayerStatueTileEntity::new, PLAYER_STATUE).build(null);
+    public static final TileEntityType<VendingMachineTileEntity> VENDING_MACHINE_TILE_ENTITY =
+            TileEntityType.Builder.create(VendingMachineTileEntity::new, PLAYER_STATUE).build(null);
 
     public static final PlayerStatueBlockItem PLAYER_STATUE_BLOCK_ITEM = new PlayerStatueBlockItem();
 
@@ -126,6 +130,7 @@ public class ModBlocks {
         registerBlock(event, OBELISK, Vault.id("obelisk"));
         registerBlock(event, MVP_CROWN, Vault.id("mvp_crown"));
         registerBlock(event, PLAYER_STATUE, Vault.id("player_statue"));
+        registerBlock(event, VENDING_MACHINE, Vault.id("vending_machine"));
     }
 
     public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
@@ -134,6 +139,7 @@ public class ModBlocks {
         registerTileEntity(event, VAULT_CRATE_TILE_ENTITY, Vault.id("vault_crate_tile_entity"));
         registerTileEntity(event, VAULT_PORTAL_TILE_ENTITY, Vault.id("vault_portal_tile_entity"));
         registerTileEntity(event, PLAYER_STATUE_TILE_ENTITY, Vault.id("player_statue_tile_entity"));
+        registerTileEntity(event, VENDING_MACHINE_TILE_ENTITY, Vault.id("vending_machine_tile_entity"));
     }
 
     public static void registerTileEntityRenderers() {
@@ -141,6 +147,7 @@ public class ModBlocks {
         ClientRegistry.bindTileEntityRenderer(ModBlocks.VAULT_RUNE_TILE_ENTITY, VaultRuneRenderer::new);
         ClientRegistry.bindTileEntityRenderer(ModBlocks.VAULT_RUNE_TILE_ENTITY, VaultRuneRenderer::new);
         ClientRegistry.bindTileEntityRenderer(ModBlocks.PLAYER_STATUE_TILE_ENTITY, PlayerStatueRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(ModBlocks.VENDING_MACHINE_TILE_ENTITY, VendingMachineRenderer::new);
     }
 
     public static void registerBlockItems(RegistryEvent.Register<Item> event) {
@@ -189,6 +196,7 @@ public class ModBlocks {
         registerBlockItem(event, OBELISK, 1);
         registerBlockItem(event, MVP_CROWN, 1);
         registerBlockItem(event, PLAYER_STATUE, PLAYER_STATUE_BLOCK_ITEM);
+        registerBlockItem(event, VENDING_MACHINE, 1);
     }
 
     /* --------------------------------------------- */
