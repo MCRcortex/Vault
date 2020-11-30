@@ -11,6 +11,7 @@ import iskallia.vault.client.gui.widget.TalentWidget;
 import iskallia.vault.config.entry.SkillStyle;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModNetwork;
+import iskallia.vault.init.ModSounds;
 import iskallia.vault.network.message.TalentUpgradeMessage;
 import iskallia.vault.skill.talent.TalentGroup;
 import iskallia.vault.skill.talent.TalentNode;
@@ -128,6 +129,16 @@ public class TalentDialog extends AbstractGui {
 
         if (talentNode.getLevel() >= talentGroup.getMaxLevel())
             return;
+
+        Minecraft minecraft = Minecraft.getInstance();
+
+        if (minecraft.player != null) {
+            minecraft.player.playSound(
+                    talentNode.isLearned() ? ModSounds.SKILL_TREE_UPGRADE_SFX
+                            : ModSounds.SKILL_TREE_LEARN_SFX,
+                    1f, 1f
+            );
+        }
 
         talentTree.upgradeTalent(null, talentNode);
         refreshWidgets();

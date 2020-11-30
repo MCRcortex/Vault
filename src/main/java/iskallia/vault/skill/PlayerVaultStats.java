@@ -2,6 +2,7 @@ package iskallia.vault.skill;
 
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModNetwork;
+import iskallia.vault.init.ModSounds;
 import iskallia.vault.network.message.VaultLevelMessage;
 import iskallia.vault.util.NetcodeUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -60,10 +61,21 @@ public class PlayerVaultStats implements INBTSerializable<CompoundNBT> {
         int tnl;
         this.exp += exp;
 
+        int initialLevel = this.vaultLevel;
+
         while (this.exp >= (tnl = getTnl())) {
             this.vaultLevel++;
             this.unspentSkillPts++;
             this.exp -= tnl; // Carry extra exp to next level!
+        }
+
+        NetcodeUtils.runIfPresent(server, uuid, player -> {
+            player.world.playSound(null, player.getPosition(),
+                    ModSounds.VAULT_EXP_SFX, SoundCategory.PLAYERS,
+                    1f, player.world.rand.nextFloat() * 0.75f);
+        });
+
+        if (this.vaultLevel > initialLevel) {
             NetcodeUtils.runIfPresent(server, uuid, this::fancyLevelUpEffects);
         }
 
@@ -88,8 +100,8 @@ public class PlayerVaultStats implements INBTSerializable<CompoundNBT> {
                     pos.getZ() + world.rand.nextDouble() - 0.5, 10, d0, d1, d2, 0.25D);
         }
 
-        world.playSound(null, player.getPosition(), SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS,
-                1.0F, world.rand.nextFloat() * 0.75f);
+        world.playSound(null, player.getPosition(), ModSounds.VAULT_LEVEL_UP_SFX, SoundCategory.PLAYERS,
+                1.0F, 2f);
     }
 
     public PlayerVaultStats spendSkillPoints(MinecraftServer server, int amount) {

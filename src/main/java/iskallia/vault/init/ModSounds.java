@@ -10,8 +10,13 @@ public class ModSounds {
 
     public static SoundEvent RAFFLE_SFX;
     public static SoundEvent TIMER_KILL_SFX;
+    public static SoundEvent TIMER_PANIC_TICK_SFX;
     public static SoundEvent CONFETTI_SFX;
     public static SoundEvent MEGA_JUMP_SFX;
+    public static SoundEvent VAULT_EXP_SFX;
+    public static SoundEvent VAULT_LEVEL_UP_SFX;
+    public static SoundEvent SKILL_TREE_LEARN_SFX;
+    public static SoundEvent SKILL_TREE_UPGRADE_SFX;
     public static SoundEvent VAULT_GEM_HIT;
     public static SoundEvent VAULT_GEM_BREAK;
 
@@ -20,8 +25,13 @@ public class ModSounds {
     public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
         RAFFLE_SFX = registerSound(event, "raffle");
         TIMER_KILL_SFX = registerSound(event, "timer_kill");
+        TIMER_PANIC_TICK_SFX = registerSound(event, "timer_panic_tick");
         CONFETTI_SFX = registerSound(event, "confetti");
         MEGA_JUMP_SFX = registerSound(event, "mega_jump");
+        VAULT_EXP_SFX = registerSound(event, "vault_exp");
+        VAULT_LEVEL_UP_SFX = registerSound(event, "vault_level_up");
+        SKILL_TREE_LEARN_SFX = registerSound(event, "skill_tree_learn");
+        SKILL_TREE_UPGRADE_SFX = registerSound(event, "skill_tree_upgrade");
         VAULT_GEM_HIT = registerSound(event, "vault_gem_hit");
         VAULT_GEM_BREAK = registerSound(event, "vault_gem_break");
     }

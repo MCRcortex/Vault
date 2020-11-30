@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
 import iskallia.vault.client.gui.helper.FontHelper;
+import iskallia.vault.init.ModSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.util.ResourceLocation;
@@ -79,7 +80,7 @@ public class VaultRaidOverlay {
         if (remainingTicks < panicTicks) {
             if (panicSound == null || !minecraft.getSoundHandler().isPlaying(panicSound)) {
                 panicSound = SimpleSound.master(
-                        SoundEvents.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE,
+                        ModSounds.TIMER_PANIC_TICK_SFX,
                         2.0f - ((float) remainingTicks / panicTicks)
                 );
                 minecraft.getSoundHandler().play(panicSound);

@@ -11,10 +11,40 @@
       "the_vault:timer_kill"
     ]
   },
+  "timer_panic_tick": {
+    "category": "master",
+    "sounds": [
+      "the_vault:timer_panic_tick"
+    ]
+  },
   "confetti": {
     "category": "master",
     "sounds": [
       "the_vault:confetti"
+    ]
+  },
+  "vault_exp": {
+    "category": "master",
+    "sounds": [
+      "the_vault:vault_exp"
+    ]
+  },
+  "vault_level_up": {
+    "category": "master",
+    "sounds": [
+      "the_vault:vault_level_up"
+    ]
+  },
+  "skill_tree_learn": {
+    "category": "master",
+    "sounds": [
+      "the_vault:skill_tree_learn"
+    ]
+  },
+  "skill_tree_upgrade": {
+    "category": "master",
+    "sounds": [
+      "the_vault:skill_tree_upgrade"
     ]
   },
   "mega_jump": {

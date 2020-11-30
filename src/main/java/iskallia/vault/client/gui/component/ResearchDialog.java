@@ -11,6 +11,7 @@ import iskallia.vault.client.gui.widget.ResearchWidget;
 import iskallia.vault.config.entry.SkillStyle;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModNetwork;
+import iskallia.vault.init.ModSounds;
 import iskallia.vault.network.message.ResearchMessage;
 import iskallia.vault.research.ResearchTree;
 import iskallia.vault.skill.talent.TalentTree;
@@ -99,6 +100,15 @@ public class ResearchDialog extends AbstractGui {
 
         if (cost > unspentSkillPts)
             return;
+
+        Minecraft minecraft = Minecraft.getInstance();
+
+        if (minecraft.player != null) {
+            minecraft.player.playSound(
+                    ModSounds.SKILL_TREE_LEARN_SFX,
+                    1f, 1f
+            );
+        }
 
         researchTree.research(researchName);
         refreshWidgets();

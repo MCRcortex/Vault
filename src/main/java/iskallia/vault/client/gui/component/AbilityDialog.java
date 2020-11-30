@@ -11,6 +11,7 @@ import iskallia.vault.client.gui.widget.AbilityWidget;
 import iskallia.vault.config.entry.SkillStyle;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModNetwork;
+import iskallia.vault.init.ModSounds;
 import iskallia.vault.network.message.AbilityUpgradeMessage;
 import iskallia.vault.skill.ability.AbilityGroup;
 import iskallia.vault.skill.ability.AbilityNode;
@@ -128,6 +129,16 @@ public class AbilityDialog extends AbstractGui {
 
         if (abilityNode.getLevel() >= abilityGroup.getMaxLevel())
             return;
+
+        Minecraft minecraft = Minecraft.getInstance();
+
+        if (minecraft.player != null) {
+            minecraft.player.playSound(
+                    abilityNode.isLearned() ? ModSounds.SKILL_TREE_UPGRADE_SFX
+                            : ModSounds.SKILL_TREE_LEARN_SFX,
+                    1f, 1f
+            );
+        }
 
         abilityTree.upgradeAbility(null, abilityNode);
         refreshWidgets();
