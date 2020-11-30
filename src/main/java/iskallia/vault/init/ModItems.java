@@ -79,6 +79,7 @@ public class ModItems {
     public static ItemVaultRelicPart PLATINUM_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_platinum_essence"), "Richity Set");
     public static ItemVaultRune VAULT_RUNE = new ItemVaultRune(VAULT_MOD_GROUP, Vault.id("vault_rune"));
     public static ObeliskInscriptionItem OBELISK_INSCRIPTION = new ObeliskInscriptionItem(VAULT_MOD_GROUP, Vault.id("obelisk_inscription"));
+    public static ItemTraderCore TRADER_CORE = new ItemTraderCore(VAULT_MOD_GROUP, Vault.id("trader_core"));
 
     public static void registerItems(RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
@@ -138,5 +139,6 @@ public class ModItems {
         registry.register(PLATINUM_ESSENCE_RELIC);
         registry.register(VAULT_RUNE);
         registry.register(OBELISK_INSCRIPTION);
+        registry.register(TRADER_CORE);
     }
 }
