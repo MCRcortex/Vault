@@ -1,6 +1,7 @@
 package iskallia.vault.skill.ability.type;
 
 import com.google.gson.annotations.Expose;
+import iskallia.vault.init.ModSounds;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
@@ -39,7 +40,7 @@ public class MegaJumpAbility extends PlayerAbility {
 
         player.velocityChanged = true;
 
-        player.playSound(SoundEvents.ITEM_CROSSBOW_SHOOT, SoundCategory.MASTER, 1f, 1f);
+        player.playSound(ModSounds.MEGA_JUMP_SFX, SoundCategory.MASTER, 0.7f, 1f);
         ((ServerWorld) player.world).spawnParticle(ParticleTypes.POOF,
                 player.getPosX(), player.getPosY(), player.getPosZ(),
                 50, 1D, 0.5D, 1D, 0.0D);

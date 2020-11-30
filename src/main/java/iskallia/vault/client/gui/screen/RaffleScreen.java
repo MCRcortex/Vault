@@ -291,7 +291,7 @@ public class RaffleScreen extends Screen {
         if (elapsedTicks >= spinTicks) {
             spinning = false;
             if (!popped) {
-                getMinecraft().getSoundHandler().play(SimpleSound.master(SoundEvents.ENTITY_FIREWORK_ROCKET_TWINKLE, 1.0F));
+                getMinecraft().getSoundHandler().play(SimpleSound.master(ModSounds.CONFETTI_SFX, 1.0F));
                 leftConfettiPopper.pop();
                 rightConfettiPopper.pop();
                 popped = true;

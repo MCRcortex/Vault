@@ -221,7 +221,7 @@ public class EntityEvents {
 			ServerPlayerEntity playerEntity = (ServerPlayerEntity) entityLiving;
             Vector3d position = playerEntity.getPositionVec();
             playerEntity.getServerWorld().playSound(null, position.x, position.y, position.z,
-                    ModSounds.TIMER_KILL_SFX, SoundCategory.MASTER, 1F, 0.75F);
+                    ModSounds.TIMER_KILL_SFX, SoundCategory.MASTER, 0.75F, 1F);
 		}
 	}
 

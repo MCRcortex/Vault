@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
 import iskallia.vault.client.gui.helper.ConfettiParticles;
+import iskallia.vault.init.ModSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.util.ResourceLocation;
@@ -79,7 +80,7 @@ public class HyperBarOverlay {
         if (currentHype >= maxHype) {
             confettiParticles.pop();
             minecraft.getSoundHandler().play(SimpleSound.master(
-                    SoundEvents.ENTITY_FIREWORK_ROCKET_TWINKLE,
+                    ModSounds.CONFETTI_SFX,
                     1.0F
             ));
             currentHype -= maxHype;

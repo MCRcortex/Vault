@@ -36,6 +36,7 @@ public class RegistryEvents {
     @SubscribeEvent
     public static void onSoundRegister(RegistryEvent.Register<SoundEvent> event) {
         ModSounds.registerSounds(event);
+        ModSounds.registerSoundTypes();
     }
 
     @SubscribeEvent

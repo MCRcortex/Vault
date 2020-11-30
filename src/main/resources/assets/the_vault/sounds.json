@@ -10,5 +10,29 @@
     "sounds": [
       "the_vault:timer_kill"
     ]
+  },
+  "confetti": {
+    "category": "master",
+    "sounds": [
+      "the_vault:confetti"
+    ]
+  },
+  "mega_jump": {
+    "category": "master",
+    "sounds": [
+      "the_vault:mega_jump"
+    ]
+  },
+  "vault_gem_hit": {
+    "category": "master",
+    "sounds": [
+      "the_vault:vault_gem_hit"
+    ]
+  },
+  "vault_gem_break": {
+    "category": "master",
+    "sounds": [
+      "the_vault:vault_gem_break"
+    ]
   }
 }
