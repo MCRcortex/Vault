@@ -4,6 +4,7 @@ import iskallia.vault.config.*;
 
 public class ModConfigs {
 
+    public static StreamerMultipliersConfig STREAMER_MULTIPLIERS;
     public static AbilitiesConfig ABILITIES;
     public static AbilitiesGUIConfig ABILITIES_GUI;
     public static TalentsConfig TALENTS;
@@ -22,6 +23,7 @@ public class ModConfigs {
     public static VaultPortalConfig VAULT_PORTAL;
 
     public static void register() {
+        STREAMER_MULTIPLIERS = (StreamerMultipliersConfig) new StreamerMultipliersConfig().readConfig();
         ABILITIES = (AbilitiesConfig) new AbilitiesConfig().readConfig();
         ABILITIES_GUI = (AbilitiesGUIConfig) new AbilitiesGUIConfig().readConfig();
         TALENTS = (TalentsConfig) new TalentsConfig().readConfig();

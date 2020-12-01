@@ -68,6 +68,7 @@ public class ArenaRaidData extends WorldSavedData {
 
         if(this.activeRaids.containsKey(player.getUniqueID())) {
             //TODO: The hell do we do if an arena raid is already ongoing?
+            // ^ Should be impossible now, with the StreamData::subBufferMap
         }
 
         this.activeRaids.put(raid.getPlayerId(), raid);

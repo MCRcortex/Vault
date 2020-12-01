@@ -56,7 +56,11 @@
   "vault_gem_hit": {
     "category": "block",
     "sounds": [
-      "the_vault:vault_gem_hit"
+      "the_vault:vault_gem_hit1",
+      "the_vault:vault_gem_hit2",
+      "the_vault:vault_gem_hit3",
+      "the_vault:vault_gem_hit4",
+      "the_vault:vault_gem_hit5"
     ]
   },
   "vault_gem_break": {

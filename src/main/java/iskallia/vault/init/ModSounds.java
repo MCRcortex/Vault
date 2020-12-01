@@ -37,7 +37,7 @@ public class ModSounds {
     }
 
     public static void registerSoundTypes() {
-        VAULT_GEM.initialize(0.75f, 1f, VAULT_GEM_BREAK, VAULT_GEM_HIT, VAULT_GEM_HIT, VAULT_GEM_HIT, VAULT_GEM_HIT);
+        VAULT_GEM.initialize(0.75f, 1f, VAULT_GEM_BREAK, null, null, VAULT_GEM_HIT, null);
     }
 
     /* ---------------------------- */

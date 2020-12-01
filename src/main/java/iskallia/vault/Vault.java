@@ -2,9 +2,7 @@ package iskallia.vault;
 
 import iskallia.vault.init.ModCommands;
 import iskallia.vault.init.ModFeatures;
-import iskallia.vault.world.data.PlayerAbilitiesData;
-import iskallia.vault.world.data.PlayerResearchesData;
-import iskallia.vault.world.data.PlayerVaultStatsData;
+import iskallia.vault.world.data.*;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.RegistryKey;
@@ -54,6 +52,7 @@ public class Vault {
 		PlayerVaultStatsData.get(serverWorld).getVaultStats(player).sync(server);
 		PlayerResearchesData.get(serverWorld).getResearches(player).sync(server);
 		PlayerAbilitiesData.get(serverWorld).getAbilities(player).sync(server);
+		StreamData.get(serverWorld).syncHypebar(server, player.getUniqueID());
 	}
 
 	public static String sId(String name) {

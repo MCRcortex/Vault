@@ -27,7 +27,7 @@ public class HyperBarOverlay {
             .speedRange(2, 10);
 
     public static int currentHype;
-    public static int maxHype = 100; // TODO: Fetch from the config?
+    public static int maxHype = 1; // Will be synced with Server Config
 
     @SubscribeEvent
     public static void
@@ -84,14 +84,6 @@ public class HyperBarOverlay {
                     1.0F
             ));
             currentHype -= maxHype;
-        }
-    }
-
-    @SubscribeEvent
-    public static void onMouse(InputEvent.MouseInputEvent event) {
-        if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_MIDDLE
-                && event.getAction() == GLFW.GLFW_RELEASE) {
-            currentHype += 10;
         }
     }
 

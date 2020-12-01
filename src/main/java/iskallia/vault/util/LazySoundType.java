@@ -16,8 +16,16 @@ public class LazySoundType extends SoundType {
     protected SoundEvent lazyHitSound;
     protected SoundEvent lazyFallSound;
 
+    public LazySoundType(SoundType vanillaType) {
+        super(1f, 1f, vanillaType.getBreakSound(),
+                vanillaType.getStepSound(),
+                vanillaType.getPlaceSound(),
+                vanillaType.getHitSound(),
+                vanillaType.getFallSound());
+    }
+
     public LazySoundType() {
-        super(1f, 1f, SoundEvents.BLOCK_STONE_BREAK, SoundEvents.BLOCK_STONE_STEP, SoundEvents.BLOCK_STONE_PLACE, SoundEvents.BLOCK_STONE_HIT, SoundEvents.BLOCK_STONE_FALL);
+        this(SoundType.STONE);
     }
 
     public void initialize(float volumeIn, float pitchIn, SoundEvent breakSoundIn, SoundEvent stepSoundIn, SoundEvent placeSoundIn, SoundEvent hitSoundIn, SoundEvent fallSoundIn) {
@@ -44,27 +52,27 @@ public class LazySoundType extends SoundType {
 
     @Override
     public SoundEvent getBreakSound() {
-        return lazyBreakSound;
+        return lazyBreakSound == null ? super.getBreakSound() : lazyBreakSound;
     }
 
     @Override
     public SoundEvent getStepSound() {
-        return lazyStepSound;
+        return lazyStepSound == null ? super.getStepSound() : lazyStepSound;
     }
 
     @Override
     public SoundEvent getPlaceSound() {
-        return lazyPlaceSound;
+        return lazyPlaceSound == null ? super.getPlaceSound() : lazyPlaceSound;
     }
 
     @Override
     public SoundEvent getHitSound() {
-        return lazyHitSound;
+        return lazyHitSound == null ? super.getHitSound() : lazyHitSound;
     }
 
     @Override
     public SoundEvent getFallSound() {
-        return lazyFallSound;
+        return lazyFallSound == null ? super.getFallSound() : lazyFallSound;
     }
 
 }

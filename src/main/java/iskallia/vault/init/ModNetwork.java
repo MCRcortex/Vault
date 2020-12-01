@@ -82,6 +82,11 @@ public class ModNetwork {
                 ScoreboardDamageMessage::encode,
                 ScoreboardDamageMessage::decode,
                 ScoreboardDamageMessage::handle);
+
+        CHANNEL.registerMessage(13, HypeBarMessage.class,
+                HypeBarMessage::encode,
+                HypeBarMessage::decode,
+                HypeBarMessage::handle);
     }
 
 }
