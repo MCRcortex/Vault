@@ -5,6 +5,7 @@ import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.HypeBarMessage;
 import iskallia.vault.util.NetcodeUtils;
+import iskallia.vault.world.raid.ArenaRaid;
 import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.server.ServerWorld;
@@ -37,7 +38,10 @@ public class StreamData extends WorldSavedData {
 
     public StreamData onSub(MinecraftServer server, UUID streamer, String subscriber) {
         NetcodeUtils.runIfPresent(server, streamer, player -> {
-            if (player.getServerWorld().getDimensionKey() == Vault.ARENA_KEY) {
+            ArenaRaid activeRaid = ArenaRaidData.get(player.getServerWorld()).getActiveFor(player);
+
+            if (activeRaid != null) {
+                // Just put incoming sub to the buffer, if an arena is already in progress
                 Subscribers subscribers = subBufferMap.computeIfAbsent(streamer, uuid -> new Subscribers());
                 subscribers.onSub(subscriber);
 

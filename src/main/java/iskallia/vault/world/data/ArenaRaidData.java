@@ -3,10 +3,13 @@ package iskallia.vault.world.data;
 import iskallia.vault.Vault;
 import iskallia.vault.init.ModFeatures;
 import iskallia.vault.init.ModStructures;
+import iskallia.vault.util.NetcodeUtils;
 import iskallia.vault.world.raid.ArenaRaid;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.concurrent.TickDelayedTask;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
@@ -32,6 +35,7 @@ public class ArenaRaidData extends WorldSavedData {
 
     protected static final String DATA_NAME = Vault.MOD_ID + "_ArenaRaid";
 
+    private Map<UUID, Integer> raidsToStart = new HashMap<>();
     private Map<UUID, ArenaRaid> activeRaids = new HashMap<>();
     private int xOffset = 0;
 
@@ -50,7 +54,7 @@ public class ArenaRaidData extends WorldSavedData {
     public void remove(ServerWorld server, UUID playerId) {
         ArenaRaid v = this.activeRaids.remove(playerId);
 
-        if(v != null) {
+        if (v != null) {
             v.finish(server, server.getServer().getPlayerList().getPlayerByUUID(playerId));
         }
     }
@@ -66,7 +70,7 @@ public class ArenaRaidData extends WorldSavedData {
                 this.xOffset, 0, 0, this.xOffset += ArenaRaid.REGION_SIZE, 256, ArenaRaid.REGION_SIZE
         ));
 
-        if(this.activeRaids.containsKey(player.getUniqueID())) {
+        if (this.activeRaids.containsKey(player.getUniqueID())) {
             //TODO: The hell do we do if an arena raid is already ongoing?
             // ^ Should be impossible now, with the StreamData::subBufferMap
         }
@@ -74,32 +78,8 @@ public class ArenaRaidData extends WorldSavedData {
         this.activeRaids.put(raid.getPlayerId(), raid);
         this.markDirty();
 
-        player.getServer().runAsync(() -> {
-            try {
-                ServerWorld world = player.getServer().getWorld(Vault.ARENA_KEY);
-                ChunkPos chunkPos = new ChunkPos((raid.box.minX + raid.box.getXSize() / 2) >> 4, (raid.box.minZ + raid.box.getZSize() / 2) >> 4);
-
-                StructureSeparationSettings settings = new StructureSeparationSettings(1, 0, -1);
-
-                StructureStart<?> start = ModFeatures.ARENA_FEATURE.func_242771_a(world.func_241828_r(),
-                        world.getChunkProvider().generator, world.getChunkProvider().generator.getBiomeProvider(),
-                        world.getStructureTemplateManager(), world.getSeed(), chunkPos,
-                        BiomeRegistry.PLAINS, 0, settings);
-
-                //This is some cursed calculations, don't ask me how it works.
-                int chunkRadius = ArenaRaid.REGION_SIZE >> 5;
-
-                for(int x = -chunkRadius; x <= chunkRadius; x += 17) {
-                    for(int z = -chunkRadius; z <= chunkRadius; z += 17) {
-                        world.getChunk(chunkPos.x + x, chunkPos.z + z, ChunkStatus.EMPTY, true).func_230344_a_(ModStructures.ARENA, start);
-                    }
-                }
-
-                raid.start(world, player, chunkPos);
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
-        });
+        MinecraftServer server = player.getServer();
+        this.raidsToStart.put(player.getUniqueID(), server.getTickCounter() + (5 * 20));
 
         return raid;
     }
@@ -112,7 +92,7 @@ public class ArenaRaidData extends WorldSavedData {
         List<Runnable> tasks = new ArrayList<>();
 
         for (ArenaRaid raid : this.activeRaids.values()) {
-            if(raid.isComplete()) {
+            if (raid.isComplete()) {
                 tasks.add(() -> this.remove(world, raid.getPlayerId()));
                 removed = true;
             }
@@ -127,8 +107,51 @@ public class ArenaRaidData extends WorldSavedData {
 
     @SubscribeEvent
     public static void onTick(TickEvent.WorldTickEvent event) {
-        if(event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START && event.world.getDimensionKey() == Vault.ARENA_KEY) {
-            get((ServerWorld)event.world).tick((ServerWorld)event.world);
+        if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START) {
+            ArenaRaidData arenaRaidData = get((ServerWorld) event.world);
+
+            MinecraftServer server = event.world.getServer();
+            int tickCounter = server.getTickCounter();
+
+            arenaRaidData.raidsToStart.forEach((uuid, scheduledTick) -> {
+                if (tickCounter >= scheduledTick) {
+                    NetcodeUtils.runIfPresent(server, uuid, player -> {
+                        ArenaRaid raid = arenaRaidData.getActiveFor(player);
+                        server.runAsync(() -> {
+                            try {
+                                ServerWorld world = server.getWorld(Vault.ARENA_KEY);
+                                ChunkPos chunkPos = new ChunkPos((raid.box.minX + raid.box.getXSize() / 2) >> 4, (raid.box.minZ + raid.box.getZSize() / 2) >> 4);
+
+                                StructureSeparationSettings settings = new StructureSeparationSettings(1, 0, -1);
+
+                                StructureStart<?> start = ModFeatures.ARENA_FEATURE.func_242771_a(world.func_241828_r(),
+                                        world.getChunkProvider().generator, world.getChunkProvider().generator.getBiomeProvider(),
+                                        world.getStructureTemplateManager(), world.getSeed(), chunkPos,
+                                        BiomeRegistry.PLAINS, 0, settings);
+
+                                //This is some cursed calculations, don't ask me how it works.
+                                int chunkRadius = ArenaRaid.REGION_SIZE >> 5;
+
+                                for (int x = -chunkRadius; x <= chunkRadius; x += 17) {
+                                    for (int z = -chunkRadius; z <= chunkRadius; z += 17) {
+                                        world.getChunk(chunkPos.x + x, chunkPos.z + z, ChunkStatus.EMPTY, true).func_230344_a_(ModStructures.ARENA, start);
+                                    }
+                                }
+
+                                raid.start(world, player, chunkPos);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    });
+                }
+            });
+
+            arenaRaidData.raidsToStart.values().removeIf(scheduledTick -> tickCounter >= scheduledTick);
+
+            if (event.world.getDimensionKey() == Vault.ARENA_KEY) {
+                arenaRaidData.tick((ServerWorld) event.world);
+            }
         }
     }
 
@@ -144,7 +167,7 @@ public class ArenaRaidData extends WorldSavedData {
         this.activeRaids.clear();
 
         nbt.getList("ActiveRaids", Constants.NBT.TAG_COMPOUND).forEach(raidNBT -> {
-            ArenaRaid raid = ArenaRaid.fromNBT((CompoundNBT)raidNBT);
+            ArenaRaid raid = ArenaRaid.fromNBT((CompoundNBT) raidNBT);
             this.activeRaids.put(raid.getPlayerId(), raid);
         });
 
