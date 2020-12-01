@@ -11,16 +11,22 @@ public class TraderCore implements INBTSerializable {
     private String NAME;
     @Expose
     @NBTSerialize
+    private boolean MEGAHEAD;
+    @Expose
+    @NBTSerialize
     private Trade TRADE;
 
     public TraderCore(String name, Trade trade) {
+        this(name, trade, false);
+    }
+
+    public TraderCore(String name, Trade trade, boolean megahead) {
         this.NAME = name;
+        this.MEGAHEAD = megahead;
         this.TRADE = trade;
     }
 
-    public TraderCore() {
-
-    }
+    public TraderCore() { }
 
     public String getName() {
         return this.NAME;
@@ -36,6 +42,14 @@ public class TraderCore implements INBTSerializable {
 
     public void setTrade(Trade trade) {
         this.TRADE = trade;
+    }
+
+    public boolean isMegahead() {
+        return MEGAHEAD;
+    }
+
+    public void setMegahead(boolean megahead) {
+        this.MEGAHEAD = megahead;
     }
 
 }

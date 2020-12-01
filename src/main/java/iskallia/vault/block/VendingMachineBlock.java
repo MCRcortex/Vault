@@ -4,7 +4,9 @@ import iskallia.vault.block.entity.VendingMachineTileEntity;
 import iskallia.vault.client.gui.screen.RaffleScreen;
 import iskallia.vault.container.VendingMachineContainer;
 import iskallia.vault.init.ModBlocks;
+import iskallia.vault.init.ModItems;
 import iskallia.vault.init.ModSounds;
+import iskallia.vault.item.ItemTraderCore;
 import iskallia.vault.vending.Product;
 import iskallia.vault.vending.Trade;
 import iskallia.vault.vending.TraderCore;
@@ -55,8 +57,14 @@ public class VendingMachineBlock extends Block {
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
     public VendingMachineBlock() {
-        super(Properties.create(Material.IRON, MaterialColor.IRON).hardnessAndResistance(2.0F).sound(SoundType.METAL).notSolid());
-        this.setDefaultState(this.stateContainer.getBaseState().with(FACING, Direction.NORTH).with(HALF, DoubleBlockHalf.LOWER));
+        super(Properties.create(Material.IRON, MaterialColor.IRON)
+                .hardnessAndResistance(2.0F)
+                .sound(SoundType.METAL)
+                .notSolid());
+
+        this.setDefaultState(this.stateContainer.getBaseState()
+                .with(FACING, Direction.NORTH)
+                .with(HALF, DoubleBlockHalf.LOWER));
     }
 
     @Override
@@ -85,6 +93,12 @@ public class VendingMachineBlock extends Block {
         } else {
             return null;
         }
+    }
+
+    @Override
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(HALF);
+        builder.add(FACING);
     }
 
     @Override
@@ -118,15 +132,13 @@ public class VendingMachineBlock extends Block {
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         worldIn.setBlockState(pos.up(), state.with(HALF, DoubleBlockHalf.UPPER), 3);
 
-        VendingMachineTileEntity machine = getVendingMachineTile(worldIn, pos, state);
-        if (machine != null) {
-            addTestCores(machine);
-        }
+//        VendingMachineTileEntity machine = getVendingMachineTile(worldIn, pos, state);
+//        if (machine != null) addTestCores(machine); // Real noicee ways to test!
     }
 
     private void addTestCores(VendingMachineTileEntity machine) {
         machine.addCore(new TraderCore("jmilthedude", new Trade(new Product(Items.APPLE, 8, null), null, new Product(Items.GOLDEN_APPLE, 1, null))));
-        machine.addCore(new TraderCore("KaptainWutax", new Trade(new Product(Items.GOLDEN_APPLE, 8, null), null, new Product(Items.ENCHANTED_GOLDEN_APPLE, 1, null))));
+        machine.addCore(new TraderCore("iGoodie", new Trade(new Product(Items.GOLDEN_APPLE, 8, null), null, new Product(Items.ENCHANTED_GOLDEN_APPLE, 1, null))));
         CompoundNBT nbt = new CompoundNBT();
         ListNBT enchantments = new ListNBT();
         CompoundNBT knockback = new CompoundNBT();
@@ -134,7 +146,7 @@ public class VendingMachineBlock extends Block {
         knockback.putInt("lvl", 10);
         enchantments.add(knockback);
         nbt.put("Enchantments", enchantments);
-        machine.addCore(new TraderCore("iGoodie", new Trade(new Product(Items.ENCHANTED_GOLDEN_APPLE, 8, null), null, new Product(Items.STICK, 1, nbt))));
+        machine.addCore(new TraderCore("KaptainWutax", new Trade(new Product(Items.ENCHANTED_GOLDEN_APPLE, 8, null), null, new Product(Items.STICK, 1, nbt))));
     }
 
     @Override
@@ -152,54 +164,63 @@ public class VendingMachineBlock extends Block {
 
     @Override
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
-        if (world.isRemote) {
-            Minecraft minecraft = Minecraft.getInstance();
-            minecraft.getSoundHandler().play(SimpleSound.master(
-                    ModSounds.VENDING_MACHINE_SFX, 1f, 1f
-            ));
-            return ActionResultType.SUCCESS;
-        }
+        ItemStack heldStack = player.getHeldItem(hand);
 
-        VendingMachineTileEntity machine = getVendingMachineTile(world, pos, state);
+        if (heldStack.getItem() == ModItems.TRADER_CORE) {
+            VendingMachineTileEntity machine = getVendingMachineTile(world, pos, state);
 
-        if (machine != null) {
+            if (machine != null) {
+                machine.addCore(ItemTraderCore.toTraderCore(heldStack));
+                heldStack.shrink(1);
+            }
+
+        } else {
+            if (world.isRemote) {
+                Minecraft minecraft = Minecraft.getInstance();
+                minecraft.getSoundHandler().play(SimpleSound.master(
+                        ModSounds.VENDING_MACHINE_SFX, 1f, 1f
+                ));
+                return ActionResultType.SUCCESS;
+            }
+
+            VendingMachineTileEntity machine = getVendingMachineTile(world, pos, state);
+
+            if (machine != null) {
 //            machine.printCores(); // Nice way to debug, JML!
-            NetworkHooks.openGui(
-                    (ServerPlayerEntity) player,
-                    new INamedContainerProvider() {
-                        @Override
-                        public ITextComponent getDisplayName() {
-                            return new StringTextComponent("Vending Machine");
-                        }
+                NetworkHooks.openGui(
+                        (ServerPlayerEntity) player,
+                        new INamedContainerProvider() {
+                            @Override
+                            public ITextComponent getDisplayName() {
+                                return new StringTextComponent("Vending Machine");
+                            }
 
-                        @Nullable
-                        @Override
-                        public Container createMenu(int windowId, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-                            BlockPos vendingMachinePos = getVendingMachinePos(world, pos);
-                            return new VendingMachineContainer(windowId, world, vendingMachinePos, playerInventory, playerEntity);
+                            @Nullable
+                            @Override
+                            public Container createMenu(int windowId, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+                                BlockState blockState = world.getBlockState(pos);
+                                BlockPos vendingMachinePos = getVendingMachinePos(blockState, pos);
+                                return new VendingMachineContainer(windowId, world, vendingMachinePos, playerInventory, playerEntity);
+                            }
+                        },
+                        (buffer) -> {
+                            BlockState blockState = world.getBlockState(pos);
+                            buffer.writeBlockPos(getVendingMachinePos(blockState, pos));
                         }
-                    },
-                    (buffer) -> {
-                        buffer.writeBlockPos(getVendingMachinePos(world, pos));
-                    }
-            );
+                );
+            }
         }
 
         return super.onBlockActivated(state, world, pos, player, hand, hit);
     }
 
-    @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(HALF, FACING);
-    }
-
-    public static BlockPos getVendingMachinePos(World world, BlockPos pos) {
-        return world.getBlockState(pos).get(HALF) == DoubleBlockHalf.UPPER
+    public static BlockPos getVendingMachinePos(BlockState state, BlockPos pos) {
+        return state.get(HALF) == DoubleBlockHalf.UPPER
                 ? pos.down() : pos;
     }
 
     public static VendingMachineTileEntity getVendingMachineTile(World world, BlockPos pos, BlockState state) {
-        BlockPos vendingMachinePos = getVendingMachinePos(world, pos);
+        BlockPos vendingMachinePos = getVendingMachinePos(state, pos);
 
         TileEntity tileEntity = world.getTileEntity(vendingMachinePos);
 

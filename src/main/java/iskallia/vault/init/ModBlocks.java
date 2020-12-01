@@ -81,7 +81,7 @@ public class ModBlocks {
     public static final TileEntityType<PlayerStatueTileEntity> PLAYER_STATUE_TILE_ENTITY =
             TileEntityType.Builder.create(PlayerStatueTileEntity::new, PLAYER_STATUE).build(null);
     public static final TileEntityType<VendingMachineTileEntity> VENDING_MACHINE_TILE_ENTITY =
-            TileEntityType.Builder.create(VendingMachineTileEntity::new, PLAYER_STATUE).build(null);
+            TileEntityType.Builder.create(VendingMachineTileEntity::new, VENDING_MACHINE).build(null);
 
     public static final PlayerStatueBlockItem PLAYER_STATUE_BLOCK_ITEM = new PlayerStatueBlockItem();
 
@@ -146,7 +146,6 @@ public class ModBlocks {
 
     public static void registerTileEntityRenderers() {
         ClientRegistry.bindTileEntityRenderer(ModBlocks.VAULT_ALTAR_TILE_ENTITY, VaultAltarRenderer::new);
-        ClientRegistry.bindTileEntityRenderer(ModBlocks.VAULT_RUNE_TILE_ENTITY, VaultRuneRenderer::new);
         ClientRegistry.bindTileEntityRenderer(ModBlocks.VAULT_RUNE_TILE_ENTITY, VaultRuneRenderer::new);
         ClientRegistry.bindTileEntityRenderer(ModBlocks.PLAYER_STATUE_TILE_ENTITY, PlayerStatueRenderer::new);
         ClientRegistry.bindTileEntityRenderer(ModBlocks.VENDING_MACHINE_TILE_ENTITY, VendingMachineRenderer::new);

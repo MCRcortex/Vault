@@ -7,9 +7,12 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import iskallia.vault.config.StreamerMultipliersConfig;
 import iskallia.vault.init.ModConfigs;
+import iskallia.vault.item.ItemTraderCore;
+import iskallia.vault.vending.TraderCore;
 import iskallia.vault.world.data.StreamData;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemStack;
 
 import static net.minecraft.command.Commands.argument;
 import static net.minecraft.command.Commands.literal;
@@ -71,6 +74,10 @@ public class InternalCommand extends Command {
         String mcNick = player.getDisplayName().getString();
         int multiplier = ModConfigs.STREAMER_MULTIPLIERS.ofStreamer(mcNick).weightPerDonationUnit;
         StreamData.get(player.getServerWorld()).onDono(player.getServer(), player.getUniqueID(), donator, amount * multiplier);
+        if (amount >= 25) {
+            ItemStack core = ItemTraderCore.generate(donator, amount >= 100);
+            player.dropItem(core, false, false);
+        }
         return 0;
     }
 
@@ -79,6 +86,10 @@ public class InternalCommand extends Command {
         String mcNick = player.getDisplayName().getString();
         int multiplier = ModConfigs.STREAMER_MULTIPLIERS.ofStreamer(mcNick).weightPerHundredBits;
         StreamData.get(player.getServerWorld()).onDono(player.getServer(), player.getUniqueID(), donator, (amount / 100) * multiplier);
+        if (amount >= 2500) {
+            ItemStack core = ItemTraderCore.generate(donator, amount >= 10000);
+            player.dropItem(core, false, false);
+        }
         return 0;
     }
 

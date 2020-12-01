@@ -2,6 +2,7 @@ package iskallia.vault.item;
 
 import iskallia.vault.init.ModItems;
 import iskallia.vault.util.nbt.NBTSerializer;
+import iskallia.vault.util.nbt.UnserializableClassException;
 import iskallia.vault.vending.Product;
 import iskallia.vault.vending.Trade;
 import iskallia.vault.vending.TraderCore;
@@ -9,6 +10,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -30,6 +32,16 @@ public class ItemTraderCore extends Item {
         this.setRegistryName(id);
     }
 
+    public static ItemStack generate(String nickname, boolean megahead) {
+        // TODO: Fetch a random trade from config
+        Trade trade = new Trade(
+                new Product(Items.APPLE, 8, null),
+                null,
+                new Product(Items.GOLDEN_APPLE, 1, null)
+        );
+        return getStack(new TraderCore(nickname, trade, megahead));
+    }
+
     public static ItemStack getStack(TraderCore core) {
         ItemStack stack = new ItemStack(ModItems.TRADER_CORE, 1);
         CompoundNBT nbt = new CompoundNBT();
@@ -40,6 +52,17 @@ public class ItemTraderCore extends Item {
             e.printStackTrace();
         }
         return stack;
+    }
+
+    public static TraderCore toTraderCore(ItemStack itemStack) {
+        CompoundNBT nbt = itemStack.getTag();
+        if (nbt == null) return null;
+        try {
+            return NBTSerializer.deserialize(TraderCore.class, nbt.getCompound("core"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -86,6 +109,7 @@ public class ItemTraderCore extends Item {
 
     @Override
     public ITextComponent getDisplayName(ItemStack stack) {
-        return new StringTextComponent("Trader Core");
+        return new StringTextComponent("Trader Circuit");
     }
+
 }

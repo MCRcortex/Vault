@@ -2,6 +2,7 @@ package iskallia.vault.block.entity;
 
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.item.ItemTraderCore;
+import iskallia.vault.util.SkinProfile;
 import iskallia.vault.util.nbt.NBTSerializer;
 import iskallia.vault.vending.TraderCore;
 import net.minecraft.block.BlockState;
@@ -10,20 +11,33 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class VendingMachineTileEntity extends TileEntity {
 
+    protected SkinProfile skin;
     private List<TraderCore> cores = new ArrayList<>();
 
     public VendingMachineTileEntity() {
         super(ModBlocks.VENDING_MACHINE_TILE_ENTITY);
+        skin = new SkinProfile();
     }
 
+    public SkinProfile getSkin() {
+        return skin;
+    }
+
+    public TraderCore getLastCore() {
+        if (cores == null || cores.size() == 0) return null;
+        return cores.get(cores.size() - 1);
+    }
 
     public void sendUpdates() {
         this.world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
@@ -36,6 +50,7 @@ public class VendingMachineTileEntity extends TileEntity {
         ListNBT list = new ListNBT();
         for (TraderCore core : cores) {
             try {
+                System.out.println(core);
                 list.add(NBTSerializer.serialize(core));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -57,11 +72,53 @@ public class VendingMachineTileEntity extends TileEntity {
             }
             cores.add(core);
         }
+        updateSkin();
         super.read(state, nbt);
+    }
+
+    @Override
+    public CompoundNBT getUpdateTag() {
+        CompoundNBT nbt = super.getUpdateTag();
+
+        ListNBT list = new ListNBT();
+        for (TraderCore core : cores) {
+            try {
+                list.add(NBTSerializer.serialize(core));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        nbt.put("coresList", list);
+
+        return nbt;
+    }
+
+    @Override
+    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
+        read(state, tag);
+    }
+
+    @Nullable
+    @Override
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        return new SUpdateTileEntityPacket(pos, 1, getUpdateTag());
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        CompoundNBT nbt = pkt.getNbtCompound();
+        handleUpdateTag(getBlockState(), nbt);
     }
 
     public void addCore(TraderCore core) {
         this.cores.add(core);
+        updateSkin();
+    }
+
+    public void updateSkin() {
+        TraderCore lastCore = getLastCore();
+        if (lastCore == null) return;
+        skin.updateSkin(lastCore.getName());
     }
 
     public void printCores() {
