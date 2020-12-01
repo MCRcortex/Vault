@@ -2,6 +2,7 @@ package iskallia.vault.init;
 
 import iskallia.vault.container.SkillTreeContainer;
 import iskallia.vault.container.VaultCrateContainer;
+import iskallia.vault.container.VendingMachineContainer;
 import iskallia.vault.research.ResearchTree;
 import iskallia.vault.skill.ability.AbilityTree;
 import iskallia.vault.skill.talent.TalentTree;
@@ -20,6 +21,7 @@ public class ModContainers {
 
     public static ContainerType<SkillTreeContainer> SKILL_TREE_CONTAINER;
     public static ContainerType<VaultCrateContainer> VAULT_CRATE_CONTAINER;
+    public static ContainerType<VendingMachineContainer> VENDING_MACHINE_CONTAINER;
 
     public static void register(RegistryEvent.Register<ContainerType<?>> event) {
         SKILL_TREE_CONTAINER = createContainerType((windowId, inventory, buffer) -> {
@@ -32,15 +34,23 @@ public class ModContainers {
             researchTree.deserializeNBT(Optional.ofNullable(buffer.readCompoundTag()).orElse(new CompoundNBT()));
             return new SkillTreeContainer(windowId, abilityTree, talentTree, researchTree);
         });
+
         VAULT_CRATE_CONTAINER = createContainerType((windowId, inventory, buffer) -> {
             World world = inventory.player.getEntityWorld();
             BlockPos pos = buffer.readBlockPos();
             return new VaultCrateContainer(windowId, world, pos, inventory, inventory.player);
         });
 
+        VENDING_MACHINE_CONTAINER = createContainerType((windowId, inventory, buffer) -> {
+            World world = inventory.player.getEntityWorld();
+            BlockPos pos = buffer.readBlockPos();
+            return new VendingMachineContainer(windowId, world, pos, inventory, inventory.player);
+        });
+
         event.getRegistry().registerAll(
                 SKILL_TREE_CONTAINER.setRegistryName("ability_tree"),
-                VAULT_CRATE_CONTAINER.setRegistryName("vault_crate")
+                VAULT_CRATE_CONTAINER.setRegistryName("vault_crate"),
+                VENDING_MACHINE_CONTAINER.setRegistryName("vending_machine")
         );
     }
 

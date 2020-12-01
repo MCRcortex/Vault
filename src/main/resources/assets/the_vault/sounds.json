@@ -47,6 +47,12 @@
       "the_vault:skill_tree_upgrade"
     ]
   },
+  "vending_machine": {
+    "category": "master",
+    "sounds": [
+      "the_vault:vending_machine"
+    ]
+  },
   "mega_jump": {
     "category": "master",
     "sounds": [
