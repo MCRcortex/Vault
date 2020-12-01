@@ -8,7 +8,7 @@
       "features": true,
       "layers": [
         {
-          "block": "minecraft:bedrock",
+          "block": "the_vault:vault_bedrock",
           "height": 256
         }
       ],

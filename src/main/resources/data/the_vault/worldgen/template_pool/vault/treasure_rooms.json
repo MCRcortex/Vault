@@ -38,7 +38,7 @@
         "element_type": "minecraft:single_pool_element"
       }
     },
-    {
+        {
       "weight": 1,
       "element": {
         "location": "the_vault:vault/rooms/treasure5",
@@ -172,8 +172,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    },{
       "weight": 1,
       "element": {
         "location": "the_vault:vault/rooms/treasure20",
@@ -336,10 +335,15 @@
       }
     },
     {
-      "weight": 25,
+      "weight": 100,
       "element": {
         "element_type": "minecraft:empty_pool_element"
       }
     }
+
+
+
+
+
   ]
 }

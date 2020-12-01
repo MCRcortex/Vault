@@ -68,6 +68,7 @@ public class ModBlocks {
     public static final MVPCrownBlock MVP_CROWN = new MVPCrownBlock();
     public static final PlayerStatueBlock PLAYER_STATUE = new PlayerStatueBlock();
     public static final VendingMachineBlock VENDING_MACHINE = new VendingMachineBlock();
+    public static final VaultBedrockBlock VAULT_BEDROCK = new VaultBedrockBlock();
 
     public static final TileEntityType<VaultAltarTileEntity> VAULT_ALTAR_TILE_ENTITY =
             TileEntityType.Builder.create(VaultAltarTileEntity::new, VAULT_ALTAR).build(null);
@@ -131,6 +132,7 @@ public class ModBlocks {
         registerBlock(event, MVP_CROWN, Vault.id("mvp_crown"));
         registerBlock(event, PLAYER_STATUE, Vault.id("player_statue"));
         registerBlock(event, VENDING_MACHINE, Vault.id("vending_machine"));
+        registerBlock(event, VAULT_BEDROCK, Vault.id("vault_bedrock"));
     }
 
     public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
@@ -197,6 +199,7 @@ public class ModBlocks {
         registerBlockItem(event, MVP_CROWN, 1);
         registerBlockItem(event, PLAYER_STATUE, PLAYER_STATUE_BLOCK_ITEM);
         registerBlockItem(event, VENDING_MACHINE, 1);
+        registerBlockItem(event, VAULT_BEDROCK);
     }
 
     /* --------------------------------------------- */

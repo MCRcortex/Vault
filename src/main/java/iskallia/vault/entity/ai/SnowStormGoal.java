@@ -1,5 +1,6 @@
 package iskallia.vault.entity.ai;
 
+import iskallia.vault.entity.ArenaBossEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.monster.BlazeEntity;
@@ -49,8 +50,9 @@ public class SnowStormGoal<T extends MonsterEntity> extends GoalTask<T> {
 		if(this.getWorld().rand.nextInt(3) == 0) {
 			SnowballEntity snowball = new SnowballEntity(this.getWorld(), this.getEntity()) {
 				@Override
-				protected void onEntityHit(EntityRayTraceResult p_213868_1_) {
-					Entity entity = p_213868_1_.getEntity();
+				protected void onEntityHit(EntityRayTraceResult raycast) {
+					Entity entity = raycast.getEntity();
+					if(entity instanceof ArenaBossEntity)return;
 					int i = entity instanceof BlazeEntity ? 3 : 1;
 					entity.attackEntityFrom(DamageSource.causeIndirectDamage(this, SnowStormGoal.this.getEntity()), (float)i);
 				}
