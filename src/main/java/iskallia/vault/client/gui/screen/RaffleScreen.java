@@ -7,7 +7,9 @@ import iskallia.vault.client.gui.helper.ConfettiParticles;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.client.gui.helper.UIHelper;
 import iskallia.vault.client.gui.widget.RaffleEntry;
+import iskallia.vault.init.ModNetwork;
 import iskallia.vault.init.ModSounds;
+import iskallia.vault.network.message.RaffleMessage;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.Screen;
@@ -56,35 +58,23 @@ public class RaffleScreen extends Screen {
     protected double elapsedTicks;
     private double C;
 
-    public RaffleScreen() {
+    public RaffleScreen(List<String> occupants, String winner) {
         super(new StringTextComponent("Raffle Screen"));
 
         this.raffleWidgets = new LinkedList<>();
-        String[] names = {
-                "TheBigBadWulf",
-                "iGoodie",
-                "Kumara22",
-                "Kimandjax",
-                "KaptainWutax",
-                "Starmute",
-                "Jmilthedude",
-                "iskall85",
-                "Monni_21",
-                "OneHellOfALongNickname",
-        };
-        occupants = new LinkedList<>();
-        occupants.addAll(Arrays.asList(names));
+        this.occupants = new LinkedList<>();
+        this.occupants.addAll(occupants);
         Collections.shuffle(occupants);
 
-        winner = "Starmute";
+        this.winner = winner;
         int winnerIndex = occupants.indexOf(winner);
 
-        this.spinTicks = 5 * 20; // ticks
+        this.spinTicks = 10 * 20; // ticks
         int freeSpinCount = 5;
         this.distance = freeSpinCount * (occupants.size() * containerHeight + (occupants.size() - 1) + 1)
                 + (winnerIndex - 2) * (containerHeight + 1); // pixels
 
-        for (int i = 0; i < names.length; i++) {
+        for (int i = 0; i < this.occupants.size(); i++) {
             RaffleEntry entry = new RaffleEntry(occupants.get(i), i % 5);
             Rectangle bounds = new Rectangle();
             bounds.x0 = 0;
@@ -291,6 +281,7 @@ public class RaffleScreen extends Screen {
         if (elapsedTicks >= spinTicks) {
             spinning = false;
             if (!popped) {
+                ModNetwork.CHANNEL.sendToServer(RaffleMessage.animationDone(this.winner));
                 getMinecraft().getSoundHandler().play(SimpleSound.master(ModSounds.CONFETTI_SFX, 1.0F));
                 leftConfettiPopper.pop();
                 rightConfettiPopper.pop();

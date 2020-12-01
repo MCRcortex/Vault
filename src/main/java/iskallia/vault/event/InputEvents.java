@@ -6,6 +6,7 @@ import iskallia.vault.init.ModKeybinds;
 import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.AbilityKeyMessage;
 import iskallia.vault.network.message.OpenSkillTreeMessage;
+import iskallia.vault.network.message.RaffleMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -32,7 +33,7 @@ public class InputEvents {
 
     private static void onInput(Minecraft minecraft, int key, int action) {
         if (minecraft.currentScreen == null && ModKeybinds.openRaffleScreen.isPressed()) {
-            minecraft.displayGuiScreen(new RaffleScreen());
+            ModNetwork.CHANNEL.sendToServer(RaffleMessage.requestRaffle());
 
         } else if (minecraft.currentScreen == null && ModKeybinds.openAbilityTree.isPressed()) {
             ModNetwork.CHANNEL.sendToServer(new OpenSkillTreeMessage());

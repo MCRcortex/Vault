@@ -5,7 +5,9 @@ import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.HypeBarMessage;
 import iskallia.vault.util.NetcodeUtils;
+import iskallia.vault.util.nbt.NBTHelper;
 import iskallia.vault.world.raid.ArenaRaid;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.server.ServerWorld;
@@ -15,8 +17,6 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.network.NetworkDirection;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -34,6 +34,21 @@ public class StreamData extends WorldSavedData {
 
     public StreamData(String name) {
         super(name);
+    }
+
+    public Donations getDonations(UUID streamer) {
+        return this.donoMap.computeIfAbsent(streamer, uuid -> new Donations());
+    }
+
+    public StreamData reset(MinecraftServer server, UUID streamer) {
+        this.subMap.put(streamer, new Subscribers());
+        this.subBufferMap.put(streamer, new Subscribers());
+        this.donoMap.put(streamer, new Donations());
+
+        syncHypebar(server, streamer);
+
+        this.markDirty();
+        return this;
     }
 
     public StreamData onSub(MinecraftServer server, UUID streamer, String subscriber) {
@@ -65,7 +80,7 @@ public class StreamData extends WorldSavedData {
     }
 
     public StreamData onDono(MinecraftServer server, UUID streamer, String donator, int amount) {
-        this.donoMap.computeIfAbsent(streamer, uuid -> new Donations()).onDono(donator, amount);
+        getDonations(streamer).onDono(donator, amount);
         this.markDirty();
         return this;
     }
@@ -88,19 +103,19 @@ public class StreamData extends WorldSavedData {
     public void read(CompoundNBT nbt) {
         System.out.println("Reading:" + nbt);
 
-        this.subMap = readMap(nbt, "StreamSubs", ListNBT.class, list -> {
+        this.subMap = NBTHelper.readMap(nbt, "StreamSubs", ListNBT.class, list -> {
             Subscribers subs = new Subscribers();
             subs.deserializeNBT(list);
             return subs;
         });
 
-        this.subBufferMap = readMap(nbt, "StreamSubsBuffer", ListNBT.class, list -> {
+        this.subBufferMap = NBTHelper.readMap(nbt, "StreamSubsBuffer", ListNBT.class, list -> {
             Subscribers subs = new Subscribers();
             subs.deserializeNBT(list);
             return subs;
         });
 
-        this.donoMap = readMap(nbt, "StreamDonos", CompoundNBT.class, list -> {
+        this.donoMap = NBTHelper.readMap(nbt, "StreamDonos", CompoundNBT.class, list -> {
             Donations donos = new Donations();
             donos.deserializeNBT(list);
             return donos;
@@ -109,9 +124,9 @@ public class StreamData extends WorldSavedData {
 
     @Override
     public CompoundNBT write(CompoundNBT nbt) {
-        writeMap(nbt, "StreamSubsBuffer", this.subBufferMap, ListNBT.class, Subscribers::serializeNBT);
-        writeMap(nbt, "StreamSubs", this.subMap, ListNBT.class, Subscribers::serializeNBT);
-        writeMap(nbt, "StreamDonos", this.donoMap, CompoundNBT.class, Donations::serializeNBT);
+        NBTHelper.writeMap(nbt, "StreamSubsBuffer", this.subBufferMap, ListNBT.class, Subscribers::serializeNBT);
+        NBTHelper.writeMap(nbt, "StreamSubs", this.subMap, ListNBT.class, Subscribers::serializeNBT);
+        NBTHelper.writeMap(nbt, "StreamDonos", this.donoMap, CompoundNBT.class, Donations::serializeNBT);
         return nbt;
     }
 
@@ -125,33 +140,6 @@ public class StreamData extends WorldSavedData {
                     NetworkDirection.PLAY_TO_CLIENT
             );
         });
-    }
-
-    public static <T, N extends INBT> Map<UUID, T> readMap(CompoundNBT nbt, String name, Class<N> nbtType, Function<N, T> mapper) {
-        Map<UUID, T> res = new HashMap<>();
-        ListNBT uuidList = nbt.getList(name + "Keys", Constants.NBT.TAG_STRING);
-        ListNBT valuesList = (ListNBT) nbt.get(name + "Values");
-
-        if (uuidList.size() != valuesList.size()) {
-            throw new IllegalStateException("Map doesn't have the same amount of keys as values");
-        }
-
-        for (int i = 0; i < uuidList.size(); i++) {
-            res.put(UUID.fromString(uuidList.get(i).getString()), mapper.apply((N) valuesList.get(i)));
-        }
-
-        return res;
-    }
-
-    public static <T, N extends INBT> void writeMap(CompoundNBT nbt, String name, Map<UUID, T> map, Class<N> nbtType, Function<T, N> mapper) {
-        ListNBT uuidList = new ListNBT();
-        ListNBT valuesList = new ListNBT();
-        map.forEach((key, value) -> {
-            uuidList.add(StringNBT.valueOf(key.toString()));
-            valuesList.add(mapper.apply(value));
-        });
-        nbt.put(name + "Keys", uuidList);
-        nbt.put(name + "Values", valuesList);
     }
 
     public static StreamData get(ServerWorld world) {
@@ -191,6 +179,23 @@ public class StreamData extends WorldSavedData {
         public Donations onDono(String name, int amount) {
             this.donoMap.put(name, this.donoMap.getOrDefault(name, 0) + amount);
             return this;
+        }
+
+        public Set<String> getDonators() {
+            return donoMap.keySet();
+        }
+
+        public String weightedRandom() {
+            int totalWeight = donoMap.values().stream().mapToInt(i -> i).sum();
+            double r = Math.random() * totalWeight;
+            double c = 0.0;
+            for (Map.Entry<String, Integer> entry : donoMap.entrySet()) {
+                c += entry.getValue();
+                if (c >= r) {
+                    return entry.getKey();
+                }
+            }
+            throw new RuntimeException("Wat? :O");
         }
 
         @Override
