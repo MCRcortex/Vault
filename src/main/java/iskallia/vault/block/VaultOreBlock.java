@@ -15,7 +15,7 @@ public class VaultOreBlock extends OreBlock {
                 .setRequiresTool()
                 .setLightLevel(state -> 9)
                 .hardnessAndResistance(3f, 3f)
-                .sound(ModSounds.VAULT_GEM)
+                //.sound(ModSounds.VAULT_GEM)
         );
     }
 

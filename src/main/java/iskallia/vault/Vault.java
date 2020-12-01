@@ -41,8 +41,12 @@ public class Vault {
 
 	public void onBiomeLoad(BiomeLoadingEvent event) {
     	if(event.getName().equals(Vault.id("spoopy"))) {
-    		ModFeatures.FEATURES.forEach(feature -> event.getGeneration().withFeature(GenerationStage.Decoration.UNDERGROUND_DECORATION, feature));
+		    event.getGeneration()
+				    .withFeature(GenerationStage.Decoration.UNDERGROUND_DECORATION, ModFeatures.VAULT_ORE)
+				    .withFeature(GenerationStage.Decoration.UNDERGROUND_DECORATION, ModFeatures.BREADCRUMB_CHEST);
 	    }
+
+    	event.getGeneration().withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, ModFeatures.VAULT_ROCK_ORE);
 	}
 
 	public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
