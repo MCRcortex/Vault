@@ -86,6 +86,10 @@ public class ObeliskBlock extends Block {
 
             if (raid != null) {
                 EntityScaler.scale(boss, raid.level + 5, new Random());
+
+                if(raid.playerBossName != null) {
+                    boss.setCustomName(new StringTextComponent(raid.playerBossName));
+                }
             }
 
             world.setBlockState(pos, Blocks.AIR.getDefaultState());

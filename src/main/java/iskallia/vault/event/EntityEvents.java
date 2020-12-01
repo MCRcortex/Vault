@@ -1,6 +1,7 @@
 package iskallia.vault.event;
 
 import iskallia.vault.Vault;
+import iskallia.vault.block.VaultCrateBlock;
 import iskallia.vault.block.VaultDoorBlock;
 import iskallia.vault.entity.EntityScaler;
 import iskallia.vault.entity.FighterEntity;
@@ -10,6 +11,7 @@ import iskallia.vault.init.ModSounds;
 import iskallia.vault.world.data.VaultRaidData;
 import iskallia.vault.world.gen.PortalPlacer;
 import iskallia.vault.world.raid.VaultRaid;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ChestBlock;
@@ -18,9 +20,13 @@ import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.projectile.FireworkRocketEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameterSets;
 import net.minecraft.loot.LootParameters;
@@ -28,7 +34,9 @@ import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.concurrent.TickDelayedTask;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
@@ -42,6 +50,7 @@ import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.List;
 import java.util.Random;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -162,7 +171,7 @@ public class EntityEvents {
 	}
 
 	@SubscribeEvent
-	public static void onEntityDeath(LivingDeathEvent event) {
+	public static void onEntityDeath(LivingDropsEvent event) {
 		if(event.getEntity().world.isRemote
 				|| event.getEntity().world.getDimensionKey() != Vault.VAULT_KEY
 				|| !event.getEntity().getTags().contains("VaultBoss"))return;
@@ -182,13 +191,24 @@ public class EntityEvents {
 
 				LootContext ctx = builder.build(LootParameterSets.ENTITY);
 
-				world.getServer().getLootTableManager().getLootTableFromLocation(Vault.id("chest/boss")).generate(ctx).forEach(stack -> {
-					if(!player.addItemStackToInventory(stack)) {
-						//TODO: drop the item at spawn
-					}
-				});
+				NonNullList<ItemStack> stacks = NonNullList.create();
+				stacks.addAll(world.getServer().getLootTableManager().getLootTableFromLocation(Vault.id("chest/boss")).generate(ctx));
+				ItemStack crate = VaultCrateBlock.getCrateWithLoot(ModBlocks.VAULT_CRATE, stacks);
 
-				raid.teleportToStart(world, player);
+				event.getEntity().entityDropItem(crate);
+
+				FireworkRocketEntity fireworks = new FireworkRocketEntity(world, event.getEntity().getPosX(),
+						event.getEntity().getPosY(), event.getEntity().getPosZ(), new ItemStack(Items.FIREWORK_ROCKET));
+				world.addEntity(fireworks);
+				//world.getServer().getLootTableManager().getLootTableFromLocation(Vault.id("chest/boss")).generate(ctx).forEach(stack -> {
+				//	if(!player.addItemStackToInventory(stack)) {
+				//		//TODO: drop the item at spawn
+				//	}
+				//});
+
+				raid.won = true;
+				raid.ticksLeft = 20 * 20;
+				world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MASTER, 1.0F, 1.0F);
 			});
 		}
 	}

@@ -69,13 +69,17 @@ public class ArenaBossEntity extends FighterEntity {
 	}
 
 	public boolean attackEntityAsMob(Entity entity) {
+		boolean ret = false;
+
 		if(this.rand.nextInt(12) == 0) {
 			double old = this.getAttribute(Attributes.ATTACK_KNOCKBACK).getBaseValue();
 			this.getAttribute(Attributes.ATTACK_KNOCKBACK).setBaseValue(this.knockbackAttack(entity));
 			boolean result = super.attackEntityAsMob(entity);
 			this.getAttribute(Attributes.ATTACK_KNOCKBACK).setBaseValue(old);
-			return result;
-		} else if(this.rand.nextInt(6) == 0) {
+			ret |= result;
+		}
+
+		if(this.rand.nextInt(6) == 0) {
 			this.world.setEntityState(this, (byte)4);
 			float f = (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE);
 			float f1 = (int)f > 0 ? f / 2.0F + (float)this.rand.nextInt((int)f) : f;
@@ -87,10 +91,10 @@ public class ArenaBossEntity extends FighterEntity {
 			}
 
 			this.world.playSound(null, entity.getPosition(), SoundEvents.ENTITY_IRON_GOLEM_HURT, SoundCategory.HOSTILE, 1.0F, 1.0F);
-			return flag;
+			ret |= flag;
 		}
 
-		return super.attackEntityAsMob(entity);
+		return ret || super.attackEntityAsMob(entity);
 	}
 
 	@SubscribeEvent

@@ -40,7 +40,7 @@ public class FighterEntity extends ZombieEntity {
 
 		if(!this.world.isRemote) {
 			this.changeSize(this.sizeMultiplier);
-			this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.rand.nextFloat() * 0.15D + 0.10D);
+			this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.rand.nextFloat() * 0.10D + 0.20D);
 		} else {
 			this.skin = new SkinProfile();
 		}

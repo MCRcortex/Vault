@@ -57,6 +57,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 
     public BlockPos start;
     public Direction facing;
+    public boolean won;
 
     public VaultSpawner spawner = new VaultSpawner(this);
     public boolean finished = false;
@@ -93,16 +94,22 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         });
 
         if (this.ticksLeft <= 0) {
-            this.runIfPresent(world.getServer(), playerEntity -> {
-                playerEntity.sendMessage(new StringTextComponent("Time has run out!").mergeStyle(TextFormatting.GREEN), this.playerId);
-                playerEntity.inventory.func_234564_a_(stack -> true, -1, playerEntity.container.func_234641_j_());
-                playerEntity.openContainer.detectAndSendChanges();
-                playerEntity.container.onCraftMatrixChanged(playerEntity.inventory);
-                playerEntity.updateHeldItem();
-                playerEntity.onKillCommand();
-                this.finish(world, this.playerId);
-                this.finished = true;
-            });
+            if(this.won) {
+                this.runIfPresent(world.getServer(), playerEntity -> {
+                    this.teleportToStart(world, playerEntity);
+                });
+            } else {
+                this.runIfPresent(world.getServer(), playerEntity -> {
+                    playerEntity.sendMessage(new StringTextComponent("Time has run out!").mergeStyle(TextFormatting.GREEN), this.playerId);
+                    playerEntity.inventory.func_234564_a_(stack -> true, -1, playerEntity.container.func_234641_j_());
+                    playerEntity.openContainer.detectAndSendChanges();
+                    playerEntity.container.onCraftMatrixChanged(playerEntity.inventory);
+                    playerEntity.updateHeldItem();
+                    playerEntity.onKillCommand();
+                    this.finish(world, this.playerId);
+                    this.finished = true;
+                });
+            }
         } else {
             this.runIfPresent(world.getServer(), player -> {
                 if(this.ticksLeft + 20 < ModConfigs.VAULT_GENERAL.getTickCounter()
@@ -161,6 +168,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         nbt.putInt("Rarity", this.rarity);
         nbt.putInt("TicksLeft", this.ticksLeft);
         nbt.putString("PlayerBossName", playerBossName);
+        nbt.putBoolean("Won", this.won);
 
         if (this.start != null) {
             CompoundNBT startNBT = new CompoundNBT();
@@ -181,6 +189,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         this.rarity = nbt.getInt("Rarity");
         this.ticksLeft = nbt.getInt("TicksLeft");
         this.playerBossName = nbt.getString("PlayerBossName");
+        this.won = nbt.getBoolean("Won");
 
         if (nbt.contains("Start", Constants.NBT.TAG_COMPOUND)) {
             CompoundNBT startNBT = nbt.getCompound("Start");
