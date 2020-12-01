@@ -37,7 +37,7 @@ public class VaultAltarBlock extends Block {
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
     public VaultAltarBlock() {
-        super(Properties.create(Material.ROCK, MaterialColor.DIAMOND).setRequiresTool().hardnessAndResistance(3f, 3f));
+        super(Properties.create(Material.ROCK, MaterialColor.DIAMOND).setRequiresTool().hardnessAndResistance(3f, 3f).notSolid());
         this.setDefaultState(this.stateContainer.getBaseState().with(POWERED, Boolean.valueOf(false)));
 
     }
