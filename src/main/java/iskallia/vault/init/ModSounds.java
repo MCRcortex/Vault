@@ -9,10 +9,13 @@ import net.minecraftforge.event.RegistryEvent;
 public class ModSounds {
 
     public static SoundEvent RAFFLE_SFX;
+    public static SoundEvent VAULT_AMBIENT_LOOP;
+    public static SoundEvent VAULT_AMBIENT;
     public static SoundEvent TIMER_KILL_SFX;
     public static SoundEvent TIMER_PANIC_TICK_SFX;
     public static SoundEvent CONFETTI_SFX;
     public static SoundEvent MEGA_JUMP_SFX;
+    public static SoundEvent DASH_SFX;
     public static SoundEvent VAULT_EXP_SFX;
     public static SoundEvent VAULT_LEVEL_UP_SFX;
     public static SoundEvent SKILL_TREE_LEARN_SFX;
@@ -25,10 +28,13 @@ public class ModSounds {
 
     public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
         RAFFLE_SFX = registerSound(event, "raffle");
+        VAULT_AMBIENT_LOOP = registerSound(event, "vault_ambient_loop");
+        VAULT_AMBIENT = registerSound(event, "vault_ambient");
         TIMER_KILL_SFX = registerSound(event, "timer_kill");
         TIMER_PANIC_TICK_SFX = registerSound(event, "timer_panic_tick");
         CONFETTI_SFX = registerSound(event, "confetti");
         MEGA_JUMP_SFX = registerSound(event, "mega_jump");
+        DASH_SFX = registerSound(event, "dash");
         VAULT_EXP_SFX = registerSound(event, "vault_exp");
         VAULT_LEVEL_UP_SFX = registerSound(event, "vault_level_up");
         SKILL_TREE_LEARN_SFX = registerSound(event, "skill_tree_learn");

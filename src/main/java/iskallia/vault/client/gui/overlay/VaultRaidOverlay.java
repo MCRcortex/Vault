@@ -23,6 +23,10 @@ public class VaultRaidOverlay {
     public static int remainingTicks;
 
     public static SimpleSound panicSound;
+    public static SimpleSound ambientLoop;
+    public static SimpleSound ambientSound;
+
+    private static int ticksBeforeAmbientSound;
 
     @SubscribeEvent
     public static void
@@ -76,6 +80,21 @@ public class VaultRaidOverlay {
         );
 
         matrixStack.pop();
+
+        if (ambientLoop == null || !minecraft.getSoundHandler().isPlaying(ambientLoop)) {
+            ambientLoop = SimpleSound.ambient(ModSounds.VAULT_AMBIENT_LOOP);
+            minecraft.getSoundHandler().play(ambientLoop);
+        }
+
+        if (ticksBeforeAmbientSound < 0) {
+            if (ambientSound == null || !minecraft.getSoundHandler().isPlaying(ambientSound)) {
+                ambientSound = SimpleSound.ambient(ModSounds.VAULT_AMBIENT);
+                minecraft.getSoundHandler().play(ambientSound);
+                ticksBeforeAmbientSound = 20 * 60;
+            }
+        }
+
+        ticksBeforeAmbientSound--;
 
         if (remainingTicks < panicTicks) {
             if (panicSound == null || !minecraft.getSoundHandler().isPlaying(panicSound)) {

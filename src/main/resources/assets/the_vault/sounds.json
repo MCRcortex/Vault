@@ -11,6 +11,30 @@
       "the_vault:timer_kill"
     ]
   },
+  "vault_ambient_loop": {
+    "category": "music",
+    "sounds": [
+      {
+        "name": "the_vault:vault_ambient_loop",
+        "stream": true
+      }
+    ]
+  },
+  "vault_ambient": {
+    "category": "ambient",
+    "sounds": [
+      "the_vault:vault_ambient_1",
+      "the_vault:vault_ambient_2",
+      "the_vault:vault_ambient_3",
+      "the_vault:vault_ambient_4",
+      "the_vault:vault_ambient_5",
+      "the_vault:vault_ambient_6",
+      "the_vault:vault_ambient_7",
+      "the_vault:vault_ambient_8",
+      "the_vault:vault_ambient_9",
+      "the_vault:vault_ambient_10"
+    ]
+  },
   "timer_panic_tick": {
     "category": "master",
     "sounds": [
@@ -51,6 +75,12 @@
     "category": "master",
     "sounds": [
       "the_vault:vending_machine"
+    ]
+  },
+  "dash": {
+    "category": "master",
+    "sounds": [
+      "the_vault:dash"
     ]
   },
   "mega_jump": {

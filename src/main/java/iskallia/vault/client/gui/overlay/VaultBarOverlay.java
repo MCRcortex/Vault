@@ -22,7 +22,7 @@ public class VaultBarOverlay {
 
     public static int vaultLevel;
     public static int vaultExp, tnl;
-    public static int unspentSkillPoints; // <-- TODO: "Has unspent points!" indicator
+    public static int unspentSkillPoints;
 
     @SubscribeEvent
     public static void
