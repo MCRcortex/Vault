@@ -2,16 +2,20 @@ package iskallia.vault.world.raid;
 
 import iskallia.vault.entity.FighterEntity;
 import iskallia.vault.init.ModEntities;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-//TODO: NBT
-public class ArenaSpawner {
+public class ArenaSpawner implements INBTSerializable<CompoundNBT> {
 
 	private final ArenaRaid raid;
 	public final List<UUID> fighters = new ArrayList<>();
@@ -66,6 +70,35 @@ public class ArenaSpawner {
 	public BlockPos toTop(ServerWorld world, BlockPos pos) {
 		world.getChunk(pos); //Force chunk loading.
 		return world.getHeight(Heightmap.Type.MOTION_BLOCKING, pos);
+	}
+
+	@Override
+	public CompoundNBT serializeNBT() {
+		CompoundNBT nbt = new CompoundNBT();
+		ListNBT bossList = new ListNBT();
+		ListNBT fighterList = new ListNBT();
+		this.bosses.forEach(uuid -> bossList.add(StringNBT.valueOf(uuid.toString())));
+		this.fighters.forEach(uuid -> fighterList.add(StringNBT.valueOf(uuid.toString())));
+		nbt.put("BossList", bossList);
+		nbt.put("FighterList", fighterList);
+		return nbt;
+	}
+
+	@Override
+	public void deserializeNBT(CompoundNBT nbt) {
+		this.bosses.clear();
+		this.fighters.clear();
+
+		ListNBT bossList = nbt.getList("BossList", Constants.NBT.TAG_STRING);
+		ListNBT fighterList = nbt.getList("FighterList", Constants.NBT.TAG_STRING);
+
+		for(int i = 0; i < bossList.size(); i++) {
+			this.bosses.add(UUID.fromString(bossList.getString(i)));
+		}
+
+		for(int i = 0; i < fighterList.size(); i++) {
+			this.fighters.add(UUID.fromString(fighterList.getString(i)));
+		}
 	}
 
 }

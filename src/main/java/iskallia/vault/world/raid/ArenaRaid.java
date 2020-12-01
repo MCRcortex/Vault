@@ -107,6 +107,7 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
 
         nbt.put("Scoreboard", this.scoreboard.serializeNBT());
         nbt.put("ReturnInfo", this.returnInfo.serializeNBT());
+        nbt.put("Spawner", this.spawner.serializeNBT());
         return nbt;
     }
 
@@ -127,6 +128,10 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
 
         if(nbt.contains("ReturnInfo", Constants.NBT.TAG_COMPOUND)) {
             this.returnInfo.deserializeNBT(nbt.getCompound("ReturnInfo"));
+        }
+
+        if(nbt.contains("Spawner", Constants.NBT.TAG_COMPOUND)) {
+            this.spawner.deserializeNBT(nbt.getCompound("Spawner"));
         }
     }
 
