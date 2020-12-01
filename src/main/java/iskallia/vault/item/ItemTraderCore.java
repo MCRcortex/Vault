@@ -1,6 +1,7 @@
 package iskallia.vault.item;
 
 import iskallia.vault.init.ModItems;
+import iskallia.vault.util.nbt.NBTSerializer;
 import iskallia.vault.vending.Product;
 import iskallia.vault.vending.Trade;
 import iskallia.vault.vending.TraderCore;
@@ -30,10 +31,14 @@ public class ItemTraderCore extends Item {
     }
 
     public static ItemStack getStack(TraderCore core) {
-        CompoundNBT nbt = new CompoundNBT();
-        nbt.put("core", TraderCore.writeToNBT(core));
         ItemStack stack = new ItemStack(ModItems.TRADER_CORE, 1);
-        stack.setTag(nbt);
+        CompoundNBT nbt = new CompoundNBT();
+        try {
+            nbt.put("core", NBTSerializer.serialize(core));
+            stack.setTag(nbt);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return stack;
     }
 
@@ -41,7 +46,13 @@ public class ItemTraderCore extends Item {
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         CompoundNBT nbt = stack.getOrCreateTag();
         if (nbt.contains("core")) {
-            TraderCore core = TraderCore.readFromNBT((CompoundNBT) nbt.get("core"));
+            TraderCore core = null;
+            try {
+                core = NBTSerializer.deserialize(TraderCore.class, (CompoundNBT) nbt.get("core"));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
 
             Trade trade = core.getTrade();
             if (!trade.isValid()) return;

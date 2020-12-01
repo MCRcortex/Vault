@@ -2,6 +2,7 @@ package iskallia.vault.block.entity;
 
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.item.ItemTraderCore;
+import iskallia.vault.util.nbt.NBTSerializer;
 import iskallia.vault.vending.TraderCore;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;
@@ -34,7 +35,11 @@ public class VendingMachineTileEntity extends TileEntity {
     public CompoundNBT write(CompoundNBT compound) {
         ListNBT list = new ListNBT();
         for (TraderCore core : cores) {
-            list.add(TraderCore.writeToNBT(core));
+            try {
+                list.add(NBTSerializer.serialize(core));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         compound.put("coresList", list);
         return super.write(compound);
@@ -44,8 +49,12 @@ public class VendingMachineTileEntity extends TileEntity {
     public void read(BlockState state, CompoundNBT nbt) {
         ListNBT list = nbt.getList("coresList", Constants.NBT.TAG_COMPOUND);
         for (INBT tag : list) {
-            CompoundNBT coreNBT = (CompoundNBT) tag;
-            TraderCore core = TraderCore.readFromNBT(coreNBT);
+            TraderCore core = null;
+            try {
+                core = NBTSerializer.deserialize(TraderCore.class, (CompoundNBT) tag);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             cores.add(core);
         }
         super.read(state, nbt);
