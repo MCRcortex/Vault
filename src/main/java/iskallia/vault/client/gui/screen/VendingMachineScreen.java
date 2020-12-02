@@ -6,22 +6,19 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import iskallia.vault.Vault;
 import iskallia.vault.block.entity.VendingMachineTileEntity;
 import iskallia.vault.block.render.VendingMachineRenderer;
+import iskallia.vault.client.gui.component.ScrollableContainer;
+import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.container.VendingMachineContainer;
 import iskallia.vault.entity.model.StatuePlayerModel;
 import iskallia.vault.util.SkinProfile;
 import iskallia.vault.vending.TraderCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
@@ -82,11 +79,28 @@ public class VendingMachineScreen extends ContainerScreen<VendingMachineContaine
             // TODO: Render each one on screen. A widget sounds more reasonable hmmmmmm
         }
 
+        ScrollableContainer scrollableContainer = new ScrollableContainer((ms, mx, my, pt) -> {
+
+        });
+
+        Rectangle rectangle = new Rectangle();
+        rectangle.x0 = (int) (midX - 134);
+        rectangle.y0 = (int) (midY - 66);
+        rectangle.setWidth(96);
+        rectangle.setHeight(142);
+
+        scrollableContainer.setBounds(rectangle);
+        scrollableContainer.setInnerHeight(1000);
+
+        scrollableContainer.render(matrixStack, mouseX, mouseY, partialTicks);
+
         super.render(matrixStack, mouseX, mouseY, partialTicks);
 
         TraderCore lastCore = tileEntity.getLastCore();
-        drawSkin((int) midX - 175, (int) midY - 10, 45, tileEntity.getSkin(), lastCore.isMegahead());
-        drawSkin((int) midX + 175, (int) midY - 10, -45, tileEntity.getSkin(), lastCore.isMegahead());
+        if (lastCore != null) {
+            drawSkin((int) midX - 175, (int) midY - 10, 45, tileEntity.getSkin(), lastCore.isMegahead());
+            drawSkin((int) midX + 175, (int) midY - 10, -45, tileEntity.getSkin(), lastCore.isMegahead());
+        }
 
         this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
     }
@@ -114,8 +128,8 @@ public class VendingMachineScreen extends ContainerScreen<VendingMachineContaine
             matrixStack.scale(scale, scale, scale);
             matrixStack.rotate(Vector3f.XP.rotationDegrees(20));
             matrixStack.rotate(Vector3f.YN.rotationDegrees(yRotation));
-            int lighting = 0xe00000;
-            int overlay = 0xe0000;
+            int lighting = 0xf00000;
+            int overlay = 0xf0000;
             RenderType renderType = model.getRenderType(skin.getLocationSkin());
             IVertexBuilder vertexBuilder = irendertypebuffer$impl.getBuffer(renderType);
             model.bipedBody.render(matrixStack, vertexBuilder, lighting, overlay, 1, 1, 1, 1);
