@@ -2,7 +2,6 @@ package iskallia.vault.util;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
 
 // Y E S
 public class LazySoundType extends SoundType {

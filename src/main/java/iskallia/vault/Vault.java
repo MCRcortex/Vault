@@ -2,7 +2,10 @@ package iskallia.vault;
 
 import iskallia.vault.init.ModCommands;
 import iskallia.vault.init.ModFeatures;
-import iskallia.vault.world.data.*;
+import iskallia.vault.world.data.PlayerAbilitiesData;
+import iskallia.vault.world.data.PlayerResearchesData;
+import iskallia.vault.world.data.PlayerVaultStatsData;
+import iskallia.vault.world.data.StreamData;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.RegistryKey;

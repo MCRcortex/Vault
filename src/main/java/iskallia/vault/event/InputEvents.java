@@ -1,7 +1,6 @@
 package iskallia.vault.event;
 
 import iskallia.vault.client.gui.overlay.AbilitiesOverlay;
-import iskallia.vault.client.gui.screen.RaffleScreen;
 import iskallia.vault.init.ModKeybinds;
 import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.AbilityKeyMessage;

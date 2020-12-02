@@ -1,6 +1,5 @@
 package iskallia.vault.block;
 
-import iskallia.vault.init.ModSounds;
 import net.minecraft.block.OreBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;

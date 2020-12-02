@@ -1,7 +1,6 @@
 package iskallia.vault.entity.renderer;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
 import iskallia.vault.client.gui.overlay.ArenaScoreboardOverlay;
 import iskallia.vault.entity.FighterEntity;

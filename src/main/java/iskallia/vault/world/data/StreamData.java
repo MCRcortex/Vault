@@ -7,8 +7,10 @@ import iskallia.vault.network.message.HypeBarMessage;
 import iskallia.vault.util.NetcodeUtils;
 import iskallia.vault.util.nbt.NBTHelper;
 import iskallia.vault.world.raid.ArenaRaid;
-import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.IntNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldSavedData;
@@ -66,10 +68,10 @@ public class StreamData extends WorldSavedData {
                 syncHypebar(server, streamer);
                 int maxSubs = ModConfigs.STREAMER_MULTIPLIERS.ofStreamer(player.getDisplayName().getString()).subsNeededForArena;
                 if (subscribers.count() >= maxSubs) {
+                    ArenaRaid raid = ArenaRaidData.get(player.getServerWorld()).startNew(player);
                     List<String> fighterSubs = subscribers.subs.subList(0, maxSubs);
-                    // TODO: Put last "maxSubs" amount of subs to ArenaSpawner
+                    raid.spawner.addFighters(fighterSubs);
                     fighterSubs.clear();
-                    ArenaRaidData.get(player.getServerWorld()).startNew(player);
                 }
             }
 

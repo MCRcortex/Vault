@@ -2,7 +2,6 @@ package iskallia.vault.block;
 
 import iskallia.vault.entity.ArenaBossEntity;
 import iskallia.vault.entity.EntityScaler;
-import iskallia.vault.entity.FighterEntity;
 import iskallia.vault.init.ModEntities;
 import iskallia.vault.item.ObeliskInscriptionItem;
 import iskallia.vault.world.data.VaultRaidData;
