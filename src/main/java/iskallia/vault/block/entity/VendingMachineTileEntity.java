@@ -34,6 +34,10 @@ public class VendingMachineTileEntity extends TileEntity {
         return skin;
     }
 
+    public List<TraderCore> getCores() {
+        return cores;
+    }
+
     public TraderCore getLastCore() {
         if (cores == null || cores.size() == 0) return null;
         return cores.get(cores.size() - 1);
@@ -50,7 +54,6 @@ public class VendingMachineTileEntity extends TileEntity {
         ListNBT list = new ListNBT();
         for (TraderCore core : cores) {
             try {
-                System.out.println(core);
                 list.add(NBTSerializer.serialize(core));
             } catch (Exception e) {
                 e.printStackTrace();

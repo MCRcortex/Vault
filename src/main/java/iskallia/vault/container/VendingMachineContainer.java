@@ -24,14 +24,20 @@ public class VendingMachineContainer extends Container {
         // Player Inventory
         for (int i1 = 0; i1 < 3; ++i1) {
             for (int k1 = 0; k1 < 9; ++k1) {
-                this.addSlot(new Slot(playerInventory, k1 + i1 * 9 + 9, 8 + k1 * 18, 84 + i1 * 18));
+                this.addSlot(new Slot(playerInventory, k1 + i1 * 9 + 9,
+                        167 + k1 * 18,
+                        86 + i1 * 18));
             }
         }
 
         // Player Hotbar
         for (int j1 = 0; j1 < 9; ++j1) {
-            this.addSlot(new Slot(playerInventory, j1, 8 + j1 * 18, 142));
+            this.addSlot(new Slot(playerInventory, j1, 167 + j1 * 18, 144));
         }
+    }
+
+    public VendingMachineTileEntity getTileEntity() {
+        return tileEntity;
     }
 
     @Override

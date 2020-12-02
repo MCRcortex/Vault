@@ -30,7 +30,7 @@ import java.util.Vector;
 
 public class VendingMachineRenderer extends TileEntityRenderer<VendingMachineTileEntity> {
 
-    protected static final StatuePlayerModel<PlayerEntity> PLAYER_MODEL = new StatuePlayerModel<>(0.1f, true);
+    public static final StatuePlayerModel<PlayerEntity> PLAYER_MODEL = new StatuePlayerModel<>(0.1f, true);
 
     public VendingMachineRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
         super(rendererDispatcherIn);
