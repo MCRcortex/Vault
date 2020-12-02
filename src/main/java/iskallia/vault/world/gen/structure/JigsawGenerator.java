@@ -87,7 +87,7 @@ public class JigsawGenerator {
 			this.rand = p_i242005_7_;
 		}
 
-		private void func_236831_a_(AbstractVillagePiece p_236831_1_, MutableObject<VoxelShape> p_236831_2_, int p_236831_3_, int p_236831_4_, boolean p_236831_5_) {
+		private void func_236831_a_(AbstractVillagePiece p_236831_1_, MutableObject<VoxelShape> p_236831_2_, int p_236831_3_, int currentDepth, boolean p_236831_5_) {
 			JigsawPiece jigsawpiece = p_236831_1_.getJigsawPiece();
 			BlockPos blockpos = p_236831_1_.getPos();
 			Rotation rotation = p_236831_1_.getRotation();
@@ -105,11 +105,11 @@ public class JigsawGenerator {
 				int j = blockpos1.getY() - i;
 				int k = -1;
 				ResourceLocation resourcelocation = new ResourceLocation(template$blockinfo.nbt.getString("pool"));
-				Optional<JigsawPattern> optional = this.field_242839_a.getOptional(resourcelocation);
-				if (optional.isPresent() && (optional.get().getNumberOfPieces() != 0 || Objects.equals(resourcelocation, JigsawPatternRegistry.field_244091_a.getLocation()))) {
-					ResourceLocation resourcelocation1 = optional.get().getFallback();
-					Optional<JigsawPattern> optional1 = this.field_242839_a.getOptional(resourcelocation1);
-					if (optional1.isPresent() && (optional1.get().getNumberOfPieces() != 0 || Objects.equals(resourcelocation1, JigsawPatternRegistry.field_244091_a.getLocation()))) {
+				Optional<JigsawPattern> mainJigsawPattern = this.field_242839_a.getOptional(resourcelocation);
+				if (mainJigsawPattern.isPresent() && (mainJigsawPattern.get().getNumberOfPieces() != 0 || Objects.equals(resourcelocation, JigsawPatternRegistry.field_244091_a.getLocation()))) {
+					ResourceLocation resourcelocation1 = mainJigsawPattern.get().getFallback();
+					Optional<JigsawPattern> fallbackJigsawPattern = this.field_242839_a.getOptional(resourcelocation1);
+					if (fallbackJigsawPattern.isPresent() && (fallbackJigsawPattern.get().getNumberOfPieces() != 0 || Objects.equals(resourcelocation1, JigsawPatternRegistry.field_244091_a.getLocation()))) {
 						boolean flag1 = mutableboundingbox.isVecInside(blockpos2);
 						MutableObject<VoxelShape> mutableobject1;
 						int l;
@@ -125,11 +125,13 @@ public class JigsawGenerator {
 						}
 
 						List<JigsawPiece> list = Lists.newArrayList();
-						if (p_236831_4_ != this.maxDepth) {
-							list.addAll(optional.get().getShuffledPieces(this.rand));
-						}
 
-						list.addAll(optional1.get().getShuffledPieces(this.rand));
+						if(currentDepth != this.maxDepth) {
+							list.addAll(mainJigsawPattern.get().getShuffledPieces(this.rand));
+							list.addAll(fallbackJigsawPattern.get().getShuffledPieces(this.rand));
+						} else {
+							list.addAll(fallbackJigsawPattern.get().getShuffledPieces(this.rand));
+						}
 
 						for(JigsawPiece jigsawpiece1 : list) {
 							if (jigsawpiece1 == EmptyJigsawPiece.INSTANCE) {
@@ -222,8 +224,8 @@ public class JigsawGenerator {
 											if(abstractvillagepiece.getBoundingBox().minY > 0 && abstractvillagepiece.getBoundingBox().maxY < 256) {
 												this.structurePieces.add(abstractvillagepiece);
 
-												if(p_236831_4_ + 1 <= this.maxDepth) {
-													this.availablePieces.addLast(new Entry(abstractvillagepiece, mutableobject1, l, p_236831_4_ + 1));
+												if(currentDepth + 1 <= this.maxDepth) {
+													this.availablePieces.addLast(new Entry(abstractvillagepiece, mutableobject1, l, currentDepth + 1));
 												}
 											}
 

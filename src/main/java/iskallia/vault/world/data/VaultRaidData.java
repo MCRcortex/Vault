@@ -96,7 +96,7 @@ public class VaultRaidData extends WorldSavedData {
 
                 for (int x = -chunkRadius; x <= chunkRadius; x += 17) {
                     for (int z = -chunkRadius; z <= chunkRadius; z += 17) {
-                        world.getChunk(chunkPos.x + x, chunkPos.z + z, ChunkStatus.STRUCTURE_REFERENCES, true).func_230344_a_(ModStructures.VAULT, start);
+                        world.getChunk(chunkPos.x + x, chunkPos.z + z, ChunkStatus.EMPTY, true).func_230344_a_(ModStructures.VAULT, start);
                     }
                 }
 
