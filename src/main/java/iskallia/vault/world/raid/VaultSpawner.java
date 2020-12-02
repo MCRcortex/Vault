@@ -2,12 +2,12 @@ package iskallia.vault.world.raid;
 
 import iskallia.vault.Vault;
 import iskallia.vault.init.ModConfigs;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.server.ServerWorld;
 
 import java.util.ArrayList;
@@ -28,6 +28,7 @@ public class VaultSpawner {
 
 	public void tick(ServerPlayerEntity player) {
 		if(player.world.getDimensionKey() != Vault.VAULT_KEY)return;
+		if(this.raid.ticksLeft + 15 * 20 > ModConfigs.VAULT_GENERAL.getTickCounter())return;
 
 		this.mobs.removeIf(entity -> {
 			if(entity.getDistanceSq(player) > 24 * 24) {
@@ -82,7 +83,7 @@ public class VaultSpawner {
 	}
 
 	public void spawn(ServerWorld world, BlockPos pos) {
-		Entity e = ModConfigs.VAULT_MOBS.getForLevel(this.raid.level).getRandomMob(world.rand).getType().create(world);
+		Entity e = ModConfigs.VAULT_MOBS.getForLevel(this.raid.level).getRandomMob(world.rand).create(world);
 
 		if(e instanceof LivingEntity) {
 			LivingEntity entity = (LivingEntity)e;
@@ -91,7 +92,10 @@ public class VaultSpawner {
 
 			if(entity instanceof MobEntity) {
 				((MobEntity)entity).spawnExplosionParticle();
+				((MobEntity)entity).onInitialSpawn(world, new DifficultyInstance(Difficulty.PEACEFUL, 13000L, 0L, 0L),
+						SpawnReason.STRUCTURE, null, null);
 			}
+
 
 			this.mobs.add(entity);
 		}

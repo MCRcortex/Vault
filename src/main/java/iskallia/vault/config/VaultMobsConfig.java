@@ -1,16 +1,22 @@
 package iskallia.vault.config;
 
 import com.google.gson.annotations.Expose;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class VaultMobsConfig extends Config {
@@ -63,12 +69,44 @@ public class VaultMobsConfig extends Config {
 
 	@Override
 	protected void reset() {
-		this.LEVEL_OVERRIDES.add(new Level(5, 3).add(LEATHER_ARMOR).add(WOODEN_WEAPONS).add(STONE_WEAPONS).enchant(1, 1).mob(EntityType.ZOMBIE, 1));
-		this.LEVEL_OVERRIDES.add(new Level(10, 3).add(LEATHER_ARMOR).add(GOLDEN_ARMOR).add(STONE_WEAPONS).add(GOLDEN_WEAPONS).enchant(1, 2).mob(EntityType.ZOMBIE, 4).mob(EntityType.SKELETON, 1));
-		this.LEVEL_OVERRIDES.add(new Level(15, 4).add(GOLDEN_ARMOR).add(IRON_ARMOR).add(GOLDEN_WEAPONS).add(IRON_WEAPONS).enchant(2, 1).mob(EntityType.ZOMBIE, 4).mob(EntityType.SKELETON, 2).mob(EntityType.CREEPER, 1));
-		this.LEVEL_OVERRIDES.add(new Level(20, 4).add(IRON_ARMOR).add(DIAMOND_ARMOR).add(IRON_WEAPONS).add(DIAMOND_WEAPONS).enchant(2, 2).mob(EntityType.ZOMBIE, 4).mob(EntityType.SKELETON, 3).mob(EntityType.CREEPER, 2));
-		this.LEVEL_OVERRIDES.add(new Level(25, 5).add(DIAMOND_ARMOR).add(NETHERITE_ARMOR).add(DIAMOND_WEAPONS).add(NETHERITE_WEAPONS).enchant(3, 1).mob(EntityType.ZOMBIE, 4).mob(EntityType.SKELETON, 3).mob(EntityType.CREEPER, 2).mob(EntityType.SPIDER, 2));
-		this.LEVEL_OVERRIDES.add(new Level(30, 6).add(NETHERITE_ARMOR).add(NETHERITE_WEAPONS).enchant(3, 2).mob(EntityType.ZOMBIE, 4).mob(EntityType.ZOMBIE, 4).mob(EntityType.SKELETON, 3).mob(EntityType.CREEPER, 2).mob(EntityType.SPIDER, 2).mob(EntityType.VEX, 2));
+		this.LEVEL_OVERRIDES.add(new Level(5, 3).add(LEATHER_ARMOR).add(WOODEN_WEAPONS).add(STONE_WEAPONS)
+				.enchant(1, 1)
+				.mob(EntityType.ZOMBIE, 1));
+		this.LEVEL_OVERRIDES.add(new Level(10, 3).add(LEATHER_ARMOR).add(GOLDEN_ARMOR).add(STONE_WEAPONS).add(GOLDEN_WEAPONS)
+				.enchant(1, 2)
+				.mob(EntityType.ZOMBIE, 4)
+				.mob(EntityType.SKELETON, 1));
+		this.LEVEL_OVERRIDES.add(new Level(15, 4).add(GOLDEN_ARMOR).add(IRON_ARMOR).add(GOLDEN_WEAPONS).add(IRON_WEAPONS)
+				.enchant(2, 1)
+				.mob(EntityType.ZOMBIE, 4)
+				.mob(EntityType.SKELETON, 2)
+				.mob(EntityType.CREEPER, 1));
+		this.LEVEL_OVERRIDES.add(new Level(20, 4).add(IRON_ARMOR).add(DIAMOND_ARMOR).add(IRON_WEAPONS).add(DIAMOND_WEAPONS)
+				.enchant(2, 2)
+				.mob(EntityType.ZOMBIE, 4)
+				.mob(EntityType.SKELETON, 3)
+				.mob(EntityType.CREEPER, 2));
+		this.LEVEL_OVERRIDES.add(new Level(25, 5).add(DIAMOND_ARMOR).add(NETHERITE_ARMOR).add(DIAMOND_WEAPONS).add(NETHERITE_WEAPONS)
+				.enchant(3, 1)
+				.mob(EntityType.ZOMBIE, 4)
+				.mob(EntityType.SKELETON, 3)
+				.mob(EntityType.CREEPER, 2)
+				.mob(EntityType.SPIDER, 2));
+		this.LEVEL_OVERRIDES.add(new Level(30, 6).add(NETHERITE_ARMOR).add(NETHERITE_WEAPONS)
+				.enchant(3, 2)
+				.mob(EntityType.ZOMBIE, 4, mob -> mob
+						.attribute(Attributes.ATTACK_DAMAGE, 5.0D)
+						.attribute(Attributes.MAX_HEALTH, 40.0D))
+				.mob(EntityType.SKELETON, 3, mob -> mob
+						.attribute(Attributes.ATTACK_DAMAGE, 5.0D)
+						.attribute(Attributes.MAX_HEALTH, 40.0D))
+				.mob(EntityType.CREEPER, 2, mob -> mob
+						.attribute(Attributes.ATTACK_DAMAGE, 5.0D)
+						.attribute(Attributes.MAX_HEALTH, 40.0D))
+				.mob(EntityType.SPIDER, 2, mob -> mob
+						.attribute(Attributes.ATTACK_DAMAGE, 5.0D)
+						.attribute(Attributes.MAX_HEALTH, 40.0D))
+				.mob(EntityType.VEX, 2));
 	}
 
 	public static class Level {
@@ -112,6 +150,13 @@ public class VaultMobsConfig extends Config {
 			return this;
 		}
 
+		public Level mob(EntityType<? extends LivingEntity> type, int weight, Consumer<Mob> action) {
+			Mob mob = new Mob(type, weight);
+			action.accept(mob);
+			this.MOB_POOL.add(mob);
+			return this;
+		}
+
 		public List<Item> getFor(EquipmentSlotType slot) {
 			return this.LOOT.getOrDefault(slot.getName(), new ArrayList<>()).stream().map(ResourceLocation::new)
 					.map(s -> Registry.ITEM.getOptional(s).orElse(Items.AIR)).collect(Collectors.toList());
@@ -142,14 +187,51 @@ public class VaultMobsConfig extends Config {
 	public static class Mob {
 		@Expose private String NAME;
 		@Expose private int WEIGHT;
+		@Expose private List<AttributeOverride> ATTRIBUTES;
 
 		public Mob(EntityType<?> type, int weight) {
 			this.NAME = type.getRegistryName().toString();
 			this.WEIGHT = weight;
+			this.ATTRIBUTES = new ArrayList<>();
+		}
+
+		public Mob attribute(Attribute attribute, double defaultValue) {
+			this.ATTRIBUTES.add(new AttributeOverride(attribute, defaultValue));
+			return this;
 		}
 
 		public EntityType<?> getType() {
 			return Registry.ENTITY_TYPE.getOptional(new ResourceLocation(this.NAME)).orElse(EntityType.BAT);
+		}
+
+		public Entity create(World world) {
+			Entity entity = this.getType().create(world);
+
+			if(entity instanceof LivingEntity) {
+				LivingEntity livingEntity = (LivingEntity)entity;
+
+				for(AttributeOverride override: ATTRIBUTES) {
+					Attribute attribute = Registry.ATTRIBUTE.getOptional(new ResourceLocation(override.NAME)).orElse(null);
+					if(attribute == null)continue;
+					ModifiableAttributeInstance instance = livingEntity.getAttribute(attribute);
+					if(instance == null)continue;
+					instance.setBaseValue(override.DEFAULT_VALUE);
+				}
+
+				livingEntity.heal(1000000.0F);
+			}
+
+			return entity;
+		}
+
+		public static class AttributeOverride {
+			@Expose private String NAME;
+			@Expose private double DEFAULT_VALUE;
+
+			public AttributeOverride(Attribute attribute, double defaultValue) {
+				this.NAME = attribute.getRegistryName().toString();
+				this.DEFAULT_VALUE = defaultValue;
+			}
 		}
 	}
 
