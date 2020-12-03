@@ -108,5 +108,12 @@
   "overlay.requires_research.interact_block": "You need to research %s in order to interact with this block.",
   "overlay.requires_research.interact_entity": "You need to research %s in order to interact with this entity.",
   "container.vault.vault_crate": "Vault Crate",
-  "death.attack.vaultFailed": "%1$s ran out of time, F"
+  "death.attack.vaultFailed": "%1$s ran out of time, F",
+  "block.minecraft.andesite": "Andersite",
+  "block.minecraft.polished_andesite": "Polished Andersite",
+  "block.minecraft.andesite_stairs": "Andersite Stairs",
+  "block.minecraft.polished_andesite_stairs": "Polished Andersite Stairs",
+  "block.minecraft.andesite_slab": "Andersite Slab",
+  "block.minecraft.polished_andesite_slab": "Polished Andersite Slab",
+  "block.minecraft.andesite_wall": "Andersite Wall"
 }
