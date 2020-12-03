@@ -2,7 +2,6 @@ package iskallia.vault.item;
 
 import iskallia.vault.init.ModItems;
 import iskallia.vault.util.nbt.NBTSerializer;
-import iskallia.vault.util.nbt.UnserializableClassException;
 import iskallia.vault.vending.Product;
 import iskallia.vault.vending.Trade;
 import iskallia.vault.vending.TraderCore;

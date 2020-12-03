@@ -6,14 +6,17 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 public class ArenaSpawner implements INBTSerializable<CompoundNBT> {
 
@@ -22,6 +25,7 @@ public class ArenaSpawner implements INBTSerializable<CompoundNBT> {
 	public final List<UUID> bosses = new ArrayList<>();
 	private final int bossCount;
 
+	private List<String> fighterNames = new ArrayList<>();
 	private boolean started;
 
 	public ArenaSpawner(ArenaRaid raid, int bossCount) {
@@ -31,6 +35,10 @@ public class ArenaSpawner implements INBTSerializable<CompoundNBT> {
 
 	public boolean hasStarted() {
 		return this.started;
+	}
+
+	public void addFighters(Collection<String> fighterNames) {
+		this.fighterNames = new ArrayList<>(fighterNames);
 	}
 
 	public void start(ServerWorld world) {
@@ -45,17 +53,16 @@ public class ArenaSpawner implements INBTSerializable<CompoundNBT> {
 			world.summonEntity(boss);
 		}
 
-		int subsCount = 100;
-
-		for(int i = 0; i < subsCount; i++) {
+		for(int i = 0; i < this.fighterNames.size(); i++) {
 			double radius = 40.0D;
-			double a = ((double)i / subsCount) * 2.0D * Math.PI;
+			double a = ((double)i / this.fighterNames.size()) * 2.0D * Math.PI;
 			double s = Math.sin(a), c = Math.cos(a);
 			double r = Math.sqrt((radius * radius) / (s * s + c * c));
 			BlockPos pos = this.toTop(world, this.raid.getCenter().add(s * r, 0, c * r));
 
 			FighterEntity fighter = ModEntities.ARENA_FIGHTER.create(world).changeSize(1.2F);
 			fighter.setLocationAndAngles(pos.getX() + 0.5F, pos.getY() + 0.2F, pos.getZ() + 0.5F, 0.0F, 0.0F);
+			fighter.setCustomName(new StringTextComponent(this.fighterNames.get(0)));
 			this.fighters.add(fighter.getUniqueID());
 			world.summonEntity(fighter);
 		}
@@ -77,10 +84,15 @@ public class ArenaSpawner implements INBTSerializable<CompoundNBT> {
 		CompoundNBT nbt = new CompoundNBT();
 		ListNBT bossList = new ListNBT();
 		ListNBT fighterList = new ListNBT();
+		ListNBT fighterNamesList = new ListNBT();
+
 		this.bosses.forEach(uuid -> bossList.add(StringNBT.valueOf(uuid.toString())));
 		this.fighters.forEach(uuid -> fighterList.add(StringNBT.valueOf(uuid.toString())));
+		this.fighterNames.forEach(name -> fighterNamesList.add(StringNBT.valueOf(name)));
+
 		nbt.put("BossList", bossList);
 		nbt.put("FighterList", fighterList);
+		nbt.put("FighterNamesList", fighterNamesList);
 		return nbt;
 	}
 
@@ -91,14 +103,11 @@ public class ArenaSpawner implements INBTSerializable<CompoundNBT> {
 
 		ListNBT bossList = nbt.getList("BossList", Constants.NBT.TAG_STRING);
 		ListNBT fighterList = nbt.getList("FighterList", Constants.NBT.TAG_STRING);
+		ListNBT fighterNamesList = nbt.getList("FighterNamesList", Constants.NBT.TAG_STRING);
 
-		for(int i = 0; i < bossList.size(); i++) {
-			this.bosses.add(UUID.fromString(bossList.getString(i)));
-		}
-
-		for(int i = 0; i < fighterList.size(); i++) {
-			this.fighters.add(UUID.fromString(fighterList.getString(i)));
-		}
+		IntStream.range(0, bossList.size()).mapToObj(i -> UUID.fromString(bossList.getString(i))).forEach(this.bosses::add);
+		IntStream.range(0, fighterList.size()).mapToObj(i -> UUID.fromString(fighterList.getString(i))).forEach(this.fighters::add);
+		IntStream.range(0, fighterNamesList.size()).forEach(i -> this.fighterNames.add(fighterNamesList.getString(i)));
 	}
 
 }

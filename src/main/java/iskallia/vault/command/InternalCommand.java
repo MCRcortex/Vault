@@ -8,7 +8,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import iskallia.vault.config.StreamerMultipliersConfig;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.item.ItemTraderCore;
-import iskallia.vault.vending.TraderCore;
 import iskallia.vault.world.data.StreamData;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.ServerPlayerEntity;

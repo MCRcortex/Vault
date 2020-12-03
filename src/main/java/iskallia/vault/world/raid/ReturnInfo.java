@@ -1,6 +1,5 @@
 package iskallia.vault.world.raid;
 
-import iskallia.vault.Vault;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;

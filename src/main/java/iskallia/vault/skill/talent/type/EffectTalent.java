@@ -1,11 +1,9 @@
 package iskallia.vault.skill.talent.type;
 
 import com.google.gson.annotations.Expose;
-import iskallia.vault.Vault;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 

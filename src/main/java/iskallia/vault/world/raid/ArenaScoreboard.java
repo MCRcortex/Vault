@@ -5,7 +5,6 @@ import iskallia.vault.entity.ArenaFighterEntity;
 import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.ScoreboardDamageMessage;
 import iskallia.vault.util.NetcodeUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.FloatNBT;
 import net.minecraft.nbt.ListNBT;
