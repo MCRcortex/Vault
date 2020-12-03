@@ -174,6 +174,8 @@ public class VendingMachineBlock extends Block {
                 heldStack.shrink(1);
             }
 
+            return ActionResultType.SUCCESS;
+
         } else {
             if (world.isRemote) {
                 Minecraft minecraft = Minecraft.getInstance();

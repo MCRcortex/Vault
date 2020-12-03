@@ -1,6 +1,7 @@
 package iskallia.vault.skill.ability.type;
 
 import com.google.gson.annotations.Expose;
+import iskallia.vault.init.ModSounds;
 import iskallia.vault.util.MathUtilities;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
@@ -64,7 +65,7 @@ public class DashAbility extends PlayerAbility {
 
         player.velocityChanged = true;
 
-        player.playSound(SoundEvents.ITEM_TRIDENT_RIPTIDE_3, SoundCategory.MASTER, 1f, 1f);
+        player.playSound(ModSounds.DASH_SFX, SoundCategory.MASTER, 1f, 1f);
         ((ServerWorld) player.world).spawnParticle(ParticleTypes.POOF,
                 player.getPosX(), player.getPosY(), player.getPosZ(),
                 50, 1D, 0.5D, 1D, 0.0D);
