@@ -17,6 +17,7 @@ import java.util.List;
 public class VaultGeneralConfig extends Config {
 
 	@Expose private int TICK_COUNTER;
+	@Expose private int EXTRA_TICKS_PER_SET;
 	@Expose private List<String> ITEM_BLACKLIST;
 	@Expose private List<String> BLOCK_BLACKLIST;
 

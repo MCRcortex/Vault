@@ -120,6 +120,8 @@ public class EntityEvents {
 							if(te instanceof ChestTileEntity) {
 								((ChestTileEntity)te).setLootTable(Vault.id("chest/treasure"), 0L);
 							}
+						} else if(s.getBlock() == Blocks.BEDROCK) {
+							event.getEntity().world.setBlockState(c, ModBlocks.VAULT_BEDROCK.getDefaultState());
 						}
 					}
 				}

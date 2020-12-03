@@ -161,10 +161,20 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
             for (int z = -48; z < 48; z++) {
                 for (int y = 0; y < 48; y++) {
                     BlockPos pos = chunkPos.asBlockPos().add(x, ArenaStructure.START_Y + y, z);
-                    if (world.getBlockState(pos).getBlock() != Blocks.CRIMSON_PRESSURE_PLATE) continue;
+                    if(world.getBlockState(pos).getBlock() != Blocks.CRIMSON_PRESSURE_PLATE)continue;
                     world.setBlockState(pos, Blocks.AIR.getDefaultState());
                     this.start = pos;
                     break loop;
+                }
+            }
+        }
+
+        if(this.start != null) {
+            for(int x = -4; x <= 4; x++) {
+                for(int z = -4; z <= 4; z++) {
+                    for(int y = -4; y <= 4; y++) {
+                        world.setBlockState(this.start.add(x, y, z), Blocks.AIR.getDefaultState());
+                    }
                 }
             }
         }

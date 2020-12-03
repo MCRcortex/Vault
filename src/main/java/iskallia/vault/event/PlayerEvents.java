@@ -1,17 +1,23 @@
 package iskallia.vault.event;
 
+import iskallia.vault.Vault;
 import iskallia.vault.entity.FighterEntity;
 import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.FighterSizeMessage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.world.GameRules;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.NetworkDirection;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class PlayerEvents {
+
+	public static boolean NATURAL_REGEN_OLD_VALUE = false; //TODO: No static field pls
 
 	@SubscribeEvent
 	public static void onStartTracking(PlayerEvent.StartTracking event) {
@@ -23,6 +29,18 @@ public class PlayerEvents {
 		ServerPlayerEntity player = (ServerPlayerEntity)event.getPlayer();
 
 		ModNetwork.CHANNEL.sendTo(new FighterSizeMessage(fighter), player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
+	}
+
+	@SubscribeEvent
+	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+		if(event.side == LogicalSide.CLIENT || event.player.world.getDimensionKey() != Vault.VAULT_KEY)return;
+
+		if(event.phase == TickEvent.Phase.START) {
+			NATURAL_REGEN_OLD_VALUE = event.player.world.getGameRules().getBoolean(GameRules.NATURAL_REGENERATION);
+			event.player.world.getGameRules().get(GameRules.NATURAL_REGENERATION).set(false, event.player.getServer());
+		} else if(event.phase == TickEvent.Phase.END) {
+			event.player.world.getGameRules().get(GameRules.NATURAL_REGENERATION).set(NATURAL_REGEN_OLD_VALUE, event.player.getServer());
+		}
 	}
 
 }
