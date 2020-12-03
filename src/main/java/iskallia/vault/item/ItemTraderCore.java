@@ -1,5 +1,7 @@
 package iskallia.vault.item;
 
+import iskallia.vault.Vault;
+import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModItems;
 import iskallia.vault.util.nbt.NBTSerializer;
 import iskallia.vault.vending.Product;
@@ -9,7 +11,6 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -18,7 +19,10 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ItemTraderCore extends Item {
 
@@ -32,13 +36,18 @@ public class ItemTraderCore extends Item {
     }
 
     public static ItemStack generate(String nickname, boolean megahead) {
-        // TODO: Fetch a random trade from config
-        Trade trade = new Trade(
-                new Product(Items.APPLE, 8, null),
-                null,
-                new Product(Items.GOLDEN_APPLE, 1, null)
-        );
-        return getStack(new TraderCore(nickname, trade, megahead));
+        List<Trade> trades = ModConfigs.VENDING_CONFIG.TRADES.stream().filter(trade -> trade.isValid())
+                .collect(Collectors.toList());
+
+        Collections.shuffle(trades);
+
+
+        Optional<Trade> trade = trades.stream().findFirst();
+        if (trade.isPresent())
+            return getStack(new TraderCore(nickname, trade.get(), megahead));
+
+        Vault.LOGGER.error("Attempted to generate a Trader Circuit.. No Trades in config.");
+        return ItemStack.EMPTY;
     }
 
     public static ItemStack getStack(TraderCore core) {

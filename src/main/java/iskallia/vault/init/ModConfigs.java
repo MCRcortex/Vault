@@ -21,6 +21,7 @@ public class ModConfigs {
     public static VaultGeneralConfig VAULT_GENERAL;
     public static VaultCrystalConfig VAULT_CRYSTAL;
     public static VaultPortalConfig VAULT_PORTAL;
+    public static VaultVendingConfig VENDING_CONFIG;
 
     public static void register() {
         STREAMER_MULTIPLIERS = (StreamerMultipliersConfig) new StreamerMultipliersConfig().readConfig();
@@ -40,6 +41,7 @@ public class ModConfigs {
         VAULT_GENERAL = (VaultGeneralConfig) new VaultGeneralConfig().readConfig();
         VAULT_CRYSTAL = (VaultCrystalConfig) new VaultCrystalConfig().readConfig();
         VAULT_PORTAL = (VaultPortalConfig) new VaultPortalConfig().readConfig();
+        VENDING_CONFIG = (VaultVendingConfig) new VaultVendingConfig().readConfig();
     }
 
 
