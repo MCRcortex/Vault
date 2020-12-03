@@ -6,11 +6,14 @@ import iskallia.vault.world.data.ArenaRaidData;
 import iskallia.vault.world.raid.ArenaRaid;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.monster.ZombieEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.IndirectEntityDamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.StringTextComponent;
@@ -89,6 +92,43 @@ public class ArenaBossEntity extends FighterEntity {
 		}
 
 		return ret || super.attackEntityAsMob(entity);
+	}
+
+	@Override
+	public boolean attackEntityFrom(DamageSource source, float amount) {
+		if (this.isInvulnerableTo(source)) {
+			return false;
+		} else if(source instanceof IndirectEntityDamageSource) {
+			for(int i = 0; i < 64; ++i) {
+				if(this.teleportRandomly()) {
+					this.world.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
+					return true;
+				}
+			}
+
+			return false;
+		} else {
+			boolean flag = super.attackEntityFrom(source, amount);
+
+			if(!this.world.isRemote() && !(source.getTrueSource() instanceof LivingEntity) && this.rand.nextInt(10) != 0) {
+				if(this.teleportRandomly()) {
+					this.world.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
+				}
+			}
+
+			return flag;
+		}
+	}
+
+	private boolean teleportRandomly() {
+		if (!this.world.isRemote() && this.isAlive()) {
+			double d0 = this.getPosX() + (this.rand.nextDouble() - 0.5D) * 64.0D;
+			double d1 = this.getPosY() + (double)(this.rand.nextInt(64) - 32);
+			double d2 = this.getPosZ() + (this.rand.nextDouble() - 0.5D) * 64.0D;
+			return this.attemptTeleport(d0, d1, d2, true);
+		}
+
+		return false;
 	}
 
 	@SubscribeEvent
