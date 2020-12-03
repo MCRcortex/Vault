@@ -9,7 +9,7 @@ import iskallia.vault.client.gui.helper.UIHelper;
 import iskallia.vault.client.gui.widget.RaffleEntry;
 import iskallia.vault.init.ModNetwork;
 import iskallia.vault.init.ModSounds;
-import iskallia.vault.network.message.RaffleMessage;
+import iskallia.vault.network.message.RaffleServerMessage;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.Screen;
@@ -279,7 +279,7 @@ public class RaffleScreen extends Screen {
         if (elapsedTicks >= spinTicks) {
             spinning = false;
             if (!popped) {
-                ModNetwork.CHANNEL.sendToServer(RaffleMessage.animationDone(this.winner));
+                ModNetwork.CHANNEL.sendToServer(RaffleServerMessage.animationDone(this.winner));
                 getMinecraft().getSoundHandler().play(SimpleSound.master(ModSounds.CONFETTI_SFX, 1.0F));
                 leftConfettiPopper.pop();
                 rightConfettiPopper.pop();

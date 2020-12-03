@@ -1,5 +1,6 @@
 package iskallia.vault.network.message;
 
+import iskallia.vault.client.gui.screen.RaffleScreen;
 import iskallia.vault.init.ModNetwork;
 import iskallia.vault.item.ItemVaultCrystal;
 import iskallia.vault.util.nbt.NBTHelper;
@@ -21,39 +22,32 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class RaffleMessage {
+public class RaffleServerMessage {
 
     public enum Opcode {
-        REQUEST_RAFFLE(LogicalSide.SERVER),
-        OPEN_UI(LogicalSide.CLIENT),
-        DONE_ANIMATING(LogicalSide.SERVER);
-
-        LogicalSide receivingSide;
-
-        Opcode(LogicalSide side) {
-            this.receivingSide = side;
-        }
+        REQUEST_RAFFLE,
+        DONE_ANIMATING;
     }
 
     public Opcode opcode;
     public CompoundNBT payload;
 
-    public RaffleMessage() {
+    public RaffleServerMessage() {
     }
 
-    public static void encode(RaffleMessage message, PacketBuffer buffer) {
+    public static void encode(RaffleServerMessage message, PacketBuffer buffer) {
         buffer.writeInt(message.opcode.ordinal());
         buffer.writeCompoundTag(message.payload);
     }
 
-    public static RaffleMessage decode(PacketBuffer buffer) {
-        RaffleMessage message = new RaffleMessage();
+    public static RaffleServerMessage decode(PacketBuffer buffer) {
+        RaffleServerMessage message = new RaffleServerMessage();
         message.opcode = Opcode.values()[buffer.readInt()];
         message.payload = buffer.readCompoundTag();
         return message;
     }
 
-    public static void handle(RaffleMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
+    public static void handle(RaffleServerMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
             if (message.opcode == Opcode.REQUEST_RAFFLE) {
@@ -67,17 +61,11 @@ public class RaffleMessage {
 
                 } else {
                     ModNetwork.CHANNEL.sendTo(
-                            RaffleMessage.openUI(donations.getDonators(), donations.weightedRandom()),
+                            RaffleClientMessage.openUI(donations.getDonators(), donations.weightedRandom()),
                             sender.connection.netManager,
                             NetworkDirection.PLAY_TO_CLIENT
                     );
                 }
-
-            } else if (message.opcode == Opcode.OPEN_UI) {
-                Minecraft minecraft = Minecraft.getInstance();
-                List<String> occupants = NBTHelper.readList(message.payload, "Occupants", StringNBT.class, StringNBT::getString);
-                String winner = message.payload.getString("Winner");
-                //minecraft.displayGuiScreen(new RaffleScreen(occupants, winner));
 
             } else if (message.opcode == Opcode.DONE_ANIMATING) {
                 ServerPlayerEntity sender = context.getSender();
@@ -90,24 +78,15 @@ public class RaffleMessage {
         context.setPacketHandled(true);
     }
 
-    public static RaffleMessage requestRaffle() {
-        RaffleMessage message = new RaffleMessage();
+    public static RaffleServerMessage requestRaffle() {
+        RaffleServerMessage message = new RaffleServerMessage();
         message.opcode = Opcode.REQUEST_RAFFLE;
         message.payload = new CompoundNBT();
         return message;
     }
 
-    public static RaffleMessage openUI(Collection<String> occupants, String winner) {
-        RaffleMessage message = new RaffleMessage();
-        message.opcode = Opcode.OPEN_UI;
-        message.payload = new CompoundNBT();
-        NBTHelper.writeList(message.payload, "Occupants", occupants, StringNBT.class, StringNBT::valueOf);
-        message.payload.putString("Winner", winner);
-        return message;
-    }
-
-    public static RaffleMessage animationDone(String winner) {
-        RaffleMessage message = new RaffleMessage();
+    public static RaffleServerMessage animationDone(String winner) {
+        RaffleServerMessage message = new RaffleServerMessage();
         message.opcode = Opcode.DONE_ANIMATING;
         message.payload = new CompoundNBT();
         message.payload.putString("Winner", winner);

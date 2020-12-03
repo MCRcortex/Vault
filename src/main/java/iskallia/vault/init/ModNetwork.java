@@ -8,7 +8,7 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class ModNetwork {
 
-    private static final String NETWORK_VERSION = "0.13.0";
+    private static final String NETWORK_VERSION = "0.14.0";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(Vault.MOD_ID, "network"),
@@ -88,15 +88,20 @@ public class ModNetwork {
                 HypeBarMessage::decode,
                 HypeBarMessage::handle);
 
-        CHANNEL.registerMessage(14, RaffleMessage.class,
-                RaffleMessage::encode,
-                RaffleMessage::decode,
-                RaffleMessage::handle);
+        CHANNEL.registerMessage(14, RaffleServerMessage.class,
+                RaffleServerMessage::encode,
+                RaffleServerMessage::decode,
+                RaffleServerMessage::handle);
 
         CHANNEL.registerMessage(15, VendingUIMessage.class,
                 VendingUIMessage::encode,
                 VendingUIMessage::decode,
                 VendingUIMessage::handle);
+
+        CHANNEL.registerMessage(16, RaffleClientMessage.class,
+                RaffleClientMessage::encode,
+                RaffleClientMessage::decode,
+                RaffleClientMessage::handle);
     }
 
 }
