@@ -169,7 +169,7 @@ public class EntityEvents {
 	}
 
 	@SubscribeEvent
-	public static void onEntityDeath(LivingDropsEvent event) {
+	public static void onEntityDeath(LivingDeathEvent event) {
 		if(event.getEntity().world.isRemote
 				|| event.getEntity().world.getDimensionKey() != Vault.VAULT_KEY
 				|| !event.getEntity().getTags().contains("VaultBoss"))return;

@@ -19,6 +19,7 @@ import net.minecraft.scoreboard.ScoreCriteria;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -105,7 +106,10 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
                     playerEntity.openContainer.detectAndSendChanges();
                     playerEntity.container.onCraftMatrixChanged(playerEntity.inventory);
                     playerEntity.updateHeldItem();
-                    playerEntity.onKillCommand();
+
+                    DamageSource source = new DamageSource("vaultFailed").setDamageBypassesArmor().setDamageAllowedInCreativeMode();
+                    playerEntity.attackEntityFrom(source, 100000000.0F);
+
                     this.finish(world, this.playerId);
                     this.finished = true;
                 });

@@ -107,5 +107,6 @@
   "overlay.requires_research.hit": "You need to research %s in order to hit this block.",
   "overlay.requires_research.interact_block": "You need to research %s in order to interact with this block.",
   "overlay.requires_research.interact_entity": "You need to research %s in order to interact with this entity.",
-  "container.vault.vault_crate": "Vault Crate"
+  "container.vault.vault_crate": "Vault Crate",
+  "death.attack.vaultFailed": "%1$s ran out of time, F"
 }
