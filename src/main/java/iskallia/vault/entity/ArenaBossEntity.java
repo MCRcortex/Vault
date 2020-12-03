@@ -61,7 +61,7 @@ public class ArenaBossEntity extends FighterEntity {
 					entity.getPosZ() + this.world.rand.nextDouble() - d2, 10, d0, d1, d2, 1.0D);
 		}
 
-		this.world.playSound(null, entity.getPosition(), SoundEvents.ENTITY_IRON_GOLEM_HURT, SoundCategory.HOSTILE, 1.0F, 1.0F);
+		this.world.playSound(null, entity.getPosition(), SoundEvents.ENTITY_IRON_GOLEM_HURT, this.getSoundCategory(), 1.0F, 1.0F);
 		return 15.0F;
 	}
 
@@ -87,7 +87,7 @@ public class ArenaBossEntity extends FighterEntity {
 				this.applyEnchantments(this, entity);
 			}
 
-			this.world.playSound(null, entity.getPosition(), SoundEvents.ENTITY_IRON_GOLEM_HURT, SoundCategory.HOSTILE, 1.0F, 1.0F);
+			this.world.playSound(null, entity.getPosition(), SoundEvents.ENTITY_IRON_GOLEM_HURT, this.getSoundCategory(), 1.0F, 1.0F);
 			ret |= flag;
 		}
 
