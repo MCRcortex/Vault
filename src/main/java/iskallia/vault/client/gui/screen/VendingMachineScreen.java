@@ -8,11 +8,15 @@ import iskallia.vault.block.entity.VendingMachineTileEntity;
 import iskallia.vault.block.render.VendingMachineRenderer;
 import iskallia.vault.client.gui.component.ScrollableContainer;
 import iskallia.vault.client.gui.helper.Rectangle;
+import iskallia.vault.client.gui.widget.TradeWidget;
 import iskallia.vault.container.VendingMachineContainer;
 import iskallia.vault.entity.model.StatuePlayerModel;
+import iskallia.vault.init.ModNetwork;
+import iskallia.vault.network.message.VendingUIMessage;
 import iskallia.vault.util.SkinProfile;
 import iskallia.vault.vending.TraderCore;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -20,25 +24,98 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class VendingMachineScreen extends ContainerScreen<VendingMachineContainer> {
 
     public static final ResourceLocation HUD_RESOURCE = new ResourceLocation(Vault.MOD_ID, "textures/gui/vending-machine.png");
 
+    public ScrollableContainer tradesContainer;
+    public List<TradeWidget> tradeWidgets;
+
     public VendingMachineScreen(VendingMachineContainer screenContainer, PlayerInventory inv, ITextComponent title) {
         super(screenContainer, inv, new StringTextComponent("Vending Machine"));
+
+        tradesContainer = new ScrollableContainer(this::renderTrades);
+        tradeWidgets = new LinkedList<>();
+
+        List<TraderCore> cores = screenContainer.getTileEntity().getCores();
+
+        for (int i = 0; i < cores.size(); i++) {
+            TraderCore traderCore = cores.get(i);
+            int x = 0;
+            int y = i * TradeWidget.BUTTON_HEIGHT;
+            tradeWidgets.add(new TradeWidget(x, y, traderCore, this));
+        }
 
         xSize = 394;
         ySize = 170;
     }
 
+    public Rectangle getTradeBoundaries() {
+        float midX = width / 2f;
+        float midY = height / 2f;
+
+        Rectangle boundaries = new Rectangle();
+        boundaries.x0 = (int) (midX - 134);
+        boundaries.y0 = (int) (midY - 66);
+        boundaries.setWidth(100);
+        boundaries.setHeight(142);
+
+        return boundaries;
+    }
+
     @Override
     protected void init() {
         super.init();
+    }
+
+    @Override
+    public void mouseMoved(double mouseX, double mouseY) {
+        Rectangle tradeBoundaries = getTradeBoundaries();
+
+        double tradeContainerX = mouseX - tradeBoundaries.x0;
+        double tradeContainerY = mouseY - tradeBoundaries.y0;
+
+        for (TradeWidget tradeWidget : tradeWidgets) {
+            tradeWidget.mouseMoved(tradeContainerX, tradeContainerY);
+        }
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        Rectangle tradeBoundaries = getTradeBoundaries();
+
+        double tradeContainerX = mouseX - tradeBoundaries.x0;
+        double tradeContainerY = mouseY - tradeBoundaries.y0 + tradesContainer.getyOffset();
+
+        for (int i = 0; i < tradeWidgets.size(); i++) {
+            TradeWidget tradeWidget = tradeWidgets.get(i);
+            boolean isHovered = tradeWidget.x <= tradeContainerX && tradeContainerX <= tradeWidget.x + TradeWidget.BUTTON_WIDTH
+                    && tradeWidget.y <= tradeContainerY && tradeContainerY <= tradeWidget.y + TradeWidget.BUTTON_HEIGHT;
+
+            if (isHovered) {
+                getContainer().selectTrade(i);
+                ModNetwork.CHANNEL.sendToServer(VendingUIMessage.selectTrade(i));
+                Minecraft.getInstance().getSoundHandler()
+                        .play(SimpleSound.master(SoundEvents.UI_BUTTON_CLICK, 1f));
+            }
+        }
+
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        tradesContainer.mouseScrolled(mouseX, mouseY, delta);
+        return true;
     }
 
     @Override
@@ -74,26 +151,12 @@ public class VendingMachineScreen extends ContainerScreen<VendingMachineContaine
 
         VendingMachineContainer container = getContainer();
         VendingMachineTileEntity tileEntity = container.getTileEntity();
+        Rectangle tradeBoundaries = getTradeBoundaries();
 
-        for (TraderCore core : tileEntity.getCores()) {
-            // TODO: Render each one on screen. A widget sounds more reasonable hmmmmmm
-        }
+        tradesContainer.setBounds(tradeBoundaries);
+        tradesContainer.setInnerHeight(TradeWidget.BUTTON_HEIGHT * tradeWidgets.size());
 
-        ScrollableContainer scrollableContainer = new ScrollableContainer((ms, mx, my, pt) -> {
-
-        });
-
-        Rectangle rectangle = new Rectangle();
-        rectangle.x0 = (int) (midX - 134);
-        rectangle.y0 = (int) (midY - 66);
-        rectangle.setWidth(96);
-        rectangle.setHeight(142);
-
-        scrollableContainer.setBounds(rectangle);
-        scrollableContainer.setInnerHeight(1000);
-
-        scrollableContainer.render(matrixStack, mouseX, mouseY, partialTicks);
-
+        tradesContainer.render(matrixStack, mouseX, mouseY, partialTicks);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
 
         TraderCore lastCore = tileEntity.getLastCore();
@@ -102,7 +165,31 @@ public class VendingMachineScreen extends ContainerScreen<VendingMachineContaine
             drawSkin((int) midX + 175, (int) midY - 10, -45, tileEntity.getSkin(), lastCore.isMegahead());
         }
 
+        minecraft.fontRenderer.drawString(matrixStack,
+                "Trades", midX - 108, midY - 77, 0xFF_3f3f3f);
+
+        if (lastCore != null) {
+            String name = "Vendor - " + lastCore.getName();
+            int nameWidth = minecraft.fontRenderer.getStringWidth(name);
+            minecraft.fontRenderer.drawString(matrixStack,
+                    name,
+                    midX + 50 - nameWidth / 2f,
+                    midY - 70, 0xFF_3f3f3f);
+        }
+
         this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
+    }
+
+    public void
+    renderTrades(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        Rectangle tradeBoundaries = getTradeBoundaries();
+
+        int tradeContainerX = mouseX - tradeBoundaries.x0;
+        int tradeContainerY = mouseY - tradeBoundaries.y0 + tradesContainer.getyOffset();
+
+        for (TradeWidget tradeWidget : tradeWidgets) {
+            tradeWidget.render(matrixStack, tradeContainerX, tradeContainerY, partialTicks);
+        }
     }
 
     public static void drawSkin(int posX, int posY, int yRotation, SkinProfile skin, boolean megahead) {

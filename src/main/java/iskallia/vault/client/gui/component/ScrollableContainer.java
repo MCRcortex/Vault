@@ -28,6 +28,10 @@ public class ScrollableContainer extends AbstractGui {
         this.renderer = renderer;
     }
 
+    public int getyOffset() {
+        return yOffset;
+    }
+
     public float scrollPercentage() {
         Rectangle scrollBounds = getScrollBounds();
         return (float) yOffset / (innerHeight - scrollBounds.getHeight());
@@ -62,7 +66,7 @@ public class ScrollableContainer extends AbstractGui {
         if (viewportRatio < 1) {
             yOffset = MathHelper.clamp(yOffset + (int) (-delta * 5),
                     0,
-                    innerHeight - renderableBounds.getHeight());
+                    innerHeight - renderableBounds.getHeight() + 2);
         }
     }
 
@@ -85,7 +89,7 @@ public class ScrollableContainer extends AbstractGui {
                         renderableBounds.x1 - 1, renderableBounds.y1 - 1, 0xFF_8B8B8B),
                 (ms) -> {
                     ms.push();
-                    ms.translate(renderableBounds.x0, renderableBounds.y0 - yOffset, 0);
+                    ms.translate(renderableBounds.x0 + 1, renderableBounds.y0 - yOffset + 1, 0);
                     renderer.render(matrixStack, mouseX, mouseY, partialTicks);
                     ms.pop();
                 });

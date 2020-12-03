@@ -81,7 +81,7 @@ public class VaultRaidOverlay {
         matrixStack.pop();
 
         if (ambientLoop == null || !minecraft.getSoundHandler().isPlaying(ambientLoop)) {
-            ambientLoop = SimpleSound.ambient(ModSounds.VAULT_AMBIENT_LOOP);
+            ambientLoop = SimpleSound.music(ModSounds.VAULT_AMBIENT_LOOP);
             minecraft.getSoundHandler().play(ambientLoop);
         }
 

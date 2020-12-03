@@ -6,15 +6,13 @@ import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModItems;
 import iskallia.vault.init.ModSounds;
 import iskallia.vault.item.ItemTraderCore;
-import iskallia.vault.vending.Product;
-import iskallia.vault.vending.Trade;
-import iskallia.vault.vending.TraderCore;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -22,9 +20,6 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
@@ -41,6 +36,8 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
@@ -125,22 +122,6 @@ public class VendingMachineBlock extends Block {
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         worldIn.setBlockState(pos.up(), state.with(HALF, DoubleBlockHalf.UPPER), 3);
-
-//        VendingMachineTileEntity machine = getVendingMachineTile(worldIn, pos, state);
-//        if (machine != null) addTestCores(machine); // Real noicee ways to test!
-    }
-
-    private void addTestCores(VendingMachineTileEntity machine) {
-        machine.addCore(new TraderCore("jmilthedude", new Trade(new Product(Items.APPLE, 8, null), null, new Product(Items.GOLDEN_APPLE, 1, null))));
-        machine.addCore(new TraderCore("iGoodie", new Trade(new Product(Items.GOLDEN_APPLE, 8, null), null, new Product(Items.ENCHANTED_GOLDEN_APPLE, 1, null))));
-        CompoundNBT nbt = new CompoundNBT();
-        ListNBT enchantments = new ListNBT();
-        CompoundNBT knockback = new CompoundNBT();
-        knockback.putString("id", "minecraft:knockback");
-        knockback.putInt("lvl", 10);
-        enchantments.add(knockback);
-        nbt.put("Enchantments", enchantments);
-        machine.addCore(new TraderCore("KaptainWutax", new Trade(new Product(Items.ENCHANTED_GOLDEN_APPLE, 8, null), null, new Product(Items.STICK, 1, nbt))));
     }
 
     @Override
@@ -151,9 +132,14 @@ public class VendingMachineBlock extends Block {
         VendingMachineTileEntity machine = getVendingMachineTile(worldIn, pos, state);
         if (machine != null) {
             machine.ejectCores();
-
         }
+        dropVendingMachine(worldIn, pos);
         super.onReplaced(state, worldIn, pos, newState, isMoving);
+    }
+
+    private void dropVendingMachine(World world, BlockPos pos) {
+        ItemEntity entity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(ModBlocks.VENDING_MACHINE));
+        world.addEntity(entity);
     }
 
     @Override
@@ -168,12 +154,11 @@ public class VendingMachineBlock extends Block {
                 heldStack.shrink(1);
             }
 
+            return ActionResultType.SUCCESS;
+
         } else {
             if (world.isRemote) {
-                Minecraft minecraft = Minecraft.getInstance();
-                minecraft.getSoundHandler().play(SimpleSound.master(
-                        ModSounds.VENDING_MACHINE_SFX, 1f, 1f
-                ));
+                playOpenSound();
                 return ActionResultType.SUCCESS;
             }
 
@@ -206,6 +191,14 @@ public class VendingMachineBlock extends Block {
         }
 
         return super.onBlockActivated(state, world, pos, player, hand, hit);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void playOpenSound() {
+        Minecraft minecraft = Minecraft.getInstance();
+        minecraft.getSoundHandler().play(SimpleSound.master(
+                ModSounds.VENDING_MACHINE_SFX, 1f, 1f
+        ));
     }
 
     public static BlockPos getVendingMachinePos(BlockState state, BlockPos pos) {
