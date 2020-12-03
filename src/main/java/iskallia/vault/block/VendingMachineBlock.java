@@ -4,13 +4,11 @@ import iskallia.vault.block.entity.VendingMachineTileEntity;
 import iskallia.vault.container.VendingMachineContainer;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModItems;
-import iskallia.vault.init.ModSounds;
 import iskallia.vault.item.ItemTraderCore;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -157,9 +155,9 @@ public class VendingMachineBlock extends Block {
         } else {
             if (world.isRemote) {
                 Minecraft minecraft = Minecraft.getInstance();
-                minecraft.getSoundHandler().play(SimpleSound.master(
-                        ModSounds.VENDING_MACHINE_SFX, 1f, 1f
-                ));
+//                minecraft.getSoundHandler().play(SimpleSound.master(
+//                        ModSounds.VENDING_MACHINE_SFX, 1f, 1f
+//                ));
                 return ActionResultType.SUCCESS;
             }
 

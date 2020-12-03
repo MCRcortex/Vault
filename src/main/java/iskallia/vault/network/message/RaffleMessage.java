@@ -1,6 +1,5 @@
 package iskallia.vault.network.message;
 
-import iskallia.vault.client.gui.screen.RaffleScreen;
 import iskallia.vault.init.ModNetwork;
 import iskallia.vault.item.ItemVaultCrystal;
 import iskallia.vault.util.nbt.NBTHelper;
@@ -39,7 +38,8 @@ public class RaffleMessage {
     public Opcode opcode;
     public CompoundNBT payload;
 
-    public RaffleMessage() { }
+    public RaffleMessage() {
+    }
 
     public static void encode(RaffleMessage message, PacketBuffer buffer) {
         buffer.writeInt(message.opcode.ordinal());
@@ -77,7 +77,7 @@ public class RaffleMessage {
                 Minecraft minecraft = Minecraft.getInstance();
                 List<String> occupants = NBTHelper.readList(message.payload, "Occupants", StringNBT.class, StringNBT::getString);
                 String winner = message.payload.getString("Winner");
-                minecraft.displayGuiScreen(new RaffleScreen(occupants, winner));
+                //minecraft.displayGuiScreen(new RaffleScreen(occupants, winner));
 
             } else if (message.opcode == Opcode.DONE_ANIMATING) {
                 ServerPlayerEntity sender = context.getSender();

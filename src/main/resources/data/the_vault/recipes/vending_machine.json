@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern":
+  [
+    "iri",
+    "igi",
+    "i i"
+  ],
+  "key":
+  {
+    "i":
+    {
+      "tag": "minecraft:iron_ingot"
+    },
+    "r":
+    {
+      "tag": "minecraft:redstone"
+    },
+    "g":
+    {
+      "item": "minecraft:glass_pane"
+    }
+  },
+  "result":
+  {
+    "item": "the_vault:vending_machine",
+    "count": 1
+  }
+}
