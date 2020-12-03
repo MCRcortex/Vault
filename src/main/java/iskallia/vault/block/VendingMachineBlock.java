@@ -4,11 +4,13 @@ import iskallia.vault.block.entity.VendingMachineTileEntity;
 import iskallia.vault.container.VendingMachineContainer;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModItems;
+import iskallia.vault.init.ModSounds;
 import iskallia.vault.item.ItemTraderCore;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -34,6 +36,8 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
@@ -154,10 +158,7 @@ public class VendingMachineBlock extends Block {
 
         } else {
             if (world.isRemote) {
-                Minecraft minecraft = Minecraft.getInstance();
-//                minecraft.getSoundHandler().play(SimpleSound.master(
-//                        ModSounds.VENDING_MACHINE_SFX, 1f, 1f
-//                ));
+                playOpenSound();
                 return ActionResultType.SUCCESS;
             }
 
@@ -190,6 +191,14 @@ public class VendingMachineBlock extends Block {
         }
 
         return super.onBlockActivated(state, world, pos, player, hand, hit);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void playOpenSound() {
+        Minecraft minecraft = Minecraft.getInstance();
+        minecraft.getSoundHandler().play(SimpleSound.master(
+                ModSounds.VENDING_MACHINE_SFX, 1f, 1f
+        ));
     }
 
     public static BlockPos getVendingMachinePos(BlockState state, BlockPos pos) {

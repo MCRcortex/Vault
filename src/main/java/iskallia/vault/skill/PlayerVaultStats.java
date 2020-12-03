@@ -67,12 +67,6 @@ public class PlayerVaultStats implements INBTSerializable<CompoundNBT> {
             this.exp -= tnl; // Carry extra exp to next level!
         }
 
-        NetcodeUtils.runIfPresent(server, uuid, player -> {
-            player.world.playSound(null, player.getPosition(),
-                    ModSounds.VAULT_EXP_SFX, SoundCategory.PLAYERS,
-                    1f, player.world.rand.nextFloat() * 0.75f);
-        });
-
         if (this.vaultLevel > initialLevel) {
             NetcodeUtils.runIfPresent(server, uuid, this::fancyLevelUpEffects);
         }
