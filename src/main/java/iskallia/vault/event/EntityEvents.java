@@ -3,6 +3,7 @@ package iskallia.vault.event;
 import iskallia.vault.Vault;
 import iskallia.vault.block.VaultCrateBlock;
 import iskallia.vault.block.VaultDoorBlock;
+import iskallia.vault.block.item.PlayerStatueBlockItem;
 import iskallia.vault.entity.EntityScaler;
 import iskallia.vault.entity.FighterEntity;
 import iskallia.vault.init.ModBlocks;
@@ -63,7 +64,7 @@ public class EntityEvents {
 		VaultRaid raid = VaultRaidData.get((ServerWorld) entity.world).getAt(entity.getPosition());
 		if(raid == null)return;
 
-		EntityScaler.scale(entity, raid.level, new Random());
+		EntityScaler.scaleVault(entity, raid.level, new Random());
 		entity.getTags().add("VaultScaled");
 		entity.enablePersistence();
 	}
@@ -152,7 +153,7 @@ public class EntityEvents {
 		VaultRaid raid = VaultRaidData.get((ServerWorld)entity.world).getAt(entity.getPosition());
 
 		if(raid != null) {
-			EntityScaler.scale(boss, raid.level + 5, new Random());
+			EntityScaler.scaleVault(boss, raid.level + 5, new Random());
 		}
 
 		entity.remove();
@@ -191,6 +192,7 @@ public class EntityEvents {
 
 				NonNullList<ItemStack> stacks = NonNullList.create();
 				stacks.addAll(world.getServer().getLootTableManager().getLootTableFromLocation(Vault.id("chest/boss")).generate(ctx));
+				stacks.add(PlayerStatueBlockItem.forVaultBoss(event.getEntity().getCustomName().getString()));
 				ItemStack crate = VaultCrateBlock.getCrateWithLoot(ModBlocks.VAULT_CRATE, stacks);
 
 				event.getEntity().entityDropItem(crate);

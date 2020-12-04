@@ -90,7 +90,7 @@ public class ObeliskBlock extends Block {
             VaultRaid raid = VaultRaidData.get((ServerWorld) world).getAt(pos);
 
             if (raid != null) {
-                EntityScaler.scale(boss, raid.level + 5, new Random());
+                EntityScaler.scaleVault(boss, raid.level + 5, new Random());
 
                 if (raid.playerBossName != null) {
                     boss.setCustomName(new StringTextComponent(raid.playerBossName));
