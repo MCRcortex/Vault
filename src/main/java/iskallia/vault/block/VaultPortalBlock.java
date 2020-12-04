@@ -120,20 +120,23 @@ public class VaultPortalBlock extends NetherPortalBlock {
 
     @Override
     public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-        if (world.isRemote || !(entity instanceof PlayerEntity)) return;
-        if (entity.isPassenger() || entity.isBeingRidden() || !entity.isNonBoss()) return;
+        if(world.isRemote || !(entity instanceof PlayerEntity)) return;
+        if(entity.isPassenger() || entity.isBeingRidden() || !entity.isNonBoss()) return;
 
         ServerPlayerEntity player = (ServerPlayerEntity) entity;
         VoxelShape playerVoxel = VoxelShapes.create(player.getBoundingBox().offset(-pos.getX(), -pos.getY(), -pos.getZ()));
 
-        if (VoxelShapes.compare(playerVoxel, state.getShape(world, pos), IBooleanFunction.AND)) {
+        VaultPortalTileEntity portal = getPortalTileEntity(world, pos);
+        String playerBossName = portal == null ? "" : portal.getPlayerBossName();
+
+        if(VoxelShapes.compare(playerVoxel, state.getShape(world, pos), IBooleanFunction.AND)) {
             RegistryKey<World> worldKey = world.getDimensionKey() == Vault.VAULT_KEY ? World.OVERWORLD : Vault.VAULT_KEY;
             ServerWorld destination = ((ServerWorld) world).getServer().getWorld(worldKey);
 
-            if (destination == null) return;
+            if(destination == null) return;
 
             //Reset cooldown.
-            if (player.func_242280_ah()) {
+            if(player.func_242280_ah()) {
                 player.func_242279_ag();
                 return;
             }
@@ -159,17 +162,13 @@ public class VaultPortalBlock extends NetherPortalBlock {
                     } else {
                         this.moveToSpawn(destination, player);
                     }
-                } else if (worldKey == Vault.VAULT_KEY) {
-                    VaultPortalTileEntity portal = getPortalTileEntity(world, pos);
-                    String playerBossName = "";
-                    if (portal != null)
-                        playerBossName = portal.getPlayerBossName();
+                } else if(worldKey == Vault.VAULT_KEY) {
                     VaultRaidData.get(destination).startNew(player, state.get(RARITY), playerBossName);
                 }
             });
 
             if(worldKey == Vault.VAULT_KEY) {
-	            world.setBlockState(pos, Blocks.AIR.getDefaultState());
+                world.setBlockState(pos, Blocks.AIR.getDefaultState());
             }
 
             player.func_242279_ag();
@@ -251,10 +250,7 @@ public class VaultPortalBlock extends NetherPortalBlock {
 
     private VaultPortalTileEntity getPortalTileEntity(World worldIn, BlockPos pos) {
         TileEntity te = worldIn.getTileEntity(pos);
-        if (te == null || !(te instanceof VaultPortalTileEntity))
-            return null;
-        VaultPortalTileEntity portal = (VaultPortalTileEntity) worldIn.getTileEntity(pos);
-        return portal;
+        return te instanceof VaultPortalTileEntity ? (VaultPortalTileEntity)te : null;
     }
 
 }

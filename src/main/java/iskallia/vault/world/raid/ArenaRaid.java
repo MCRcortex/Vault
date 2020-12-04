@@ -1,13 +1,22 @@
 package iskallia.vault.world.raid;
 
 import iskallia.vault.Vault;
+import iskallia.vault.block.VaultCrateBlock;
+import iskallia.vault.block.item.PlayerStatueBlockItem;
 import iskallia.vault.entity.ArenaBossEntity;
+import iskallia.vault.entity.ArenaFighterEntity;
+import iskallia.vault.init.ModBlocks;
+import iskallia.vault.init.ModConfigs;
+import iskallia.vault.world.data.StreamData;
 import iskallia.vault.world.gen.structure.ArenaStructure;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.play.server.STitlePacket;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
@@ -20,6 +29,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -32,9 +42,12 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
     private boolean isComplete;
 
     public BlockPos start;
-    public ArenaSpawner spawner = new ArenaSpawner(this, 3);
+    public ArenaSpawner spawner = new ArenaSpawner(this, ModConfigs.ARENA_GENERAL.BOSS_COUNT);
     public ArenaScoreboard scoreboard = new ArenaScoreboard(this);
     public ReturnInfo returnInfo = new ReturnInfo();
+
+    private int time = 0;
+    private int endDelay = 20 * 15;
 
     protected ArenaRaid() {
 
@@ -50,7 +63,7 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
     }
 
     public boolean isComplete() {
-        return this.isComplete;
+        return this.isComplete && this.endDelay < 0;
     }
 
     public BlockPos getCenter() {
@@ -58,28 +71,58 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
     }
 
     public void tick(ServerWorld world) {
-        if(this.isComplete())return;
+        this.time++;
+
+        if(this.isComplete) {
+            this.endDelay--;
+            return;
+        }
 
         if(this.spawner.hasStarted()) {
-            boolean bossLeft = false;
-
-            for(UUID uuid : this.spawner.bosses) {
-                Entity entity = world.getEntityByUuid(uuid);
-
-                if(entity instanceof ArenaBossEntity) {
-                    bossLeft = true;
-                    break;
-                }
-            }
+            boolean bossLeft = this.spawner.bosses.stream().map(world::getEntityByUuid).anyMatch(entity -> entity instanceof ArenaBossEntity);
+            boolean fighterLeft = this.spawner.fighters.stream().map(world::getEntityByUuid).anyMatch(entity -> entity instanceof ArenaFighterEntity);
 
             if(!bossLeft) {
+                this.onFighterWin(world);
+                this.isComplete = true;
+            } else if(!fighterLeft) {
+                this.onBossWin(world);
                 this.isComplete = true;
             }
+        } else if(this.time > 20 * 5) {
+            this.spawner.start(world);
         }
     }
 
+    private void onBossWin(ServerWorld world) {
+        //TODO: losing screen
+    }
+
+    private void onFighterWin(ServerWorld world) {
+        //TODO: win screen
+        this.giveLoot(world);
+    }
+
+    private void giveLoot(ServerWorld world) {
+        NonNullList<ItemStack> stacks = NonNullList.create();
+
+        stacks.add(PlayerStatueBlockItem.forArenaChampion(this.scoreboard.get().entrySet().stream()
+                .sorted((o1, o2) -> Float.compare(o2.getValue(), o1.getValue()))
+                .map(Map.Entry::getKey).findFirst().orElse("")));
+
+        ItemStack crate = VaultCrateBlock.getCrateWithLoot(ModBlocks.VAULT_CRATE_ARENA, stacks);
+
+        this.runIfPresent(world, playerEntity -> {
+            playerEntity.inventory.addItemStackToInventory(crate);
+            world.playSound(null, playerEntity.getPosX(), playerEntity.getPosY(), playerEntity.getPosZ(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 1.0F, 1.0F);
+        });
+    }
+
     public void finish(ServerWorld world, ServerPlayerEntity player) {
-        if(player != null)this.returnInfo.apply(world.getServer(), player);
+        if(player != null) {
+            this.returnInfo.apply(world.getServer(), player);
+            StreamData.get(world).onArenaLeave(world.getServer(), this.playerId);
+        }
     }
 
     public boolean runIfPresent(ServerWorld world, Consumer<ServerPlayerEntity> action) {
@@ -96,6 +139,8 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
         nbt.putUniqueId("PlayerId", this.playerId);
         nbt.put("Box", this.box.toNBTTagIntArray());
         nbt.putBoolean("Completed", this.isComplete());
+        nbt.putInt("Time", this.time);
+        nbt.putInt("EndDelay", this.endDelay);
 
         if (this.start != null) {
             CompoundNBT startNBT = new CompoundNBT();
@@ -116,6 +161,8 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
         this.playerId = nbt.getUniqueId("PlayerId");
         this.box = new MutableBoundingBox(nbt.getIntArray("Box"));
         this.isComplete = nbt.getBoolean("Completed");
+        this.time = nbt.getInt("Time");
+        this.endDelay = nbt.getInt("EndDelay");
 
         if(nbt.contains("Start", Constants.NBT.TAG_COMPOUND)) {
             CompoundNBT startNBT = nbt.getCompound("Start");
@@ -182,7 +229,6 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
         this.teleportToStart(world, player);
         player.func_242279_ag();
 
-        this.spawner.start(world);
         player.setGameType(GameType.SPECTATOR);
 
         this.runIfPresent(world, playerEntity -> {

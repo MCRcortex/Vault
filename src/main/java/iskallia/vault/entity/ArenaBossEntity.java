@@ -96,7 +96,7 @@ public class ArenaBossEntity extends FighterEntity {
 
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float amount) {
-		if (this.isInvulnerableTo(source)) {
+		if(this.isInvulnerableTo(source) || source == DamageSource.FALL) {
 			return false;
 		} else if(source instanceof IndirectEntityDamageSource) {
 			for(int i = 0; i < 64; ++i) {

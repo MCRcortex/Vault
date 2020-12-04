@@ -53,23 +53,22 @@ public class StreamData extends WorldSavedData {
         return this;
     }
 
-    public StreamData onSub(MinecraftServer server, UUID streamer, String subscriber) {
+    public StreamData onSub(MinecraftServer server, UUID streamer, String name, int months) {
         NetcodeUtils.runIfPresent(server, streamer, player -> {
             ArenaRaid activeRaid = ArenaRaidData.get(player.getServerWorld()).getActiveFor(player);
 
             if (activeRaid != null) {
                 // Just put incoming sub to the buffer, if an arena is already in progress
                 Subscribers subscribers = subBufferMap.computeIfAbsent(streamer, uuid -> new Subscribers());
-                subscribers.onSub(subscriber);
-
+                subscribers.onSub(name, months);
             } else {
                 Subscribers subscribers = subMap.computeIfAbsent(streamer, uuid -> new Subscribers());
-                subscribers.onSub(subscriber);
+                subscribers.onSub(name, months);
                 syncHypebar(server, streamer);
                 int maxSubs = ModConfigs.STREAMER_MULTIPLIERS.ofStreamer(player.getDisplayName().getString()).subsNeededForArena;
                 if (subscribers.count() >= maxSubs) {
                     ArenaRaid raid = ArenaRaidData.get(player.getServerWorld()).startNew(player);
-                    List<String> fighterSubs = subscribers.subs.subList(0, maxSubs);
+                    List<Subscribers.Instance> fighterSubs = subscribers.subs.subList(0, maxSubs);
                     raid.spawner.addFighters(fighterSubs);
                     fighterSubs.clear();
                 }
@@ -88,16 +87,19 @@ public class StreamData extends WorldSavedData {
     }
 
     // TODO: Call dis bad boi when dimension is changed and changed dimension != ARENA
+    // TODO: Should be complete now ^
     public StreamData onArenaLeave(MinecraftServer server, UUID streamer) {
         NetcodeUtils.runIfPresent(server, streamer, player -> {
             Subscribers bufferedSubs = subBufferMap.computeIfAbsent(streamer, uuid -> new Subscribers());
             int maxSubs = ModConfigs.STREAMER_MULTIPLIERS.ofStreamer(player.getDisplayName().getString()).subsNeededForArena;
             int subsToMove = Math.min(bufferedSubs.count(), maxSubs);
             for (int i = 0; i < subsToMove; i++) {
-                onSub(server, streamer, bufferedSubs.popOneSub());
+                Subscribers.Instance e = bufferedSubs.popOneSub();
+                onSub(server, streamer, e.name, e.months);
             }
             this.markDirty();
         });
+
         return this;
     }
 
@@ -150,28 +152,71 @@ public class StreamData extends WorldSavedData {
     }
 
     public static class Subscribers implements INBTSerializable<ListNBT> {
-        private final List<String> subs = new LinkedList<>();
+        private final List<Instance> subs = new ArrayList<>();
 
-        public void onSub(String subscriber) {
-            this.subs.add(subscriber);
+        public void onSub(String name, int months) {
+            this.subs.add(new Instance(name, months));
+        }
+
+        public void onSub(CompoundNBT nbt) {
+            Instance sub = new Instance();
+            sub.deserializeNBT(nbt);
+            this.subs.add(sub);
         }
 
         public int count() {
             return subs.size();
         }
 
-        public String popOneSub() {
+        public Instance popOneSub() {
             return subs.remove(0);
         }
 
         @Override
         public ListNBT serializeNBT() {
-            return this.subs.stream().map(StringNBT::valueOf).collect(Collectors.toCollection(ListNBT::new));
+            return this.subs.stream().map(Instance::serializeNBT).collect(Collectors.toCollection(ListNBT::new));
         }
 
         @Override
         public void deserializeNBT(ListNBT nbt) {
-            IntStream.range(0, nbt.size()).mapToObj(nbt::getString).forEach(this.subs::add);
+            this.subs.clear();
+            IntStream.range(0, nbt.size()).mapToObj(nbt::getCompound).forEach(this::onSub);
+        }
+
+        public static class Instance implements INBTSerializable<CompoundNBT> {
+            private String name = "";
+            private int months = 0;
+
+            public Instance() {
+
+            }
+
+            public Instance(String name, int months) {
+                this.name = name;
+                this.months = months;
+            }
+
+            public String getName() {
+                return this.name;
+            }
+
+            public int getMonths() {
+                return this.months;
+            }
+
+            @Override
+            public CompoundNBT serializeNBT() {
+                CompoundNBT nbt = new CompoundNBT();
+                nbt.putString("Name", this.name);
+                nbt.putInt("Months", this.months);
+                return nbt;
+            }
+
+            @Override
+            public void deserializeNBT(CompoundNBT nbt) {
+                this.name = nbt.getString("Name");
+                this.months = nbt.getInt("Months");
+            }
         }
     }
 

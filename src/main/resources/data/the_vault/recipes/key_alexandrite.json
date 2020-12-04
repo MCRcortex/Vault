@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " n ",
+    "SnS",
+    "SnS"
+  ],
+  "key": {
+    "n": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "S": {
+      "item": "the_vault:key_alexandrite"
+    }
+  },
+  "result": {}
+}

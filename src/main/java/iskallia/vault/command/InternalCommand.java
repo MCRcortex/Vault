@@ -32,7 +32,8 @@ public class InternalCommand extends Command {
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
         builder.then(literal("received_sub")
                 .then(argument("subscriber", StringArgumentType.word())
-                        .executes(context -> this.receivedSub(context, StringArgumentType.getString(context, "subscriber")))));
+                        .then(argument("months", IntegerArgumentType.integer(0))
+                        .executes(context -> this.receivedSub(context, StringArgumentType.getString(context, "subscriber"), IntegerArgumentType.getInteger(context, "months"))))));
 
         builder.then(literal("received_sub_gift")
                 .then(argument("gifter", StringArgumentType.word())
@@ -51,9 +52,9 @@ public class InternalCommand extends Command {
                                 .executes(context -> this.receivedBitDonation(context, StringArgumentType.getString(context, "donator"), IntegerArgumentType.getInteger(context, "amount"))))));
     }
 
-    private int receivedSub(CommandContext<CommandSource> context, String subscriber) throws CommandSyntaxException {
+    private int receivedSub(CommandContext<CommandSource> context, String name, int months) throws CommandSyntaxException {
         ServerPlayerEntity player = context.getSource().asPlayer();
-        StreamData.get(player.getServerWorld()).onSub(player.getServer(), player.getUniqueID(), subscriber);
+        StreamData.get(player.getServerWorld()).onSub(player.getServer(), player.getUniqueID(), name, months);
         return 0;
     }
 
