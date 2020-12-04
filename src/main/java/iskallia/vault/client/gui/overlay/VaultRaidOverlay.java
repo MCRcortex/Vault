@@ -24,8 +24,24 @@ public class VaultRaidOverlay {
     public static SimpleSound panicSound;
     public static SimpleSound ambientLoop;
     public static SimpleSound ambientSound;
+    public static SimpleSound bossLoop;
 
+    public static boolean bossSummoned;
     private static int ticksBeforeAmbientSound;
+
+    public static void startBossLoop() {
+        if (bossLoop != null) stopBossLoop();
+        Minecraft minecraft = Minecraft.getInstance();
+        bossLoop = SimpleSound.ambientWithoutAttenuation(ModSounds.VAULT_BOSS_LOOP, 0.75f, 1f);
+        minecraft.getSoundHandler().play(bossLoop);
+    }
+
+    public static void stopBossLoop() {
+        if (bossLoop == null) return;
+        Minecraft minecraft = Minecraft.getInstance();
+        minecraft.getSoundHandler().stop(bossLoop);
+        bossLoop = null;
+    }
 
     @SubscribeEvent
     public static void
@@ -33,12 +49,14 @@ public class VaultRaidOverlay {
         if (event.getType() != RenderGameOverlayEvent.ElementType.HOTBAR)
             return; // Render only on HOTBAR
 
-        if (remainingTicks == 0)
-            return; // Timed out, stop here
-
         if (Minecraft.getInstance().world == null || Minecraft.getInstance().world.getDimensionKey() != Vault.VAULT_KEY) {
+            stopBossLoop();
+            bossSummoned = false;
             return;
         }
+
+        if (remainingTicks == 0)
+            return; // Timed out, stop here
 
         MatrixStack matrixStack = event.getMatrixStack();
         Minecraft minecraft = Minecraft.getInstance();
@@ -46,6 +64,12 @@ public class VaultRaidOverlay {
         int barWidth = 62;
         int barHeight = 22;
         int panicTicks = 30 * 20;
+
+        if (!bossSummoned) {
+            stopBossLoop();
+        } else if (!minecraft.getSoundHandler().isPlaying(bossLoop)) {
+            startBossLoop();
+        }
 
         matrixStack.push();
         matrixStack.translate(barWidth, bottom, 0);
@@ -59,7 +83,6 @@ public class VaultRaidOverlay {
                 0xFF_000000);
 
         matrixStack.translate(30, -25, 0);
-
 
         if (remainingTicks < panicTicks)
             matrixStack.rotate(new Quaternion(0, 0, (remainingTicks * 10f) % 360, true));

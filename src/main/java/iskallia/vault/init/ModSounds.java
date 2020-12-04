@@ -11,6 +11,7 @@ public class ModSounds {
     public static SoundEvent RAFFLE_SFX;
     public static SoundEvent VAULT_AMBIENT_LOOP;
     public static SoundEvent VAULT_AMBIENT;
+    public static SoundEvent VAULT_BOSS_LOOP;
     public static SoundEvent TIMER_KILL_SFX;
     public static SoundEvent TIMER_PANIC_TICK_SFX;
     public static SoundEvent CONFETTI_SFX;
@@ -30,6 +31,7 @@ public class ModSounds {
         RAFFLE_SFX = registerSound(event, "raffle");
         VAULT_AMBIENT_LOOP = registerSound(event, "vault_ambient_loop");
         VAULT_AMBIENT = registerSound(event, "vault_ambient");
+        VAULT_BOSS_LOOP = registerSound(event, "boss_loop");
         TIMER_KILL_SFX = registerSound(event, "timer_kill");
         TIMER_PANIC_TICK_SFX = registerSound(event, "timer_panic_tick");
         CONFETTI_SFX = registerSound(event, "confetti");

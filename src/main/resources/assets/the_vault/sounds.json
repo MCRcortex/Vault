@@ -20,6 +20,15 @@
       }
     ]
   },
+  "boss_loop": {
+    "category": "music",
+    "sounds": [
+      {
+        "name": "the_vault:boss_loop",
+        "stream": true
+      }
+    ]
+  },
   "vault_ambient": {
     "category": "ambient",
     "sounds": [

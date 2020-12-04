@@ -1,5 +1,6 @@
 package iskallia.vault.block;
 
+import iskallia.vault.client.gui.overlay.VaultRaidOverlay;
 import iskallia.vault.entity.ArenaBossEntity;
 import iskallia.vault.entity.EntityScaler;
 import iskallia.vault.init.ModEntities;
@@ -30,6 +31,8 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Random;
 
@@ -56,16 +59,19 @@ public class ObeliskBlock extends Block {
             if (!player.isCreative()) {
                 heldStack.shrink(1);
             }
-
-            if (world.isRemote) {
-                return ActionResultType.SUCCESS;
-            }
         } else {
             return ActionResultType.PASS;
         }
 
         BlockState newState = state.with(COMPLETION, MathHelper.clamp(state.get(COMPLETION) + 1, 0, 4));
         world.setBlockState(pos, newState);
+
+        if (world.isRemote) {
+            if (newState.get(COMPLETION) == 4)
+                startBossLoop();
+
+            return ActionResultType.SUCCESS;
+        }
 
         this.spawnParticles(world, pos);
 
@@ -86,7 +92,7 @@ public class ObeliskBlock extends Block {
             if (raid != null) {
                 EntityScaler.scale(boss, raid.level + 5, new Random());
 
-                if(raid.playerBossName != null) {
+                if (raid.playerBossName != null) {
                     boss.setCustomName(new StringTextComponent(raid.playerBossName));
                 }
             }
@@ -95,6 +101,11 @@ public class ObeliskBlock extends Block {
         }
 
         return ActionResultType.SUCCESS;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private void startBossLoop() {
+        VaultRaidOverlay.bossSummoned = true;
     }
 
     private void spawnParticles(World world, BlockPos pos) {
