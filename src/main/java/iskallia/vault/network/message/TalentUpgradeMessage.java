@@ -49,6 +49,9 @@ public class TalentUpgradeMessage {
             PlayerTalentsData abilitiesData = PlayerTalentsData.get((ServerWorld) sender.world);
             TalentTree talentTree = abilitiesData.getTalents(sender);
 
+            if (ModConfigs.SKILL_GATES.getGates().isLocked(talentGroup, talentTree))
+                return; // Cannot upgrade locked skill...
+
             TalentNode<?> talentNode = talentTree.getNodeByName(message.talentName);
             PlayerVaultStats stats = statsData.getVaultStats(sender);
 

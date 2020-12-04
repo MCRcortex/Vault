@@ -1,6 +1,7 @@
 package iskallia.vault.network.message;
 
 import iskallia.vault.init.ModConfigs;
+import iskallia.vault.research.ResearchTree;
 import iskallia.vault.research.type.Research;
 import iskallia.vault.skill.PlayerVaultStats;
 import iskallia.vault.world.data.PlayerResearchesData;
@@ -47,6 +48,11 @@ public class ResearchMessage {
 
             PlayerVaultStatsData statsData = PlayerVaultStatsData.get((ServerWorld) sender.world);
             PlayerResearchesData researchesData = PlayerResearchesData.get((ServerWorld) sender.world);
+
+            ResearchTree researchTree = researchesData.getResearches(sender);
+
+            if (ModConfigs.SKILL_GATES.getGates().isLocked(research.getName(), researchTree))
+                return; // Cannot upgrade locked skill...
 
             PlayerVaultStats stats = statsData.getVaultStats(sender);
 

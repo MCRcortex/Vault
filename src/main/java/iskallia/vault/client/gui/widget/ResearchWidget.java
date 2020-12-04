@@ -4,12 +4,17 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import iskallia.vault.Vault;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.config.entry.SkillStyle;
+import iskallia.vault.init.ModConfigs;
 import iskallia.vault.research.ResearchTree;
+import iskallia.vault.research.type.Research;
+import iskallia.vault.skill.SkillGates;
 import iskallia.vault.util.ResourceBoundary;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
+
+import java.util.List;
 
 public class ResearchWidget extends Widget {
 
@@ -20,6 +25,7 @@ public class ResearchWidget extends Widget {
 
     String researchName;
     ResearchTree researchTree;
+    boolean locked;
     SkillStyle style;
 
     boolean selected;
@@ -29,6 +35,7 @@ public class ResearchWidget extends Widget {
                 ICON_SIZE, ICON_SIZE,
                 new StringTextComponent("the_vault.widgets.research"));
         this.style = style;
+        this.locked = ModConfigs.SKILL_GATES.getGates().isLocked(researchName, researchTree);
         this.researchName = researchName;
         this.researchTree = researchTree;
     }
@@ -62,6 +69,7 @@ public class ResearchWidget extends Widget {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
 //        if (button == 1) return false;
+        if (locked) return false;
         if (selected) return false;
 
         this.playDownSound(Minecraft.getInstance().getSoundHandler());
@@ -90,7 +98,8 @@ public class ResearchWidget extends Widget {
         matrixStack.translate(-ICON_SIZE / 2f, -ICON_SIZE / 2f, 0);
         Minecraft.getInstance().textureManager.bindTexture(resourceBoundary.getResource());
 
-        int vOffset = selected || isMouseOver(mouseX, mouseY) ? -31
+        int vOffset = locked ? 62
+                : selected || isMouseOver(mouseX, mouseY) ? -31
                 : researchTree.getResearchesDone().contains(researchName) ? 31 : 0;
         blit(matrixStack, this.x, this.y,
                 resourceBoundary.getU(),
@@ -101,10 +110,15 @@ public class ResearchWidget extends Widget {
 
         matrixStack.push();
         matrixStack.translate(-16 / 2f, -16 / 2f, 0);
-        Minecraft.getInstance().textureManager.bindTexture(RESEARCHES_RESOURCE);
-        blit(matrixStack, this.x, this.y,
-                style.u, style.v,
-                16, 16);
+        Minecraft.getInstance().textureManager.bindTexture(locked ? SKILL_WIDGET_RESOURCE : RESEARCHES_RESOURCE);
+        if (locked) {
+            blit(matrixStack, this.x + 3, this.y + 1,
+                    10, 124, 10, 14);
+        } else {
+            blit(matrixStack, this.x, this.y,
+                    style.u, style.v,
+                    16, 16);
+        }
         matrixStack.pop();
     }
 

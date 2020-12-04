@@ -12,6 +12,7 @@ public class ModConfigs {
     public static ResearchConfig RESEARCHES;
     public static ResearchesGUIConfig RESEARCHES_GUI;
     public static SkillDescriptionsConfig SKILL_DESCRIPTIONS;
+    public static SkillGatesConfig SKILL_GATES;
     public static VaultLevelsConfig LEVELS_META;
     public static VaultRelicsConfig VAULT_RELICS;
     public static VaultOreConfig VAULT_ORES;
@@ -32,6 +33,7 @@ public class ModConfigs {
         RESEARCHES = (ResearchConfig) new ResearchConfig().readConfig();
         RESEARCHES_GUI = (ResearchesGUIConfig) new ResearchesGUIConfig().readConfig();
         SKILL_DESCRIPTIONS = (SkillDescriptionsConfig) new SkillDescriptionsConfig().readConfig();
+        SKILL_GATES = (SkillGatesConfig) new SkillGatesConfig().readConfig();
         LEVELS_META = (VaultLevelsConfig) new VaultLevelsConfig().readConfig();
         VAULT_RELICS = (VaultRelicsConfig) new VaultRelicsConfig().readConfig();
         VAULT_ORES = (VaultOreConfig) new VaultOreConfig().readConfig();
