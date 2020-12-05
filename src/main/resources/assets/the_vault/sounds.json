@@ -11,6 +11,12 @@
       "the_vault:timer_kill"
     ]
   },
+  "arena_horns": {
+    "category": "master",
+    "sounds": [
+      "the_vault:arena_horns"
+    ]
+  },
   "vault_ambient_loop": {
     "category": "music",
     "sounds": [

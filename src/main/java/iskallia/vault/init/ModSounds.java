@@ -22,6 +22,7 @@ public class ModSounds {
     public static SoundEvent SKILL_TREE_LEARN_SFX;
     public static SoundEvent SKILL_TREE_UPGRADE_SFX;
     public static SoundEvent VENDING_MACHINE_SFX;
+    public static SoundEvent ARENA_HORNS_SFX;
     public static SoundEvent VAULT_GEM_HIT;
     public static SoundEvent VAULT_GEM_BREAK;
 
@@ -42,6 +43,7 @@ public class ModSounds {
         SKILL_TREE_LEARN_SFX = registerSound(event, "skill_tree_learn");
         SKILL_TREE_UPGRADE_SFX = registerSound(event, "skill_tree_upgrade");
         VENDING_MACHINE_SFX = registerSound(event, "vending_machine");
+        ARENA_HORNS_SFX = registerSound(event, "arena_horns");
         VAULT_GEM_HIT = registerSound(event, "vault_gem_hit");
         VAULT_GEM_BREAK = registerSound(event, "vault_gem_break");
     }

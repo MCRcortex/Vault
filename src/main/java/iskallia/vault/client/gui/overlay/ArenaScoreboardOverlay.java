@@ -4,8 +4,10 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import iskallia.vault.Vault;
 import iskallia.vault.client.gui.helper.ArenaScoreboardContainer;
 import iskallia.vault.client.gui.helper.FontHelper;
+import iskallia.vault.init.ModSounds;
 import iskallia.vault.util.RomanNumber;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -18,6 +20,9 @@ public class ArenaScoreboardOverlay {
 
     public static ArenaScoreboardContainer scoreboard = new ArenaScoreboardContainer();
 
+    public static int hornsPlayedCount;
+    private static SimpleSound arenaHorns;
+
     @SubscribeEvent
     public static void
     onPostRender(RenderGameOverlayEvent.Post event) {
@@ -27,9 +32,18 @@ public class ArenaScoreboardOverlay {
         Minecraft minecraft = Minecraft.getInstance();
 
         if (minecraft.world == null || minecraft.world.getDimensionKey() != Vault.ARENA_KEY) {
+            hornsPlayedCount = 0;
             if (scoreboard.getSize() != 0)
                 scoreboard.reset();
             return;
+        }
+
+        if (hornsPlayedCount < 1) {
+            if (arenaHorns == null || !minecraft.getSoundHandler().isPlaying(arenaHorns)) {
+                arenaHorns = SimpleSound.master(ModSounds.ARENA_HORNS_SFX, 1f, 1f);
+                minecraft.getSoundHandler().play(arenaHorns);
+                hornsPlayedCount++;
+            }
         }
 
         MatrixStack matrixStack = event.getMatrixStack();
