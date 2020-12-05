@@ -26,7 +26,7 @@ public class VaultBarOverlay {
     @SubscribeEvent
     public static void
     onPostRender(RenderGameOverlayEvent.Post event) {
-        if (event.getType() != RenderGameOverlayEvent.ElementType.POTION_ICONS)
+        if (event.getType() != RenderGameOverlayEvent.ElementType.HOTBAR)
             return; // Render only on POTION_ICONS
 
         MatrixStack matrixStack = event.getMatrixStack();

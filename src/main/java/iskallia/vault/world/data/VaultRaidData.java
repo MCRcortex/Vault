@@ -71,6 +71,8 @@ public class VaultRaidData extends WorldSavedData {
                 this.xOffset, 0, 0, this.xOffset += VaultRaid.REGION_SIZE, 256, VaultRaid.REGION_SIZE
         ), PlayerVaultStatsData.get(player.getServerWorld()).getVaultStats(player).getVaultLevel(), rarity, playerBossName);
 
+        raid.sTickLeft += VaultSetsData.get(player.getServerWorld()).getExtraTime(player.getUniqueID());
+
         if (this.activeRaids.containsKey(player.getUniqueID())) {
             this.activeRaids.get(player.getUniqueID()).ticksLeft = 0;
         }

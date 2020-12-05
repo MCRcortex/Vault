@@ -53,7 +53,8 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
     public MutableBoundingBox box;
     public int level;
     private int rarity;
-    public int ticksLeft = ModConfigs.VAULT_GENERAL.getTickCounter();
+    public int sTickLeft = ModConfigs.VAULT_GENERAL.getTickCounter();
+    public int ticksLeft = this.sTickLeft;
     public String playerBossName;
 
     public BlockPos start;
@@ -62,6 +63,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
 
     public VaultSpawner spawner = new VaultSpawner(this);
     public boolean finished = false;
+    public int timer = 20 * 60;
 
     protected VaultRaid() {
 
@@ -94,7 +96,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
             this.syncTicksLeft(world.getServer());
         });
 
-        if (this.ticksLeft <= 0) {
+        if(this.ticksLeft <= 0) {
             if(this.won) {
                 this.runIfPresent(world.getServer(), playerEntity -> {
                     this.teleportToStart(world, playerEntity);
@@ -116,7 +118,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
             }
         } else {
             this.runIfPresent(world.getServer(), player -> {
-                if(this.ticksLeft + 20 < ModConfigs.VAULT_GENERAL.getTickCounter()
+                if(this.ticksLeft + 20 < this.sTickLeft
                         && player.world.getDimensionKey() != Vault.VAULT_KEY
                         && player.world.getDimensionKey() != Vault.ARENA_KEY) {
                     if(player.world.getDimensionKey() == World.OVERWORLD) {
@@ -129,6 +131,8 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
                 }
             });
         }
+
+        this.timer--;
     }
 
     public void finish(ServerWorld server, UUID playerId) {
@@ -170,8 +174,9 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         nbt.put("Box", this.box.toNBTTagIntArray());
         nbt.putInt("Level", this.level);
         nbt.putInt("Rarity", this.rarity);
+        nbt.putInt("StartTicksLeft", this.sTickLeft);
         nbt.putInt("TicksLeft", this.ticksLeft);
-        nbt.putString("PlayerBossName", playerBossName);
+        nbt.putString("PlayerBossName", this.playerBossName);
         nbt.putBoolean("Won", this.won);
 
         if (this.start != null) {
@@ -191,6 +196,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         this.box = new MutableBoundingBox(nbt.getIntArray("Box"));
         this.level = nbt.getInt("Level");
         this.rarity = nbt.getInt("Rarity");
+        this.sTickLeft = nbt.getInt("StartTicksLeft");
         this.ticksLeft = nbt.getInt("TicksLeft");
         this.playerBossName = nbt.getString("PlayerBossName");
         this.won = nbt.getBoolean("Won");
@@ -225,9 +231,9 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
         loop:
         for (int x = -48; x < 48; x++) {
             for (int z = -48; z < 48; z++) {
-                for (int y = 0; y < 48; y++) {
+                for(int y = 0; y < 48; y++) {
                     BlockPos pos = chunkPos.asBlockPos().add(x, VaultStructure.START_Y + y, z);
-                    if (world.getBlockState(pos).getBlock() != Blocks.CRIMSON_PRESSURE_PLATE) continue;
+                    if (world.getBlockState(pos).getBlock() != Blocks.CRIMSON_PRESSURE_PLATE)continue;
                     world.setBlockState(pos, Blocks.AIR.getDefaultState());
 
                     this.start = pos;

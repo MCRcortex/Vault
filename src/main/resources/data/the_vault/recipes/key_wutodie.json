@@ -10,11 +10,11 @@
       "item": "minecraft:netherite_ingot"
     },
     "S": {
-      "item": "the_vault:key_wutodie"
+      "item": "the_vault:gem_wutodie"
     }
   },
   "result": {
-    "item": "the_vault:door_wutodie",
+    "item": "the_vault:key_wutodie",
     "count": 1
   }
 }

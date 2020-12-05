@@ -27,10 +27,10 @@ public class VaultSpawner {
 
 	public void tick(ServerPlayerEntity player) {
 		if(player.world.getDimensionKey() != Vault.VAULT_KEY)return;
-		if(this.raid.ticksLeft + 15 * 20 > ModConfigs.VAULT_GENERAL.getTickCounter())return;
+		if(this.raid.ticksLeft + 15 * 20 > this.raid.sTickLeft)return;
 
 		this.mobs.removeIf(entity -> {
-			if(entity.getDistanceSq(player) > 24 * 24) {
+			if(this.raid.won || entity.getDistanceSq(player) > 24 * 24) {
 				entity.remove();
 				return true;
 			}

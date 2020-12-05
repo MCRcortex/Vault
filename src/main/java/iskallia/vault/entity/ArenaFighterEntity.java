@@ -17,6 +17,8 @@ import java.util.UUID;
 
 public class ArenaFighterEntity extends FighterEntity {
 
+    private boolean immuneToFall = true;
+
     public ArenaFighterEntity(EntityType<? extends ZombieEntity> type, World world) {
         super(type, world);
         this.setCustomName(new StringTextComponent("Subscriber" + (int)(Math.random() * 100)));
@@ -48,7 +50,8 @@ public class ArenaFighterEntity extends FighterEntity {
 
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
-        if(source == DamageSource.FALL) {
+        if(source == DamageSource.FALL && this.immuneToFall) {
+            this.immuneToFall = false;
             return false;
         }
 

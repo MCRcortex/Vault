@@ -51,7 +51,7 @@ public class ReturnInfo implements INBTSerializable<CompoundNBT> {
 		nbt.putFloat("Yaw", this.yaw);
 		nbt.putFloat("Pitch", this.pitch);
 		nbt.putInt("Gamemode", this.gamemode.ordinal());
-		nbt.putString("Dimension", this.dimension.getRegistryName().toString());
+		nbt.putString("Dimension", this.dimension.getRegistryName().toString()); //TODO: debug
 		return nbt;
 	}
 

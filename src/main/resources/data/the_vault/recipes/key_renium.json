@@ -10,11 +10,11 @@
       "item": "minecraft:netherite_ingot"
     },
     "S": {
-      "item": "the_vault:key_renium"
+      "item": "the_vault:gem_renium"
     }
   },
   "result": {
-    "item": "the_vault:door_renium",
+    "item": "the_vault:key_renium",
     "count": 1
   }
 }

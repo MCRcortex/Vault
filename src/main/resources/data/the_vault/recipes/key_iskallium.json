@@ -10,11 +10,11 @@
       "item": "minecraft:netherite_ingot"
     },
     "S": {
-      "item": "the_vault:key_iskallium"
+      "item": "the_vault:gem_iskallium"
     }
   },
   "result": {
-    "item": "the_vault:door_iskallium",
+    "item": "the_vault:key_iskallium",
     "count": 1
   }
 }

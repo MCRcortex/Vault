@@ -36,7 +36,13 @@ public class VaultLevelsConfig extends Config {
     }
 
     public int defaultTNLFunction(int level) {
-        return (int) (Math.pow(level, 2) + 100);
+        //TODO: Click on me to see the full thing
+        /*
+        * - 3 levels with n subs
+        *
+        * */
+
+        return level * 5 + 100;
     }
 
     public static class VaultLevelMeta {

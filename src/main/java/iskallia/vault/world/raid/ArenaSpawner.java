@@ -61,7 +61,9 @@ public class ArenaSpawner implements INBTSerializable<CompoundNBT> {
 
 			BlockPos pos = this.raid.getCenter().add(s * r, 256 - this.raid.getCenter().getY(), c * r);
 
-			FighterEntity fighter = ModEntities.ARENA_FIGHTER.create(world).changeSize(1.2F);
+			FighterEntity fighter = ModConfigs.ARENA_MOBS.getForLevel(this.subscribers.get(i).getMonths())
+					.FIGHTER_CONFIG.create(world, ModEntities.ARENA_FIGHTER).changeSize(1.2F);
+
 			fighter.setLocationAndAngles(pos.getX() + 0.5F, pos.getY() + 0.2F, pos.getZ() + 0.5F, 0.0F, 0.0F);
 			fighter.setCustomName(new StringTextComponent(this.subscribers.get(i).getName()));
 			this.fighters.add(fighter.getUniqueID());
@@ -74,7 +76,8 @@ public class ArenaSpawner implements INBTSerializable<CompoundNBT> {
 		}
 
 		for(int i = 0; i < this.bossCount; i++) {
-			FighterEntity boss = ModEntities.ARENA_BOSS.create(world).changeSize(1.2F);
+			FighterEntity boss = ModConfigs.ARENA_MOBS.getForLevel(maxMonths).BOSS_CONFIG.create(world, ModEntities.ARENA_BOSS).changeSize(1.2F);
+
 			BlockPos pos = this.toTop(world, new BlockPos(this.raid.getCenter().getX(), 0, this.raid.getCenter().getZ()));
 			boss.setLocationAndAngles(pos.getX() + 0.5F, pos.getY() + 0.2F, pos.getZ() + 0.5F, 0.0F, 0.0F);
 			this.bosses.add(boss.getUniqueID());

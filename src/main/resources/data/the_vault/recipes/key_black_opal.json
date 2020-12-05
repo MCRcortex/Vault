@@ -10,11 +10,11 @@
       "item": "minecraft:netherite_ingot"
     },
     "S": {
-      "item": "the_vault:key_black_opal"
+      "item": "the_vault:gem_black_opal"
     }
   },
   "result": {
-    "item": "the_vault:door_black_opal",
+    "item": "the_vault:key_black_opal",
     "count": 1
   }
 }

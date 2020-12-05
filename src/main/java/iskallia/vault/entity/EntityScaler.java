@@ -54,7 +54,7 @@ public class EntityScaler {
 			entity.setItemStackToSlot(slot, loot);
 		}
 
-		entity.changeSize(entity instanceof ArenaBossEntity ? ModConfigs.ARENA_GENERAL.BOSS_SIZE : config.MOB_SIZE);
+		entity.changeSize(config.MOB_SIZE);
 	}
 
 }

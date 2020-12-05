@@ -10,8 +10,11 @@
       "item": "minecraft:netherite_ingot"
     },
     "S": {
-      "item": "the_vault:key_benitoite"
+      "item": "the_vault:gem_benitoite"
     }
   },
-  "result": {}
+  "result": {
+    "item": "the_vault:key_benitoite",
+    "count": 1
+  }
 }

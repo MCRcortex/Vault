@@ -11,9 +11,15 @@ import iskallia.vault.world.data.StreamData;
 import iskallia.vault.world.gen.structure.ArenaStructure;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.projectile.FireworkRocketEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameterSets;
+import net.minecraft.loot.LootParameters;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.play.server.STitlePacket;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -46,7 +52,7 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
     public ArenaScoreboard scoreboard = new ArenaScoreboard(this);
     public ReturnInfo returnInfo = new ReturnInfo();
 
-    private int time = 0;
+    private int time = ModConfigs.ARENA_GENERAL.TICK_COUNTER;
     private int endDelay = 20 * 15;
 
     protected ArenaRaid() {
@@ -100,6 +106,16 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
 
     private void onFighterWin(ServerWorld world) {
         //TODO: win screen
+        for(int i = 0; i < 128; i++) {
+            FireworkRocketEntity firework = new FireworkRocketEntity(world,
+                    this.getCenter().getX() + world.getRandom().nextInt(81) - 40,
+                    this.getCenter().getY() - 15,
+                    this.getCenter().getZ() + world.getRandom().nextInt(81) - 40,
+                    new ItemStack(Items.FIREWORK_ROCKET));
+
+            world.summonEntity(firework);
+        }
+
         this.giveLoot(world);
     }
 
@@ -113,6 +129,16 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
         ItemStack crate = VaultCrateBlock.getCrateWithLoot(ModBlocks.VAULT_CRATE_ARENA, stacks);
 
         this.runIfPresent(world, playerEntity -> {
+            LootContext.Builder builder = (new LootContext.Builder(world)).withRandom(world.rand)
+                    .withNullableParameter(LootParameters.THIS_ENTITY, playerEntity)
+                    .withNullableParameter(LootParameters.DAMAGE_SOURCE, DamageSource.GENERIC)
+                    .withNullableParameter(LootParameters.KILLER_ENTITY, playerEntity)
+                    .withNullableParameter(LootParameters.DIRECT_KILLER_ENTITY, playerEntity)
+                    .withParameter(LootParameters.LAST_DAMAGE_PLAYER, playerEntity).withLuck(playerEntity.getLuck());
+
+            LootContext ctx = builder.build(LootParameterSets.ENTITY);
+            stacks.addAll(world.getServer().getLootTableManager().getLootTableFromLocation(Vault.id("chest/arena")).generate(ctx));
+
             playerEntity.inventory.addItemStackToInventory(crate);
             world.playSound(null, playerEntity.getPosX(), playerEntity.getPosY(), playerEntity.getPosZ(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 1.0F, 1.0F);
         });

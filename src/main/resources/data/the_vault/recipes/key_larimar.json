@@ -10,11 +10,11 @@
       "item": "minecraft:netherite_ingot"
     },
     "S": {
-      "item": "the_vault:key_larimar"
+      "item": "the_vault:gem_larimar"
     }
   },
   "result": {
-    "item": "the_vault:door_larimar",
+    "item": "the_vault:key_larimar",
     "count": 1
   }
 }

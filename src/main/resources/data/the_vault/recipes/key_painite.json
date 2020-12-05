@@ -10,11 +10,11 @@
       "item": "minecraft:netherite_ingot"
     },
     "S": {
-      "item": "the_vault:key_painite"
+      "item": "the_vault:gem_painite"
     }
   },
   "result": {
-    "item": "the_vault:door_painite",
+    "item": "the_vault:key_painite",
     "count": 1
   }
 }

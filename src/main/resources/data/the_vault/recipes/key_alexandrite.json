@@ -10,8 +10,11 @@
       "item": "minecraft:netherite_ingot"
     },
     "S": {
-      "item": "the_vault:key_alexandrite"
+      "item": "the_vault:gem_alexandrite"
     }
   },
-  "result": {}
+  "result": {
+    "item": "the_vault:key_alexandrite",
+    "count": 1
+  }
 }

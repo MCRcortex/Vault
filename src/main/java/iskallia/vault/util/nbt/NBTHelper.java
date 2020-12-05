@@ -43,7 +43,7 @@ public class NBTHelper {
         ListNBT listNBT = (ListNBT) nbt.get(name);
 
         for (int i = 0; i < listNBT.size(); i++) {
-            res.add(mapper.apply((N) listNBT.get(i)));
+            res.add(mapper.apply((N)listNBT.get(i)));
         }
 
         return res;

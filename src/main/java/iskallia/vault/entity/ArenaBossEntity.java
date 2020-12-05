@@ -1,5 +1,7 @@
 package iskallia.vault.entity;
 
+import iskallia.vault.Vault;
+import iskallia.vault.entity.ai.AOEGoal;
 import iskallia.vault.entity.ai.SnowStormGoal;
 import iskallia.vault.entity.ai.TeleportGoal;
 import iskallia.vault.world.data.ArenaRaidData;
@@ -23,6 +25,8 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.UUID;
+
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ArenaBossEntity extends FighterEntity {
 
@@ -45,8 +49,26 @@ public class ArenaBossEntity extends FighterEntity {
 		}).build());
 
 		this.goalSelector.addGoal(1, new SnowStormGoal<>(this, 96, 10));
+		this.goalSelector.addGoal(1, new AOEGoal<>(this, e -> !(e instanceof ArenaBossEntity)));
 
 		this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(100.0D);
+	}
+
+	@Override
+	public void tick() {
+		super.tick();
+
+		if(!this.world.isRemote && this.getAttackTarget() == null && this.world.getDimensionKey() == Vault.ARENA_KEY) {
+			ArenaRaid raid = ArenaRaidData.get((ServerWorld)this.world).getAt(this.getPosition());
+			if(raid == null || raid.spawner.fighters.isEmpty())return;
+
+			UUID target = raid.spawner.fighters.get(this.rand.nextInt(raid.spawner.fighters.size()));
+			Entity targetEntity = ((ServerWorld)this.world).getEntityByUuid(target);
+
+			if(targetEntity instanceof ArenaFighterEntity) {
+				this.setAttackTarget((ArenaFighterEntity)targetEntity);
+			}
+		}
 	}
 
 	private float knockbackAttack(Entity entity) {
@@ -96,6 +118,10 @@ public class ArenaBossEntity extends FighterEntity {
 
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float amount) {
+		if(!(source.getTrueSource() instanceof PlayerEntity)) {
+			return false;
+		}
+
 		if(this.isInvulnerableTo(source) || source == DamageSource.FALL) {
 			return false;
 		} else if(source instanceof IndirectEntityDamageSource) {
