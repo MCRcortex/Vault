@@ -46,12 +46,23 @@ public class VaultBarOverlay {
             ClientPlayerEntity player = minecraft.player;
             boolean iconsShowing = player != null && player.getActivePotionEffects().stream()
                     .anyMatch(EffectInstance::isShowIcon);
-            int toastWidth = 160;
             minecraft.getTextureManager().bindTexture(RESOURCE);
-            new AbstractGui() {}.blit(matrixStack, right - toastWidth - 1, iconsShowing ? 26 : 1,
-                    3, 171, toastWidth, 32);
-            minecraft.fontRenderer.drawString(matrixStack, unspentSkillPoints + " unspent skill point(s)",
-                    right - toastWidth + 29, iconsShowing ? 39 : 14, 0xFF_a18959);
+            String unspentText = unspentSkillPoints == 1
+                    ? " unspent skill point"
+                    : " unspent skill points";
+            String unspentPointsText = unspentSkillPoints + "";
+            int unspentPointsWidth = minecraft.fontRenderer.getStringWidth(unspentPointsText);
+            int unspentWidth = minecraft.fontRenderer.getStringWidth(unspentText);
+            int gap = 5;
+            int yOffset = 18;
+            minecraft.fontRenderer.drawStringWithShadow(matrixStack, unspentSkillPoints + "",
+                    right - unspentWidth - unspentPointsWidth - gap, iconsShowing ? yOffset + 10 : yOffset,
+                    0xFF_ffd800
+            );
+            minecraft.fontRenderer.drawStringWithShadow(matrixStack, unspentText,
+                    right - unspentWidth - gap, iconsShowing ? yOffset + 10 : yOffset,
+                    0xFF_ffffff
+            );
         }
 
         minecraft.getProfiler().startSection("vaultBar");
