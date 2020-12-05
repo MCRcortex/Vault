@@ -69,6 +69,7 @@ public class ModBlocks {
     public static final PlayerStatueBlock PLAYER_STATUE = new PlayerStatueBlock();
     public static final VendingMachineBlock VENDING_MACHINE = new VendingMachineBlock();
     public static final VaultBedrockBlock VAULT_BEDROCK = new VaultBedrockBlock();
+    public static final RelicStatueBlock RELIC_STATUE = new RelicStatueBlock();
 
     public static final TileEntityType<VaultAltarTileEntity> VAULT_ALTAR_TILE_ENTITY =
             TileEntityType.Builder.create(VaultAltarTileEntity::new, VAULT_ALTAR).build(null);
@@ -82,6 +83,8 @@ public class ModBlocks {
             TileEntityType.Builder.create(PlayerStatueTileEntity::new, PLAYER_STATUE).build(null);
     public static final TileEntityType<VendingMachineTileEntity> VENDING_MACHINE_TILE_ENTITY =
             TileEntityType.Builder.create(VendingMachineTileEntity::new, VENDING_MACHINE).build(null);
+    public static final TileEntityType<RelicStatueTileEntity> RELIC_STATUE_TILE_ENTITY =
+            TileEntityType.Builder.create(RelicStatueTileEntity::new, RELIC_STATUE).build(null);
 
     public static final PlayerStatueBlockItem PLAYER_STATUE_BLOCK_ITEM = new PlayerStatueBlockItem();
 
@@ -133,6 +136,7 @@ public class ModBlocks {
         registerBlock(event, PLAYER_STATUE, Vault.id("player_statue"));
         registerBlock(event, VENDING_MACHINE, Vault.id("vending_machine"));
         registerBlock(event, VAULT_BEDROCK, Vault.id("vault_bedrock"));
+        registerBlock(event, RELIC_STATUE, Vault.id("relic_statue"));
     }
 
     public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
@@ -142,6 +146,7 @@ public class ModBlocks {
         registerTileEntity(event, VAULT_PORTAL_TILE_ENTITY, Vault.id("vault_portal_tile_entity"));
         registerTileEntity(event, PLAYER_STATUE_TILE_ENTITY, Vault.id("player_statue_tile_entity"));
         registerTileEntity(event, VENDING_MACHINE_TILE_ENTITY, Vault.id("vending_machine_tile_entity"));
+        registerTileEntity(event, RELIC_STATUE_TILE_ENTITY, Vault.id("relic_statue_tile_entity"));
     }
 
     public static void registerTileEntityRenderers() {
@@ -199,6 +204,7 @@ public class ModBlocks {
         registerBlockItem(event, PLAYER_STATUE, PLAYER_STATUE_BLOCK_ITEM);
         registerBlockItem(event, VENDING_MACHINE, 1);
         registerBlockItem(event, VAULT_BEDROCK);
+        registerBlockItem(event, RELIC_STATUE, 1);
     }
 
     /* --------------------------------------------- */
