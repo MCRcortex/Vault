@@ -1,6 +1,7 @@
 package iskallia.vault.item;
 
 import iskallia.vault.init.ModConfigs;
+import iskallia.vault.init.ModSounds;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -38,7 +39,7 @@ public class ItemRelicBoosterPack extends Item {
                     position.x,
                     position.y,
                     position.z,
-                    SoundEvents.ITEM_ARMOR_EQUIP_LEATHER,
+                    ModSounds.BOOSTER_PACK_SFX,
                     SoundCategory.PLAYERS,
                     1f, 1f
             );

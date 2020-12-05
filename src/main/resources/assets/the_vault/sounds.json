@@ -104,6 +104,12 @@
       "the_vault:mega_jump"
     ]
   },
+  "booster_pack": {
+    "category": "master",
+    "sounds": [
+      "the_vault:booster_pack"
+    ]
+  },
   "vault_gem_hit": {
     "category": "block",
     "sounds": [
