@@ -229,11 +229,24 @@ public class SkillTreeScreen extends ContainerScreen<SkillTreeContainer> {
             getMinecraft().getTextureManager().bindTexture(HUD_RESOURCE);
             int toastWidth = 160;
             int right = getMinecraft().getMainWindow().getScaledWidth();
-            blit(matrixStack, right - toastWidth - 1, 1,
-                    3, 171, toastWidth, 32);
-            font.drawString(matrixStack, VaultBarOverlay.unspentSkillPoints + " unspent skill point(s)",
-                    right - toastWidth + 29, 14, 0xFF_a18959);
+            String unspentText = VaultBarOverlay.unspentSkillPoints == 1
+                    ? " unspent skill point"
+                    : " unspent skill points";
+            String unspentPointsText = VaultBarOverlay.unspentSkillPoints + "";
+            int unspentPointsWidth = minecraft.fontRenderer.getStringWidth(unspentPointsText);
+            int unspentWidth = minecraft.fontRenderer.getStringWidth(unspentText);
+            int gap = 5;
+            int yOffset = 18;
+            minecraft.fontRenderer.drawStringWithShadow(matrixStack, VaultBarOverlay.unspentSkillPoints + "",
+                    right - unspentWidth - unspentPointsWidth - gap, yOffset,
+                    0xFF_ffd800
+            );
+            minecraft.fontRenderer.drawStringWithShadow(matrixStack, unspentText,
+                    right - unspentWidth - gap, yOffset,
+                    0xFF_ffffff
+            );
         }
+        
         renderContainerBorders(matrixStack);
         renderContainerTabs(matrixStack);
         Rectangle dialogBounds = new Rectangle();
