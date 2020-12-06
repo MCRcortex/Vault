@@ -6,6 +6,7 @@ import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModItems;
 import iskallia.vault.init.ModSounds;
 import iskallia.vault.item.ItemTraderCore;
+import iskallia.vault.vending.TraderCore;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
@@ -31,14 +32,17 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.Color;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
+import org.apache.logging.log4j.message.StringFormattedMessage;
 
 import javax.annotation.Nullable;
 
@@ -133,7 +137,10 @@ public class VendingMachineBlock extends Block {
         if (machine != null) {
             machine.ejectCores();
         }
-        dropVendingMachine(worldIn, pos);
+
+        if (state.get(HALF) == DoubleBlockHalf.LOWER)
+            dropVendingMachine(worldIn, pos);
+
         super.onReplaced(state, worldIn, pos, newState, isMoving);
     }
 
@@ -150,8 +157,16 @@ public class VendingMachineBlock extends Block {
             VendingMachineTileEntity machine = getVendingMachineTile(world, pos, state);
 
             if (machine != null) {
-                machine.addCore(ItemTraderCore.toTraderCore(heldStack));
-                heldStack.shrink(1);
+                TraderCore lastCore = machine.getLastCore();
+                TraderCore coreToInsert = ItemTraderCore.toTraderCore(heldStack);
+                if (lastCore == null || lastCore.getName().equalsIgnoreCase(coreToInsert.getName())) {
+                    machine.addCore(coreToInsert);
+                    heldStack.shrink(1);
+                } else {
+                    StringTextComponent text = new StringTextComponent("This vending machine is already occupied.");
+                    text.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_ffd800)));
+                    player.sendStatusMessage(text, true);
+                }
             }
 
             return ActionResultType.SUCCESS;
@@ -187,6 +202,10 @@ public class VendingMachineBlock extends Block {
                             buffer.writeBlockPos(getVendingMachinePos(blockState, pos));
                         }
                 );
+
+                if (!heldStack.isEmpty()) {
+                    return ActionResultType.SUCCESS;
+                }
             }
         }
 

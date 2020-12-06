@@ -34,13 +34,13 @@ public class VendingMachineRenderer extends TileEntityRenderer<VendingMachineTil
     @Override
     public void
     render(VendingMachineTileEntity tileEntity, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
-        TraderCore lastCore = tileEntity.getLastCore();
+        TraderCore renderCore = tileEntity.getRenderCore();
 
-        if (lastCore == null)
+        if (renderCore == null)
             return; // Woopsies, no core no render.
 
-        float scale = lastCore.isMegahead() ? 0.8f : 0.9f;
-        float headScale = lastCore.isMegahead() ? 1.75f : 1f;
+        float scale = renderCore.isMegahead() ? 0.8f : 0.9f;
+        float headScale = renderCore.isMegahead() ? 1.75f : 1f;
 
         ResourceLocation skinLocation = tileEntity.getSkin().getLocationSkin();
         RenderType renderType = PLAYER_MODEL.getRenderType(skinLocation);
@@ -50,7 +50,7 @@ public class VendingMachineRenderer extends TileEntityRenderer<VendingMachineTil
         Direction direction = blockState.get(PlayerStatueBlock.FACING);
 
         matrixStack.push();
-        matrixStack.translate(0.5, lastCore.isMegahead() ? 1.1 : 1.3, 0.5);
+        matrixStack.translate(0.5, renderCore.isMegahead() ? 1.1 : 1.3, 0.5);
         matrixStack.scale(scale, scale, scale);
         matrixStack.rotate(Vector3f.YN.rotationDegrees(direction.getHorizontalAngle() + 180));
         matrixStack.rotate(Vector3f.XP.rotationDegrees(180));

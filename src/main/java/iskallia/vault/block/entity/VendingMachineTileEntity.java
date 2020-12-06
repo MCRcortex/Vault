@@ -43,6 +43,16 @@ public class VendingMachineTileEntity extends TileEntity {
         return cores.get(cores.size() - 1);
     }
 
+    public TraderCore getRenderCore() {
+        if (cores == null || cores.size() == 0) return null;
+        TraderCore renderCore = null;
+        for (TraderCore core : cores) {
+            if (renderCore == null || renderCore.getValue() < core.getValue())
+                renderCore = core;
+        }
+        return renderCore;
+    }
+
     public void sendUpdates() {
         this.world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
         this.world.notifyNeighborsOfStateChange(pos, this.getBlockState().getBlock());

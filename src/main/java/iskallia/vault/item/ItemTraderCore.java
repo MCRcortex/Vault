@@ -35,16 +35,15 @@ public class ItemTraderCore extends Item {
         this.setRegistryName(id);
     }
 
-    public static ItemStack generate(String nickname, boolean megahead) {
+    public static ItemStack generate(String nickname, int value, boolean megahead) {
         List<Trade> trades = ModConfigs.VENDING_CONFIG.TRADES.stream().filter(trade -> trade.isValid())
                 .collect(Collectors.toList());
 
         Collections.shuffle(trades);
 
-
         Optional<Trade> trade = trades.stream().findFirst();
         if (trade.isPresent())
-            return getStack(new TraderCore(nickname, trade.get(), megahead));
+            return getStack(new TraderCore(nickname, trade.get(), value, megahead));
 
         Vault.LOGGER.error("Attempted to generate a Trader Circuit.. No Trades in config.");
         return ItemStack.EMPTY;

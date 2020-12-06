@@ -33,7 +33,7 @@ public class InternalCommand extends Command {
         builder.then(literal("received_sub")
                 .then(argument("subscriber", StringArgumentType.word())
                         .then(argument("months", IntegerArgumentType.integer(0))
-                        .executes(context -> this.receivedSub(context, StringArgumentType.getString(context, "subscriber"), IntegerArgumentType.getInteger(context, "months"))))));
+                                .executes(context -> this.receivedSub(context, StringArgumentType.getString(context, "subscriber"), IntegerArgumentType.getInteger(context, "months"))))));
 
         builder.then(literal("received_sub_gift")
                 .then(argument("gifter", StringArgumentType.word())
@@ -75,7 +75,7 @@ public class InternalCommand extends Command {
         int multiplier = ModConfigs.STREAMER_MULTIPLIERS.ofStreamer(mcNick).weightPerDonationUnit;
         StreamData.get(player.getServerWorld()).onDono(player.getServer(), player.getUniqueID(), donator, amount * multiplier);
         if (amount >= 25) {
-            ItemStack core = ItemTraderCore.generate(donator, amount >= 100);
+            ItemStack core = ItemTraderCore.generate(donator, amount, amount >= 100);
             player.dropItem(core, false, false);
         }
         return 0;
@@ -87,7 +87,7 @@ public class InternalCommand extends Command {
         int multiplier = ModConfigs.STREAMER_MULTIPLIERS.ofStreamer(mcNick).weightPerHundredBits;
         StreamData.get(player.getServerWorld()).onDono(player.getServer(), player.getUniqueID(), donator, (amount / 100) * multiplier);
         if (amount >= 2500) {
-            ItemStack core = ItemTraderCore.generate(donator, amount >= 10000);
+            ItemStack core = ItemTraderCore.generate(donator, 100 * amount, amount >= 10000);
             player.dropItem(core, false, false);
         }
         return 0;

@@ -161,7 +161,7 @@ public class VendingMachineScreen extends ContainerScreen<VendingMachineContaine
 
         TraderCore lastCore = tileEntity.getLastCore();
         if (lastCore != null) {
-            drawSkin((int) midX - 175, (int) midY - 10, 45, tileEntity.getSkin(), lastCore.isMegahead());
+//            drawSkin((int) midX - 175, (int) midY - 10, 45, tileEntity.getSkin(), lastCore.isMegahead());
             drawSkin((int) midX + 175, (int) midY - 10, -45, tileEntity.getSkin(), lastCore.isMegahead());
         }
 

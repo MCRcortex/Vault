@@ -112,7 +112,7 @@ public class VaultRaidOverlay {
             if (ambientSound == null || !minecraft.getSoundHandler().isPlaying(ambientSound)) {
                 ambientSound = SimpleSound.ambient(ModSounds.VAULT_AMBIENT);
                 minecraft.getSoundHandler().play(ambientSound);
-                ticksBeforeAmbientSound = 20 * 60;
+                ticksBeforeAmbientSound = 60 * 60;
             }
         }
 
