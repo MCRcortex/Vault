@@ -111,10 +111,10 @@ public class ScrollableContainer extends AbstractGui {
             matrixStack.push();
             matrixStack.translate(0, (scrollBounds.getHeight() - scrollHeight) * scrollPercentage, 0);
             blit(matrixStack, scrollBounds.x0 + 1, scrollBounds.y0,
-                    8, 145,
+                    8, 104,
                     8, scrollHeight);
             blit(matrixStack, scrollBounds.x0 + 1, scrollBounds.y0 - 2,
-                    8, 142,
+                    8, 101,
                     8, 2);
             blit(matrixStack, scrollBounds.x0 + 1, scrollBounds.y0 + scrollHeight,
                     8, 253,
