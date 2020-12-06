@@ -1,10 +1,11 @@
 package iskallia.vault.init;
 
 import iskallia.vault.Vault;
-import iskallia.vault.entity.ArenaBossEntity;
-import iskallia.vault.entity.ArenaFighterEntity;
-import iskallia.vault.entity.FighterEntity;
+import iskallia.vault.entity.*;
+import iskallia.vault.entity.renderer.BlueBlazeRenderer;
 import iskallia.vault.entity.renderer.FighterRenderer;
+import iskallia.vault.entity.renderer.MonsterEyeRenderer;
+import iskallia.vault.entity.renderer.RobotRenderer;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -19,30 +20,45 @@ import java.util.function.Supplier;
 
 public class ModEntities {
 
-	public static EntityType<FighterEntity> FIGHTER;
+    public static EntityType<FighterEntity> FIGHTER;
 
-	public static EntityType<ArenaFighterEntity> ARENA_FIGHTER;
-	public static EntityType<ArenaBossEntity> ARENA_BOSS;
+    public static EntityType<ArenaFighterEntity> ARENA_FIGHTER;
+    public static EntityType<ArenaBossEntity> ARENA_BOSS;
+    public static EntityType<MonsterEyeEntity> MONSTER_EYE;
+    public static EntityType<RobotEntity> ROBOT;
+    public static EntityType<BlueBlazeEntity> BLUE_BLAZE;
 
-	public static void register(RegistryEvent.Register<EntityType<?>> event) {
-		FIGHTER = register("fighter", EntityType.Builder.create(FighterEntity::new, EntityClassification.MONSTER).size(0.6F, 1.95F), ZombieEntity::func_234342_eQ_, event);
-		ARENA_FIGHTER = register("arena_fighter", EntityType.Builder.create(ArenaFighterEntity::new, EntityClassification.MONSTER).size(0.6F, 1.95F), ZombieEntity::func_234342_eQ_, event);
-		ARENA_BOSS = register("arena_boss", EntityType.Builder.create(ArenaBossEntity::new, EntityClassification.MONSTER).size(0.6F, 1.95F), ZombieEntity::func_234342_eQ_, event);
-	}
+    public static void register(RegistryEvent.Register<EntityType<?>> event) {
+        FIGHTER = register("fighter", EntityType.Builder.create(FighterEntity::new, EntityClassification.MONSTER)
+                .size(0.6F, 1.95F), ZombieEntity::func_234342_eQ_, event);
+        ARENA_FIGHTER = register("arena_fighter", EntityType.Builder.create(ArenaFighterEntity::new, EntityClassification.MONSTER)
+                .size(0.6F, 1.95F), ZombieEntity::func_234342_eQ_, event);
+        ARENA_BOSS = register("arena_boss", EntityType.Builder.create(ArenaBossEntity::new, EntityClassification.MONSTER)
+                .size(0.6F, 1.95F), ZombieEntity::func_234342_eQ_, event);
+        MONSTER_EYE = register("monster_eye", EntityType.Builder.create(MonsterEyeEntity::new, EntityClassification.MONSTER)
+                .size(0.6F, 1.95F), ZombieEntity::func_234342_eQ_, event);
+        ROBOT = register("robot", EntityType.Builder.create(RobotEntity::new, EntityClassification.MONSTER)
+                .size(0.6F, 1.95F), ZombieEntity::func_234342_eQ_, event);
+        BLUE_BLAZE = register("blue_blaze", EntityType.Builder.create(BlueBlazeEntity::new, EntityClassification.MONSTER)
+                .size(0.6F, 1.95F), ZombieEntity::func_234342_eQ_, event);
+    }
 
-	public static <T extends LivingEntity> EntityType<T> register(String name, EntityType.Builder<T> builder, Supplier<AttributeModifierMap.MutableAttribute> attributes, RegistryEvent.Register<EntityType<?>> event) {
-		EntityType<T> entityType = builder.build(Vault.sId(name));
-		event.getRegistry().register(entityType.setRegistryName(Vault.id(name)));
-		GlobalEntityTypeAttributes.put(entityType, attributes.get().create());
-		return entityType;
-	}
+    public static <T extends LivingEntity> EntityType<T> register(String name, EntityType.Builder<T> builder, Supplier<AttributeModifierMap.MutableAttribute> attributes, RegistryEvent.Register<EntityType<?>> event) {
+        EntityType<T> entityType = builder.build(Vault.sId(name));
+        event.getRegistry().register(entityType.setRegistryName(Vault.id(name)));
+        GlobalEntityTypeAttributes.put(entityType, attributes.get().create());
+        return entityType;
+    }
 
-	public static class Renderers {
-		public static void register(FMLClientSetupEvent event) {
-			RenderingRegistry.registerEntityRenderingHandler(FIGHTER, FighterRenderer::new);
-			RenderingRegistry.registerEntityRenderingHandler(ARENA_FIGHTER, FighterRenderer::new);
-			RenderingRegistry.registerEntityRenderingHandler(ARENA_BOSS, FighterRenderer::new);
-		}
-	}
+    public static class Renderers {
+        public static void register(FMLClientSetupEvent event) {
+            RenderingRegistry.registerEntityRenderingHandler(FIGHTER, FighterRenderer::new);
+            RenderingRegistry.registerEntityRenderingHandler(ARENA_FIGHTER, FighterRenderer::new);
+            RenderingRegistry.registerEntityRenderingHandler(ARENA_BOSS, FighterRenderer::new);
+            RenderingRegistry.registerEntityRenderingHandler(MONSTER_EYE, MonsterEyeRenderer::new);
+            RenderingRegistry.registerEntityRenderingHandler(ROBOT, RobotRenderer::new);
+            RenderingRegistry.registerEntityRenderingHandler(BLUE_BLAZE, BlueBlazeRenderer::new);
+        }
+    }
 
 }
