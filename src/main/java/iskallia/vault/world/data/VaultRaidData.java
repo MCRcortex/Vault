@@ -72,6 +72,7 @@ public class VaultRaidData extends WorldSavedData {
         ), PlayerVaultStatsData.get(player.getServerWorld()).getVaultStats(player).getVaultLevel(), rarity, playerBossName);
 
         raid.sTickLeft += VaultSetsData.get(player.getServerWorld()).getExtraTime(player.getUniqueID());
+        raid.ticksLeft += VaultSetsData.get(player.getServerWorld()).getExtraTime(player.getUniqueID());
 
         if (this.activeRaids.containsKey(player.getUniqueID())) {
             this.activeRaids.get(player.getUniqueID()).ticksLeft = 0;
@@ -103,7 +104,7 @@ public class VaultRaidData extends WorldSavedData {
                 }
 
                 raid.start(world, player, chunkPos);
-            } catch (Exception e) {
+            } catch(Exception e) {
                 e.printStackTrace();
             }
         });

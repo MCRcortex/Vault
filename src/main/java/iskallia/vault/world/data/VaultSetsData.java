@@ -11,10 +11,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -34,7 +31,7 @@ public class VaultSetsData extends WorldSavedData {
 	}
 
 	public int getExtraTime(UUID playerId) {
-		return this.playerData.get(playerId).size();
+		return this.playerData.getOrDefault(playerId, Collections.emptySet()).size();
 	}
 
 	@SubscribeEvent

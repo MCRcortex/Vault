@@ -3,7 +3,6 @@ package iskallia.vault.container.inventory;
 import iskallia.vault.vending.Product;
 import iskallia.vault.vending.Trade;
 import iskallia.vault.vending.TraderCore;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ItemStackHelper;

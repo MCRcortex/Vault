@@ -1,21 +1,20 @@
 package iskallia.vault.world.raid;
 
+import iskallia.vault.entity.ArenaTrackerEntity;
 import iskallia.vault.entity.EntityScaler;
 import iskallia.vault.entity.FighterEntity;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModEntities;
 import iskallia.vault.world.data.StreamData;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
-import net.minecraft.util.Unit;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.server.TicketType;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -52,6 +51,7 @@ public class ArenaSpawner implements INBTSerializable<CompoundNBT> {
 		this.bosses.clear();
 
 		int maxMonths = 0;
+		float fightersHealth = 0.0F;
 
 		for(int i = 0; i < this.subscribers.size(); i++) {
 			double radius = 40.0D;
@@ -68,11 +68,13 @@ public class ArenaSpawner implements INBTSerializable<CompoundNBT> {
 			fighter.setCustomName(new StringTextComponent(this.subscribers.get(i).getName()));
 			this.fighters.add(fighter.getUniqueID());
 
+			world.getChunk(pos);
 			fighter.enablePersistence();
 			world.addEntity(fighter);
 
 			EntityScaler.scaleArena(fighter, this.subscribers.get(i).getMonths(), world.getRandom());
 			maxMonths = Math.max(maxMonths, this.subscribers.get(i).getMonths());
+			fightersHealth += fighter.getMaxHealth();
 		}
 
 		for(int i = 0; i < this.bossCount; i++) {
@@ -82,17 +84,24 @@ public class ArenaSpawner implements INBTSerializable<CompoundNBT> {
 			boss.setLocationAndAngles(pos.getX() + 0.5F, pos.getY() + 0.2F, pos.getZ() + 0.5F, 0.0F, 0.0F);
 			this.bosses.add(boss.getUniqueID());
 
+			boss.bossInfo.setVisible(true);
 			boss.enablePersistence();
 			world.addEntity(boss);
 
 			EntityScaler.scaleArena(boss, maxMonths, world.getRandom());
 		}
 
+		ArenaTrackerEntity tracker = ModEntities.ARENA_TRACKER.create(world);
+		tracker.getAttribute(Attributes.MAX_HEALTH).setBaseValue(fightersHealth);
+		tracker.setLocationAndAngles(this.raid.getCenter().getX(), this.raid.getCenter().getY(), this.raid.getCenter().getZ(), 0.0F, 0.0F);
+		tracker.setCustomName(new StringTextComponent("Subscribers"));
+		world.addEntity(tracker);
+
 		this.started = true;
 	}
 
 	public int getFighterCount() {
-		return this.fighters.size();
+		return this.subscribers.size();
 	}
 
 	public BlockPos toTop(ServerWorld world, BlockPos pos) {

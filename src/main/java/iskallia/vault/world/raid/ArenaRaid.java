@@ -10,6 +10,7 @@ import iskallia.vault.init.ModConfigs;
 import iskallia.vault.world.data.StreamData;
 import iskallia.vault.world.gen.structure.ArenaStructure;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
 import net.minecraft.item.ItemStack;
@@ -36,6 +37,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -52,7 +54,7 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
     public ArenaScoreboard scoreboard = new ArenaScoreboard(this);
     public ReturnInfo returnInfo = new ReturnInfo();
 
-    private int time = ModConfigs.ARENA_GENERAL.TICK_COUNTER;
+    private int time = 0;
     private int endDelay = 20 * 15;
 
     protected ArenaRaid() {
@@ -77,14 +79,22 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
     }
 
     public void tick(ServerWorld world) {
-        this.time++;
+        if(this.start == null) {
+            return;
+        }
 
         if(this.isComplete) {
             this.endDelay--;
             return;
+        } else {
+            this.time++;
         }
 
         if(this.spawner.hasStarted()) {
+            if(this.time > ModConfigs.ARENA_GENERAL.TICK_COUNTER) {
+                this.spawner.fighters.stream().map(world::getEntityByUuid).filter(Objects::nonNull).forEach(Entity::remove);
+            }
+
             boolean bossLeft = this.spawner.bosses.stream().map(world::getEntityByUuid).anyMatch(entity -> entity instanceof ArenaBossEntity);
             boolean fighterLeft = this.spawner.fighters.stream().map(world::getEntityByUuid).anyMatch(entity -> entity instanceof ArenaFighterEntity);
 
@@ -101,12 +111,53 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
     }
 
     private void onBossWin(ServerWorld world) {
-        //TODO: losing screen
+        this.runIfPresent(world, playerEntity -> {
+            StringTextComponent title = new StringTextComponent("You Lost");
+            title.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF0000)));
+
+            IFormattableTextComponent subtitle = new StringTextComponent("F");
+            subtitle.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF0000)));
+
+            StringTextComponent actionBar;
+
+            if(this.time > ModConfigs.ARENA_GENERAL.TICK_COUNTER) {
+                actionBar = new StringTextComponent("Ran out of time.");
+            } else {
+                actionBar = new StringTextComponent("No subscribers left standing.");
+            }
+
+            actionBar.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF0000)));
+
+            STitlePacket titlePacket = new STitlePacket(STitlePacket.Type.TITLE, title);
+            STitlePacket subtitlePacket = new STitlePacket(STitlePacket.Type.SUBTITLE, subtitle);
+
+            playerEntity.connection.sendPacket(titlePacket);
+            playerEntity.connection.sendPacket(subtitlePacket);
+            playerEntity.sendStatusMessage(actionBar, true);
+        });
     }
 
     private void onFighterWin(ServerWorld world) {
-        //TODO: win screen
-        for(int i = 0; i < 128; i++) {
+        this.runIfPresent(world, playerEntity -> {
+            StringTextComponent title = new StringTextComponent("You Win");
+            title.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF00)));
+
+            IFormattableTextComponent subtitle = new StringTextComponent("GG");
+            subtitle.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_91ee3e)));
+
+            StringTextComponent actionBar = new StringTextComponent("With "
+                    + this.spawner.fighters.stream().map(world::getEntityByUuid).filter(Objects::nonNull).count() + " subscribers left.");
+            actionBar.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_91ee3e)));
+
+            STitlePacket titlePacket = new STitlePacket(STitlePacket.Type.TITLE, title);
+            STitlePacket subtitlePacket = new STitlePacket(STitlePacket.Type.SUBTITLE, subtitle);
+
+            playerEntity.connection.sendPacket(titlePacket);
+            playerEntity.connection.sendPacket(subtitlePacket);
+            playerEntity.sendStatusMessage(actionBar, true);
+        });
+
+        for(int i = 0; i < 64; i++) {
             FireworkRocketEntity firework = new FireworkRocketEntity(world,
                     this.getCenter().getX() + world.getRandom().nextInt(81) - 40,
                     this.getCenter().getY() - 15,
@@ -130,6 +181,7 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
 
         this.runIfPresent(world, playerEntity -> {
             LootContext.Builder builder = (new LootContext.Builder(world)).withRandom(world.rand)
+                    .withParameter(LootParameters.field_237457_g_, playerEntity.getPositionVec())
                     .withNullableParameter(LootParameters.THIS_ENTITY, playerEntity)
                     .withNullableParameter(LootParameters.DAMAGE_SOURCE, DamageSource.GENERIC)
                     .withNullableParameter(LootParameters.KILLER_ENTITY, playerEntity)

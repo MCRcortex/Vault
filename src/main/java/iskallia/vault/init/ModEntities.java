@@ -3,6 +3,11 @@ package iskallia.vault.init;
 import iskallia.vault.Vault;
 import iskallia.vault.entity.*;
 import iskallia.vault.entity.renderer.BlueBlazeRenderer;
+import iskallia.vault.entity.ArenaBossEntity;
+import iskallia.vault.entity.ArenaFighterEntity;
+import iskallia.vault.entity.ArenaTrackerEntity;
+import iskallia.vault.entity.FighterEntity;
+import iskallia.vault.entity.renderer.ArenaTrackerRenderer;
 import iskallia.vault.entity.renderer.FighterRenderer;
 import iskallia.vault.entity.renderer.MonsterEyeRenderer;
 import iskallia.vault.entity.renderer.RobotRenderer;
@@ -27,6 +32,7 @@ public class ModEntities {
     public static EntityType<MonsterEyeEntity> MONSTER_EYE;
     public static EntityType<RobotEntity> ROBOT;
     public static EntityType<BlueBlazeEntity> BLUE_BLAZE;
+    public static EntityType<ArenaTrackerEntity> ARENA_TRACKER;
 
     public static void register(RegistryEvent.Register<EntityType<?>> event) {
         FIGHTER = register("fighter", EntityType.Builder.create(FighterEntity::new, EntityClassification.MONSTER)
@@ -41,12 +47,14 @@ public class ModEntities {
                 .size(0.6F, 1.95F), ZombieEntity::func_234342_eQ_, event);
         BLUE_BLAZE = register("blue_blaze", EntityType.Builder.create(BlueBlazeEntity::new, EntityClassification.MONSTER)
                 .size(0.6F, 1.95F), ZombieEntity::func_234342_eQ_, event);
+        ARENA_TRACKER = register("arena_tracker", EntityType.Builder.create(ArenaTrackerEntity::new, EntityClassification.MISC)
+                .size(0.0F, 0.0F), ZombieEntity::func_234342_eQ_, event);
     }
 
     public static <T extends LivingEntity> EntityType<T> register(String name, EntityType.Builder<T> builder, Supplier<AttributeModifierMap.MutableAttribute> attributes, RegistryEvent.Register<EntityType<?>> event) {
         EntityType<T> entityType = builder.build(Vault.sId(name));
         event.getRegistry().register(entityType.setRegistryName(Vault.id(name)));
-        GlobalEntityTypeAttributes.put(entityType, attributes.get().create());
+        if (attributes != null) GlobalEntityTypeAttributes.put(entityType, attributes.get().create());
         return entityType;
     }
 
@@ -58,6 +66,7 @@ public class ModEntities {
             RenderingRegistry.registerEntityRenderingHandler(MONSTER_EYE, MonsterEyeRenderer::new);
             RenderingRegistry.registerEntityRenderingHandler(ROBOT, RobotRenderer::new);
             RenderingRegistry.registerEntityRenderingHandler(BLUE_BLAZE, BlueBlazeRenderer::new);
+            RenderingRegistry.registerEntityRenderingHandler(ARENA_TRACKER, ArenaTrackerRenderer::new);
         }
     }
 

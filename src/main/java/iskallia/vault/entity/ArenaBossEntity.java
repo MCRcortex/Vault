@@ -16,7 +16,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.IndirectEntityDamageSource;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
@@ -33,6 +32,10 @@ public class ArenaBossEntity extends FighterEntity {
 	public ArenaBossEntity(EntityType<? extends ZombieEntity> type, World world) {
 		super(type, world);
 		this.setCustomName(new StringTextComponent("Boss"));
+
+		if(!this.world.isRemote) {
+			this.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(1000000.0D);
+		}
 	}
 
 	@Override
@@ -65,7 +68,7 @@ public class ArenaBossEntity extends FighterEntity {
 			UUID target = raid.spawner.fighters.get(this.rand.nextInt(raid.spawner.fighters.size()));
 			Entity targetEntity = ((ServerWorld)this.world).getEntityByUuid(target);
 
-			if(targetEntity instanceof ArenaFighterEntity) {
+			if(targetEntity instanceof ArenaFighterEntity && targetEntity.isOnGround()) {
 				this.setAttackTarget((ArenaFighterEntity)targetEntity);
 			}
 		}
@@ -118,7 +121,9 @@ public class ArenaBossEntity extends FighterEntity {
 
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float amount) {
-		if(!(source.getTrueSource() instanceof PlayerEntity)) {
+		if(!(source.getTrueSource() instanceof PlayerEntity)
+				&& !(source.getTrueSource() instanceof ArenaFighterEntity)
+				&& source != DamageSource.OUT_OF_WORLD) {
 			return false;
 		}
 
