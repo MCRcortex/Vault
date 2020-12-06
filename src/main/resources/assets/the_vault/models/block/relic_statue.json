@@ -1,7 +1,8 @@
 {
     "textures": {
         "statue-stone": "the_vault:block/statue_stone",
-        "statue-stone2": "the_vault:block/statue_stone2"
+        "statue-stone2": "the_vault:block/statue_stone2",
+        "particle": "the_vault:block/statue_stone"
     },
     "display": {
         "gui": {
