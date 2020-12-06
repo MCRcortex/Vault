@@ -5,9 +5,6 @@ import iskallia.vault.Vault;
 import iskallia.vault.client.gui.helper.Rectangle;
 import iskallia.vault.config.entry.SkillStyle;
 import iskallia.vault.init.ModConfigs;
-import iskallia.vault.research.ResearchTree;
-import iskallia.vault.research.type.Research;
-import iskallia.vault.skill.SkillGates;
 import iskallia.vault.skill.talent.TalentGroup;
 import iskallia.vault.skill.talent.TalentTree;
 import iskallia.vault.util.ResourceBoundary;
@@ -15,8 +12,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
-
-import java.util.List;
 
 public class TalentWidget extends Widget {
 

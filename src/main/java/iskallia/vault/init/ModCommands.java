@@ -6,7 +6,6 @@ import iskallia.vault.Vault;
 import iskallia.vault.command.*;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import org.omg.CORBA.INTERNAL;
 
 import java.util.function.Supplier;
 

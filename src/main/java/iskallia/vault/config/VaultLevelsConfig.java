@@ -36,12 +36,6 @@ public class VaultLevelsConfig extends Config {
     }
 
     public int defaultTNLFunction(int level) {
-        //TODO: Click on me to see the full thing
-        /*
-        * - 3 levels with n subs
-        *
-        * */
-
         return level * 5 + 100;
     }
 

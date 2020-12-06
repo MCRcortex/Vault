@@ -3,7 +3,6 @@ package iskallia.vault.config;
 import com.google.gson.annotations.Expose;
 import iskallia.vault.entity.ArenaBossEntity;
 import iskallia.vault.entity.ArenaFighterEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
@@ -17,8 +16,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ArenaMobsConfig extends Config {
@@ -74,7 +75,7 @@ public class ArenaMobsConfig extends Config {
 		this.LEVEL_OVERRIDES.add(new Level(1,
 				new Mob<ArenaBossEntity>(1.0F)
 						.add(LEATHER_ARMOR, WOODEN_WEAPONS, STONE_WEAPONS)
-						.attribute(Attributes.MAX_HEALTH, 1000.0D)
+						.attribute(Attributes.MAX_HEALTH, 200.0D)
 						.enchant(1, 0),
 				new Mob<ArenaFighterEntity>(0.5F)
 						.add(LEATHER_ARMOR, WOODEN_WEAPONS, STONE_WEAPONS)
@@ -83,7 +84,7 @@ public class ArenaMobsConfig extends Config {
 		this.LEVEL_OVERRIDES.add(new Level(3,
 				new Mob<ArenaBossEntity>(1.5F)
 						.add(LEATHER_ARMOR, CHAINMAIL_ARMOR, STONE_WEAPONS, GOLDEN_WEAPONS)
-						.attribute(Attributes.MAX_HEALTH, 1000.0D)
+						.attribute(Attributes.MAX_HEALTH, 200.0D)
 						.enchant(1, 1),
 				new Mob<ArenaFighterEntity>(0.75F)
 						.add(LEATHER_ARMOR, CHAINMAIL_ARMOR, STONE_WEAPONS, GOLDEN_WEAPONS)
@@ -92,7 +93,7 @@ public class ArenaMobsConfig extends Config {
 		this.LEVEL_OVERRIDES.add(new Level(5,
 				new Mob<ArenaBossEntity>(2.0F)
 						.add(GOLDEN_ARMOR, CHAINMAIL_ARMOR, GOLDEN_WEAPONS, IRON_WEAPONS)
-						.attribute(Attributes.MAX_HEALTH, 1000.0D)
+						.attribute(Attributes.MAX_HEALTH, 200.0D)
 						.enchant(1, 2),
 				new Mob<ArenaFighterEntity>(1.0F)
 						.add(GOLDEN_ARMOR, CHAINMAIL_ARMOR, GOLDEN_WEAPONS, IRON_WEAPONS)
@@ -101,7 +102,7 @@ public class ArenaMobsConfig extends Config {
 		this.LEVEL_OVERRIDES.add(new Level(10,
 				new Mob<ArenaBossEntity>(2.5F)
 						.add(IRON_ARMOR, GOLDEN_ARMOR, IRON_WEAPONS, DIAMOND_WEAPONS)
-						.attribute(Attributes.MAX_HEALTH, 1000.0D)
+						.attribute(Attributes.MAX_HEALTH, 200.0D)
 						.enchant(2, 1),
 				new Mob<ArenaFighterEntity>(1.25F)
 						.add(IRON_ARMOR, GOLDEN_ARMOR, IRON_WEAPONS, DIAMOND_WEAPONS)
@@ -110,7 +111,7 @@ public class ArenaMobsConfig extends Config {
 		this.LEVEL_OVERRIDES.add(new Level(15,
 				new Mob<ArenaBossEntity>(3.0F)
 						.add(IRON_ARMOR, DIAMOND_ARMOR, DIAMOND_WEAPONS)
-						.attribute(Attributes.MAX_HEALTH, 1000.0D)
+						.attribute(Attributes.MAX_HEALTH, 200.0D)
 						.enchant(2, 2),
 				new Mob<ArenaFighterEntity>(1.5F)
 						.add(IRON_ARMOR, DIAMOND_ARMOR, DIAMOND_WEAPONS)
@@ -119,7 +120,7 @@ public class ArenaMobsConfig extends Config {
 		this.LEVEL_OVERRIDES.add(new Level(15,
 				new Mob<ArenaBossEntity>(3.5F)
 						.add(DIAMOND_ARMOR, NETHERITE_ARMOR, DIAMOND_WEAPONS, NETHERITE_WEAPONS)
-						.attribute(Attributes.MAX_HEALTH, 1000.0D)
+						.attribute(Attributes.MAX_HEALTH, 200.0D)
 						.enchant(2, 2),
 				new Mob<ArenaFighterEntity>(1.75F)
 						.add(DIAMOND_ARMOR, NETHERITE_ARMOR, DIAMOND_WEAPONS, NETHERITE_WEAPONS)
@@ -128,7 +129,7 @@ public class ArenaMobsConfig extends Config {
 		this.LEVEL_OVERRIDES.add(new Level(24,
 				new Mob<ArenaBossEntity>(4.0F)
 						.add(NETHERITE_ARMOR, NETHERITE_WEAPONS)
-						.attribute(Attributes.MAX_HEALTH, 1000.0D)
+						.attribute(Attributes.MAX_HEALTH, 200.0D)
 						.enchant(3, 1),
 				new Mob<ArenaFighterEntity>(2.0F)
 						.add(NETHERITE_ARMOR, NETHERITE_WEAPONS)

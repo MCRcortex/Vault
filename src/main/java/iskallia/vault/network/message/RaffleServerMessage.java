@@ -1,25 +1,18 @@
 package iskallia.vault.network.message;
 
-import iskallia.vault.client.gui.screen.RaffleScreen;
 import iskallia.vault.init.ModNetwork;
 import iskallia.vault.item.ItemVaultCrystal;
-import iskallia.vault.util.nbt.NBTHelper;
 import iskallia.vault.world.data.StreamData;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.StringNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.Color;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
-import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.function.Supplier;
 
 public class RaffleServerMessage {
