@@ -13,6 +13,7 @@ import net.minecraft.block.DoorBlock;
 import net.minecraft.block.OreBlock;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.TallBlockItem;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -197,8 +198,8 @@ public class ModBlocks {
         registerBlockItem(event, ARTIFACT_14, 1);
         registerBlockItem(event, ARTIFACT_15, 1);
         registerBlockItem(event, ARTIFACT_16, 1);
-        registerBlockItem(event, VAULT_CRATE, 1);
-        registerBlockItem(event, VAULT_CRATE_ARENA, 1);
+        registerBlockItem(event, VAULT_CRATE, 1, true);
+        registerBlockItem(event, VAULT_CRATE_ARENA, 1, true);
         registerBlockItem(event, OBELISK, 1);
         registerBlockItem(event, MVP_CROWN, 1);
         registerBlockItem(event, PLAYER_STATUE, PLAYER_STATUE_BLOCK_ITEM);
@@ -225,8 +226,20 @@ public class ModBlocks {
         event.getRegistry().register(blockItem);
     }
 
+    private static void registerBlockItem(RegistryEvent.Register<Item> event, Block block, int maxStackSize, boolean showGlint) {
+        BlockItem blockItem = new BlockItem(block, new Item.Properties().group(ModItems.VAULT_MOD_GROUP).maxStackSize(maxStackSize)) {
+            @Override
+            public boolean hasEffect(ItemStack stack) {
+                return showGlint;
+            }
+        };
+
+        blockItem.setRegistryName(block.getRegistryName());
+        event.getRegistry().register(blockItem);
+    }
     private static void registerBlockItem(RegistryEvent.Register<Item> event, Block block, int maxStackSize) {
         BlockItem blockItem = new BlockItem(block, new Item.Properties().group(ModItems.VAULT_MOD_GROUP).maxStackSize(maxStackSize));
+
         blockItem.setRegistryName(block.getRegistryName());
         event.getRegistry().register(blockItem);
     }

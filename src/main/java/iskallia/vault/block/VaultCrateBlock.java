@@ -54,6 +54,7 @@ public class VaultCrateBlock extends Block {
         return crate;
     }
 
+
     @Override
     public boolean hasTileEntity(BlockState state) {
         return true;
