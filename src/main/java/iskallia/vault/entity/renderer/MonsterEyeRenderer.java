@@ -1,5 +1,6 @@
 package iskallia.vault.entity.renderer;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import iskallia.vault.Vault;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.SlimeRenderer;
@@ -12,6 +13,12 @@ public class MonsterEyeRenderer extends SlimeRenderer {
 
     public MonsterEyeRenderer(EntityRendererManager renderManagerIn) {
         super(renderManagerIn);
+    }
+
+    @Override
+    protected void preRenderCallback(SlimeEntity entitylivingbase, MatrixStack matrixStack, float partialTickTime) {
+        super.preRenderCallback(entitylivingbase, matrixStack, partialTickTime);
+        matrixStack.scale(2, 2, 2);
     }
 
     @Override

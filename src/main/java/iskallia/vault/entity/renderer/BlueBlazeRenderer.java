@@ -1,5 +1,6 @@
 package iskallia.vault.entity.renderer;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import iskallia.vault.Vault;
 import net.minecraft.client.renderer.entity.BlazeRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -12,6 +13,12 @@ public class BlueBlazeRenderer extends BlazeRenderer {
 
     public BlueBlazeRenderer(EntityRendererManager renderManager) {
         super(renderManager);
+    }
+
+    @Override
+    protected void preRenderCallback(BlazeEntity entitylivingbase, MatrixStack matrixStack, float partialTickTime) {
+        super.preRenderCallback(entitylivingbase, matrixStack, partialTickTime);
+        matrixStack.scale(2, 2, 2);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package iskallia.vault.entity;
 
+import iskallia.vault.util.EntityHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.monster.SlimeEntity;
 import net.minecraft.util.DamageSource;
@@ -9,6 +10,7 @@ public class MonsterEyeEntity extends SlimeEntity {
 
     public MonsterEyeEntity(EntityType<? extends SlimeEntity> type, World worldIn) {
         super(type, worldIn);
+        EntityHelper.changeSize(this, 2f);
     }
 
     @Override

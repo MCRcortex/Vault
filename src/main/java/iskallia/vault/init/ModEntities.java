@@ -2,15 +2,11 @@ package iskallia.vault.init;
 
 import iskallia.vault.Vault;
 import iskallia.vault.entity.*;
-import iskallia.vault.entity.renderer.BlueBlazeRenderer;
+import iskallia.vault.entity.renderer.*;
 import iskallia.vault.entity.ArenaBossEntity;
 import iskallia.vault.entity.ArenaFighterEntity;
 import iskallia.vault.entity.ArenaTrackerEntity;
 import iskallia.vault.entity.FighterEntity;
-import iskallia.vault.entity.renderer.ArenaTrackerRenderer;
-import iskallia.vault.entity.renderer.FighterRenderer;
-import iskallia.vault.entity.renderer.MonsterEyeRenderer;
-import iskallia.vault.entity.renderer.RobotRenderer;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -32,6 +28,7 @@ public class ModEntities {
     public static EntityType<MonsterEyeEntity> MONSTER_EYE;
     public static EntityType<RobotEntity> ROBOT;
     public static EntityType<BlueBlazeEntity> BLUE_BLAZE;
+    public static EntityType<BoogiemanEntity> BOOGIEMAN;
     public static EntityType<ArenaTrackerEntity> ARENA_TRACKER;
 
     public static void register(RegistryEvent.Register<EntityType<?>> event) {
@@ -42,11 +39,13 @@ public class ModEntities {
         ARENA_BOSS = register("arena_boss", EntityType.Builder.create(ArenaBossEntity::new, EntityClassification.MONSTER)
                 .size(0.6F, 1.95F), ZombieEntity::func_234342_eQ_, event);
         MONSTER_EYE = register("monster_eye", EntityType.Builder.create(MonsterEyeEntity::new, EntityClassification.MONSTER)
-                .size(0.6F, 1.95F), ZombieEntity::func_234342_eQ_, event);
+                .size(3.9F, 3.95F), ZombieEntity::func_234342_eQ_, event);
         ROBOT = register("robot", EntityType.Builder.create(RobotEntity::new, EntityClassification.MONSTER)
-                .size(0.6F, 1.95F), ZombieEntity::func_234342_eQ_, event);
+                .size(1.6F, 3.95F), ZombieEntity::func_234342_eQ_, event);
         BLUE_BLAZE = register("blue_blaze", EntityType.Builder.create(BlueBlazeEntity::new, EntityClassification.MONSTER)
-                .size(0.6F, 1.95F), ZombieEntity::func_234342_eQ_, event);
+                .size(1.0f, 3.95f), ZombieEntity::func_234342_eQ_, event);
+        BOOGIEMAN = register("boogieman", EntityType.Builder.create(BoogiemanEntity::new, EntityClassification.MONSTER)
+                .size(1.0F, 3.95F), ZombieEntity::func_234342_eQ_, event);
         ARENA_TRACKER = register("arena_tracker", EntityType.Builder.create(ArenaTrackerEntity::new, EntityClassification.MISC)
                 .size(0.0F, 0.0F), ZombieEntity::func_234342_eQ_, event);
     }
@@ -66,6 +65,7 @@ public class ModEntities {
             RenderingRegistry.registerEntityRenderingHandler(MONSTER_EYE, MonsterEyeRenderer::new);
             RenderingRegistry.registerEntityRenderingHandler(ROBOT, RobotRenderer::new);
             RenderingRegistry.registerEntityRenderingHandler(BLUE_BLAZE, BlueBlazeRenderer::new);
+            RenderingRegistry.registerEntityRenderingHandler(BOOGIEMAN, BoogiemanRenderer::new);
             RenderingRegistry.registerEntityRenderingHandler(ARENA_TRACKER, ArenaTrackerRenderer::new);
         }
     }
