@@ -33,7 +33,7 @@ public class DebugCommand extends Command {
         MinecraftServer server = player.getServer();
         StreamData streamData = StreamData.get(player.getServerWorld());
         for (int i = 0; i < 20; i++) {
-            streamData.onSub(server, player.getUniqueID(), "Test" + (i + 1), 1);
+            streamData.onSub(server, player.getUniqueID(), "Test" + (i + 1), i * 5);
         }
         return 0;
     }

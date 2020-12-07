@@ -49,10 +49,13 @@ public class VaultRaidOverlay {
         if (event.getType() != RenderGameOverlayEvent.ElementType.POTION_ICONS)
             return; // Render only on HOTBAR
 
-        if (Minecraft.getInstance().world == null
-                || (Minecraft.getInstance().world.getDimensionKey() != Vault.VAULT_KEY
-                && Minecraft.getInstance().world.getDimensionKey() != Vault.ARENA_KEY)) {
-            stopBossLoop();
+        Minecraft minecraft = Minecraft.getInstance();
+
+        boolean inVault = minecraft.world.getDimensionKey() == Vault.VAULT_KEY;
+        boolean inArena = minecraft.world.getDimensionKey() == Vault.ARENA_KEY;
+
+        if (minecraft.world == null || (!inVault && !inArena)) {
+            if (inVault) stopBossLoop();
             bossSummoned = false;
             return;
         }
@@ -61,16 +64,15 @@ public class VaultRaidOverlay {
             return; // Timed out, stop here
 
         MatrixStack matrixStack = event.getMatrixStack();
-        Minecraft minecraft = Minecraft.getInstance();
         int bottom = minecraft.getMainWindow().getScaledHeight();
         int barWidth = 62;
         int barHeight = 22;
         int panicTicks = 30 * 20;
 
         if (!bossSummoned) {
-            stopBossLoop();
+            if (inVault) stopBossLoop();
         } else if (!minecraft.getSoundHandler().isPlaying(bossLoop)) {
-            startBossLoop();
+            if (inVault) startBossLoop();
         }
 
         matrixStack.push();
@@ -105,20 +107,22 @@ public class VaultRaidOverlay {
 
         matrixStack.pop();
 
-        if (ambientLoop == null || !minecraft.getSoundHandler().isPlaying(ambientLoop)) {
-            ambientLoop = SimpleSound.music(ModSounds.VAULT_AMBIENT_LOOP);
-            minecraft.getSoundHandler().play(ambientLoop);
-        }
-
-        if (ticksBeforeAmbientSound < 0) {
-            if (ambientSound == null || !minecraft.getSoundHandler().isPlaying(ambientSound)) {
-                ambientSound = SimpleSound.ambient(ModSounds.VAULT_AMBIENT);
-                minecraft.getSoundHandler().play(ambientSound);
-                ticksBeforeAmbientSound = 60 * 60;
+        if (inVault) {
+            if (ambientLoop == null || !minecraft.getSoundHandler().isPlaying(ambientLoop)) {
+                ambientLoop = SimpleSound.music(ModSounds.VAULT_AMBIENT_LOOP);
+                minecraft.getSoundHandler().play(ambientLoop);
             }
-        }
 
-        ticksBeforeAmbientSound--;
+            if (ticksBeforeAmbientSound < 0) {
+                if (ambientSound == null || !minecraft.getSoundHandler().isPlaying(ambientSound)) {
+                    ambientSound = SimpleSound.ambient(ModSounds.VAULT_AMBIENT);
+                    minecraft.getSoundHandler().play(ambientSound);
+                    ticksBeforeAmbientSound = 60 * 60;
+                }
+            }
+
+            ticksBeforeAmbientSound--;
+        }
 
         if (remainingTicks < panicTicks) {
             if (panicSound == null || !minecraft.getSoundHandler().isPlaying(panicSound)) {

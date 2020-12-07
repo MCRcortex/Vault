@@ -68,7 +68,9 @@ public class FighterRenderer extends LivingRenderer<FighterEntity, FighterModel>
 
     public void renderCrown(FighterEntity entity, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
         matrixStack.push();
-        matrixStack.translate(0, 3f, 0);
+        float sizeMultiplier = entity.getSizeMultiplier();
+        matrixStack.scale(sizeMultiplier, sizeMultiplier, sizeMultiplier);
+        matrixStack.translate(0, 2.5f, 0);
         float scale = 2.5f;
         matrixStack.scale(scale, scale, scale);
         matrixStack.rotate(Vector3f.YP.rotationDegrees(entity.ticksExisted));
