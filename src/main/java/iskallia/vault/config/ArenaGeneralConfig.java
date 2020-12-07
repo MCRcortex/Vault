@@ -15,7 +15,7 @@ public class ArenaGeneralConfig extends Config {
 	@Override
 	protected void reset() {
 		this.BOSS_COUNT = 3;
-		this.TICK_COUNTER = 20 * 60;
+		this.TICK_COUNTER = 20 * 60 * 3;
 	}
 
 }

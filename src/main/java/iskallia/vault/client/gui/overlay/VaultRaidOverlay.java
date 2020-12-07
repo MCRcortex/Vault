@@ -46,10 +46,12 @@ public class VaultRaidOverlay {
     @SubscribeEvent
     public static void
     onPostRender(RenderGameOverlayEvent.Post event) {
-        if (event.getType() != RenderGameOverlayEvent.ElementType.HOTBAR)
+        if (event.getType() != RenderGameOverlayEvent.ElementType.POTION_ICONS)
             return; // Render only on HOTBAR
 
-        if (Minecraft.getInstance().world == null || Minecraft.getInstance().world.getDimensionKey() != Vault.VAULT_KEY) {
+        if (Minecraft.getInstance().world == null
+                || (Minecraft.getInstance().world.getDimensionKey() != Vault.VAULT_KEY
+                && Minecraft.getInstance().world.getDimensionKey() != Vault.ARENA_KEY)) {
             stopBossLoop();
             bossSummoned = false;
             return;

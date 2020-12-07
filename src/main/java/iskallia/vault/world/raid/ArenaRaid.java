@@ -7,6 +7,8 @@ import iskallia.vault.entity.ArenaBossEntity;
 import iskallia.vault.entity.ArenaFighterEntity;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModConfigs;
+import iskallia.vault.init.ModNetwork;
+import iskallia.vault.network.message.VaultRaidTickMessage;
 import iskallia.vault.world.data.StreamData;
 import iskallia.vault.world.gen.structure.ArenaStructure;
 import net.minecraft.block.Blocks;
@@ -35,6 +37,7 @@ import net.minecraft.world.GameType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.network.NetworkDirection;
 
 import java.util.Map;
 import java.util.Objects;
@@ -56,6 +59,7 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
 
     private int time = 0;
     private int endDelay = 20 * 15;
+    private int checkCooldown = 20;
 
     protected ArenaRaid() {
 
@@ -88,9 +92,19 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
             return;
         } else {
             this.time++;
+
+            this.runIfPresent(world, player -> {
+                ModNetwork.CHANNEL.sendTo(
+                        new VaultRaidTickMessage(ModConfigs.ARENA_GENERAL.TICK_COUNTER - this.time),
+                        player.connection.netManager,
+                        NetworkDirection.PLAY_TO_CLIENT
+                );
+            });
         }
 
-        if(this.spawner.hasStarted()) {
+        if(this.checkCooldown-- > 0) {
+            return;
+        } else if(this.spawner.hasStarted()) {
             if(this.time > ModConfigs.ARENA_GENERAL.TICK_COUNTER) {
                 this.spawner.fighters.stream().map(world::getEntityByUuid).filter(Objects::nonNull).forEach(Entity::remove);
             }

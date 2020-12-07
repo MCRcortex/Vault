@@ -68,8 +68,8 @@ public class AOEGoal<T extends MobEntity> extends GoalTask<T> {
 
 		if(this.started) {
 			double max = 50.0D;
-			double distance = (this.tick) * 0.5D;
-			double nextDistance = (this.tick + 1) * 0.5D;
+			double distance = this.tick * 2;
+			double nextDistance = this.tick * 2 + 2;
 
 			if(distance >= max) {
 				this.completed = true;

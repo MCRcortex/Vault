@@ -101,6 +101,7 @@ public class EntityEvents {
 				PortalPlacer placer = new PortalPlacer((pos1, random, facing) -> null, (pos1, random, facing) -> Blocks.BEDROCK.getDefaultState());
 				placer.place(event.getEntity().world, pos, state.get(DoorBlock.FACING).rotateYCCW(), 1, 2);
 				placer.place(event.getEntity().world, pos.offset(state.get(DoorBlock.FACING).getOpposite()), state.get(DoorBlock.FACING).rotateYCCW(), 1, 2);
+				placer.place(event.getEntity().world, pos.offset(state.get(DoorBlock.FACING)), state.get(DoorBlock.FACING).rotateYCCW(), 1, 2);
 
 				event.getEntity().world.setBlockState(pos.up(), Blocks.AIR.getDefaultState(), 27);
 				event.getEntity().world.setBlockState(pos, newState, 11);
@@ -109,7 +110,7 @@ public class EntityEvents {
 
 			for(int x = -30; x <= 30; x++) {
 				for(int z = -30; z <= 30; z++) {
-					for(int y = -10; y <= 10; y++) {
+					for(int y = -15; y <= 15; y++) {
 						BlockPos c = pos.add(x, y, z);
 						BlockState s = event.getEntity().world.getBlockState(c);
 

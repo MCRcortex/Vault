@@ -36,6 +36,8 @@ public class ArenaBossEntity extends FighterEntity {
 		if(!this.world.isRemote) {
 			this.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(1000000.0D);
 		}
+
+		this.bossInfo.setVisible(true);
 	}
 
 	@Override

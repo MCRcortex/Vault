@@ -83,6 +83,11 @@ public class ArenaRaidData extends WorldSavedData {
         return raid;
     }
 
+    @Override
+    public boolean isDirty() {
+        return true;
+    }
+
     public void tick(ServerWorld world) {
         this.activeRaids.values().forEach(vaultRaid -> vaultRaid.tick(world));
 

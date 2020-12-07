@@ -93,7 +93,7 @@ public class ArenaSpawner implements INBTSerializable<CompoundNBT> {
 
 		ArenaTrackerEntity tracker = ModEntities.ARENA_TRACKER.create(world);
 		tracker.getAttribute(Attributes.MAX_HEALTH).setBaseValue(fightersHealth);
-		tracker.setLocationAndAngles(this.raid.getCenter().getX(), this.raid.getCenter().getY(), this.raid.getCenter().getZ(), 0.0F, 0.0F);
+		tracker.setLocationAndAngles(this.raid.getCenter().getX(), 128, this.raid.getCenter().getZ(), 0.0F, 0.0F);
 		tracker.setCustomName(new StringTextComponent("Subscribers"));
 		world.addEntity(tracker);
 
@@ -123,6 +123,7 @@ public class ArenaSpawner implements INBTSerializable<CompoundNBT> {
 		nbt.put("BossList", bossList);
 		nbt.put("FighterList", fighterList);
 		nbt.put("SubscriberList", subscriberList);
+		nbt.putBoolean("Started", this.started);
 		return nbt;
 	}
 
@@ -133,7 +134,7 @@ public class ArenaSpawner implements INBTSerializable<CompoundNBT> {
 
 		ListNBT bossList = nbt.getList("BossList", Constants.NBT.TAG_STRING);
 		ListNBT fighterList = nbt.getList("FighterList", Constants.NBT.TAG_STRING);
-		ListNBT subscriberList = nbt.getList("SubscriberList", Constants.NBT.TAG_STRING);
+		ListNBT subscriberList = nbt.getList("SubscriberList", Constants.NBT.TAG_COMPOUND);
 
 		IntStream.range(0, bossList.size()).mapToObj(i -> UUID.fromString(bossList.getString(i))).forEach(this.bosses::add);
 		IntStream.range(0, fighterList.size()).mapToObj(i -> UUID.fromString(fighterList.getString(i))).forEach(this.fighters::add);
@@ -142,6 +143,8 @@ public class ArenaSpawner implements INBTSerializable<CompoundNBT> {
 			sub.deserializeNBT(subscriberList.getCompound(i));
 			this.subscribers.add(sub);
 		});
+
+		this.started = nbt.getBoolean("Started");
 	}
 
 }
