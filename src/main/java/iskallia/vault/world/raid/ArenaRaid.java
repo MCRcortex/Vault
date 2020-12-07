@@ -19,10 +19,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameterSets;
-import net.minecraft.loot.LootParameters;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.play.server.STitlePacket;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -39,6 +37,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.network.NetworkDirection;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -185,26 +184,20 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
     }
 
     private void giveLoot(ServerWorld world) {
-        NonNullList<ItemStack> stacks = NonNullList.create();
-
-        stacks.add(PlayerStatueBlockItem.forArenaChampion(this.scoreboard.get().entrySet().stream()
-                .sorted((o1, o2) -> Float.compare(o2.getValue(), o1.getValue()))
-                .map(Map.Entry::getKey).findFirst().orElse("")));
-
-        ItemStack crate = VaultCrateBlock.getCrateWithLoot(ModBlocks.VAULT_CRATE_ARENA, stacks);
-
         this.runIfPresent(world, playerEntity -> {
-            LootContext.Builder builder = (new LootContext.Builder(world)).withRandom(world.rand)
-                    .withParameter(LootParameters.field_237457_g_, playerEntity.getPositionVec())
-                    .withNullableParameter(LootParameters.THIS_ENTITY, playerEntity)
-                    .withNullableParameter(LootParameters.DAMAGE_SOURCE, DamageSource.GENERIC)
-                    .withNullableParameter(LootParameters.KILLER_ENTITY, playerEntity)
-                    .withNullableParameter(LootParameters.DIRECT_KILLER_ENTITY, playerEntity)
-                    .withParameter(LootParameters.LAST_DAMAGE_PLAYER, playerEntity).withLuck(playerEntity.getLuck());
+            LootContext.Builder builder = new LootContext.Builder(world).withRandom(world.rand).withLuck(playerEntity.getLuck());
+            LootContext ctx = builder.build(LootParameterSets.EMPTY);
 
-            LootContext ctx = builder.build(LootParameterSets.ENTITY);
-            stacks.addAll(world.getServer().getLootTableManager().getLootTableFromLocation(Vault.id("chest/arena")).generate(ctx));
+            NonNullList<ItemStack> stacks = NonNullList.create();
 
+            stacks.add(PlayerStatueBlockItem.forArenaChampion(this.scoreboard.get().entrySet().stream()
+                    .sorted((o1, o2) -> Float.compare(o2.getValue(), o1.getValue()))
+                    .map(Map.Entry::getKey).findFirst().orElse("")));
+
+            List<ItemStack> items = world.getServer().getLootTableManager().getLootTableFromLocation(Vault.id("chest/arena")).generate(ctx);
+            stacks.addAll(items);
+
+            ItemStack crate = VaultCrateBlock.getCrateWithLoot(ModBlocks.VAULT_CRATE_ARENA, stacks);
             playerEntity.inventory.addItemStackToInventory(crate);
             world.playSound(null, playerEntity.getPosX(), playerEntity.getPosY(), playerEntity.getPosZ(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 1.0F, 1.0F);
         });
