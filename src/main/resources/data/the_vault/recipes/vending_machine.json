@@ -10,11 +10,11 @@
   {
     "i":
     {
-      "tag": "minecraft:iron_ingot"
+      "item": "minecraft:iron_ingot"
     },
     "r":
     {
-      "tag": "minecraft:redstone"
+      "item": "minecraft:redstone"
     },
     "g":
     {
