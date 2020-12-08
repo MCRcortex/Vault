@@ -84,7 +84,11 @@ public class StageManager {
 
         if (slot != -1) {
             // Most prolly SHIFT-taken, just shrink from the taken stack
-            player.inventory.getStackInSlot(slot).shrink(craftedItemStack.getCount());
+            ItemStack stackInSlot = player.inventory.getStackInSlot(slot);
+            if (stackInSlot.getCount() < craftedItemStack.getCount()) {
+                craftedItemStack.setCount(stackInSlot.getCount());
+            }
+            stackInSlot.shrink(craftedItemStack.getCount());
 
         } else {
             craftedItemStack.shrink(craftedItemStack.getCount());
