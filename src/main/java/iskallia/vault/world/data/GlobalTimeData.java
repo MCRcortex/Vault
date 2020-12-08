@@ -30,6 +30,10 @@ public class GlobalTimeData extends WorldSavedData {
         return endTime - startTime + additionalTime;
     }
 
+    public long getEndTime() {
+        return endTime + additionalTime;
+    }
+
     public void addTime(long seconds) {
         this.additionalTime += seconds;
         this.markDirty();

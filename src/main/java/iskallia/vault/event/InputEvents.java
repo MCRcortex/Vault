@@ -4,6 +4,7 @@ import iskallia.vault.client.gui.overlay.AbilitiesOverlay;
 import iskallia.vault.init.ModKeybinds;
 import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.AbilityKeyMessage;
+import iskallia.vault.network.message.GlobalTimerMessage;
 import iskallia.vault.network.message.OpenSkillTreeMessage;
 import iskallia.vault.network.message.RaffleServerMessage;
 import net.minecraft.client.Minecraft;
@@ -31,7 +32,10 @@ public class InputEvents {
     }
 
     private static void onInput(Minecraft minecraft, int key, int action) {
-        if (minecraft.currentScreen == null && ModKeybinds.openRaffleScreen.isPressed()) {
+        if (minecraft.currentScreen == null && ModKeybinds.globalTimerKey.isPressed()) {
+            ModNetwork.CHANNEL.sendToServer(GlobalTimerMessage.requestUnix());
+
+        } else if (minecraft.currentScreen == null && ModKeybinds.openRaffleScreen.isPressed()) {
             ModNetwork.CHANNEL.sendToServer(RaffleServerMessage.requestRaffle());
 
         } else if (minecraft.currentScreen == null && ModKeybinds.openAbilityTree.isPressed()) {
