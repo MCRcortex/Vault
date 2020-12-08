@@ -25,6 +25,21 @@ import java.util.stream.IntStream;
 
 public class ArenaSpawner implements INBTSerializable<CompoundNBT> {
 
+	public static String[] DEV_NICKS = {
+			"KaptainWutax",
+			"iGoodie",
+			"jmilthedude",
+			"Scalda",
+			"Kumara22",
+			"Goktwo",
+			"Aolsen96",
+			"Winter_Grave",
+			"kimandjax",
+			"Monni21",
+			"Starmute",
+			"haleighen"
+	};
+
 	private final ArenaRaid raid;
 	public final List<UUID> fighters = new ArrayList<>();
 	public final List<UUID> bosses = new ArrayList<>();
@@ -85,6 +100,7 @@ public class ArenaSpawner implements INBTSerializable<CompoundNBT> {
 			this.bosses.add(boss.getUniqueID());
 
 			boss.bossInfo.setVisible(true);
+			boss.setCustomName(new StringTextComponent(DEV_NICKS[world.rand.nextInt(DEV_NICKS.length)]));
 			boss.enablePersistence();
 			world.addEntity(boss);
 
