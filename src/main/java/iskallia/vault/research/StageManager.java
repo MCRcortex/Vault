@@ -83,7 +83,8 @@ public class StageManager {
         int slot = SideOnlyFixer.getSlotFor(player.inventory, craftedItemStack);
 
         if (slot != -1) {
-            player.inventory.getStackInSlot(slot).shrink(1);
+            // Most prolly SHIFT-taken, just shrink from the taken stack
+            player.inventory.getStackInSlot(slot).shrink(craftedItemStack.getCount());
 
         } else {
             craftedItemStack.shrink(craftedItemStack.getCount());
