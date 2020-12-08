@@ -17,7 +17,7 @@ apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '0.4.8'
+version = '0.5.0'
 group = 'iskallia.vault' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'the_vault'
 

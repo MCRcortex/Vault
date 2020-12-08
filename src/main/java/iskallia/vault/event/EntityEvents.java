@@ -197,7 +197,8 @@ public class EntityEvents {
 
 				NonNullList<ItemStack> stacks = NonNullList.create();
 				stacks.addAll(world.getServer().getLootTableManager().getLootTableFromLocation(Vault.id("chest/boss")).generate(ctx));
-				stacks.add(PlayerStatueBlockItem.forVaultBoss(event.getEntity().getCustomName().getString()));
+				if(raid.playerBossName!=null && !raid.playerBossName.isEmpty())
+					stacks.add(PlayerStatueBlockItem.forVaultBoss(event.getEntity().getCustomName().getString()));
 				ItemStack crate = VaultCrateBlock.getCrateWithLoot(ModBlocks.VAULT_CRATE, stacks);
 
 				event.getEntity().entityDropItem(crate);

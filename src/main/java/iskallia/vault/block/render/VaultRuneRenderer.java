@@ -57,7 +57,7 @@ public class VaultRuneRenderer extends TileEntityRenderer<VaultRuneTileEntity> {
         matrixStack.scale(scale, scale, scale);
         matrixStack.rotate(mc.getRenderManager().getCameraOrientation()); // face the camera
         matrixStack.rotate(Vector3f.ZP.rotationDegrees(180.0F)); // flip vertical
-        fontRenderer.func_243247_a(text, offset, 0, color, false, matrix4f, buffer, false, opacity, lightLevel);
+        fontRenderer.func_243247_a(text, offset, 0, color, false, matrix4f, buffer, true, opacity, lightLevel);
         matrixStack.pop();
     }
 

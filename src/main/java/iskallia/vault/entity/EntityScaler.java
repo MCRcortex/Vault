@@ -4,6 +4,7 @@ import iskallia.vault.config.ArenaMobsConfig;
 import iskallia.vault.config.VaultMobsConfig;
 import iskallia.vault.init.ModConfigs;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
@@ -14,7 +15,7 @@ import java.util.Random;
 
 public class EntityScaler {
 
-	public static void scaleVault(MonsterEntity entity, int level, Random random) {
+	public static void scaleVault(LivingEntity entity, int level, Random random) {
 		VaultMobsConfig.Level overrides = ModConfigs.VAULT_MOBS.getForLevel(level);
 
 		for(EquipmentSlotType slot: EquipmentSlotType.values()) {

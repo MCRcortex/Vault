@@ -54,7 +54,7 @@ public class StageManager {
         Minecraft.getInstance().ingameGUI.setOverlayMessage(text, false);
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
         PlayerEntity player = event.getPlayer();
         ResearchTree researchTree = getResearchTree(player);
@@ -83,7 +83,12 @@ public class StageManager {
         int slot = SideOnlyFixer.getSlotFor(player.inventory, craftedItemStack);
 
         if (slot != -1) {
-            player.inventory.getStackInSlot(slot).shrink(1);
+            // Most prolly SHIFT-taken, just shrink from the taken stack
+            ItemStack stackInSlot = player.inventory.getStackInSlot(slot);
+            if (stackInSlot.getCount() < craftedItemStack.getCount()) {
+                craftedItemStack.setCount(stackInSlot.getCount());
+            }
+            stackInSlot.shrink(craftedItemStack.getCount());
 
         } else {
             craftedItemStack.shrink(craftedItemStack.getCount());

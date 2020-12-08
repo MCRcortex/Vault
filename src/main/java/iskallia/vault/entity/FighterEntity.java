@@ -140,6 +140,10 @@ public class FighterEntity extends ZombieEntity {
 		}
 	}
 
+	public float getSizeMultiplier() {
+		return sizeMultiplier;
+	}
+
 	public FighterEntity changeSize(float m) {
 		Field sizeField = Entity.class.getDeclaredFields()[79]; //Entity.size
 		sizeField.setAccessible(true);

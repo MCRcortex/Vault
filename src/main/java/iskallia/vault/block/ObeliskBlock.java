@@ -3,6 +3,8 @@ package iskallia.vault.block;
 import iskallia.vault.client.gui.overlay.VaultRaidOverlay;
 import iskallia.vault.entity.ArenaBossEntity;
 import iskallia.vault.entity.EntityScaler;
+import iskallia.vault.entity.FighterEntity;
+import iskallia.vault.entity.VaultBoss;
 import iskallia.vault.init.ModEntities;
 import iskallia.vault.item.ObeliskInscriptionItem;
 import iskallia.vault.world.data.VaultRaidData;
@@ -12,6 +14,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -76,31 +81,56 @@ public class ObeliskBlock extends Block {
         this.spawnParticles(world, pos);
 
         if (newState.get(COMPLETION) == 4) {
-            ArenaBossEntity boss = ModEntities.ARENA_BOSS.create(world);
-            boss.changeSize(2.0F);
-            boss.setLocationAndAngles(pos.getX() + 0.5D, pos.getY() + 0.2D, pos.getZ() + 0.5D, 0.0F, 0.0F);
-            ((ServerWorld) world).summonEntity(boss);
-
-            boss.getTags().add("VaultBoss");
-            boss.bossInfo.setVisible(true);
-            boss.setCustomName(new StringTextComponent("Boss"));
-            boss.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100.0F);
-            boss.setHealth(100.0F);
-
             VaultRaid raid = VaultRaidData.get((ServerWorld) world).getAt(pos);
 
-            if (raid != null) {
-                EntityScaler.scaleVault(boss, raid.level + 5, new Random());
+            if (raid != null && raid.playerBossName != null && !raid.playerBossName.isEmpty()) {
+                spawnSubscriberBoss(raid, (ServerWorld) world, pos);
 
-                if (raid.playerBossName != null) {
-                    boss.setCustomName(new StringTextComponent(raid.playerBossName));
-                }
+            } else {
+                spawnRandomBoss(raid, (ServerWorld) world, pos);
             }
-
-            world.setBlockState(pos, Blocks.AIR.getDefaultState());
         }
 
         return ActionResultType.SUCCESS;
+    }
+
+    public void spawnSubscriberBoss(VaultRaid raid, ServerWorld world, BlockPos pos) {
+        ArenaBossEntity boss = ModEntities.ARENA_BOSS.create(world);
+        boss.changeSize(2.0F);
+        boss.setLocationAndAngles(pos.getX() + 0.5D, pos.getY() + 0.2D, pos.getZ() + 0.5D, 0.0F, 0.0F);
+        world.summonEntity(boss);
+
+        boss.getTags().add("VaultBoss");
+        boss.bossInfo.setVisible(true);
+        boss.setCustomName(new StringTextComponent("Boss"));
+        boss.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100.0F);
+        boss.setHealth(100.0F);
+
+        if (raid != null) {
+            EntityScaler.scaleVault(boss, raid.level + 5, new Random());
+
+            if (raid.playerBossName != null) {
+                boss.setCustomName(new StringTextComponent(raid.playerBossName));
+            }
+        }
+
+        world.setBlockState(pos, Blocks.AIR.getDefaultState());
+    }
+
+    public void spawnRandomBoss(VaultRaid raid, ServerWorld world, BlockPos pos) {
+        EntityType<? extends VaultBoss>[] bossPool = new EntityType[]{
+                ModEntities.BOOGIEMAN,
+                ModEntities.BLUE_BLAZE,
+                ModEntities.ROBOT,
+                ModEntities.MONSTER_EYE,
+        };
+        VaultBoss boss = bossPool[world.rand.nextInt(bossPool.length)].create(world);
+        if (boss == null) {
+            // TODO: Wut? How da hell?
+            return;
+        }
+        boss.spawnInTheWorld(raid, world, pos);
+        boss.getServerBossInfo().setVisible(true);
     }
 
     @OnlyIn(Dist.CLIENT)
