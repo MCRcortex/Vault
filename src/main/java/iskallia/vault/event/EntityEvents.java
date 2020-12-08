@@ -87,49 +87,53 @@ public class EntityEvents {
 		event.getEntity().getServer().enqueue(new TickDelayedTask(event.getEntity().getServer().getTickCounter() + 2, () -> {
 			if(!event.getEntity().getTags().contains("vault_door"))return;
 
-			BlockPos pos = event.getEntity().getPosition();
-			BlockState state = event.getEntity().world.getBlockState(pos);
+			for(int ox = -1; ox <= 1; ox++) {
+				for(int oz = -1; oz <= 1; oz++) {
+					BlockPos pos = event.getEntity().getPosition().add(ox, 0, oz);
+					BlockState state = event.getEntity().world.getBlockState(pos);
 
-			if(state.getBlock() == Blocks.IRON_DOOR) {
-				BlockState newState = VaultDoorBlock.VAULT_DOORS.get(event.getEntity().world.rand.nextInt(VaultDoorBlock.VAULT_DOORS.size())).getDefaultState()
-						.with(DoorBlock.FACING, state.get(DoorBlock.FACING))
-						.with(DoorBlock.OPEN, state.get(DoorBlock.OPEN))
-						.with(DoorBlock.HINGE, state.get(DoorBlock.HINGE))
-						.with(DoorBlock.POWERED, state.get(DoorBlock.POWERED))
-						.with(DoorBlock.HALF, state.get(DoorBlock.HALF));
+					if(state.getBlock() == Blocks.IRON_DOOR) {
+						BlockState newState = VaultDoorBlock.VAULT_DOORS.get(event.getEntity().world.rand.nextInt(VaultDoorBlock.VAULT_DOORS.size())).getDefaultState()
+								.with(DoorBlock.FACING, state.get(DoorBlock.FACING))
+								.with(DoorBlock.OPEN, state.get(DoorBlock.OPEN))
+								.with(DoorBlock.HINGE, state.get(DoorBlock.HINGE))
+								.with(DoorBlock.POWERED, state.get(DoorBlock.POWERED))
+								.with(DoorBlock.HALF, state.get(DoorBlock.HALF));
 
-				PortalPlacer placer = new PortalPlacer((pos1, random, facing) -> null, (pos1, random, facing) -> Blocks.BEDROCK.getDefaultState());
-				placer.place(event.getEntity().world, pos, state.get(DoorBlock.FACING).rotateYCCW(), 1, 2);
-				placer.place(event.getEntity().world, pos.offset(state.get(DoorBlock.FACING).getOpposite()), state.get(DoorBlock.FACING).rotateYCCW(), 1, 2);
-				placer.place(event.getEntity().world, pos.offset(state.get(DoorBlock.FACING)), state.get(DoorBlock.FACING).rotateYCCW(), 1, 2);
+						PortalPlacer placer = new PortalPlacer((pos1, random, facing) -> null, (pos1, random, facing) -> Blocks.BEDROCK.getDefaultState());
+						placer.place(event.getEntity().world, pos, state.get(DoorBlock.FACING).rotateYCCW(), 1, 2);
+						placer.place(event.getEntity().world, pos.offset(state.get(DoorBlock.FACING).getOpposite()), state.get(DoorBlock.FACING).rotateYCCW(), 1, 2);
+						placer.place(event.getEntity().world, pos.offset(state.get(DoorBlock.FACING)), state.get(DoorBlock.FACING).rotateYCCW(), 1, 2);
 
-				event.getEntity().world.setBlockState(pos.up(), Blocks.AIR.getDefaultState(), 27);
-				event.getEntity().world.setBlockState(pos, newState, 11);
-				event.getEntity().world.setBlockState(pos.up(), newState.with(DoorBlock.HALF, DoubleBlockHalf.UPPER), 11);
-			}
+						event.getEntity().world.setBlockState(pos.up(), Blocks.AIR.getDefaultState(), 27);
+						event.getEntity().world.setBlockState(pos, newState, 11);
+						event.getEntity().world.setBlockState(pos.up(), newState.with(DoorBlock.HALF, DoubleBlockHalf.UPPER), 11);
 
-			for(int x = -30; x <= 30; x++) {
-				for(int z = -30; z <= 30; z++) {
-					for(int y = -15; y <= 15; y++) {
-						BlockPos c = pos.add(x, y, z);
-						BlockState s = event.getEntity().world.getBlockState(c);
+						for(int x = -30; x <= 30; x++) {
+							for(int z = -30; z <= 30; z++) {
+								for(int y = -15; y <= 15; y++) {
+									BlockPos c = pos.add(x, y, z);
+									BlockState s = event.getEntity().world.getBlockState(c);
 
-						if(s.getBlock() == Blocks.PINK_WOOL) {
-							event.getEntity().world.setBlockState(c, Blocks.CHEST.getDefaultState()
-									.with(ChestBlock.FACING, Direction.byHorizontalIndex(event.getEntity().world.rand.nextInt(4))), 2);
-							TileEntity te = event.getEntity().world.getTileEntity(c);
+									if(s.getBlock() == Blocks.PINK_WOOL) {
+										event.getEntity().world.setBlockState(c, Blocks.CHEST.getDefaultState()
+												.with(ChestBlock.FACING, Direction.byHorizontalIndex(event.getEntity().world.rand.nextInt(4))), 2);
+										TileEntity te = event.getEntity().world.getTileEntity(c);
 
-							if(te instanceof ChestTileEntity) {
-								((ChestTileEntity)te).setLootTable(Vault.id("chest/treasure"), 0L);
+										if(te instanceof ChestTileEntity) {
+											((ChestTileEntity)te).setLootTable(Vault.id("chest/treasure"), 0L);
+										}
+									} else if(s.getBlock() == Blocks.BEDROCK) {
+										event.getEntity().world.setBlockState(c, ModBlocks.VAULT_BEDROCK.getDefaultState());
+									}
+								}
 							}
-						} else if(s.getBlock() == Blocks.BEDROCK) {
-							event.getEntity().world.setBlockState(c, ModBlocks.VAULT_BEDROCK.getDefaultState());
 						}
+
+						event.getEntity().remove();
 					}
 				}
 			}
-
-			event.getEntity().remove();
 		}));
 	}
 

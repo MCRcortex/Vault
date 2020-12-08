@@ -12,6 +12,7 @@ import iskallia.vault.network.message.VaultRaidTickMessage;
 import iskallia.vault.world.data.StreamData;
 import iskallia.vault.world.gen.structure.ArenaStructure;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.GlassBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
@@ -307,6 +308,14 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
                     for(int y = -4; y <= 4; y++) {
                         world.setBlockState(this.start.add(x, y, z), Blocks.AIR.getDefaultState());
                     }
+                }
+            }
+
+            for(int i = 0; i < this.start.getY(); i++) {
+                if(!world.getBlockState(this.start.down(i)).isSolid()) {
+                    world.setBlockState(this.start.down(i), Blocks.AIR.getDefaultState());
+                } else {
+                    break;
                 }
             }
         }
