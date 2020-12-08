@@ -54,7 +54,7 @@ public class StageManager {
         Minecraft.getInstance().ingameGUI.setOverlayMessage(text, false);
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
         PlayerEntity player = event.getPlayer();
         ResearchTree researchTree = getResearchTree(player);
