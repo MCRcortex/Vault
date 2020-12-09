@@ -8,6 +8,7 @@ import iskallia.vault.block.entity.PlayerStatueTileEntity;
 import iskallia.vault.entity.model.StatuePlayerModel;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.IBakedModel;
@@ -18,12 +19,16 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.text.StringTextComponent;
 
 public class PlayerStatueRenderer extends TileEntityRenderer<PlayerStatueTileEntity> {
 
     protected static final StatuePlayerModel<PlayerEntity> PLAYER_MODEL = new StatuePlayerModel<>(0.1f, true);
+
+    private Minecraft mc = Minecraft.getInstance();
 
     public PlayerStatueRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
         super(rendererDispatcherIn);
@@ -89,6 +94,28 @@ public class PlayerStatueRenderer extends TileEntityRenderer<PlayerStatueTileEnt
                             matrixStack, buffer, 0x00_f00000, 0x00_e00000, ibakedmodel);
             matrixStack.pop();
         }
+
+        StringTextComponent text = new StringTextComponent(tileEntity.getSkin().getLatestNickname());
+        renderLabel(matrixStack, buffer, combinedLight, text, 0xFF_FFFFFF);
+    }
+
+    private void renderLabel(MatrixStack matrixStack, IRenderTypeBuffer buffer, int lightLevel,
+                             StringTextComponent text, int color) {
+        FontRenderer fontRenderer = mc.fontRenderer;
+
+        //render amount required for the item
+        matrixStack.push();
+        float scale = 0.02f;
+        int opacity = (int) (.4f * 255.0F) << 24;
+        float offset = (float) (-fontRenderer.getStringPropertyWidth(text) / 2);
+        Matrix4f matrix4f = matrixStack.getLast().getMatrix();
+
+        matrixStack.translate(0.5f, 1.6f, 0.5f);
+        matrixStack.scale(scale, scale, scale);
+        matrixStack.rotate(mc.getRenderManager().getCameraOrientation()); // face the camera
+        matrixStack.rotate(Vector3f.ZP.rotationDegrees(180.0F)); // flip vertical
+        fontRenderer.func_243247_a(text, offset, 0, color, false, matrix4f, buffer, true, opacity, lightLevel);
+        matrixStack.pop();
     }
 
 }

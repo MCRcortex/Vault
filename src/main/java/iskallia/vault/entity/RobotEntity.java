@@ -1,13 +1,18 @@
 package iskallia.vault.entity;
 
+import iskallia.vault.entity.ai.AOEGoal;
+import iskallia.vault.entity.ai.SnowStormGoal;
+import iskallia.vault.entity.ai.TeleportGoal;
 import iskallia.vault.util.EntityHelper;
 import iskallia.vault.world.raid.VaultRaid;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.BossInfo;
@@ -29,6 +34,25 @@ public class RobotEntity extends IronGolemEntity implements VaultBoss {
 
     @Override
     protected void dropLoot(DamageSource damageSource, boolean attackedRecently) { }
+
+    @Override
+    protected void registerGoals() {
+        super.registerGoals();
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, ArenaFighterEntity.class, false));
+
+        this.goalSelector.addGoal(1, TeleportGoal.builder(this).start(entity -> {
+            return entity.getAttackTarget() != null && entity.ticksExisted % 60 == 0;
+        }).to(entity -> {
+            return entity.getAttackTarget().getPositionVec().add((entity.rand.nextDouble() - 0.5D) * 8.0D, entity.rand.nextInt(16) - 8, (entity.rand.nextDouble() - 0.5D) * 8.0D);
+        }).then(entity -> {
+            entity.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        }).build());
+
+        this.goalSelector.addGoal(1, new SnowStormGoal<>(this, 96, 10));
+        this.goalSelector.addGoal(1, new AOEGoal<>(this, e -> !(e instanceof ArenaBossEntity)));
+
+        this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(100.0D);
+    }
 
     @Override
     public void spawnInTheWorld(VaultRaid raid, ServerWorld world, BlockPos pos) {

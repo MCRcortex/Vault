@@ -65,7 +65,7 @@ public class GlobalTimerScreen extends Screen {
         matrixStack.scale(2, 2, 2);
         FontHelper.drawStringWithBorder(matrixStack, formattedTime,
                 -formattedTimeLength / 2f, -4,
-                0xFF_c5b285, 0xFF_483121);
+                0xFF_FFFFFF, 0xFF_483121);
         matrixStack.pop();
 
         FontHelper.drawStringWithBorder(matrixStack, formattedSeconds,

@@ -15,7 +15,7 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 
-public class SnowStormGoal<T extends MonsterEntity> extends GoalTask<T> {
+public class SnowStormGoal<T extends LivingEntity> extends GoalTask<T> {
 
 	private final int chance;
 	private final int count;
@@ -31,12 +31,12 @@ public class SnowStormGoal<T extends MonsterEntity> extends GoalTask<T> {
 
 	@Override
 	public boolean shouldExecute() {
-		return this.getEntity().getAttackTarget() != null && this.getWorld().rand.nextInt(this.chance) == 0;
+		return this.getEntity().getRevengeTarget() != null && this.getWorld().rand.nextInt(this.chance) == 0;
 	}
 
 	@Override
 	public boolean shouldContinueExecuting() {
-		return this.getEntity().getAttackTarget() != null && this.progress < this.count;
+		return this.getEntity().getRevengeTarget() != null && this.progress < this.count;
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class SnowStormGoal<T extends MonsterEntity> extends GoalTask<T> {
 				}
 			};
 
-			LivingEntity target = this.getEntity().getAttackTarget();
+			LivingEntity target = this.getEntity().getRevengeTarget();
 			double d0 = target.getPosYEye() - (double)1.1F;
 			double d1 = target.getPosX() - this.getEntity().getPosX();
 			double d2 = d0 - snowball.getPosY();
