@@ -14,6 +14,7 @@ import static net.minecraft.command.Commands.literal;
 public class ModCommands {
 
     public static ReloadConfigsCommand RELOAD_CONFIGS;
+    public static GlobalTimerCommand GLOBAL_TIMER;
     public static RaidCommand RAID;
     public static VaultLevelCommand VAULT_LEVEL;
     public static InternalCommand INTERNAL;
@@ -21,6 +22,7 @@ public class ModCommands {
 
     public static void registerCommands(CommandDispatcher<CommandSource> dispatcher, Commands.EnvironmentType env) {
         RELOAD_CONFIGS = registerCommand(ReloadConfigsCommand::new, dispatcher, env);
+        GLOBAL_TIMER = registerCommand(GlobalTimerCommand::new, dispatcher, env);
         RAID = registerCommand(RaidCommand::new, dispatcher, env);
         VAULT_LEVEL = registerCommand(VaultLevelCommand::new, dispatcher, env);
         INTERNAL = registerCommand(InternalCommand::new, dispatcher, env);

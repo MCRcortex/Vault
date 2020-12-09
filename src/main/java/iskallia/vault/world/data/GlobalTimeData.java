@@ -19,7 +19,6 @@ public class GlobalTimeData extends WorldSavedData {
         this(DATA_NAME);
         startTime = Instant.now().getEpochSecond();
         endTime = startTime + 7776000L;
-        this.markDirty();
     }
 
     public GlobalTimeData(String name) {
@@ -32,6 +31,12 @@ public class GlobalTimeData extends WorldSavedData {
 
     public long getEndTime() {
         return endTime + additionalTime;
+    }
+
+    public void reset(long dtSeconds) {
+        startTime = Instant.now().getEpochSecond();
+        endTime = startTime + dtSeconds;
+        this.markDirty();
     }
 
     public void addTime(long seconds) {
