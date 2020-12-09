@@ -21,6 +21,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
 import net.minecraft.item.ItemStack;
@@ -41,10 +42,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -103,7 +101,9 @@ public class EntityEvents {
 						PortalPlacer placer = new PortalPlacer((pos1, random, facing) -> null, (pos1, random, facing) -> Blocks.BEDROCK.getDefaultState());
 						placer.place(event.getEntity().world, pos, state.get(DoorBlock.FACING).rotateYCCW(), 1, 2);
 						placer.place(event.getEntity().world, pos.offset(state.get(DoorBlock.FACING).getOpposite()), state.get(DoorBlock.FACING).rotateYCCW(), 1, 2);
+						placer.place(event.getEntity().world, pos.offset(state.get(DoorBlock.FACING).getOpposite(), 2), state.get(DoorBlock.FACING).rotateYCCW(), 1, 2);
 						placer.place(event.getEntity().world, pos.offset(state.get(DoorBlock.FACING)), state.get(DoorBlock.FACING).rotateYCCW(), 1, 2);
+						placer.place(event.getEntity().world, pos.offset(state.get(DoorBlock.FACING), 2), state.get(DoorBlock.FACING).rotateYCCW(), 1, 2);
 
 						event.getEntity().world.setBlockState(pos.up(), Blocks.AIR.getDefaultState(), 27);
 						event.getEntity().world.setBlockState(pos, newState, 11);
@@ -248,6 +248,17 @@ public class EntityEvents {
             Vector3d position = playerEntity.getPositionVec();
             playerEntity.getServerWorld().playSound(null, position.x, position.y, position.z,
                     ModSounds.TIMER_KILL_SFX, SoundCategory.MASTER, 0.75F, 1F);
+		}
+	}
+
+	@SubscribeEvent
+	public static void onPlayerHurt(LivingHurtEvent event) {
+		if(event.getEntity() instanceof PlayerEntity && !event.getEntity().world.isRemote) {
+			VaultRaid raid = VaultRaidData.get((ServerWorld)event.getEntity().world).getAt(event.getEntity().getPosition());
+
+			if(raid != null && raid.won) {
+				event.setCanceled(true);
+			}
 		}
 	}
 

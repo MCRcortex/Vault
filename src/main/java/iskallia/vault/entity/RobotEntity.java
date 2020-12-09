@@ -3,13 +3,12 @@ package iskallia.vault.entity;
 import iskallia.vault.entity.ai.AOEGoal;
 import iskallia.vault.entity.ai.SnowStormGoal;
 import iskallia.vault.entity.ai.TeleportGoal;
-import iskallia.vault.util.EntityHelper;
 import iskallia.vault.world.raid.VaultRaid;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.passive.IronGolemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvents;
@@ -28,7 +27,6 @@ public class RobotEntity extends IronGolemEntity implements VaultBoss {
 
     public RobotEntity(EntityType<? extends IronGolemEntity> type, World worldIn) {
         super(type, worldIn);
-        EntityHelper.changeSize(this, 2f);
         bossInfo = new ServerBossInfo(getDisplayName(), BossInfo.Color.PURPLE, BossInfo.Overlay.PROGRESS);
     }
 
@@ -49,8 +47,9 @@ public class RobotEntity extends IronGolemEntity implements VaultBoss {
         }).build());
 
         this.goalSelector.addGoal(1, new SnowStormGoal<>(this, 96, 10));
-        this.goalSelector.addGoal(1, new AOEGoal<>(this, e -> !(e instanceof ArenaBossEntity)));
+        this.goalSelector.addGoal(1, new AOEGoal<>(this, e -> !(e instanceof VaultBoss)));
 
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, false));
         this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(100.0D);
     }
 
@@ -71,8 +70,15 @@ public class RobotEntity extends IronGolemEntity implements VaultBoss {
                 this.setCustomName(new StringTextComponent(raid.playerBossName));
             }
         }
+    }
 
-        world.setBlockState(pos, Blocks.AIR.getDefaultState());
+    @Override
+    public boolean attackEntityFrom(DamageSource source, float amount) {
+        if(source == DamageSource.FALL) {
+            return false;
+        }
+
+        return  super.attackEntityFrom(source, amount);
     }
 
     @Override

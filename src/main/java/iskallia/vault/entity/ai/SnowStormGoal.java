@@ -1,10 +1,9 @@
 package iskallia.vault.entity.ai;
 
-import iskallia.vault.entity.ArenaBossEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.monster.BlazeEntity;
-import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.projectile.SnowballEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -15,7 +14,7 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 
-public class SnowStormGoal<T extends LivingEntity> extends GoalTask<T> {
+public class SnowStormGoal<T extends MobEntity> extends GoalTask<T> {
 
 	private final int chance;
 	private final int count;
@@ -31,12 +30,12 @@ public class SnowStormGoal<T extends LivingEntity> extends GoalTask<T> {
 
 	@Override
 	public boolean shouldExecute() {
-		return this.getEntity().getRevengeTarget() != null && this.getWorld().rand.nextInt(this.chance) == 0;
+		return this.getEntity().getAttackTarget() != null && this.getWorld().rand.nextInt(this.chance) == 0;
 	}
 
 	@Override
 	public boolean shouldContinueExecuting() {
-		return this.getEntity().getRevengeTarget() != null && this.progress < this.count;
+		return this.getEntity().getAttackTarget() != null && this.progress < this.count;
 	}
 
 	@Override
@@ -52,21 +51,25 @@ public class SnowStormGoal<T extends LivingEntity> extends GoalTask<T> {
 				@Override
 				protected void onEntityHit(EntityRayTraceResult raycast) {
 					Entity entity = raycast.getEntity();
-					if(entity instanceof ArenaBossEntity)return;
+					if(entity == SnowStormGoal.this.getEntity())return;
 					int i = entity instanceof BlazeEntity ? 3 : 1;
 					entity.attackEntityFrom(DamageSource.causeIndirectDamage(this, SnowStormGoal.this.getEntity()), (float)i);
 				}
 			};
 
-			LivingEntity target = this.getEntity().getRevengeTarget();
-			double d0 = target.getPosYEye() - (double)1.1F;
-			double d1 = target.getPosX() - this.getEntity().getPosX();
-			double d2 = d0 - snowball.getPosY();
-			double d3 = target.getPosZ() - this.getEntity().getPosZ();
-			float f = MathHelper.sqrt(d1 * d1 + d3 * d3) * 0.2F;
-			snowball.shoot(d1, d2 + (double)f, d3, 1.6F, 4.0F);
-			this.getWorld().playSound(null, this.getEntity().getPosition(), SoundEvents.ENTITY_SNOW_GOLEM_SHOOT, SoundCategory.HOSTILE, 1.0F, 0.4F / (this.getWorld().rand.nextFloat() * 0.4F + 0.8F));
-			this.getWorld().addEntity(snowball);
+			LivingEntity target = this.getEntity().getAttackTarget();
+
+			if(target != null) {
+				double d0 = target.getPosYEye() - (double) 1.1F;
+				double d1 = target.getPosX() - this.getEntity().getPosX();
+				double d2 = d0 - snowball.getPosY();
+				double d3 = target.getPosZ() - this.getEntity().getPosZ();
+				float f = MathHelper.sqrt(d1 * d1 + d3 * d3) * 0.2F;
+				snowball.shoot(d1, d2 + (double) f, d3, 1.6F, 4.0F);
+				this.getWorld().playSound(null, this.getEntity().getPosition(), SoundEvents.ENTITY_SNOW_GOLEM_SHOOT, SoundCategory.HOSTILE, 1.0F, 0.4F / (this.getWorld().rand.nextFloat() * 0.4F + 0.8F));
+				this.getWorld().addEntity(snowball);
+			}
+
 			this.progress++;
 		}
 	}

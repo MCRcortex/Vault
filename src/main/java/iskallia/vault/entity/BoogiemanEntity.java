@@ -10,6 +10,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.monster.ZombieEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvents;
@@ -28,7 +29,6 @@ public class BoogiemanEntity extends ZombieEntity implements VaultBoss {
 
     public BoogiemanEntity(EntityType<? extends ZombieEntity> type, World worldIn) {
         super(type, worldIn);
-        EntityHelper.changeSize(this, 2f);
         bossInfo = new ServerBossInfo(getDisplayName(), BossInfo.Color.PURPLE, BossInfo.Overlay.PROGRESS);
     }
 
@@ -49,14 +49,19 @@ public class BoogiemanEntity extends ZombieEntity implements VaultBoss {
         }).build());
 
         this.goalSelector.addGoal(1, new SnowStormGoal<>(this, 96, 10));
-        this.goalSelector.addGoal(1, new AOEGoal<>(this, e -> !(e instanceof ArenaBossEntity)));
+        this.goalSelector.addGoal(1, new AOEGoal<>(this, e -> !(e instanceof VaultBoss)));
 
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, false));
         this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(100.0D);
     }
 
     @Override
+    protected boolean shouldBurnInDay() {
+        return false;
+    }
+
+    @Override
     public void spawnInTheWorld(VaultRaid raid, ServerWorld world, BlockPos pos) {
-//        this.setSize(4f);
         this.setLocationAndAngles(pos.getX() + 0.5D, pos.getY() + 0.2D, pos.getZ() + 0.5D, 0.0F, 0.0F);
         world.summonEntity(this);
 
@@ -72,8 +77,15 @@ public class BoogiemanEntity extends ZombieEntity implements VaultBoss {
                 this.setCustomName(new StringTextComponent(raid.playerBossName));
             }
         }
+    }
 
-        world.setBlockState(pos, Blocks.AIR.getDefaultState());
+    @Override
+    public boolean attackEntityFrom(DamageSource source, float amount) {
+        if(source == DamageSource.FALL) {
+            return false;
+        }
+
+        return  super.attackEntityFrom(source, amount);
     }
 
     @Override

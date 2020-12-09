@@ -85,9 +85,10 @@ public class ObeliskBlock extends Block {
 
             if (raid != null && raid.playerBossName != null && !raid.playerBossName.isEmpty()) {
                 spawnSubscriberBoss(raid, (ServerWorld) world, pos);
-
             } else {
                 spawnRandomBoss(raid, (ServerWorld) world, pos);
+                world.setBlockState(pos, Blocks.AIR.getDefaultState());
+
             }
         }
 
@@ -113,22 +114,23 @@ public class ObeliskBlock extends Block {
                 boss.setCustomName(new StringTextComponent(raid.playerBossName));
             }
         }
-
-        world.setBlockState(pos, Blocks.AIR.getDefaultState());
     }
 
     public void spawnRandomBoss(VaultRaid raid, ServerWorld world, BlockPos pos) {
-        EntityType<? extends VaultBoss>[] bossPool = new EntityType[]{
+        EntityType<? extends VaultBoss>[] bossPool = new EntityType[] {
                 ModEntities.BOOGIEMAN,
                 ModEntities.BLUE_BLAZE,
                 ModEntities.ROBOT,
                 ModEntities.MONSTER_EYE,
         };
+
         VaultBoss boss = bossPool[world.rand.nextInt(bossPool.length)].create(world);
+
         if (boss == null) {
             // TODO: Wut? How da hell?
             return;
         }
+
         boss.spawnInTheWorld(raid, world, pos);
         boss.getServerBossInfo().setVisible(true);
     }

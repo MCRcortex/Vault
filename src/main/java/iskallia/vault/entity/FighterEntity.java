@@ -10,10 +10,7 @@ import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.BossInfo;
@@ -90,6 +87,21 @@ public class FighterEntity extends ZombieEntity {
 
 			this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
 		}
+	}
+
+	@Override
+	protected SoundEvent getAmbientSound() {
+		return null;
+	}
+
+	@Override
+	protected SoundEvent getDeathSound() {
+		return SoundEvents.ENTITY_PLAYER_DEATH;
+	}
+
+	@Override
+	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
+		return SoundEvents.ENTITY_PLAYER_HURT;
 	}
 
 	@Override

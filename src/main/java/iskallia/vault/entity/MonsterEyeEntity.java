@@ -3,17 +3,23 @@ package iskallia.vault.entity;
 import iskallia.vault.entity.ai.AOEGoal;
 import iskallia.vault.entity.ai.SnowStormGoal;
 import iskallia.vault.entity.ai.TeleportGoal;
+import iskallia.vault.init.ModEntities;
 import iskallia.vault.util.EntityHelper;
+import iskallia.vault.world.data.VaultRaidData;
 import iskallia.vault.world.raid.VaultRaid;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.monster.SlimeEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.World;
@@ -29,8 +35,7 @@ public class MonsterEyeEntity extends SlimeEntity implements VaultBoss {
 
     public MonsterEyeEntity(EntityType<? extends SlimeEntity> type, World worldIn) {
         super(type, worldIn);
-        EntityHelper.changeSize(this, 2f);
-        setSlimeSize(4, false);
+        setSlimeSize(3, false);
         bossInfo = new ServerBossInfo(getDisplayName(), BossInfo.Color.PURPLE, BossInfo.Overlay.PROGRESS);
     }
 
@@ -51,14 +56,19 @@ public class MonsterEyeEntity extends SlimeEntity implements VaultBoss {
         }).build());
 
         this.goalSelector.addGoal(1, new SnowStormGoal<>(this, 96, 10));
-        this.goalSelector.addGoal(1, new AOEGoal<>(this, e -> !(e instanceof ArenaBossEntity)));
+        this.goalSelector.addGoal(1, new AOEGoal<>(this, e -> !(e instanceof VaultBoss)));
 
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, false));
         this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(100.0D);
     }
 
     @Override
     public void spawnInTheWorld(VaultRaid raid, ServerWorld world, BlockPos pos) {
-        this.setSlimeSize(4, false);
+        this.spawnInTheWorld(raid, world, pos, 3);
+    }
+
+    public void spawnInTheWorld(VaultRaid raid, ServerWorld world, BlockPos pos, int size) {
+        this.setSlimeSize(size, false);
         this.setLocationAndAngles(pos.getX() + 0.5D, pos.getY() + 0.2D, pos.getZ() + 0.5D, 0.0F, 0.0F);
         world.summonEntity(this);
 
@@ -74,8 +84,26 @@ public class MonsterEyeEntity extends SlimeEntity implements VaultBoss {
                 this.setCustomName(new StringTextComponent(raid.playerBossName));
             }
         }
+    }
 
-        world.setBlockState(pos, Blocks.AIR.getDefaultState());
+    @Override
+    public boolean attackEntityFrom(DamageSource source, float amount) {
+        if(source == DamageSource.FALL) {
+            return false;
+        }
+
+        return  super.attackEntityFrom(source, amount);
+    }
+
+    @Override
+    protected void dealDamage(LivingEntity entityIn) {
+        if (this.isAlive()) {
+            int i = this.getSlimeSize();
+            if (this.getDistanceSq(entityIn) < 0.8D * (double)i * 0.8D * (double)i && this.canEntityBeSeen(entityIn) && entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), this.func_225512_er_())) {
+                this.playSound(SoundEvents.ENTITY_SLIME_ATTACK, 1.0F, (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
+                this.applyEnchantments(this, entityIn);
+            }
+        }
     }
 
     @Override
@@ -88,7 +116,6 @@ public class MonsterEyeEntity extends SlimeEntity implements VaultBoss {
     public int getSlimeSize() {
         return shouldBlockSlimeSplit ? 0 : super.getSlimeSize();
     }
-
     @Override
     public ServerBossInfo getServerBossInfo() {
         return bossInfo;

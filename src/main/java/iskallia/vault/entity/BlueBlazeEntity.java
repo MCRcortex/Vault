@@ -10,6 +10,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.monster.BlazeEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvents;
@@ -28,7 +29,6 @@ public class BlueBlazeEntity extends BlazeEntity implements VaultBoss {
 
     public BlueBlazeEntity(EntityType<? extends BlazeEntity> type, World world) {
         super(type, world);
-        EntityHelper.changeSize(this, 2f);
         bossInfo = new ServerBossInfo(getDisplayName(), BossInfo.Color.PURPLE, BossInfo.Overlay.PROGRESS);
     }
 
@@ -49,8 +49,8 @@ public class BlueBlazeEntity extends BlazeEntity implements VaultBoss {
         }).build());
 
         this.goalSelector.addGoal(1, new SnowStormGoal<>(this, 96, 10));
-        this.goalSelector.addGoal(1, new AOEGoal<>(this, e -> !(e instanceof ArenaBossEntity)));
 
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, false));
         this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(100.0D);
     }
 
@@ -71,8 +71,15 @@ public class BlueBlazeEntity extends BlazeEntity implements VaultBoss {
                 this.setCustomName(new StringTextComponent(raid.playerBossName));
             }
         }
+    }
 
-        world.setBlockState(pos, Blocks.AIR.getDefaultState());
+    @Override
+    public boolean attackEntityFrom(DamageSource source, float amount) {
+        if(source == DamageSource.FALL) {
+            return false;
+        }
+
+        return  super.attackEntityFrom(source, amount);
     }
 
     @Override
