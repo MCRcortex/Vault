@@ -4,10 +4,8 @@ import iskallia.vault.Vault;
 import iskallia.vault.block.*;
 import iskallia.vault.block.entity.*;
 import iskallia.vault.block.item.PlayerStatueBlockItem;
-import iskallia.vault.block.render.PlayerStatueRenderer;
-import iskallia.vault.block.render.VaultAltarRenderer;
-import iskallia.vault.block.render.VaultRuneRenderer;
-import iskallia.vault.block.render.VendingMachineRenderer;
+import iskallia.vault.block.item.RelicStatueBlockItem;
+import iskallia.vault.block.render.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.DoorBlock;
 import net.minecraft.block.OreBlock;
@@ -88,6 +86,7 @@ public class ModBlocks {
             TileEntityType.Builder.create(RelicStatueTileEntity::new, RELIC_STATUE).build(null);
 
     public static final PlayerStatueBlockItem PLAYER_STATUE_BLOCK_ITEM = new PlayerStatueBlockItem();
+    public static final RelicStatueBlockItem RELIC_STATUE_BLOCK_ITEM = new RelicStatueBlockItem();
 
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         registerBlock(event, VAULT_PORTAL, Vault.id("vault_portal"));
@@ -155,6 +154,7 @@ public class ModBlocks {
         ClientRegistry.bindTileEntityRenderer(ModBlocks.VAULT_RUNE_TILE_ENTITY, VaultRuneRenderer::new);
         ClientRegistry.bindTileEntityRenderer(ModBlocks.PLAYER_STATUE_TILE_ENTITY, PlayerStatueRenderer::new);
         ClientRegistry.bindTileEntityRenderer(ModBlocks.VENDING_MACHINE_TILE_ENTITY, VendingMachineRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(ModBlocks.RELIC_STATUE_TILE_ENTITY, RelicStatueRenderer::new);
     }
 
     public static void registerBlockItems(RegistryEvent.Register<Item> event) {
@@ -205,7 +205,7 @@ public class ModBlocks {
         registerBlockItem(event, PLAYER_STATUE, PLAYER_STATUE_BLOCK_ITEM);
         registerBlockItem(event, VENDING_MACHINE, 1);
         registerBlockItem(event, VAULT_BEDROCK);
-        registerBlockItem(event, RELIC_STATUE, 1);
+        registerBlockItem(event, RELIC_STATUE, RELIC_STATUE_BLOCK_ITEM);
     }
 
     /* --------------------------------------------- */
@@ -237,6 +237,7 @@ public class ModBlocks {
         blockItem.setRegistryName(block.getRegistryName());
         event.getRegistry().register(blockItem);
     }
+
     private static void registerBlockItem(RegistryEvent.Register<Item> event, Block block, int maxStackSize) {
         BlockItem blockItem = new BlockItem(block, new Item.Properties().group(ModItems.VAULT_MOD_GROUP).maxStackSize(maxStackSize));
 

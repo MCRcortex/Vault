@@ -91,4 +91,5 @@ public class PlayerStatueBlock extends Block {
 
         super.onBlockHarvested(world, pos, state, player);
     }
+
 }

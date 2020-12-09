@@ -16,21 +16,25 @@ import java.util.List;
 
 public class ItemVaultRelicPart extends Item {
 
-    protected String set;
+    protected String relicSet;
 
-    public ItemVaultRelicPart(ItemGroup group, ResourceLocation id, String set) {
+    public ItemVaultRelicPart(ItemGroup group, ResourceLocation id, String relicSet) {
         super(new Properties()
                 .group(group)
                 .maxStackSize(64));
 
-        this.set = set;
+        this.relicSet = relicSet;
 
         this.setRegistryName(id);
     }
 
+    public String getRelicSet() {
+        return relicSet;
+    }
+
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-        StringTextComponent line = new StringTextComponent("Vault Relic - " + set);
+        StringTextComponent line = new StringTextComponent("Vault Relic - " + relicSet);
         line.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_c6b11e)));
         tooltip.add(new StringTextComponent(""));
         tooltip.add(line);
