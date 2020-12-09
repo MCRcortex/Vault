@@ -8,7 +8,7 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class ModNetwork {
 
-    private static final String NETWORK_VERSION = "0.15.0";
+    private static final String NETWORK_VERSION = "0.16.0";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(Vault.MOD_ID, "network"),
@@ -103,7 +103,7 @@ public class ModNetwork {
                 RaffleClientMessage::decode,
                 RaffleClientMessage::handle);
 
-        CHANNEL.registerMessage(16, GlobalTimerMessage.class,
+        CHANNEL.registerMessage(17, GlobalTimerMessage.class,
                 GlobalTimerMessage::encode,
                 GlobalTimerMessage::decode,
                 GlobalTimerMessage::handle);
