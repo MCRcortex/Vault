@@ -1,8 +1,6 @@
 package iskallia.vault.entity;
 
-import iskallia.vault.entity.ai.AOEGoal;
-import iskallia.vault.entity.ai.SnowStormGoal;
-import iskallia.vault.entity.ai.TeleportGoal;
+import iskallia.vault.entity.ai.*;
 import iskallia.vault.world.raid.VaultRaid;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -24,10 +22,12 @@ import java.util.Random;
 public class RobotEntity extends IronGolemEntity implements VaultBoss {
 
     public final ServerBossInfo bossInfo;
+    public RegenAfterAWhile<RobotEntity> regenAfterAWhile;
 
     public RobotEntity(EntityType<? extends IronGolemEntity> type, World worldIn) {
         super(type, worldIn);
         bossInfo = new ServerBossInfo(getDisplayName(), BossInfo.Color.PURPLE, BossInfo.Overlay.PROGRESS);
+        regenAfterAWhile = new RegenAfterAWhile<>(this);
     }
 
     @Override
@@ -74,11 +74,13 @@ public class RobotEntity extends IronGolemEntity implements VaultBoss {
 
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
-        if(source == DamageSource.FALL) {
+        if (source == DamageSource.FALL) {
             return false;
         }
 
-        return  super.attackEntityFrom(source, amount);
+        regenAfterAWhile.onDamageTaken();
+
+        return super.attackEntityFrom(source, amount);
     }
 
     @Override
@@ -92,6 +94,7 @@ public class RobotEntity extends IronGolemEntity implements VaultBoss {
 
         if (!this.world.isRemote) {
             this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
+            this.regenAfterAWhile.tick();
         }
     }
 

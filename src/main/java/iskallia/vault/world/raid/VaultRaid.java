@@ -288,7 +288,7 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
             IFormattableTextComponent playerName = player.getDisplayName().deepCopy();
             playerName.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_983198)));
 
-            StringTextComponent text = new StringTextComponent(" started a Vault raid!");
+            StringTextComponent text = new StringTextComponent(" entered a Vault!");
             text.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_ffffff)));
 
             world.getServer().getPlayerList().func_232641_a_(

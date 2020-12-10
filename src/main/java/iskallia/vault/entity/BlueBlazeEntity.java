@@ -1,11 +1,9 @@
 package iskallia.vault.entity;
 
-import iskallia.vault.entity.ai.AOEGoal;
+import iskallia.vault.entity.ai.RegenAfterAWhile;
 import iskallia.vault.entity.ai.SnowStormGoal;
 import iskallia.vault.entity.ai.TeleportGoal;
-import iskallia.vault.util.EntityHelper;
 import iskallia.vault.world.raid.VaultRaid;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
@@ -26,10 +24,12 @@ import java.util.Random;
 public class BlueBlazeEntity extends BlazeEntity implements VaultBoss {
 
     public final ServerBossInfo bossInfo;
+    public RegenAfterAWhile<BlueBlazeEntity> regenAfterAWhile;
 
     public BlueBlazeEntity(EntityType<? extends BlazeEntity> type, World world) {
         super(type, world);
         bossInfo = new ServerBossInfo(getDisplayName(), BossInfo.Color.PURPLE, BossInfo.Overlay.PROGRESS);
+        regenAfterAWhile = new RegenAfterAWhile<>(this);
     }
 
     @Override
@@ -75,11 +75,13 @@ public class BlueBlazeEntity extends BlazeEntity implements VaultBoss {
 
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
-        if(source == DamageSource.FALL) {
+        if (source == DamageSource.FALL) {
             return false;
         }
 
-        return  super.attackEntityFrom(source, amount);
+        regenAfterAWhile.onDamageTaken();
+
+        return super.attackEntityFrom(source, amount);
     }
 
     @Override
@@ -93,6 +95,7 @@ public class BlueBlazeEntity extends BlazeEntity implements VaultBoss {
 
         if (!this.world.isRemote) {
             this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
+            this.regenAfterAWhile.tick();
         }
     }
 

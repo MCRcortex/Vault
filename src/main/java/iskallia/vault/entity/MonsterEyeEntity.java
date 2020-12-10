@@ -1,8 +1,6 @@
 package iskallia.vault.entity;
 
-import iskallia.vault.entity.ai.AOEGoal;
-import iskallia.vault.entity.ai.SnowStormGoal;
-import iskallia.vault.entity.ai.TeleportGoal;
+import iskallia.vault.entity.ai.*;
 import iskallia.vault.init.ModEntities;
 import iskallia.vault.util.EntityHelper;
 import iskallia.vault.world.data.VaultRaidData;
@@ -32,11 +30,13 @@ public class MonsterEyeEntity extends SlimeEntity implements VaultBoss {
 
     public boolean shouldBlockSlimeSplit;
     public final ServerBossInfo bossInfo;
+    public RegenAfterAWhile<MonsterEyeEntity> regenAfterAWhile;
 
     public MonsterEyeEntity(EntityType<? extends SlimeEntity> type, World worldIn) {
         super(type, worldIn);
         setSlimeSize(3, false);
         bossInfo = new ServerBossInfo(getDisplayName(), BossInfo.Color.PURPLE, BossInfo.Overlay.PROGRESS);
+        regenAfterAWhile = new RegenAfterAWhile<>(this);
     }
 
     @Override
@@ -88,18 +88,20 @@ public class MonsterEyeEntity extends SlimeEntity implements VaultBoss {
 
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
-        if(source == DamageSource.FALL) {
+        if (source == DamageSource.FALL) {
             return false;
         }
 
-        return  super.attackEntityFrom(source, amount);
+        regenAfterAWhile.onDamageTaken();
+
+        return super.attackEntityFrom(source, amount);
     }
 
     @Override
     protected void dealDamage(LivingEntity entityIn) {
         if (this.isAlive()) {
             int i = this.getSlimeSize();
-            if (this.getDistanceSq(entityIn) < 0.8D * (double)i * 0.8D * (double)i && this.canEntityBeSeen(entityIn) && entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), this.func_225512_er_())) {
+            if (this.getDistanceSq(entityIn) < 0.8D * (double) i * 0.8D * (double) i && this.canEntityBeSeen(entityIn) && entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), this.func_225512_er_())) {
                 this.playSound(SoundEvents.ENTITY_SLIME_ATTACK, 1.0F, (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
                 this.applyEnchantments(this, entityIn);
             }
@@ -116,6 +118,7 @@ public class MonsterEyeEntity extends SlimeEntity implements VaultBoss {
     public int getSlimeSize() {
         return shouldBlockSlimeSplit ? 0 : super.getSlimeSize();
     }
+
     @Override
     public ServerBossInfo getServerBossInfo() {
         return bossInfo;
@@ -127,6 +130,7 @@ public class MonsterEyeEntity extends SlimeEntity implements VaultBoss {
 
         if (!this.world.isRemote) {
             this.bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
+            this.regenAfterAWhile.tick();
         }
     }
 
