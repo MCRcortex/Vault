@@ -18,6 +18,7 @@ import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class VendingMachineTileEntity extends TileEntity {
@@ -76,6 +77,7 @@ public class VendingMachineTileEntity extends TileEntity {
     @Override
     public void read(BlockState state, CompoundNBT nbt) {
         ListNBT list = nbt.getList("coresList", Constants.NBT.TAG_COMPOUND);
+        this.cores = new LinkedList<>();
         for (INBT tag : list) {
             TraderCore core = null;
             try {
