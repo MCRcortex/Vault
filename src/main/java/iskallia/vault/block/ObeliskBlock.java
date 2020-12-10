@@ -1,10 +1,12 @@
 package iskallia.vault.block;
 
 import iskallia.vault.client.gui.overlay.VaultRaidOverlay;
+import iskallia.vault.config.VaultMobsConfig;
 import iskallia.vault.entity.ArenaBossEntity;
 import iskallia.vault.entity.EntityScaler;
 import iskallia.vault.entity.FighterEntity;
 import iskallia.vault.entity.VaultBoss;
+import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModEntities;
 import iskallia.vault.item.ObeliskInscriptionItem;
 import iskallia.vault.world.data.VaultRaidData;
@@ -104,11 +106,17 @@ public class ObeliskBlock extends Block {
         boss.getTags().add("VaultBoss");
         boss.bossInfo.setVisible(true);
         boss.setCustomName(new StringTextComponent("Boss"));
-        boss.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100.0F);
-        boss.setHealth(100.0F);
 
         if (raid != null) {
-            EntityScaler.scaleVault(boss, raid.level + 5, new Random());
+            EntityScaler.scaleVault(boss, raid.level, new Random());
+            VaultMobsConfig.Level override = ModConfigs.VAULT_MOBS.getForLevel(raid.level);
+
+            boss.getAttribute(Attributes.MAX_HEALTH).setBaseValue(override.BOSS_HEALTH);
+            boss.setHealth((float)override.BOSS_HEALTH);
+
+            boss.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(override.BOSS_SPEED);
+            boss.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(override.BOSS_DAMAGE);
+            boss.getAttribute(Attributes.ARMOR).setBaseValue(override.BOSS_ARMOR);
 
             if (raid.playerBossName != null) {
                 boss.setCustomName(new StringTextComponent(raid.playerBossName));

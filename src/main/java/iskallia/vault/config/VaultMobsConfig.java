@@ -113,6 +113,10 @@ public class VaultMobsConfig extends Config {
 		public static final Level EMPTY = new Level(0, 0);
 
 		@Expose public int MIN_LEVEL;
+		@Expose public double BOSS_HEALTH;
+		@Expose public double BOSS_SPEED;
+		@Expose public double BOSS_DAMAGE;
+		@Expose public double BOSS_ARMOR;
 		@Expose public Map<String, List<String>> LOOT;
 		@Expose public int ENCH_LEVEL;
 		@Expose public int ENCH_TRIALS;
@@ -124,6 +128,11 @@ public class VaultMobsConfig extends Config {
 			this.MAX_MOBS = maxMobs;
 			this.LOOT = new LinkedHashMap<>();
 			this.MOB_POOL = new ArrayList<>();
+
+			this.BOSS_HEALTH = 20.0D;
+			this.BOSS_SPEED = 0.23D;
+			this.BOSS_DAMAGE = 1.0D;
+			this.BOSS_ARMOR = 2.0D;
 		}
 
 		public Level add(Item... items) {
