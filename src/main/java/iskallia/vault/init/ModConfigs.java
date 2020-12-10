@@ -25,6 +25,10 @@ public class ModConfigs {
     public static VaultVendingConfig VENDING_CONFIG;
     public static ArenaGeneralConfig ARENA_GENERAL;
     public static ArenaMobsConfig ARENA_MOBS;
+    public static LegendaryTreasureNormalConfig LEGENDARY_TREASURE_NORMAL;
+    public static LegendaryTreasureRareConfig LEGENDARY_TREASURE_RARE;
+    public static LegendaryTreasureEpicConfig LEGENDARY_TREASURE_EPIC;
+    public static LegendaryTreasureOmegaConfig LEGENDARY_TREASURE_OMEGA;
 
     public static void register() {
         STREAMER_MULTIPLIERS = (StreamerMultipliersConfig) new StreamerMultipliersConfig().readConfig();
@@ -48,6 +52,10 @@ public class ModConfigs {
         VENDING_CONFIG = (VaultVendingConfig) new VaultVendingConfig().readConfig();
         ARENA_GENERAL = (ArenaGeneralConfig) new ArenaGeneralConfig().readConfig();
         ARENA_MOBS = (ArenaMobsConfig) new ArenaMobsConfig().readConfig();
+        LEGENDARY_TREASURE_NORMAL = (LegendaryTreasureNormalConfig) new LegendaryTreasureNormalConfig().readConfig();
+        LEGENDARY_TREASURE_RARE = (LegendaryTreasureRareConfig) new LegendaryTreasureRareConfig().readConfig();
+        LEGENDARY_TREASURE_EPIC = (LegendaryTreasureEpicConfig) new LegendaryTreasureEpicConfig().readConfig();
+        LEGENDARY_TREASURE_OMEGA = (LegendaryTreasureOmegaConfig) new LegendaryTreasureOmegaConfig().readConfig();
     }
 
 }

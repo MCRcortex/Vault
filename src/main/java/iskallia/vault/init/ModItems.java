@@ -80,6 +80,10 @@ public class ModItems {
     public static ItemVaultRune VAULT_RUNE = new ItemVaultRune(VAULT_MOD_GROUP, Vault.id("vault_rune"));
     public static ObeliskInscriptionItem OBELISK_INSCRIPTION = new ObeliskInscriptionItem(VAULT_MOD_GROUP, Vault.id("obelisk_inscription"));
     public static ItemTraderCore TRADER_CORE = new ItemTraderCore(VAULT_MOD_GROUP, Vault.id("trader_core"));
+    public static ItemLegendaryTreasure LEGENDARY_TREASURE_NORMAL = new ItemLegendaryTreasure(VAULT_MOD_GROUP, Vault.id("legendary_treasure_normal"),  VaultRarity.NORMAL);
+    public static ItemLegendaryTreasure LEGENDARY_TREASURE_RARE = new ItemLegendaryTreasure(VAULT_MOD_GROUP, Vault.id("legendary_treasure_rare"),  VaultRarity.RARE);
+    public static ItemLegendaryTreasure LEGENDARY_TREASURE_EPIC = new ItemLegendaryTreasure(VAULT_MOD_GROUP, Vault.id("legendary_treasure_epic"),  VaultRarity.EPIC);
+    public static ItemLegendaryTreasure LEGENDARY_TREASURE_OMEGA = new ItemLegendaryTreasure(VAULT_MOD_GROUP, Vault.id("legendary_treasure_omega"),  VaultRarity.OMEGA);
 
     public static void registerItems(RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
@@ -140,5 +144,9 @@ public class ModItems {
         registry.register(VAULT_RUNE);
         registry.register(OBELISK_INSCRIPTION);
         registry.register(TRADER_CORE);
+        registry.register(LEGENDARY_TREASURE_NORMAL);
+        registry.register(LEGENDARY_TREASURE_RARE);
+        registry.register(LEGENDARY_TREASURE_EPIC);
+        registry.register(LEGENDARY_TREASURE_OMEGA);
     }
 }
