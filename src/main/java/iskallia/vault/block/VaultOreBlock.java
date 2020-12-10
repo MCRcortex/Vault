@@ -1,5 +1,6 @@
 package iskallia.vault.block;
 
+import iskallia.vault.init.ModSounds;
 import net.minecraft.block.OreBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
@@ -14,7 +15,7 @@ public class VaultOreBlock extends OreBlock {
                 .setRequiresTool()
                 .setLightLevel(state -> 9)
                 .hardnessAndResistance(3f, 3f)
-                //.sound(ModSounds.VAULT_GEM)
+                .sound(ModSounds.VAULT_GEM)
         );
     }
 

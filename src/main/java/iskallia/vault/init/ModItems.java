@@ -80,6 +80,7 @@ public class ModItems {
     public static ItemVaultRune VAULT_RUNE = new ItemVaultRune(VAULT_MOD_GROUP, Vault.id("vault_rune"));
     public static ObeliskInscriptionItem OBELISK_INSCRIPTION = new ObeliskInscriptionItem(VAULT_MOD_GROUP, Vault.id("obelisk_inscription"));
     public static ItemTraderCore TRADER_CORE = new ItemTraderCore(VAULT_MOD_GROUP, Vault.id("trader_core"));
+    public static ItemUnidentifiedArtifact UNIDENTIFIED_ARTIFACT = new ItemUnidentifiedArtifact(VAULT_MOD_GROUP, Vault.id("unidentified_artifact"));
     public static ItemLegendaryTreasure LEGENDARY_TREASURE_NORMAL = new ItemLegendaryTreasure(VAULT_MOD_GROUP, Vault.id("legendary_treasure_normal"),  VaultRarity.NORMAL);
     public static ItemLegendaryTreasure LEGENDARY_TREASURE_RARE = new ItemLegendaryTreasure(VAULT_MOD_GROUP, Vault.id("legendary_treasure_rare"),  VaultRarity.RARE);
     public static ItemLegendaryTreasure LEGENDARY_TREASURE_EPIC = new ItemLegendaryTreasure(VAULT_MOD_GROUP, Vault.id("legendary_treasure_epic"),  VaultRarity.EPIC);
@@ -148,5 +149,6 @@ public class ModItems {
         registry.register(LEGENDARY_TREASURE_RARE);
         registry.register(LEGENDARY_TREASURE_EPIC);
         registry.register(LEGENDARY_TREASURE_OMEGA);
+        registry.register(UNIDENTIFIED_ARTIFACT);
     }
 }
