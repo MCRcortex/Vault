@@ -13,6 +13,7 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
 
@@ -54,7 +55,7 @@ public class VendingMachineTileEntity extends TileEntity {
     }
 
     public void sendUpdates() {
-        this.world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
+        this.world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 0b11);
         this.world.notifyNeighborsOfStateChange(pos, this.getBlockState().getBlock());
         markDirty();
     }
@@ -126,6 +127,7 @@ public class VendingMachineTileEntity extends TileEntity {
     public void addCore(TraderCore core) {
         this.cores.add(core);
         updateSkin();
+        sendUpdates();
     }
 
     public void updateSkin() {
