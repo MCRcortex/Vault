@@ -40,10 +40,7 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.concurrent.TickDelayedTask;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.Color;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
+import net.minecraft.util.text.*;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.*;
@@ -235,11 +232,26 @@ public class EntityEvents {
 				actionBar.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_ddd01e)));
 
 				STitlePacket titlePacket = new STitlePacket(STitlePacket.Type.TITLE, title);
-				STitlePacket subtitlePacket = new STitlePacket(STitlePacket.Type.SUBTITLE, entityName.append(subtitle));
+				STitlePacket subtitlePacket = new STitlePacket(STitlePacket.Type.SUBTITLE, entityName.deepCopy().append(subtitle));
 
 				player.connection.sendPacket(titlePacket);
 				player.connection.sendPacket(subtitlePacket);
 				player.sendStatusMessage(actionBar, true);
+
+				IFormattableTextComponent playerName = player.getDisplayName().deepCopy();
+				playerName.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_983198)));
+
+				StringTextComponent text = new StringTextComponent(" cleared a Vault by defeating ");
+				text.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_ffffff)));
+
+				StringTextComponent punctuation = new StringTextComponent("!");
+				punctuation.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_ffffff)));
+
+				world.getServer().getPlayerList().func_232641_a_(
+						playerName.append(text).append(entityName).append(punctuation),
+						ChatType.CHAT,
+						player.getUniqueID()
+				);
 			});
 		}
 	}

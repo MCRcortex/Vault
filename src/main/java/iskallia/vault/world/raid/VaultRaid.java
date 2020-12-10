@@ -227,18 +227,6 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
                 this.facing == null ? world.getRandom().nextFloat() * 360.0F : this.facing.rotateY().getHorizontalAngle(), 0.0F);
 
         player.setOnGround(true);
-
-        IFormattableTextComponent playerName = player.getDisplayName().deepCopy();
-        playerName.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_983198)));
-
-        StringTextComponent text = new StringTextComponent(" started a Vault raid!");
-        text.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_ffffff)));
-
-        world.getServer().getPlayerList().func_232641_a_(
-                playerName.append(text),
-                ChatType.CHAT,
-                playerId
-        );
     }
 
     public void start(ServerWorld world, ServerPlayerEntity player, ChunkPos chunkPos) {
@@ -296,6 +284,18 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
             playerEntity.connection.sendPacket(titlePacket);
             playerEntity.connection.sendPacket(subtitlePacket);
             playerEntity.sendStatusMessage(actionBar, true);
+
+            IFormattableTextComponent playerName = player.getDisplayName().deepCopy();
+            playerName.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_983198)));
+
+            StringTextComponent text = new StringTextComponent(" started a Vault raid!");
+            text.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_ffffff)));
+
+            world.getServer().getPlayerList().func_232641_a_(
+                    playerName.append(text),
+                    ChatType.CHAT,
+                    playerId
+            );
 
             Advancement advancement = player.getServer().getAdvancementManager().getAdvancement(Vault.id("root"));
             player.getAdvancements().grantCriterion(advancement, "entered_vault");
