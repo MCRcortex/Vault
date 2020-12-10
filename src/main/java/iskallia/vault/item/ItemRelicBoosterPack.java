@@ -34,27 +34,7 @@ public class ItemRelicBoosterPack extends Item {
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         if (!world.isRemote) {
             ItemStack heldStack = player.getHeldItem(hand);
-
-            Vector3d position = player.getPositionVec();
-
-            ((ServerWorld) world).playSound(
-                    null,
-                    position.x,
-                    position.y,
-                    position.z,
-                    ModSounds.BOOSTER_PACK_SFX,
-                    SoundCategory.PLAYERS,
-                    1f, 1f
-            );
-
-            ((ServerWorld) world).spawnParticle(ParticleTypes.DRAGON_BREATH,
-                    position.x,
-                    position.y,
-                    position.z,
-                    500,
-                    1, 1, 1,
-                    0.5
-            );
+            postEffects(world, player.getPositionVec());
 
             ItemVaultRelicPart randomPart = ModConfigs.VAULT_RELICS.getRandomPart();
             ItemStack itemStack = new ItemStack(randomPart);
@@ -70,6 +50,27 @@ public class ItemRelicBoosterPack extends Item {
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         super.addInformation(stack, world, tooltip, flagIn);
+    }
+
+    public static void postEffects(World world, Vector3d position) {
+        world.playSound(
+                null,
+                position.x,
+                position.y,
+                position.z,
+                ModSounds.BOOSTER_PACK_SFX,
+                SoundCategory.PLAYERS,
+                1f, 1f
+        );
+
+        ((ServerWorld)world).spawnParticle(ParticleTypes.DRAGON_BREATH,
+                position.x,
+                position.y,
+                position.z,
+                500,
+                1, 1, 1,
+                0.5
+        );
     }
 
 }

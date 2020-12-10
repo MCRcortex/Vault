@@ -117,6 +117,7 @@ public class VaultMobsConfig extends Config {
 		@Expose public double BOSS_SPEED;
 		@Expose public double BOSS_DAMAGE;
 		@Expose public double BOSS_ARMOR;
+		@Expose public double TP_CHANCE;
 		@Expose public Map<String, List<String>> LOOT;
 		@Expose public int ENCH_LEVEL;
 		@Expose public int ENCH_TRIALS;
@@ -133,6 +134,7 @@ public class VaultMobsConfig extends Config {
 			this.BOSS_SPEED = 0.23D;
 			this.BOSS_DAMAGE = 1.0D;
 			this.BOSS_ARMOR = 2.0D;
+			this.TP_CHANCE = 1.0D;
 		}
 
 		public Level add(Item... items) {

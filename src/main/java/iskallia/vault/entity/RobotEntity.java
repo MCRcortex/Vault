@@ -1,17 +1,18 @@
 package iskallia.vault.entity;
 
-import iskallia.vault.entity.ai.AOEGoal;
-import iskallia.vault.entity.ai.RegenAfterAWhile;
-import iskallia.vault.entity.ai.SnowStormGoal;
-import iskallia.vault.entity.ai.TeleportGoal;
+import iskallia.vault.entity.ai.*;
+import iskallia.vault.init.ModConfigs;
+import iskallia.vault.world.data.VaultRaidData;
 import iskallia.vault.world.raid.VaultRaid;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.IndirectEntityDamageSource;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
@@ -23,6 +24,26 @@ import net.minecraft.world.server.ServerWorld;
 import java.util.Random;
 
 public class RobotEntity extends IronGolemEntity implements VaultBoss {
+
+    public TeleportRandomly<RobotEntity> teleportTask = new TeleportRandomly<>(this, (entity, source, amount) -> {
+        if(!entity.world.isRemote && source instanceof IndirectEntityDamageSource) {
+            VaultRaid raid = VaultRaidData.get((ServerWorld)world).getAt(entity.getPosition());
+
+            if(raid != null) {
+                return ModConfigs.VAULT_MOBS.getForLevel(raid.level).TP_CHANCE;
+            }
+
+            return 1.0D;
+        }
+
+        return 0.0D;
+    }, (entity, source, amount) -> {
+        if(!(source.getTrueSource() instanceof LivingEntity)) {
+            return 0.1D;
+        }
+
+        return 0.0D;
+    });
 
     public final ServerBossInfo bossInfo;
     public RegenAfterAWhile<RobotEntity> regenAfterAWhile;
@@ -75,12 +96,13 @@ public class RobotEntity extends IronGolemEntity implements VaultBoss {
 
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
-        if (source == DamageSource.FALL) {
+        if(this.isInvulnerableTo(source) || source == DamageSource.FALL) {
             return false;
+        } else if(teleportTask.attackEntityFrom(source, amount)) {
+            return true;
         }
 
         regenAfterAWhile.onDamageTaken();
-
         return super.attackEntityFrom(source, amount);
     }
 

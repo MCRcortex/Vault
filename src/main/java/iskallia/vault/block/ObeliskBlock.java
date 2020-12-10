@@ -137,6 +137,9 @@ public class ObeliskBlock extends Block {
             return;
         }
 
+        boss.spawnInTheWorld(raid, world, pos);
+        boss.getServerBossInfo().setVisible(true);
+
         if(raid != null && boss instanceof LivingEntity) {
             VaultMobsConfig.Level override = ModConfigs.VAULT_MOBS.getForLevel(raid.level);
 
@@ -147,9 +150,6 @@ public class ObeliskBlock extends Block {
             ((LivingEntity)boss).getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(override.BOSS_DAMAGE);
             ((LivingEntity)boss).getAttribute(Attributes.ARMOR).setBaseValue(override.BOSS_ARMOR);
         }
-
-        boss.spawnInTheWorld(raid, world, pos);
-        boss.getServerBossInfo().setVisible(true);
     }
 
     @OnlyIn(Dist.CLIENT)

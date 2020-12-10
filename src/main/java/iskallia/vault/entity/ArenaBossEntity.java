@@ -4,8 +4,12 @@ import iskallia.vault.Vault;
 import iskallia.vault.entity.ai.AOEGoal;
 import iskallia.vault.entity.ai.SnowStormGoal;
 import iskallia.vault.entity.ai.TeleportGoal;
+import iskallia.vault.entity.ai.TeleportRandomly;
+import iskallia.vault.init.ModConfigs;
 import iskallia.vault.world.data.ArenaRaidData;
+import iskallia.vault.world.data.VaultRaidData;
 import iskallia.vault.world.raid.ArenaRaid;
+import iskallia.vault.world.raid.VaultRaid;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -28,6 +32,26 @@ import java.util.UUID;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ArenaBossEntity extends FighterEntity {
+
+	public TeleportRandomly<ArenaBossEntity> teleportTask = new TeleportRandomly<>(this, (entity, source, amount) -> {
+		if(!entity.world.isRemote && source instanceof IndirectEntityDamageSource) {
+			VaultRaid raid = VaultRaidData.get((ServerWorld)entity.world).getAt(entity.getPosition());
+
+			if(raid != null) {
+				return ModConfigs.VAULT_MOBS.getForLevel(raid.level).TP_CHANCE;
+			}
+
+			return 1.0D;
+		}
+
+		return 0.0D;
+	}, (entity, source, amount) -> {
+		if(!(source.getTrueSource() instanceof LivingEntity)) {
+			return 0.1D;
+		}
+
+		return 0.0D;
+	});
 
 	public ArenaBossEntity(EntityType<? extends ZombieEntity> type, World world) {
 		super(type, world);
@@ -131,37 +155,11 @@ public class ArenaBossEntity extends FighterEntity {
 
 		if(this.isInvulnerableTo(source) || source == DamageSource.FALL) {
 			return false;
-		} else if(source instanceof IndirectEntityDamageSource) {
-			for(int i = 0; i < 64; ++i) {
-				if(this.teleportRandomly()) {
-					this.world.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
-					return true;
-				}
-			}
-
-			return false;
-		} else {
-			boolean flag = super.attackEntityFrom(source, amount);
-
-			if(!this.world.isRemote() && !(source.getTrueSource() instanceof LivingEntity) && this.rand.nextInt(10) != 0) {
-				if(this.teleportRandomly()) {
-					this.world.playSound(null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.ENTITY_ENDERMAN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
-				}
-			}
-
-			return flag;
-		}
-	}
-
-	private boolean teleportRandomly() {
-		if (!this.world.isRemote() && this.isAlive()) {
-			double d0 = this.getPosX() + (this.rand.nextDouble() - 0.5D) * 64.0D;
-			double d1 = this.getPosY() + (double)(this.rand.nextInt(64) - 32);
-			double d2 = this.getPosZ() + (this.rand.nextDouble() - 0.5D) * 64.0D;
-			return this.attemptTeleport(d0, d1, d2, true);
+		} else if(teleportTask.attackEntityFrom(source, amount)) {
+			return true;
 		}
 
-		return false;
+		return super.attackEntityFrom(source, amount);
 	}
 
 	@SubscribeEvent
