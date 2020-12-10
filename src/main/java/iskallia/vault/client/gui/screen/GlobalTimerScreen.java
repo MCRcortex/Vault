@@ -90,7 +90,7 @@ public class GlobalTimerScreen extends Screen {
 
     public static String formatTimeLeft(long secondsLeft) {
         long minutes = (secondsLeft / 60) % 60;
-        long hour = (secondsLeft / (3600)) % 60;
+        long hour = (secondsLeft / (1440)) % 24;
         long days = (secondsLeft / (86400));
         return String.format("%02d:%02d:%02d", days, hour, minutes);
     }

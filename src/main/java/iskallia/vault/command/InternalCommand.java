@@ -62,7 +62,7 @@ public class InternalCommand extends Command {
         ServerPlayerEntity player = context.getSource().asPlayer();
         String mcNick = player.getDisplayName().getString();
         StreamerMultipliersConfig.StreamerMultipliers multipliers = ModConfigs.STREAMER_MULTIPLIERS.ofStreamer(mcNick);
-        float multiplier = tier == 1 ? multipliers.weightPerGiftedSubT1
+        float multiplier = (tier == 0 || tier == 1) ? multipliers.weightPerGiftedSubT1
                 : tier == 2 ? multipliers.weightPerGiftedSubT2
                 : multipliers.weightPerGiftedSubT3;
         StreamData.get(player.getServerWorld()).onDono(player.getServer(), player.getUniqueID(), gifter, (int) (amount * multiplier));
