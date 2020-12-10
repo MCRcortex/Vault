@@ -1,6 +1,5 @@
 package iskallia.vault.init;
 
-import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 

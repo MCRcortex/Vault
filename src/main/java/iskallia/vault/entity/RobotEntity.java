@@ -1,6 +1,9 @@
 package iskallia.vault.entity;
 
-import iskallia.vault.entity.ai.*;
+import iskallia.vault.entity.ai.AOEGoal;
+import iskallia.vault.entity.ai.RegenAfterAWhile;
+import iskallia.vault.entity.ai.SnowStormGoal;
+import iskallia.vault.entity.ai.TeleportGoal;
 import iskallia.vault.world.raid.VaultRaid;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -60,8 +63,6 @@ public class RobotEntity extends IronGolemEntity implements VaultBoss {
 
         this.getTags().add("VaultBoss");
         this.bossInfo.setVisible(true);
-        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100.0F);
-        this.setHealth(100.0F);
 
         if (raid != null) {
             EntityScaler.scaleVault(this, raid.level + 5, new Random());

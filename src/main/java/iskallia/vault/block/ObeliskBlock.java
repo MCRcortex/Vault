@@ -4,7 +4,6 @@ import iskallia.vault.client.gui.overlay.VaultRaidOverlay;
 import iskallia.vault.config.VaultMobsConfig;
 import iskallia.vault.entity.ArenaBossEntity;
 import iskallia.vault.entity.EntityScaler;
-import iskallia.vault.entity.FighterEntity;
 import iskallia.vault.entity.VaultBoss;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModEntities;
@@ -16,7 +15,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -137,6 +135,17 @@ public class ObeliskBlock extends Block {
         if (boss == null) {
             // TODO: Wut? How da hell?
             return;
+        }
+
+        if(raid != null && boss instanceof LivingEntity) {
+            VaultMobsConfig.Level override = ModConfigs.VAULT_MOBS.getForLevel(raid.level);
+
+            ((LivingEntity)boss).getAttribute(Attributes.MAX_HEALTH).setBaseValue(override.BOSS_HEALTH);
+            ((LivingEntity)boss).setHealth((float)override.BOSS_HEALTH);
+
+            ((LivingEntity)boss).getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(override.BOSS_SPEED);
+            ((LivingEntity)boss).getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(override.BOSS_DAMAGE);
+            ((LivingEntity)boss).getAttribute(Attributes.ARMOR).setBaseValue(override.BOSS_ARMOR);
         }
 
         boss.spawnInTheWorld(raid, world, pos);

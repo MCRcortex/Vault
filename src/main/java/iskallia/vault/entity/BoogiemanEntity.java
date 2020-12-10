@@ -68,8 +68,6 @@ public class BoogiemanEntity extends ZombieEntity implements VaultBoss {
 
         this.getTags().add("VaultBoss");
         this.bossInfo.setVisible(true);
-        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100.0F);
-        this.setHealth(100.0F);
 
         if (raid != null) {
             EntityScaler.scaleVault(this, raid.level + 5, new Random());

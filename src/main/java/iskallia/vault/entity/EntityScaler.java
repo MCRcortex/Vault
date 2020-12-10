@@ -5,7 +5,6 @@ import iskallia.vault.config.VaultMobsConfig;
 import iskallia.vault.init.ModConfigs;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

@@ -1,23 +1,20 @@
 package iskallia.vault.entity;
 
-import iskallia.vault.entity.ai.*;
-import iskallia.vault.init.ModEntities;
-import iskallia.vault.util.EntityHelper;
-import iskallia.vault.world.data.VaultRaidData;
+import iskallia.vault.entity.ai.AOEGoal;
+import iskallia.vault.entity.ai.RegenAfterAWhile;
+import iskallia.vault.entity.ai.SnowStormGoal;
+import iskallia.vault.entity.ai.TeleportGoal;
 import iskallia.vault.world.raid.VaultRaid;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.monster.SlimeEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.World;
@@ -74,8 +71,6 @@ public class MonsterEyeEntity extends SlimeEntity implements VaultBoss {
 
         this.getTags().add("VaultBoss");
         this.bossInfo.setVisible(true);
-        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100.0F);
-        this.setHealth(100.0F);
 
         if (raid != null) {
             EntityScaler.scaleVault(this, raid.level + 5, new Random());

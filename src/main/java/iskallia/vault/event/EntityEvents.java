@@ -19,7 +19,6 @@ import net.minecraft.block.DoorBlock;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -153,8 +152,6 @@ public class EntityEvents {
 		boss.getTags().add("VaultBoss");
 		boss.bossInfo.setVisible(true);
 		boss.setCustomName(new StringTextComponent("Boss"));
-		boss.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100.0F);
-		boss.setHealth(100.0F);
 
 		VaultRaid raid = VaultRaidData.get((ServerWorld)entity.world).getAt(entity.getPosition());
 

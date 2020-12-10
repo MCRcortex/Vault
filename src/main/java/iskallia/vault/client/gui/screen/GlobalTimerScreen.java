@@ -5,7 +5,6 @@ import iskallia.vault.Vault;
 import iskallia.vault.client.gui.helper.FontHelper;
 import iskallia.vault.client.gui.helper.UIHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Quaternion;

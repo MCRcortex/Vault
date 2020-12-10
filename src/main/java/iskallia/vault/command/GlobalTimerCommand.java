@@ -8,8 +8,8 @@ import iskallia.vault.world.data.GlobalTimeData;
 import net.minecraft.command.CommandSource;
 import net.minecraft.world.server.ServerWorld;
 
-import static net.minecraft.command.Commands.literal;
 import static net.minecraft.command.Commands.argument;
+import static net.minecraft.command.Commands.literal;
 
 public class GlobalTimerCommand extends Command {
 

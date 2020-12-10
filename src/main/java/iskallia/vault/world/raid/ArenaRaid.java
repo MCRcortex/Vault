@@ -12,7 +12,6 @@ import iskallia.vault.network.message.VaultRaidTickMessage;
 import iskallia.vault.world.data.StreamData;
 import iskallia.vault.world.gen.structure.ArenaStructure;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.GlassBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.FireworkRocketEntity;

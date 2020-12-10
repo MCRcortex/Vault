@@ -6,7 +6,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import iskallia.vault.config.StreamerMultipliersConfig;
-import iskallia.vault.init.ModCommands;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.item.ItemTraderCore;
 import iskallia.vault.world.data.StreamData;
