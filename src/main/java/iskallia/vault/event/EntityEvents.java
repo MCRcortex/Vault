@@ -29,6 +29,7 @@ import net.minecraft.item.Items;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameterSets;
 import net.minecraft.loot.LootParameters;
+import net.minecraft.network.play.server.STitlePacket;
 import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -39,7 +40,10 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.concurrent.TickDelayedTask;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.Color;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.*;
@@ -215,6 +219,27 @@ public class EntityEvents {
 				raid.won = true;
 				raid.ticksLeft = 20 * 20;
 				world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MASTER, 1.0F, 1.0F);
+
+				StringTextComponent title = new StringTextComponent("Vault Cleared!");
+				title.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_ddd01e)));
+
+				Entity entity = event.getEntity();
+
+				IFormattableTextComponent entityName = entity instanceof FighterEntity
+						? entity.getName().deepCopy() : entity.getType().getName().deepCopy();
+				entityName.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_dd711e)));
+				IFormattableTextComponent subtitle = new StringTextComponent(" was killed.");
+				subtitle.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_ddd01e)));
+
+				StringTextComponent actionBar = new StringTextComponent("You'll be teleported back soon...");
+				actionBar.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_ddd01e)));
+
+				STitlePacket titlePacket = new STitlePacket(STitlePacket.Type.TITLE, title);
+				STitlePacket subtitlePacket = new STitlePacket(STitlePacket.Type.SUBTITLE, entityName.append(subtitle));
+
+				player.connection.sendPacket(titlePacket);
+				player.connection.sendPacket(subtitlePacket);
+				player.sendStatusMessage(actionBar, true);
 			});
 		}
 	}

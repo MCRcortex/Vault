@@ -268,13 +268,13 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
             String duration = String.format("%02d:%02d", minutes, seconds);
 
             StringTextComponent title = new StringTextComponent("The Vault");
-            title.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_ddd01e)));
+            title.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_ddd01e)));
 
             IFormattableTextComponent subtitle = new StringTextComponent("Good luck, ").append(player.getName()).append(new StringTextComponent("!"));
-            subtitle.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_ddd01e)));
+            subtitle.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_ddd01e)));
 
             StringTextComponent actionBar = new StringTextComponent("You have " + duration + " minutes to complete the raid.");
-            actionBar.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_ddd01e)));
+            actionBar.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_ddd01e)));
 
             STitlePacket titlePacket = new STitlePacket(STitlePacket.Type.TITLE, title);
             STitlePacket subtitlePacket = new STitlePacket(STitlePacket.Type.SUBTITLE, subtitle);

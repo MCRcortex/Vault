@@ -154,14 +154,14 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
     private void onFighterWin(ServerWorld world) {
         this.runIfPresent(world, playerEntity -> {
             StringTextComponent title = new StringTextComponent("You Win");
-            title.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF00)));
+            title.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_00FF00)));
 
             IFormattableTextComponent subtitle = new StringTextComponent("GG");
-            subtitle.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_91ee3e)));
+            subtitle.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_91ee3e)));
 
             StringTextComponent actionBar = new StringTextComponent("With "
                     + this.spawner.fighters.stream().map(world::getEntityByUuid).filter(Objects::nonNull).count() + " subscribers left.");
-            actionBar.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_91ee3e)));
+            actionBar.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_91ee3e)));
 
             STitlePacket titlePacket = new STitlePacket(STitlePacket.Type.TITLE, title);
             STitlePacket subtitlePacket = new STitlePacket(STitlePacket.Type.SUBTITLE, subtitle);
@@ -327,13 +327,13 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
 
         this.runIfPresent(world, playerEntity -> {
             StringTextComponent title = new StringTextComponent("The Arena");
-            title.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_91ee3e)));
+            title.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_91ee3e)));
 
             IFormattableTextComponent subtitle = new StringTextComponent("Let the fight begin!");
-            subtitle.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_91ee3e)));
+            subtitle.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_91ee3e)));
 
             StringTextComponent actionBar = new StringTextComponent("You have " + spawner.getFighterCount() + " subscribers on your side.");
-            actionBar.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_91ee3e)));
+            actionBar.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_91ee3e)));
 
             STitlePacket titlePacket = new STitlePacket(STitlePacket.Type.TITLE, title);
             STitlePacket subtitlePacket = new STitlePacket(STitlePacket.Type.SUBTITLE, subtitle);
