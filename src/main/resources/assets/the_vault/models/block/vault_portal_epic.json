@@ -1,7 +1,7 @@
 {
   "textures": {
-    "particle": "the_vault:block/vault_portal",
-    "portal": "the_vault:block/vault_portal"
+    "particle": "the_vault:block/vault_portal_epic",
+    "portal": "the_vault:block/vault_portal_epic"
   },
   "elements": [
     {   "from": [ 0, 0, 6 ],

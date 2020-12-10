@@ -1,11 +1,13 @@
 package iskallia.vault.init;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 
 public class ModModels {
 
     public static void setupRenderLayers() {
+        RenderTypeLookup.setRenderLayer(ModBlocks.VAULT_PORTAL, RenderType.getTranslucent());
         RenderTypeLookup.setRenderLayer(ModBlocks.ALEXANDRITE_DOOR, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.BENITOITE_DOOR, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.LARIMAR_DOOR, RenderType.getCutout());
