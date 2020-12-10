@@ -25,7 +25,7 @@ public class LegendaryTreasureRareConfig extends Config {
 
     @Override
     protected void reset() {
-        ITEMS.add(new LegendaryItem("minecraft:golden_apple", "{display:{Name:'{\"text\":\"Fancier Apple\"}'}}"));
+        ITEMS.add(new LegendaryItem("minecraft:apple", "{display:{Name:'{\"text\":\"Fancy Apple\"}'}}"));
         ITEMS.add(new LegendaryItem("minecraft:golden_sword", "{Enchantments:[{id:\"minecraft:sharpness\",lvl:5s}]}"));
     }
 
