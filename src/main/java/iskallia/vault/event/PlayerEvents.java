@@ -18,6 +18,8 @@ import net.minecraftforge.fml.network.NetworkDirection;
 public class PlayerEvents {
 
 	public static boolean NATURAL_REGEN_OLD_VALUE = false; //TODO: No static field pls
+	public static boolean SHOULD_TICK_END = false;
+
 
 	@SubscribeEvent
 	public static void onStartTracking(PlayerEvent.StartTracking event) {
@@ -33,13 +35,17 @@ public class PlayerEvents {
 
 	@SubscribeEvent
 	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-		if(event.side == LogicalSide.CLIENT || event.player.world.getDimensionKey() != Vault.VAULT_KEY)return;
+		if(event.side == LogicalSide.CLIENT)return;
+
+		if(event.player.world.getDimensionKey() != Vault.VAULT_KEY && !(SHOULD_TICK_END && event.phase != TickEvent.Phase.END))return;
 
 		if(event.phase == TickEvent.Phase.START) {
 			NATURAL_REGEN_OLD_VALUE = event.player.world.getGameRules().getBoolean(GameRules.NATURAL_REGENERATION);
 			event.player.world.getGameRules().get(GameRules.NATURAL_REGENERATION).set(false, event.player.getServer());
+			SHOULD_TICK_END = true;
 		} else if(event.phase == TickEvent.Phase.END) {
 			event.player.world.getGameRules().get(GameRules.NATURAL_REGENERATION).set(NATURAL_REGEN_OLD_VALUE, event.player.getServer());
+			SHOULD_TICK_END = false;
 		}
 	}
 
