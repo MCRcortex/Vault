@@ -19,6 +19,7 @@ public class ModCommands {
     public static VaultLevelCommand VAULT_LEVEL;
     public static InternalCommand INTERNAL;
     public static DebugCommand DEBUG;
+    public static GiveBitsCommand GIVE_BITS;
 
     public static void registerCommands(CommandDispatcher<CommandSource> dispatcher, Commands.EnvironmentType env) {
         RELOAD_CONFIGS = registerCommand(ReloadConfigsCommand::new, dispatcher, env);
@@ -27,6 +28,7 @@ public class ModCommands {
         VAULT_LEVEL = registerCommand(VaultLevelCommand::new, dispatcher, env);
         INTERNAL = registerCommand(InternalCommand::new, dispatcher, env);
         DEBUG = registerCommand(DebugCommand::new, dispatcher, env);
+        GIVE_BITS = registerCommand(GiveBitsCommand::new, dispatcher, env);
     }
 
     public static <T extends Command> T registerCommand(Supplier<T> supplier, CommandDispatcher<CommandSource> dispatcher, Commands.EnvironmentType env) {
