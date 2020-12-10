@@ -228,7 +228,7 @@ public class EntityEvents {
 				IFormattableTextComponent entityName = entity instanceof FighterEntity
 						? entity.getName().deepCopy() : entity.getType().getName().deepCopy();
 				entityName.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_dd711e)));
-				IFormattableTextComponent subtitle = new StringTextComponent(" was killed.");
+				IFormattableTextComponent subtitle = new StringTextComponent(" is defeated.");
 				subtitle.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_ddd01e)));
 
 				StringTextComponent actionBar = new StringTextComponent("You'll be teleported back soon...");

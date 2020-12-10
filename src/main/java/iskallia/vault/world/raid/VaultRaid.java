@@ -14,6 +14,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.play.server.SChatPacket;
 import net.minecraft.network.play.server.STitlePacket;
 import net.minecraft.scoreboard.ScoreCriteria;
 import net.minecraft.scoreboard.ScoreObjective;
@@ -21,6 +22,7 @@ import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
@@ -86,18 +88,18 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
     }
 
     public void tick(ServerWorld world) {
-        if(this.finished)return;
+        if (this.finished) return;
 
         this.runIfPresent(world.getServer(), player -> {
-            if(player.world.getDimensionKey() != Vault.ARENA_KEY) {
+            if (player.world.getDimensionKey() != Vault.ARENA_KEY) {
                 this.ticksLeft--;
             }
 
             this.syncTicksLeft(world.getServer());
         });
 
-        if(this.ticksLeft <= 0) {
-            if(this.won) {
+        if (this.ticksLeft <= 0) {
+            if (this.won) {
                 this.runIfPresent(world.getServer(), playerEntity -> {
                     this.teleportToStart(world, playerEntity);
                 });
@@ -118,10 +120,10 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
             }
         } else {
             this.runIfPresent(world.getServer(), player -> {
-                if(this.ticksLeft + 20 < this.sTickLeft
+                if (this.ticksLeft + 20 < this.sTickLeft
                         && player.world.getDimensionKey() != Vault.VAULT_KEY
                         && player.world.getDimensionKey() != Vault.ARENA_KEY) {
-                    if(player.world.getDimensionKey() == World.OVERWORLD) {
+                    if (player.world.getDimensionKey() == World.OVERWORLD) {
                         this.finished = true;
                     } else {
                         this.ticksLeft = 1;
@@ -225,15 +227,27 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
                 this.facing == null ? world.getRandom().nextFloat() * 360.0F : this.facing.rotateY().getHorizontalAngle(), 0.0F);
 
         player.setOnGround(true);
+
+        IFormattableTextComponent playerName = player.getDisplayName().deepCopy();
+        playerName.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_983198)));
+
+        StringTextComponent text = new StringTextComponent(" started a Vault raid!");
+        text.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_ffffff)));
+
+        world.getServer().getPlayerList().func_232641_a_(
+                playerName.append(text),
+                ChatType.CHAT,
+                playerId
+        );
     }
 
     public void start(ServerWorld world, ServerPlayerEntity player, ChunkPos chunkPos) {
         loop:
         for (int x = -48; x < 48; x++) {
             for (int z = -48; z < 48; z++) {
-                for(int y = 0; y < 48; y++) {
+                for (int y = 0; y < 48; y++) {
                     BlockPos pos = chunkPos.asBlockPos().add(x, VaultStructure.START_Y + y, z);
-                    if (world.getBlockState(pos).getBlock() != Blocks.CRIMSON_PRESSURE_PLATE)continue;
+                    if (world.getBlockState(pos).getBlock() != Blocks.CRIMSON_PRESSURE_PLATE) continue;
                     world.setBlockState(pos, Blocks.AIR.getDefaultState());
 
                     this.start = pos;
