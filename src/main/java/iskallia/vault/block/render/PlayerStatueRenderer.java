@@ -114,7 +114,9 @@ public class PlayerStatueRenderer extends TileEntityRenderer<PlayerStatueTileEnt
         matrixStack.scale(scale, scale, scale);
         matrixStack.rotate(mc.getRenderManager().getCameraOrientation()); // face the camera
         matrixStack.rotate(Vector3f.ZP.rotationDegrees(180.0F)); // flip vertical
+
         fontRenderer.func_243247_a(text, offset, 0, color, false, matrix4f, buffer, true, opacity, lightLevel);
+        fontRenderer.func_243247_a(text, offset, 0, -1, false, matrix4f, buffer, false, 0, lightLevel);
         matrixStack.pop();
     }
 

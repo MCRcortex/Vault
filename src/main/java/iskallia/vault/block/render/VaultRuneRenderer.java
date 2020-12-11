@@ -1,6 +1,7 @@
 package iskallia.vault.block.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.block.entity.VaultRuneTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -49,7 +50,7 @@ public class VaultRuneRenderer extends TileEntityRenderer<VaultRuneTileEntity> {
         //render amount required for the item
         matrixStack.push();
         float scale = 0.02f;
-        int opacity = (int) (.4f * 255.0F) << 24;
+        int opacity = (int) (0.4f * 255.0F) << 24;
         float offset = (float) (-fontRenderer.getStringPropertyWidth(text) / 2);
         Matrix4f matrix4f = matrixStack.getLast().getMatrix();
 
@@ -57,7 +58,9 @@ public class VaultRuneRenderer extends TileEntityRenderer<VaultRuneTileEntity> {
         matrixStack.scale(scale, scale, scale);
         matrixStack.rotate(mc.getRenderManager().getCameraOrientation()); // face the camera
         matrixStack.rotate(Vector3f.ZP.rotationDegrees(180.0F)); // flip vertical
+
         fontRenderer.func_243247_a(text, offset, 0, color, false, matrix4f, buffer, true, opacity, lightLevel);
+        fontRenderer.func_243247_a(text, offset, 0, -1, false, matrix4f, buffer, false, 0, lightLevel);
         matrixStack.pop();
     }
 
