@@ -98,6 +98,12 @@ public class BlueBlazeEntity extends BlazeEntity implements VaultBoss {
 
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
+        if(!(source.getTrueSource() instanceof PlayerEntity)
+                && !(source.getTrueSource() instanceof ArenaFighterEntity) // Here for future Mini Subber thingy!
+                && source != DamageSource.OUT_OF_WORLD) {
+            return false;
+        }
+
         if(this.isInvulnerableTo(source) || source == DamageSource.FALL) {
             return false;
         } else if(teleportTask.attackEntityFrom(source, amount)) {

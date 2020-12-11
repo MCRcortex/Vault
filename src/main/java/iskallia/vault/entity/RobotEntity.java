@@ -4,6 +4,7 @@ import iskallia.vault.entity.ai.*;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.world.data.VaultRaidData;
 import iskallia.vault.world.raid.VaultRaid;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -96,6 +97,12 @@ public class RobotEntity extends IronGolemEntity implements VaultBoss {
 
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
+        if(!(source.getTrueSource() instanceof PlayerEntity)
+                && !(source.getTrueSource() instanceof ArenaFighterEntity) // Here for future Mini Subber thingy!
+                && source != DamageSource.OUT_OF_WORLD) {
+            return false;
+        }
+
         if(this.isInvulnerableTo(source) || source == DamageSource.FALL) {
             return false;
         } else if(teleportTask.attackEntityFrom(source, amount)) {
