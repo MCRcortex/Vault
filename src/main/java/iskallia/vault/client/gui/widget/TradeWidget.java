@@ -49,21 +49,34 @@ public class TradeWidget extends Widget {
 
         minecraft.getTextureManager().bindTexture(VendingMachineScreen.HUD_RESOURCE);
 
+        Trade trade = traderCode.getTrade();
+        ItemStack buy = trade.getBuy().toStack();
+        ItemStack sell = trade.getSell().toStack();
+
+        ItemRenderer itemRenderer = minecraft.getItemRenderer();
+
+        Rectangle tradeBoundaries = parentScreen.getTradeBoundaries();
+        int yOFfset = parentScreen.tradesContainer.getyOffset();
+
+        if(trade.getTradesLeft() == 0) {
+            blit(matrixStack, x, y,
+                    277, 96, BUTTON_WIDTH, BUTTON_HEIGHT, 512, 256);
+            RenderSystem.disableDepthTest();
+            itemRenderer.renderItemIntoGUI(buy,
+                    5 + x + tradeBoundaries.x0,
+                    6 + y + tradeBoundaries.y0 - yOFfset);
+            itemRenderer.renderItemIntoGUI(sell,
+                    55 + x + tradeBoundaries.x0,
+                    6 + y + tradeBoundaries.y0 - yOFfset);
+            return;
+        }
+
         boolean isHovered = isHovered(mouseX, mouseY);
 
         boolean isSelected = parentScreen.getContainer().getSelectedTrade() == this.traderCode;
 
         blit(matrixStack, x, y,
                 277, isHovered || isSelected ? 68 : 40, BUTTON_WIDTH, BUTTON_HEIGHT, 512, 256);
-
-        Trade trade = traderCode.getTrade();
-        ItemStack buy = trade.getBuy().toStack();
-        ItemStack sell = trade.getSell().toStack();
-
-        Rectangle tradeBoundaries = parentScreen.getTradeBoundaries();
-        int yOFfset = parentScreen.tradesContainer.getyOffset();
-
-        ItemRenderer itemRenderer = minecraft.getItemRenderer();
 
         RenderSystem.disableDepthTest();
         itemRenderer.renderItemIntoGUI(buy,

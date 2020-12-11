@@ -1,5 +1,6 @@
 package iskallia.vault.container.inventory;
 
+import iskallia.vault.block.entity.VendingMachineTileEntity;
 import iskallia.vault.vending.Product;
 import iskallia.vault.vending.Trade;
 import iskallia.vault.vending.TraderCore;
@@ -16,9 +17,11 @@ public class VendingInventory implements IInventory {
     public static final int SELL_SLOT = 2;
 
     private final NonNullList<ItemStack> slots = NonNullList.withSize(3, ItemStack.EMPTY);
+    private VendingMachineTileEntity tileEntity;
     private TraderCore selectedCore;
 
-    public void updateSelectedCore(TraderCore core) {
+    public void updateSelectedCore(VendingMachineTileEntity tileEntity, TraderCore core) {
+        this.tileEntity = tileEntity;
         this.selectedCore = core;
     }
 
@@ -48,6 +51,8 @@ public class VendingInventory implements IInventory {
         if (index == SELL_SLOT && !itemStack.isEmpty()) {
             ItemStack andSplit = ItemStackHelper.getAndSplit(slots, index, itemStack.getCount());
             decrStackSize(BUY_SLOT, selectedCore.getTrade().getBuy().getAmount());
+            selectedCore.getTrade().onTraded();
+            tileEntity.sendUpdates();
             updateRecipe();
             return andSplit;
         }
@@ -91,6 +96,10 @@ public class VendingInventory implements IInventory {
             slots.set(SELL_SLOT, ItemStack.EMPTY);
         } else {
             slots.set(SELL_SLOT, sell.toStack());
+        }
+
+        if (trade.getTradesLeft() == 0) {
+            slots.set(SELL_SLOT, ItemStack.EMPTY);
         }
     }
 

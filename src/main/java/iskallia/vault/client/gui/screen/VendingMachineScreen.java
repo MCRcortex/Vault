@@ -14,6 +14,7 @@ import iskallia.vault.entity.model.StatuePlayerModel;
 import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.VendingUIMessage;
 import iskallia.vault.util.SkinProfile;
+import iskallia.vault.vending.Trade;
 import iskallia.vault.vending.TraderCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
@@ -29,8 +30,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.Color;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -203,8 +206,15 @@ public class VendingMachineScreen extends ContainerScreen<VendingMachineContaine
 
         for (TradeWidget tradeWidget : tradeWidgets) {
             if (tradeWidget.isHovered(tradeContainerX, tradeContainerY)) {
-                ItemStack sellStack = tradeWidget.getTraderCode().getTrade().getSell().toStack();
-                renderTooltip(matrixStack, sellStack, mouseX, mouseY);
+                Trade trade = tradeWidget.getTraderCode().getTrade();
+                if (trade.getTradesLeft() != 0) {
+                    ItemStack sellStack = trade.getSell().toStack();
+                    renderTooltip(matrixStack, sellStack, mouseX, mouseY);
+                } else {
+                    StringTextComponent text = new StringTextComponent("Sold out, sorry!");
+                    text.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_FF0000)));
+                    renderTooltip(matrixStack, text, mouseX, mouseY);
+                }
             }
         }
 

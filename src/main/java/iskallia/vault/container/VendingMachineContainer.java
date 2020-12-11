@@ -73,11 +73,15 @@ public class VendingMachineContainer extends Container {
     public void selectTrade(int index) {
         List<TraderCore> cores = tileEntity.getCores();
         if (index < 0 || index >= cores.size()) return;
+
         TraderCore traderCore = cores.get(index);
-        vendingInventory.updateSelectedCore(traderCore);
+        int tradesLeft = traderCore.getTrade().getTradesLeft();
+        if (tradesLeft == 0) return; // Cannot select
+
+        vendingInventory.updateSelectedCore(tileEntity, traderCore);
         vendingInventory.updateRecipe();
 
-        if(vendingInventory.getStackInSlot(VendingInventory.BUY_SLOT) != ItemStack.EMPTY) {
+        if (vendingInventory.getStackInSlot(VendingInventory.BUY_SLOT) != ItemStack.EMPTY) {
             ItemStack buyStack = vendingInventory.removeStackFromSlot(VendingInventory.BUY_SLOT);
             playerInventory.addItemStackToInventory(buyStack);
         }
