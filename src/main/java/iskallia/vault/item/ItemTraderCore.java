@@ -13,9 +13,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -90,24 +88,47 @@ public class ItemTraderCore extends Item {
             Product buy = trade.getBuy();
             Product extra = trade.getExtra();
             Product sell = trade.getSell();
-            tooltip.add(new StringTextComponent("Name: " + core.getName()));
+            tooltip.add(new StringTextComponent(""));
+            tooltip.add(new StringTextComponent("Trader: "));
+            StringTextComponent traderName = new StringTextComponent(" " + core.getName());
+            traderName.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_FFAA00)));
+            tooltip.add(traderName);
+            tooltip.add(new StringTextComponent(""));
             tooltip.add(new StringTextComponent("Trades: "));
             if (buy != null && buy.isValid()) {
                 StringTextComponent comp = new StringTextComponent(" - Buy: ");
-                comp.append(new TranslationTextComponent(buy.getItem().getTranslationKey()))
-                        .append(new StringTextComponent(" x" + buy.getAmount()));
+                TranslationTextComponent name = new TranslationTextComponent(buy.getItem().getTranslationKey());
+                name.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_FFAA00)));
+                comp.append(name).append(new StringTextComponent(" x" + buy.getAmount()));
                 tooltip.add(comp);
             }
             if (extra != null && extra.isValid()) {
                 StringTextComponent comp = new StringTextComponent(" - Extra: ");
-                comp.append(new TranslationTextComponent(extra.getItem().getTranslationKey()))
-                        .append(new StringTextComponent(" x" + extra.getAmount()));
+                TranslationTextComponent name = new TranslationTextComponent(extra.getItem().getTranslationKey());
+                name.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_FFAA00)));
+                comp.append(name).append(new StringTextComponent(" x" + extra.getAmount()));
                 tooltip.add(comp);
             }
             if (sell != null && sell.isValid()) {
                 StringTextComponent comp = new StringTextComponent(" - Sell: ");
-                comp.append(new TranslationTextComponent(sell.getItem().getTranslationKey()))
-                        .append(new StringTextComponent(" x" + sell.getAmount()));
+                TranslationTextComponent name = new TranslationTextComponent(sell.getItem().getTranslationKey());
+                name.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_FFAA00)));
+                comp.append(name).append(new StringTextComponent(" x" + sell.getAmount()));
+                tooltip.add(comp);
+            }
+
+            tooltip.add(new StringTextComponent(""));
+            if (trade.getTradesLeft() == 0) {
+                StringTextComponent comp = new StringTextComponent("[0] Sold out, sorry!");
+                comp.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_FF0000)));
+                tooltip.add(comp);
+            } else if (trade.getTradesLeft() == -1) {
+                StringTextComponent comp = new StringTextComponent("[\u221e] Has unlimited trades.");
+                comp.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_00AAFF)));
+                tooltip.add(comp);
+            } else {
+                StringTextComponent comp = new StringTextComponent("[" + trade.getTradesLeft() + "] Has a limited stock.");
+                comp.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_FFAA00)));
                 tooltip.add(comp);
             }
         }
@@ -116,7 +137,9 @@ public class ItemTraderCore extends Item {
 
     @Override
     public ITextComponent getDisplayName(ItemStack stack) {
-        return new StringTextComponent("Trader Circuit");
+        StringTextComponent text = new StringTextComponent("Trader Circuit");
+        text.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_ad96c5)));
+        return text;
     }
 
 }
