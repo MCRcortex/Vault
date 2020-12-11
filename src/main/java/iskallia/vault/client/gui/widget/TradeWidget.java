@@ -38,14 +38,18 @@ public class TradeWidget extends Widget {
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
+    public boolean isHovered(int mouseX, int mouseY) {
+        return x <= mouseX && mouseX <= x + BUTTON_WIDTH
+                && y <= mouseY && mouseY <= y + BUTTON_HEIGHT;
+    }
+
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         Minecraft minecraft = Minecraft.getInstance();
 
         minecraft.getTextureManager().bindTexture(VendingMachineScreen.HUD_RESOURCE);
 
-        boolean isHovered = x <= mouseX && mouseX <= x + BUTTON_WIDTH
-                && y <= mouseY && mouseY <= y + BUTTON_HEIGHT;
+        boolean isHovered = isHovered(mouseX, mouseY);
 
         boolean isSelected = parentScreen.getContainer().getSelectedTrade() == this.traderCode;
 

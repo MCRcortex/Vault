@@ -36,7 +36,7 @@ public class VaultLevelsConfig extends Config {
     }
 
     public int defaultTNLFunction(int level) {
-        return level * 5 + 100;
+        return level * 500 + 10_000;
     }
 
     public static class VaultLevelMeta {

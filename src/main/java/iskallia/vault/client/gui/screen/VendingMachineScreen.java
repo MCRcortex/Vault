@@ -18,11 +18,13 @@ import iskallia.vault.vending.TraderCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.vector.Quaternion;
@@ -190,6 +192,23 @@ public class VendingMachineScreen extends ContainerScreen<VendingMachineContaine
         for (TradeWidget tradeWidget : tradeWidgets) {
             tradeWidget.render(matrixStack, tradeContainerX, tradeContainerY, partialTicks);
         }
+    }
+
+    @Override
+    protected void renderHoveredTooltip(MatrixStack matrixStack, int mouseX, int mouseY) {
+        Rectangle tradeBoundaries = getTradeBoundaries();
+
+        int tradeContainerX = mouseX - tradeBoundaries.x0;
+        int tradeContainerY = mouseY - tradeBoundaries.y0 + tradesContainer.getyOffset();
+
+        for (TradeWidget tradeWidget : tradeWidgets) {
+            if (tradeWidget.isHovered(tradeContainerX, tradeContainerY)) {
+                ItemStack sellStack = tradeWidget.getTraderCode().getTrade().getSell().toStack();
+                renderTooltip(matrixStack, sellStack, mouseX, mouseY);
+            }
+        }
+
+        super.renderHoveredTooltip(matrixStack, mouseX, mouseY);
     }
 
     public static void drawSkin(int posX, int posY, int yRotation, SkinProfile skin, boolean megahead) {
