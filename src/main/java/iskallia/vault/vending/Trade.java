@@ -15,10 +15,18 @@ public class Trade implements INBTSerializable {
     @Expose
     @NBTSerialize
     protected Product sell;
+    @Expose
+    @NBTSerialize
+    protected int max_trades;
+    @Expose
+    @NBTSerialize
+    protected int times_traded;
+
     private int hashCode;
 
     public Trade() {
         // Serialization.
+        this.max_trades = -1;
     }
 
     public Trade(Product buy, Product extra, Product sell) {
@@ -37,6 +45,23 @@ public class Trade implements INBTSerializable {
 
     public Product getSell() {
         return this.sell;
+    }
+
+    public int getMaxTrades() {
+        return max_trades;
+    }
+
+    public int getTimesTraded() {
+        return times_traded;
+    }
+
+    public int getTradesLeft() {
+        if (max_trades == -1) return -1;
+        return Math.max(0, max_trades - times_traded);
+    }
+
+    public void onTraded() {
+        this.times_traded++;
     }
 
     public boolean isValid() {

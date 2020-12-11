@@ -78,6 +78,7 @@ public class InternalCommand extends Command {
             ItemStack core = ItemTraderCore.generate(donator, amount, amount >= 100);
             player.dropItem(core, false, false);
         }
+        GiveBitsCommand.dropBits(player, amount * 100);
         return 0;
     }
 

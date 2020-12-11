@@ -11,6 +11,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -21,12 +22,14 @@ public class VendingMachineContainer extends Container {
 
     protected VendingMachineTileEntity tileEntity;
     protected VendingInventory vendingInventory;
+    protected PlayerInventory playerInventory;
 
     public VendingMachineContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
         super(ModContainers.VENDING_MACHINE_CONTAINER, windowId);
 
         BlockState blockState = world.getBlockState(pos);
         this.tileEntity = VendingMachineBlock.getVendingMachineTile(world, pos, blockState);
+        this.playerInventory = playerInventory;
 
         this.vendingInventory = new VendingInventory();
         this.addSlot(new Slot(vendingInventory, VendingInventory.BUY_SLOT, 210, 43) {
@@ -73,6 +76,26 @@ public class VendingMachineContainer extends Container {
         TraderCore traderCore = cores.get(index);
         vendingInventory.updateSelectedCore(traderCore);
         vendingInventory.updateRecipe();
+
+        if(vendingInventory.getStackInSlot(VendingInventory.BUY_SLOT) != ItemStack.EMPTY) {
+            ItemStack buyStack = vendingInventory.removeStackFromSlot(VendingInventory.BUY_SLOT);
+            playerInventory.addItemStackToInventory(buyStack);
+        }
+
+        int slot = slotForItem(traderCore.getTrade().getBuy().getItem());
+        if (slot != -1) {
+            ItemStack buyStack = playerInventory.removeStackFromSlot(slot);
+            vendingInventory.setInventorySlotContents(VendingInventory.BUY_SLOT, buyStack);
+        }
+    }
+
+    private int slotForItem(Item item) {
+        for (int i = 0; i < playerInventory.getSizeInventory(); i++) {
+            if (playerInventory.getStackInSlot(i).getItem() == item) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override

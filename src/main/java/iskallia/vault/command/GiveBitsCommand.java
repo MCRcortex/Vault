@@ -18,9 +18,10 @@ import static net.minecraft.command.Commands.argument;
 
 public class GiveBitsCommand extends Command {
 
-    public static final List<ItemBit> BIT_ITEMS = new LinkedList<>();
+    public static List<ItemBit> BIT_ITEMS;
 
     private static void initializeBits() {
+        BIT_ITEMS = new LinkedList<>();
         BIT_ITEMS.add(ModItems.BIT_10000);
         BIT_ITEMS.add(ModItems.BIT_5000);
         BIT_ITEMS.add(ModItems.BIT_1000);
@@ -51,7 +52,7 @@ public class GiveBitsCommand extends Command {
     }
 
     public static void dropBits(ServerPlayerEntity player, int bitsInput) {
-        if (BIT_ITEMS.size() == 0) initializeBits(); // <-- Lazy init to prevent any registry order errors
+        if (BIT_ITEMS == null) initializeBits(); // <-- Lazy init to prevent any registry order errors
 
         List<ItemStack> itemsToGive = new LinkedList<>();
 
