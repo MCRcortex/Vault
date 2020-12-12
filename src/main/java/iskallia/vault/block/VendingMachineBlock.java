@@ -133,12 +133,12 @@ public class VendingMachineBlock extends Block {
         if (!newState.isAir()) return;
 
         VendingMachineTileEntity machine = getVendingMachineTile(worldIn, pos, state);
-        if (machine != null) {
-            machine.ejectCores();
-        }
+        if (machine == null) return;
 
-        if (state.get(HALF) == DoubleBlockHalf.LOWER)
+        if (state.get(HALF) == DoubleBlockHalf.LOWER) {
+            machine.ejectCores();
             dropVendingMachine(worldIn, pos);
+        }
 
         super.onReplaced(state, worldIn, pos, newState, isMoving);
     }
