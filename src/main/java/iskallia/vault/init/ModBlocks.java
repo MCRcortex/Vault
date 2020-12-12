@@ -203,7 +203,7 @@ public class ModBlocks {
         registerBlockItem(event, OBELISK, 1);
         registerBlockItem(event, MVP_CROWN, 1);
         registerBlockItem(event, PLAYER_STATUE, PLAYER_STATUE_BLOCK_ITEM);
-        registerBlockItem(event, VENDING_MACHINE, 1);
+        registerBlockItem(event, VENDING_MACHINE, 64);
         registerBlockItem(event, VAULT_BEDROCK);
         registerBlockItem(event, RELIC_STATUE, RELIC_STATUE_BLOCK_ITEM);
     }
