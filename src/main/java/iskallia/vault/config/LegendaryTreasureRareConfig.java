@@ -1,7 +1,7 @@
 package iskallia.vault.config;
 
 import com.google.gson.annotations.Expose;
-import iskallia.vault.config.entry.ItemEntry;
+import iskallia.vault.config.entry.LegendaryItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -16,7 +16,7 @@ import java.util.Random;
 public class LegendaryTreasureRareConfig extends Config {
 
     @Expose
-    public List<ItemEntry> ITEMS = new ArrayList<>();
+    public List<LegendaryItem> ITEMS = new ArrayList<>();
 
     @Override
     public String getName() {
@@ -25,15 +25,15 @@ public class LegendaryTreasureRareConfig extends Config {
 
     @Override
     protected void reset() {
-        ITEMS.add(new ItemEntry("minecraft:apple", "{display:{Name:'{\"text\":\"Fancy Apple\"}'}}"));
-        ITEMS.add(new ItemEntry("minecraft:golden_sword", "{Enchantments:[{id:\"minecraft:sharpness\",lvl:5s}]}"));
+        ITEMS.add(new LegendaryItem("minecraft:apple", "{display:{Name:'{\"text\":\"Fancy Apple\"}'}}"));
+        ITEMS.add(new LegendaryItem("minecraft:golden_sword", "{Enchantments:[{id:\"minecraft:sharpness\",lvl:5s}]}"));
     }
 
     public ItemStack getRandom() {
         Random rand = new Random();
         ItemStack stack = ItemStack.EMPTY;
 
-        ItemEntry legendaryItem = ITEMS.get(rand.nextInt(ITEMS.size()));
+        LegendaryItem legendaryItem = ITEMS.get(rand.nextInt(ITEMS.size()));
 
         try {
             Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(legendaryItem.ITEM));
