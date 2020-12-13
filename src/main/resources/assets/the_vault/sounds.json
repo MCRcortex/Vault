@@ -62,6 +62,12 @@
       "the_vault:confetti"
     ]
   },
+  "gift_bomb": {
+    "category": "master",
+    "sounds": [
+      "the_vault:gift_bomb"
+    ]
+  },
   "vault_exp": {
     "category": "master",
     "sounds": [

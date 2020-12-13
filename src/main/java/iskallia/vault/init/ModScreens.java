@@ -22,6 +22,7 @@ public class ModScreens {
         MinecraftForge.EVENT_BUS.register(VaultRaidOverlay.class);
         MinecraftForge.EVENT_BUS.register(HyperBarOverlay.class);
         MinecraftForge.EVENT_BUS.register(ArenaScoreboardOverlay.class);
+        MinecraftForge.EVENT_BUS.register(GiftBombOverlay.class);
     }
 
 }
