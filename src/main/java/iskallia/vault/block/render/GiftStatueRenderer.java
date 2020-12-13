@@ -80,7 +80,7 @@ public class GiftStatueRenderer extends TileEntityRenderer<GiftStatueTileEntity>
         matrixStack.pop();
 
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player != null) {
+        if (blockState.get(GiftStatueBlock.VARIANT) == 1 && minecraft.player != null) {
             matrixStack.push();
             matrixStack.translate(0.5, 1.1, 0.5);
             matrixStack.scale(hatScale, hatScale, hatScale);
