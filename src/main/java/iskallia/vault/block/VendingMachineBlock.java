@@ -152,20 +152,25 @@ public class VendingMachineBlock extends Block {
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         ItemStack heldStack = player.getHeldItem(hand);
 
-        if (heldStack.getItem() == ModItems.TRADER_CORE) {
-            VendingMachineTileEntity machine = getVendingMachineTile(world, pos, state);
+        VendingMachineTileEntity machine = getVendingMachineTile(world, pos, state);
+        if (machine == null) return ActionResultType.SUCCESS;
 
-            if (machine != null) {
-                TraderCore lastCore = machine.getLastCore();
-                TraderCore coreToInsert = ItemTraderCore.toTraderCore(heldStack);
-                if (lastCore == null || lastCore.getName().equalsIgnoreCase(coreToInsert.getName())) {
-                    machine.addCore(coreToInsert);
-                    heldStack.shrink(1);
-                } else {
-                    StringTextComponent text = new StringTextComponent("This vending machine is already occupied.");
-                    text.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_ffd800)));
-                    player.sendStatusMessage(text, true);
-                }
+        if (!world.isRemote() && player.isSneaking()) {
+            machine.retrieveLastCore(player);
+            machine.sendUpdates();
+            return ActionResultType.SUCCESS;
+        }
+
+        if (heldStack.getItem() == ModItems.TRADER_CORE) {
+            TraderCore lastCore = machine.getLastCore();
+            TraderCore coreToInsert = ItemTraderCore.toTraderCore(heldStack);
+            if (lastCore == null || lastCore.getName().equalsIgnoreCase(coreToInsert.getName())) {
+                machine.addCore(coreToInsert);
+                heldStack.shrink(1);
+            } else {
+                StringTextComponent text = new StringTextComponent("This vending machine is already occupied.");
+                text.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_ffd800)));
+                player.sendStatusMessage(text, true);
             }
 
             return ActionResultType.SUCCESS;
@@ -175,39 +180,29 @@ public class VendingMachineBlock extends Block {
                 playOpenSound();
                 return ActionResultType.SUCCESS;
             }
-
-            VendingMachineTileEntity machine = getVendingMachineTile(world, pos, state);
-
-            if (machine != null) {
 //            machine.printCores(); // Nice way to debug, JML!
-                NetworkHooks.openGui(
-                        (ServerPlayerEntity) player,
-                        new INamedContainerProvider() {
-                            @Override
-                            public ITextComponent getDisplayName() {
-                                return new StringTextComponent("Vending Machine");
-                            }
-
-                            @Nullable
-                            @Override
-                            public Container createMenu(int windowId, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-                                BlockState blockState = world.getBlockState(pos);
-                                BlockPos vendingMachinePos = getVendingMachinePos(blockState, pos);
-                                return new VendingMachineContainer(windowId, world, vendingMachinePos, playerInventory, playerEntity);
-                            }
-                        },
-                        (buffer) -> {
-                            BlockState blockState = world.getBlockState(pos);
-                            buffer.writeBlockPos(getVendingMachinePos(blockState, pos));
+            NetworkHooks.openGui(
+                    (ServerPlayerEntity) player,
+                    new INamedContainerProvider() {
+                        @Override
+                        public ITextComponent getDisplayName() {
+                            return new StringTextComponent("Vending Machine");
                         }
-                );
 
-                if (!heldStack.isEmpty()) {
-                    return ActionResultType.SUCCESS;
-                }
-            }
+                        @Nullable
+                        @Override
+                        public Container createMenu(int windowId, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+                            BlockState blockState = world.getBlockState(pos);
+                            BlockPos vendingMachinePos = getVendingMachinePos(blockState, pos);
+                            return new VendingMachineContainer(windowId, world, vendingMachinePos, playerInventory, playerEntity);
+                        }
+                    },
+                    (buffer) -> {
+                        BlockState blockState = world.getBlockState(pos);
+                        buffer.writeBlockPos(getVendingMachinePos(blockState, pos));
+                    }
+            );
         }
-
         return super.onBlockActivated(state, world, pos, player, hand, hit);
     }
 

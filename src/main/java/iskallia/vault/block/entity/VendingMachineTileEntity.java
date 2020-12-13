@@ -7,6 +7,7 @@ import iskallia.vault.util.nbt.NBTSerializer;
 import iskallia.vault.vending.TraderCore;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
@@ -166,5 +167,16 @@ public class VendingMachineTileEntity extends TileEntity {
             ItemEntity entity = new ItemEntity(this.world, this.getPos().getX(), this.getPos().getY(), this.getPos().getZ(), ItemTraderCore.getStack(core));
             this.world.addEntity(entity);
         }
+    }
+
+    public void retrieveLastCore(PlayerEntity player) {
+        TraderCore lastCore = this.getLastCore();
+        if (lastCore == null) return;
+        ItemStack stack = ItemTraderCore.getStack(lastCore);
+        if (!player.addItemStackToInventory(ItemTraderCore.getStack(lastCore))) {
+            ItemEntity entity = new ItemEntity(this.world, this.getPos().getX(), this.getPos().getY(), this.getPos().getZ(), stack);
+            this.world.addEntity(entity);
+        }
+        cores.remove(lastCore);
     }
 }
