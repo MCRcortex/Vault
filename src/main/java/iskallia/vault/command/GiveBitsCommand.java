@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import iskallia.vault.init.ModItems;
 import iskallia.vault.item.ItemBit;
+import iskallia.vault.util.EntityHelper;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -67,11 +68,7 @@ public class GiveBitsCommand extends Command {
         }
 
         for (ItemStack itemStack : itemsToGive) {
-            boolean added = player.inventory.addItemStackToInventory(itemStack);
-
-            if (!added) {
-                player.dropItem(itemStack, false, false);
-            }
+            EntityHelper.giveItem(player, itemStack);
         }
     }
 

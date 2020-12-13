@@ -8,6 +8,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import iskallia.vault.config.StreamerMultipliersConfig;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.item.ItemTraderCore;
+import iskallia.vault.util.EntityHelper;
 import iskallia.vault.world.data.StreamData;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -76,7 +77,7 @@ public class InternalCommand extends Command {
         StreamData.get(player.getServerWorld()).onDono(player.getServer(), player.getUniqueID(), donator, amount * multiplier);
         if (amount >= 25) {
             ItemStack core = ItemTraderCore.generate(donator, amount, amount >= 100);
-            player.dropItem(core, false, false);
+            EntityHelper.giveItem(player, core);
         }
         GiveBitsCommand.dropBits(player, amount * 100);
         return 0;
@@ -89,7 +90,7 @@ public class InternalCommand extends Command {
         StreamData.get(player.getServerWorld()).onDono(player.getServer(), player.getUniqueID(), donator, (amount / 100) * multiplier);
         if (amount >= 2500) {
             ItemStack core = ItemTraderCore.generate(donator, 100 * amount, amount >= 10000);
-            player.dropItem(core, false, false);
+            EntityHelper.giveItem(player, core);
         }
         GiveBitsCommand.dropBits(player, amount);
         return 0;
