@@ -1,5 +1,6 @@
 package iskallia.vault.item;
 
+import iskallia.vault.block.item.GiftStatueBlockItem;
 import iskallia.vault.client.gui.overlay.GiftBombOverlay;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModItems;
@@ -46,8 +47,11 @@ public class ItemGiftBomb extends Item {
                 player.dropItem(randomLoot, false, false);
                 heldStack.shrink(1);
 
-                if (variant.shouldSpawnStatue()) {
-                    // TODO: Drop Statue
+                if (variant.ordinal != -1) {
+                    CompoundNBT nbt = heldStack.getTag();
+                    String gifter = nbt.getString("Gifter");
+                    ItemStack gifterStatue = GiftStatueBlockItem.getStatueBlockItem(gifter, variant.ordinal);
+                    player.dropItem(gifterStatue, false, false);
                 }
 
                 Vector3d position = player.getPositionVec();
@@ -160,19 +164,15 @@ public class ItemGiftBomb extends Item {
     }
 
     public enum Variant {
-        NORMAL(false),
-        SUPER(false),
-        MEGA(true),
-        OMEGA(true);
+        NORMAL(-1),
+        SUPER(-1),
+        MEGA(0),
+        OMEGA(1);
 
-        boolean shouldSpawnStatue;
+        int ordinal;
 
-        Variant(boolean shouldSpawnStatue) {
-            this.shouldSpawnStatue = shouldSpawnStatue;
-        }
-
-        public boolean shouldSpawnStatue() {
-            return shouldSpawnStatue;
+        Variant(int ordinal) {
+            this.ordinal = ordinal;
         }
     }
 

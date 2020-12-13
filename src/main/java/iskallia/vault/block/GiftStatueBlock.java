@@ -7,8 +7,11 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
@@ -40,16 +43,47 @@ public class GiftStatueBlock extends Block {
     }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-
-        TileEntity tileEntity = worldIn.getTileEntity(pos);
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        TileEntity tileEntity = world.getTileEntity(pos);
 
         if (tileEntity instanceof GiftStatueTileEntity) {
-            GiftStatueTileEntity statueTileEntity = (GiftStatueTileEntity) tileEntity;
-            statueTileEntity.getSkin().updateSkin("iskall85"); //TODO get the appropriate player name
+            GiftStatueTileEntity giftStatue = (GiftStatueTileEntity) tileEntity;
+            if (stack.hasTag()) {
+                CompoundNBT nbt = stack.getTag();
+                CompoundNBT blockEntityTag = nbt.getCompound("BlockEntityTag");
+                String playerNickname = blockEntityTag.getString("PlayerNickname");
+                int variant = blockEntityTag.getInt("Variant");
+
+                world.setBlockState(pos, state.with(VARIANT, variant), 3);
+                giftStatue.getSkin().updateSkin(playerNickname);
+            }
         }
 
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+        super.onBlockPlacedBy(world, pos, state, placer, stack);
+    }
+
+    @Override
+    public void onBlockHarvested(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        if (!world.isRemote) {
+            TileEntity tileEntity = world.getTileEntity(pos);
+            ItemStack itemStack = new ItemStack(getBlock());
+
+            if (tileEntity instanceof GiftStatueTileEntity) {
+                GiftStatueTileEntity statueTileEntity = (GiftStatueTileEntity) tileEntity;
+
+                CompoundNBT statueNBT = statueTileEntity.serializeNBT();
+                CompoundNBT stackNBT = new CompoundNBT();
+                stackNBT.put("BlockEntityTag", statueNBT);
+
+                itemStack.setTag(stackNBT);
+            }
+
+            ItemEntity itemEntity = new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, itemStack);
+            itemEntity.setDefaultPickupDelay();
+            world.addEntity(itemEntity);
+        }
+
+        super.onBlockHarvested(world, pos, state, player);
     }
 
     @Override

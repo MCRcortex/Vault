@@ -39,11 +39,12 @@ public class GiftStatueBlockItem extends BlockItem {
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }
 
-    public static ItemStack getStatueBlockItem(String nickname) {
+    public static ItemStack getStatueBlockItem(String nickname, int variant) {
         ItemStack itemStack = new ItemStack(ModBlocks.GIFT_STATUE_BLOCK_ITEM);
 
         CompoundNBT nbt = new CompoundNBT();
         nbt.putString("PlayerNickname", nickname);
+        nbt.putInt("Variant", variant);
 
         CompoundNBT stackNBT = new CompoundNBT();
         stackNBT.put("BlockEntityTag", nbt);
