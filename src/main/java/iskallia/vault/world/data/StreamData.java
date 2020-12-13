@@ -53,6 +53,13 @@ public class StreamData extends WorldSavedData {
         return this;
     }
 
+    public StreamData resetDonos(MinecraftServer server, UUID streamer) {
+        this.donoMap.put(streamer, new Donations());
+
+        this.markDirty();
+        return this;
+    }
+
     public StreamData onSub(MinecraftServer server, UUID streamer, String name, int months) {
         NetcodeUtils.runIfPresent(server, streamer, player -> {
             ArenaRaid activeRaid = ArenaRaidData.get(player.getServerWorld()).getActiveFor(player);

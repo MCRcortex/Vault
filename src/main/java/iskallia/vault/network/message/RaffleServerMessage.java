@@ -63,7 +63,7 @@ public class RaffleServerMessage {
             } else if (message.opcode == Opcode.DONE_ANIMATING) {
                 ServerPlayerEntity sender = context.getSender();
                 StreamData streamData = StreamData.get(sender.getServerWorld());
-                streamData.reset(sender.getServer(), sender.getUniqueID());
+                streamData.resetDonos(sender.getServer(), sender.getUniqueID());
                 ItemStack vaultCrystal = ItemVaultCrystal.getCrystalWithBoss(message.payload.getString("Winner"));
                 sender.dropItem(vaultCrystal, false, false);
             }
