@@ -7,6 +7,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import iskallia.vault.config.StreamerMultipliersConfig;
 import iskallia.vault.init.ModConfigs;
+import iskallia.vault.init.ModSounds;
 import iskallia.vault.item.ItemGiftBomb;
 import iskallia.vault.item.ItemTraderCore;
 import iskallia.vault.util.EntityHelper;
@@ -15,6 +16,8 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.vector.Vector3d;
 
 import static net.minecraft.command.Commands.argument;
 import static net.minecraft.command.Commands.literal;
@@ -80,6 +83,18 @@ public class InternalCommand extends Command {
                 : amount <= 19 ? ItemGiftBomb.Variant.SUPER
                 : amount <= 49 ? ItemGiftBomb.Variant.MEGA
                 : ItemGiftBomb.Variant.OMEGA;
+
+        Vector3d position = player.getPositionVec();
+        player.getServerWorld().playSound(
+                null,
+                position.x,
+                position.y,
+                position.z,
+                variant == ItemGiftBomb.Variant.NORMAL || variant == ItemGiftBomb.Variant.SUPER
+                        ? ModSounds.GIFT_BOMB_GAIN_SFX : ModSounds.MEGA_GIFT_BOMB_GAIN_SFX,
+                SoundCategory.PLAYERS,
+                0.75f, 1f
+        );
 
         ItemStack giftBomb = ItemGiftBomb.forGift(variant, gifter, amount);
         EntityHelper.giveItem(player, giftBomb);

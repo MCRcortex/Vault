@@ -72,6 +72,7 @@ public class GiftStatueBlock extends Block {
                 GiftStatueTileEntity statueTileEntity = (GiftStatueTileEntity) tileEntity;
 
                 CompoundNBT statueNBT = statueTileEntity.serializeNBT();
+                statueNBT.putInt("Variant", state.get(VARIANT));
                 CompoundNBT stackNBT = new CompoundNBT();
                 stackNBT.put("BlockEntityTag", statueNBT);
 

@@ -25,6 +25,8 @@ public class ModSounds {
     public static SoundEvent ARENA_HORNS_SFX;
     public static SoundEvent BOOSTER_PACK_SFX;
     public static SoundEvent GIFT_BOMB_SFX;
+    public static SoundEvent GIFT_BOMB_GAIN_SFX;
+    public static SoundEvent MEGA_GIFT_BOMB_GAIN_SFX;
     public static SoundEvent VAULT_GEM_HIT;
     public static SoundEvent VAULT_GEM_BREAK;
 
@@ -48,6 +50,8 @@ public class ModSounds {
         ARENA_HORNS_SFX = registerSound(event, "arena_horns");
         BOOSTER_PACK_SFX = registerSound(event, "booster_pack");
         GIFT_BOMB_SFX = registerSound(event, "gift_bomb");
+        GIFT_BOMB_GAIN_SFX = registerSound(event, "sub_bomb_gain");
+        MEGA_GIFT_BOMB_GAIN_SFX = registerSound(event, "sub_bomb_gain_mega");
         VAULT_GEM_HIT = registerSound(event, "vault_gem_hit");
         VAULT_GEM_BREAK = registerSound(event, "vault_gem_break");
     }

@@ -116,6 +116,18 @@
       "the_vault:booster_pack"
     ]
   },
+  "sub_bomb_gain": {
+    "category": "master",
+    "sounds": [
+      "the_vault:sub_bomb_gain"
+    ]
+  },
+  "sub_bomb_gain_mega": {
+    "category": "master",
+    "sounds": [
+      "the_vault:sub_bomb_gain_mega"
+    ]
+  },
   "vault_gem_hit": {
     "category": "block",
     "sounds": [
