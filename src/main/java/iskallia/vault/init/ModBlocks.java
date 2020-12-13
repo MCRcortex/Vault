@@ -3,6 +3,7 @@ package iskallia.vault.init;
 import iskallia.vault.Vault;
 import iskallia.vault.block.*;
 import iskallia.vault.block.entity.*;
+import iskallia.vault.block.item.GiftStatueBlockItem;
 import iskallia.vault.block.item.PlayerStatueBlockItem;
 import iskallia.vault.block.item.RelicStatueBlockItem;
 import iskallia.vault.block.render.*;
@@ -69,6 +70,7 @@ public class ModBlocks {
     public static final VendingMachineBlock VENDING_MACHINE = new VendingMachineBlock();
     public static final VaultBedrockBlock VAULT_BEDROCK = new VaultBedrockBlock();
     public static final RelicStatueBlock RELIC_STATUE = new RelicStatueBlock();
+    public static final GiftStatueBlock GIFT_STATUE = new GiftStatueBlock();
 
     public static final TileEntityType<VaultAltarTileEntity> VAULT_ALTAR_TILE_ENTITY =
             TileEntityType.Builder.create(VaultAltarTileEntity::new, VAULT_ALTAR).build(null);
@@ -84,9 +86,12 @@ public class ModBlocks {
             TileEntityType.Builder.create(VendingMachineTileEntity::new, VENDING_MACHINE).build(null);
     public static final TileEntityType<RelicStatueTileEntity> RELIC_STATUE_TILE_ENTITY =
             TileEntityType.Builder.create(RelicStatueTileEntity::new, RELIC_STATUE).build(null);
+    public static final TileEntityType<GiftStatueTileEntity> GIFT_STATUE_TILE_ENTITY =
+            TileEntityType.Builder.create(GiftStatueTileEntity::new, GIFT_STATUE).build(null);
 
     public static final PlayerStatueBlockItem PLAYER_STATUE_BLOCK_ITEM = new PlayerStatueBlockItem();
     public static final RelicStatueBlockItem RELIC_STATUE_BLOCK_ITEM = new RelicStatueBlockItem();
+    public static final GiftStatueBlockItem GIFT_STATUE_BLOCK_ITEM = new GiftStatueBlockItem();
 
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         registerBlock(event, VAULT_PORTAL, Vault.id("vault_portal"));
@@ -137,6 +142,7 @@ public class ModBlocks {
         registerBlock(event, VENDING_MACHINE, Vault.id("vending_machine"));
         registerBlock(event, VAULT_BEDROCK, Vault.id("vault_bedrock"));
         registerBlock(event, RELIC_STATUE, Vault.id("relic_statue"));
+        registerBlock(event, GIFT_STATUE, Vault.id("gift_statue"));
     }
 
     public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
@@ -147,6 +153,7 @@ public class ModBlocks {
         registerTileEntity(event, PLAYER_STATUE_TILE_ENTITY, Vault.id("player_statue_tile_entity"));
         registerTileEntity(event, VENDING_MACHINE_TILE_ENTITY, Vault.id("vending_machine_tile_entity"));
         registerTileEntity(event, RELIC_STATUE_TILE_ENTITY, Vault.id("relic_statue_tile_entity"));
+        registerTileEntity(event, GIFT_STATUE_TILE_ENTITY, Vault.id("gift_statue_tile_entity"));
     }
 
     public static void registerTileEntityRenderers() {
@@ -155,6 +162,7 @@ public class ModBlocks {
         ClientRegistry.bindTileEntityRenderer(ModBlocks.PLAYER_STATUE_TILE_ENTITY, PlayerStatueRenderer::new);
         ClientRegistry.bindTileEntityRenderer(ModBlocks.VENDING_MACHINE_TILE_ENTITY, VendingMachineRenderer::new);
         ClientRegistry.bindTileEntityRenderer(ModBlocks.RELIC_STATUE_TILE_ENTITY, RelicStatueRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(ModBlocks.GIFT_STATUE_TILE_ENTITY, GiftStatueRenderer::new);
     }
 
     public static void registerBlockItems(RegistryEvent.Register<Item> event) {
@@ -206,6 +214,7 @@ public class ModBlocks {
         registerBlockItem(event, VENDING_MACHINE, 64);
         registerBlockItem(event, VAULT_BEDROCK);
         registerBlockItem(event, RELIC_STATUE, RELIC_STATUE_BLOCK_ITEM);
+        registerBlockItem(event, GIFT_STATUE, GIFT_STATUE_BLOCK_ITEM);
     }
 
     /* --------------------------------------------- */
