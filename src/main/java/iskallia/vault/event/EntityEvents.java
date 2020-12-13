@@ -184,7 +184,7 @@ public class EntityEvents {
 		if(raid != null) {
 			raid.runIfPresent(world.getServer(), player -> {
 				LootContext.Builder builder = (new LootContext.Builder(world)).withRandom(world.rand)
-						.withParameter(LootParameters.THIS_ENTITY, event.getEntity())
+						.withParameter(LootParameters.THIS_ENTITY, player)
 						.withParameter(LootParameters.field_237457_g_, event.getEntity().getPositionVec())
 						.withParameter(LootParameters.DAMAGE_SOURCE, event.getSource())
 						.withNullableParameter(LootParameters.KILLER_ENTITY, event.getSource().getTrueSource())
