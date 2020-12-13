@@ -29,6 +29,7 @@ public class ModConfigs {
     public static LegendaryTreasureRareConfig LEGENDARY_TREASURE_RARE;
     public static LegendaryTreasureEpicConfig LEGENDARY_TREASURE_EPIC;
     public static LegendaryTreasureOmegaConfig LEGENDARY_TREASURE_OMEGA;
+    public static GiftBombConfig GIFT_BOMB;
 
     public static void register() {
         STREAMER_MULTIPLIERS = (StreamerMultipliersConfig) new StreamerMultipliersConfig().readConfig();
@@ -56,6 +57,7 @@ public class ModConfigs {
         LEGENDARY_TREASURE_RARE = (LegendaryTreasureRareConfig) new LegendaryTreasureRareConfig().readConfig();
         LEGENDARY_TREASURE_EPIC = (LegendaryTreasureEpicConfig) new LegendaryTreasureEpicConfig().readConfig();
         LEGENDARY_TREASURE_OMEGA = (LegendaryTreasureOmegaConfig) new LegendaryTreasureOmegaConfig().readConfig();
+        GIFT_BOMB = (GiftBombConfig) new GiftBombConfig().readConfig();
     }
 
 }

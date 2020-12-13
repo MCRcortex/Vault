@@ -7,10 +7,12 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import iskallia.vault.config.StreamerMultipliersConfig;
 import iskallia.vault.init.ModConfigs;
+import iskallia.vault.item.ItemGiftBomb;
 import iskallia.vault.item.ItemTraderCore;
 import iskallia.vault.util.EntityHelper;
 import iskallia.vault.world.data.StreamData;
 import net.minecraft.command.CommandSource;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 
@@ -67,7 +69,20 @@ public class InternalCommand extends Command {
                 : tier == 2 ? multipliers.weightPerGiftedSubT2
                 : multipliers.weightPerGiftedSubT3;
         StreamData.get(player.getServerWorld()).onDono(player.getServer(), player.getUniqueID(), gifter, (int) (amount * multiplier));
+        handleGiftBombs(player, gifter, amount);
         return 0;
+    }
+
+    private void handleGiftBombs(ServerPlayerEntity player, String gifter, int amount) {
+        if (amount < 5) return;
+
+        ItemGiftBomb.Variant variant = amount <= 9 ? ItemGiftBomb.Variant.NORMAL
+                : amount <= 19 ? ItemGiftBomb.Variant.SUPER
+                : amount <= 49 ? ItemGiftBomb.Variant.MEGA
+                : ItemGiftBomb.Variant.OMEGA;
+
+        ItemStack giftBomb = ItemGiftBomb.forGift(variant, gifter, amount);
+        EntityHelper.giveItem(player, giftBomb);
     }
 
     private int receivedDonation(CommandContext<CommandSource> context, String donator, int amount) throws CommandSyntaxException {
