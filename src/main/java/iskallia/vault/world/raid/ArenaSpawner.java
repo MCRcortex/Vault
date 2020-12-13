@@ -35,7 +35,7 @@ public class ArenaSpawner implements INBTSerializable<CompoundNBT> {
 			"Aolsen96",
 			"Winter_Grave",
 			"kimandjax",
-			"Monni21",
+			"Monni_21",
 			"Starmute",
 			"haleighen"
 	};
