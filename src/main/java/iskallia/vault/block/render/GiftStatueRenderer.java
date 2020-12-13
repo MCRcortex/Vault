@@ -2,6 +2,7 @@ package iskallia.vault.block.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import iskallia.vault.Vault;
 import iskallia.vault.block.GiftStatueBlock;
 import iskallia.vault.block.entity.GiftStatueTileEntity;
 import iskallia.vault.entity.model.StatuePlayerModel;
@@ -10,13 +11,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.StringTextComponent;
 
 public class GiftStatueRenderer extends TileEntityRenderer<GiftStatueTileEntity> {
@@ -45,7 +50,7 @@ public class GiftStatueRenderer extends TileEntityRenderer<GiftStatueTileEntity>
 
         float scale = 0.4f;
         float headScale = 1.75f;
-        float crownScale = 1.5f;
+        float hatScale = 3f;
 
         matrixStack.push();
         matrixStack.translate(0.5, 0.9, 0.5);
@@ -75,20 +80,20 @@ public class GiftStatueRenderer extends TileEntityRenderer<GiftStatueTileEntity>
         matrixStack.pop();
 
         Minecraft minecraft = Minecraft.getInstance();
-//        if (tileEntity.hasCrown() && minecraft.player != null) {
-//            matrixStack.push();
-//            matrixStack.translate(0.5, 1.2, 0.5);
-//            matrixStack.scale(crownScale, crownScale, crownScale);
-//            matrixStack.rotate(Vector3f.YP.rotationDegrees(minecraft.player.ticksExisted));
-//            //        matrixStack.rotate(Vector3f.ZP.rotationDegrees(20f));
-//            ItemStack itemStack = new ItemStack(Registry.ITEM.getOrDefault(Vault.id("mvp_crown")));
-//            IBakedModel ibakedmodel = minecraft
-//                    .getItemRenderer().getItemModelWithOverrides(itemStack, null, null);
-//            minecraft.getItemRenderer()
-//                    .renderItem(itemStack, ItemCameraTransforms.TransformType.GROUND, true,
-//                            matrixStack, buffer, 0x00_f00000, 0x00_e00000, ibakedmodel);
-//            matrixStack.pop();
-//        }
+        if (minecraft.player != null) {
+            matrixStack.push();
+            matrixStack.translate(0.5, 1.1, 0.5);
+            matrixStack.scale(hatScale, hatScale, hatScale);
+            matrixStack.rotate(Vector3f.YN.rotationDegrees(direction.getHorizontalAngle() + 180));
+//            matrixStack.rotate(Vector3f.ZP.rotationDegrees(20f));
+            ItemStack itemStack = new ItemStack(Registry.ITEM.getOrDefault(Vault.id("bow_hat")));
+            IBakedModel ibakedmodel = minecraft
+                    .getItemRenderer().getItemModelWithOverrides(itemStack, null, null);
+            minecraft.getItemRenderer()
+                    .renderItem(itemStack, ItemCameraTransforms.TransformType.GROUND, true,
+                            matrixStack, buffer, combinedLight, combinedOverlay, ibakedmodel);
+            matrixStack.pop();
+        }
 
         StringTextComponent text = new StringTextComponent(tileEntity.getSkin().getLatestNickname());
         renderLabel(matrixStack, buffer, combinedLight, text, 0xFF_FFFFFF);
@@ -105,7 +110,7 @@ public class GiftStatueRenderer extends TileEntityRenderer<GiftStatueTileEntity>
         float offset = (float) (-fontRenderer.getStringPropertyWidth(text) / 2);
         Matrix4f matrix4f = matrixStack.getLast().getMatrix();
 
-        matrixStack.translate(0.5f, 1.6f, 0.5f);
+        matrixStack.translate(0.5f, 1.7f, 0.5f);
         matrixStack.scale(scale, scale, scale);
         matrixStack.rotate(mc.getRenderManager().getCameraOrientation()); // face the camera
         matrixStack.rotate(Vector3f.ZP.rotationDegrees(180.0F)); // flip vertical
