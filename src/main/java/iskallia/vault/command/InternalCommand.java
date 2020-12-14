@@ -11,13 +11,16 @@ import iskallia.vault.init.ModSounds;
 import iskallia.vault.item.ItemGiftBomb;
 import iskallia.vault.item.ItemTraderCore;
 import iskallia.vault.util.EntityHelper;
+import iskallia.vault.util.MathUtilities;
 import iskallia.vault.world.data.PlayerVaultStatsData;
 import iskallia.vault.world.data.StreamData;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.vector.Vector3d;
 
 import static net.minecraft.command.Commands.argument;
@@ -110,6 +113,7 @@ public class InternalCommand extends Command {
         if (amount >= 25) {
             ItemStack core = ItemTraderCore.generate(donator, 100 * amount, amount >= 100);
             EntityHelper.giveItem(player, core);
+            traderCoreParticles(player);
         }
         GiveBitsCommand.dropBits(player, amount * 100);
         return 0;
@@ -123,9 +127,23 @@ public class InternalCommand extends Command {
         if (amount >= 2500) {
             ItemStack core = ItemTraderCore.generate(donator, amount, amount >= 10000);
             EntityHelper.giveItem(player, core);
+            traderCoreParticles(player);
         }
         GiveBitsCommand.dropBits(player, amount);
         return 0;
+    }
+
+    private void traderCoreParticles(ServerPlayerEntity player) {
+        Vector3d position = player.getPositionVec();
+
+        player.getServerWorld().spawnParticle(ParticleTypes.REVERSE_PORTAL,
+                position.x,
+                position.y,
+                position.z,
+                500,
+                1, 1, 1,
+                1f
+        );
     }
 
     @Override
