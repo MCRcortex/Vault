@@ -1,13 +1,11 @@
 package iskallia.vault.block;
 
-import iskallia.vault.block.entity.GiftStatueTileEntity;
 import iskallia.vault.block.entity.RelicStatueTileEntity;
 import iskallia.vault.init.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;

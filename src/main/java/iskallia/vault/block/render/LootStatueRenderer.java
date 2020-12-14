@@ -80,7 +80,8 @@ public class LootStatueRenderer extends TileEntityRenderer<LootStatueTileEntity>
         matrixStack.pop();
 
         Minecraft minecraft = Minecraft.getInstance();
-        if (blockState.get(GiftStatueBlock.VARIANT) == 1 && minecraft.player != null) {
+        LootStatueBlock block = (LootStatueBlock) blockState.getBlock();
+        if (block.getType().ordinal() == 1 && minecraft.player != null) {
             matrixStack.push();
             matrixStack.translate(0.5, 1.1, 0.5);
             matrixStack.scale(hatScale, hatScale, hatScale);
