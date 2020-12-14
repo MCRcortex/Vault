@@ -46,7 +46,7 @@ public class ItemUnidentifiedArtifact extends Item {
                     position.x,
                     position.y,
                     position.z,
-                    ModSounds.BOOSTER_PACK_SFX,
+                    ModSounds.BOOSTER_PACK_SUCCESS_SFX,
                     SoundCategory.PLAYERS,
                     1f, 1f
             );

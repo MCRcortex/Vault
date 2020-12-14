@@ -28,8 +28,8 @@ import javax.annotation.Nullable;
 
 public class GiftStatueBlock extends Block {
 
-    public static final VoxelShape SHAPE_0 = Block.makeCuboidShape(1, 0, 1, 15, 13, 15);
-    public static final VoxelShape SHAPE_1 = Block.makeCuboidShape(1, 0, 1, 15, 5, 15);
+    public static final VoxelShape SHAPE_0 = Block.makeCuboidShape(1, 0, 1, 15, 5, 15);
+    public static final VoxelShape SHAPE_1 = Block.makeCuboidShape(1, 0, 1, 15, 13, 15);
     public static final IntegerProperty VARIANT = IntegerProperty.create("variant", 0, 15);
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
 

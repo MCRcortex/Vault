@@ -14,6 +14,7 @@ public class ModConfigs {
     public static SkillDescriptionsConfig SKILL_DESCRIPTIONS;
     public static SkillGatesConfig SKILL_GATES;
     public static VaultLevelsConfig LEVELS_META;
+    public static StreamerExpConfig STREAMER_EXP;
     public static VaultRelicsConfig VAULT_RELICS;
     public static VaultOreConfig VAULT_ORES;
     public static VaultMobsConfig VAULT_MOBS;
@@ -42,6 +43,7 @@ public class ModConfigs {
         SKILL_DESCRIPTIONS = (SkillDescriptionsConfig) new SkillDescriptionsConfig().readConfig();
         SKILL_GATES = (SkillGatesConfig) new SkillGatesConfig().readConfig();
         LEVELS_META = (VaultLevelsConfig) new VaultLevelsConfig().readConfig();
+        STREAMER_EXP = (StreamerExpConfig) new StreamerExpConfig().readConfig();
         VAULT_RELICS = (VaultRelicsConfig) new VaultRelicsConfig().readConfig();
         VAULT_ORES = (VaultOreConfig) new VaultOreConfig().readConfig();
         VAULT_MOBS = (VaultMobsConfig) new VaultMobsConfig().readConfig();

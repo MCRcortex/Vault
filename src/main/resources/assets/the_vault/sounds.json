@@ -116,6 +116,12 @@
       "the_vault:booster_pack"
     ]
   },
+  "booster_pack_fail": {
+    "category": "master",
+    "sounds": [
+      "the_vault:booster_pack_fail"
+    ]
+  },
   "sub_bomb_gain": {
     "category": "master",
     "sounds": [

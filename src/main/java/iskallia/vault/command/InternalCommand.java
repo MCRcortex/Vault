@@ -11,6 +11,7 @@ import iskallia.vault.init.ModSounds;
 import iskallia.vault.item.ItemGiftBomb;
 import iskallia.vault.item.ItemTraderCore;
 import iskallia.vault.util.EntityHelper;
+import iskallia.vault.world.data.PlayerVaultStatsData;
 import iskallia.vault.world.data.StreamData;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
@@ -61,6 +62,7 @@ public class InternalCommand extends Command {
     private int receivedSub(CommandContext<CommandSource> context, String name, int months) throws CommandSyntaxException {
         ServerPlayerEntity player = context.getSource().asPlayer();
         StreamData.get(player.getServerWorld()).onSub(player.getServer(), player.getUniqueID(), name, months);
+        PlayerVaultStatsData.get(player.getServerWorld()).addVaultExp(player, ModConfigs.STREAMER_EXP.getExpPerSub(player.getName().getString()));
         return 0;
     }
 
