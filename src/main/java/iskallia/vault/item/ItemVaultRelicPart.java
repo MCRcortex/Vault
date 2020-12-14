@@ -1,5 +1,6 @@
 package iskallia.vault.item;
 
+import iskallia.vault.world.data.VaultSetsData;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -16,9 +17,9 @@ import java.util.List;
 
 public class ItemVaultRelicPart extends Item {
 
-    protected String relicSet;
+    protected VaultSetsData.RelicSet relicSet;
 
-    public ItemVaultRelicPart(ItemGroup group, ResourceLocation id, String relicSet) {
+    public ItemVaultRelicPart(ItemGroup group, ResourceLocation id, VaultSetsData.RelicSet relicSet) {
         super(new Properties()
                 .group(group)
                 .maxStackSize(64));
@@ -28,7 +29,7 @@ public class ItemVaultRelicPart extends Item {
         this.setRegistryName(id);
     }
 
-    public String getRelicSet() {
+    public VaultSetsData.RelicSet getRelicSet() {
         return relicSet;
     }
 

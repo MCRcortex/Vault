@@ -20,6 +20,7 @@ import net.minecraft.world.server.ServerWorld;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 public class ItemGiftBomb extends Item {
 
@@ -48,7 +49,7 @@ public class ItemGiftBomb extends Item {
                 heldStack.shrink(1);
 
                 if (variant.ordinal != -1) {
-                    CompoundNBT nbt = heldStack.getTag();
+                    CompoundNBT nbt = Optional.ofNullable(heldStack.getTag()).orElse(new CompoundNBT());
                     String gifter = nbt.getString("Gifter");
                     ItemStack gifterStatue = GiftStatueBlockItem.getStatueBlockItem(gifter, variant.ordinal);
                     player.dropItem(gifterStatue, false, false);
