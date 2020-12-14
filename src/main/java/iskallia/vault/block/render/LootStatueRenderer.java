@@ -3,8 +3,8 @@ package iskallia.vault.block.render;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import iskallia.vault.Vault;
-import iskallia.vault.block.GiftStatueBlock;
-import iskallia.vault.block.entity.GiftStatueTileEntity;
+import iskallia.vault.block.LootStatueBlock;
+import iskallia.vault.block.entity.LootStatueTileEntity;
 import iskallia.vault.entity.model.StatuePlayerModel;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -24,18 +24,18 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.StringTextComponent;
 
-public class GiftStatueRenderer extends TileEntityRenderer<GiftStatueTileEntity> {
+public class LootStatueRenderer extends TileEntityRenderer<LootStatueTileEntity> {
 
     protected static final StatuePlayerModel<PlayerEntity> PLAYER_MODEL = new StatuePlayerModel<>(0.1f, true);
 
     private Minecraft mc = Minecraft.getInstance();
 
-    public GiftStatueRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
+    public LootStatueRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
         super(rendererDispatcherIn);
     }
 
     @Override
-    public void render(GiftStatueTileEntity tileEntity, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
+    public void render(LootStatueTileEntity tileEntity, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
         String latestNickname = tileEntity.getSkin().getLatestNickname();
 
         if (latestNickname == null || latestNickname.equals(""))
@@ -46,7 +46,7 @@ public class GiftStatueRenderer extends TileEntityRenderer<GiftStatueTileEntity>
         IVertexBuilder vertexBuilder = buffer.getBuffer(renderType);
 
         BlockState blockState = tileEntity.getBlockState();
-        Direction direction = blockState.get(GiftStatueBlock.FACING);
+        Direction direction = blockState.get(LootStatueBlock.FACING);
 
         float scale = 0.4f;
         float headScale = 1.75f;

@@ -1,7 +1,8 @@
 package iskallia.vault.block;
 
-import iskallia.vault.block.entity.GiftStatueTileEntity;
+import iskallia.vault.block.entity.LootStatueTileEntity;
 import iskallia.vault.init.ModBlocks;
+import iskallia.vault.util.StatueType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
@@ -13,7 +14,6 @@ import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.DirectionProperty;
-import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
@@ -26,19 +26,22 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public class GiftStatueBlock extends Block {
+public class LootStatueBlock extends Block {
 
-    public static final VoxelShape SHAPE_0 = Block.makeCuboidShape(1, 0, 1, 15, 13, 15);
-    public static final VoxelShape SHAPE_1 = Block.makeCuboidShape(1, 0, 1, 15, 5, 15);
-    public static final IntegerProperty VARIANT = IntegerProperty.create("variant", 0, 15);
+    public static final VoxelShape SHAPE_GIFT_NORMAL = Block.makeCuboidShape(1, 0, 1, 15, 5, 15);
+    public static final VoxelShape SHAPE_GIFT_MEGA = Block.makeCuboidShape(1, 0, 1, 15, 13, 15);
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
-    public GiftStatueBlock() {
+    public StatueType type;
+
+    public LootStatueBlock(StatueType type) {
         super(Properties.create(Material.ROCK, MaterialColor.STONE)
                 .hardnessAndResistance(1, 1)
                 .notSolid()
                 .doesNotBlockMovement());
-        this.setDefaultState(this.getStateContainer().getBaseState().with(VARIANT, 0).with(FACING, Direction.SOUTH));
+        this.setDefaultState(this.getStateContainer().getBaseState().with(FACING, Direction.SOUTH));
+
+        this.type = type;
 
     }
 
@@ -46,19 +49,19 @@ public class GiftStatueBlock extends Block {
     public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         TileEntity tileEntity = world.getTileEntity(pos);
 
-        if (tileEntity instanceof GiftStatueTileEntity) {
-            GiftStatueTileEntity giftStatue = (GiftStatueTileEntity) tileEntity;
+        if (tileEntity instanceof LootStatueTileEntity) {
+            LootStatueTileEntity lootStatue = (LootStatueTileEntity) tileEntity;
             if (stack.hasTag()) {
                 CompoundNBT nbt = stack.getTag();
                 CompoundNBT blockEntityTag = nbt.getCompound("BlockEntityTag");
                 String playerNickname = blockEntityTag.getString("PlayerNickname");
-                int variant = blockEntityTag.getInt("Variant");
-
-                world.setBlockState(pos, state.with(VARIANT, variant), 3);
-                giftStatue.getSkin().updateSkin(playerNickname);
+                lootStatue.setInterval(blockEntityTag.getInt("Interval"));
+                lootStatue.setLootItem(ItemStack.read(blockEntityTag.getCompound("LootItem")));
+                lootStatue.setStatueType(StatueType.values()[blockEntityTag.getInt("StatueType")]);
+                lootStatue.setCurrentTick(blockEntityTag.getInt("CurrentTick"));
+                lootStatue.getSkin().updateSkin(playerNickname);
             }
         }
-
         super.onBlockPlacedBy(world, pos, state, placer, stack);
     }
 
@@ -68,11 +71,10 @@ public class GiftStatueBlock extends Block {
             TileEntity tileEntity = world.getTileEntity(pos);
             ItemStack itemStack = new ItemStack(getBlock());
 
-            if (tileEntity instanceof GiftStatueTileEntity) {
-                GiftStatueTileEntity statueTileEntity = (GiftStatueTileEntity) tileEntity;
+            if (tileEntity instanceof LootStatueTileEntity) {
+                LootStatueTileEntity statueTileEntity = (LootStatueTileEntity) tileEntity;
 
                 CompoundNBT statueNBT = statueTileEntity.serializeNBT();
-                statueNBT.putInt("Variant", state.get(VARIANT));
                 CompoundNBT stackNBT = new CompoundNBT();
                 stackNBT.put("BlockEntityTag", statueNBT);
 
@@ -95,12 +97,11 @@ public class GiftStatueBlock extends Block {
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return ModBlocks.GIFT_STATUE_TILE_ENTITY.create();
+        return ModBlocks.LOOT_STATUE_TILE_ENTITY.create();
     }
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(VARIANT);
         builder.add(FACING);
     }
 
@@ -110,7 +111,7 @@ public class GiftStatueBlock extends Block {
         BlockPos pos = context.getPos();
         World world = context.getWorld();
         if (pos.getY() < 255 && world.getBlockState(pos.up()).isReplaceable(context)) {
-            return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing()).with(VARIANT, 1); //TODO: get variant from BlockItem
+            return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing());
         } else {
             return null;
         }
@@ -118,14 +119,16 @@ public class GiftStatueBlock extends Block {
 
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-        int variant = state.get(VARIANT);
-
-        if (variant == 0)
-            return SHAPE_0;
-        else if (variant == 1)
-            return SHAPE_1;
-
+        switch (this.getType()) {
+            case GIFT_NORMAL:
+                return SHAPE_GIFT_NORMAL;
+            case GIFT_MEGA:
+                return SHAPE_GIFT_MEGA;
+        }
         return Block.makeCuboidShape(0, 0, 0, 16, 16, 16);
     }
 
+    public StatueType getType() {
+        return type;
+    }
 }

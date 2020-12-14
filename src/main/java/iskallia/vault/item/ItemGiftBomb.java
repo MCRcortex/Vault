@@ -1,6 +1,6 @@
 package iskallia.vault.item;
 
-import iskallia.vault.block.item.GiftStatueBlockItem;
+import iskallia.vault.block.item.LootStatueBlockItem;
 import iskallia.vault.client.gui.overlay.GiftBombOverlay;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModItems;
@@ -50,7 +50,8 @@ public class ItemGiftBomb extends Item {
                 if (variant.ordinal != -1) {
                     CompoundNBT nbt = heldStack.getTag();
                     String gifter = nbt.getString("Gifter");
-                    ItemStack gifterStatue = GiftStatueBlockItem.getStatueBlockItem(gifter, variant.ordinal);
+                    System.out.println(variant.ordinal);
+                    ItemStack gifterStatue = LootStatueBlockItem.getStatueBlockItem(gifter, variant.ordinal);
                     player.dropItem(gifterStatue, false, false);
                 }
 
