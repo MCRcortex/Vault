@@ -3,6 +3,7 @@ package iskallia.vault.init;
 import iskallia.vault.Vault;
 import iskallia.vault.item.*;
 import iskallia.vault.util.VaultRarity;
+import iskallia.vault.world.data.VaultSetsData;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -57,26 +58,26 @@ public class ModItems {
     public static ItemBit BIT_5000 = new ItemBit(VAULT_MOD_GROUP, Vault.id("bit_5000"), 5000);
     public static ItemBit BIT_10000 = new ItemBit(VAULT_MOD_GROUP, Vault.id("bit_10000"), 10000);
     public static ItemRelicBoosterPack RELIC_BOOSTER_PACK = new ItemRelicBoosterPack(VAULT_MOD_GROUP, Vault.id("relic_booster_pack"));
-    public static ItemVaultRelicPart DRAGON_HEAD_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_dragon_head"), "Dragon Set");
-    public static ItemVaultRelicPart DRAGON_TAIL_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_dragon_tail"), "Dragon Set");
-    public static ItemVaultRelicPart DRAGON_FOOT_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_dragon_foot"), "Dragon Set");
-    public static ItemVaultRelicPart DRAGON_CHEST_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_dragon_chest"), "Dragon Set");
-    public static ItemVaultRelicPart DRAGON_BREATH_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_dragon_breath"), "Dragon Set");
-    public static ItemVaultRelicPart MINERS_DELIGHT_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_miners_delight"), "Miner's Set");
-    public static ItemVaultRelicPart MINERS_LIGHT_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_miners_light"), "Miner's Set");
-    public static ItemVaultRelicPart PICKAXE_HANDLE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_pickaxe_handle"), "Miner's Set");
-    public static ItemVaultRelicPart PICKAXE_HEAD_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_pickaxe_head"), "Miner's Set");
-    public static ItemVaultRelicPart PICKAXE_TOOL_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_pickaxe_tool"), "Miner's Set");
-    public static ItemVaultRelicPart SWORD_BLADE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_sword_blade"), "Warror's Set");
-    public static ItemVaultRelicPart SWORD_HANDLE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_sword_handle"), "Warror's Set");
-    public static ItemVaultRelicPart SWORD_STICK_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_sword_stick"), "Warror's Set");
-    public static ItemVaultRelicPart WARRIORS_ARMOUR_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_warriors_armour"), "Warror's Set");
-    public static ItemVaultRelicPart WARRIORS_CHARM_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_warriors_charm"), "Warror's Set");
-    public static ItemVaultRelicPart DIAMOND_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_diamond_essence"), "Richity Set");
-    public static ItemVaultRelicPart GOLD_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_gold_essence"), "Richity Set");
-    public static ItemVaultRelicPart MYSTIC_GEM_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_mystic_gem_essence"), "Richity Set");
-    public static ItemVaultRelicPart NETHERITE_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_netherite_essence"), "Richity Set");
-    public static ItemVaultRelicPart PLATINUM_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_platinum_essence"), "Richity Set");
+    public static ItemVaultRelicPart DRAGON_HEAD_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_dragon_head"), VaultSetsData.RelicSet.DRAGON);
+    public static ItemVaultRelicPart DRAGON_TAIL_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_dragon_tail"), VaultSetsData.RelicSet.DRAGON);
+    public static ItemVaultRelicPart DRAGON_FOOT_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_dragon_foot"), VaultSetsData.RelicSet.DRAGON);
+    public static ItemVaultRelicPart DRAGON_CHEST_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_dragon_chest"), VaultSetsData.RelicSet.DRAGON);
+    public static ItemVaultRelicPart DRAGON_BREATH_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_dragon_breath"), VaultSetsData.RelicSet.DRAGON);
+    public static ItemVaultRelicPart MINERS_DELIGHT_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_miners_delight"), VaultSetsData.RelicSet.MINER);
+    public static ItemVaultRelicPart MINERS_LIGHT_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_miners_light"), VaultSetsData.RelicSet.MINER);
+    public static ItemVaultRelicPart PICKAXE_HANDLE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_pickaxe_handle"), VaultSetsData.RelicSet.MINER);
+    public static ItemVaultRelicPart PICKAXE_HEAD_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_pickaxe_head"), VaultSetsData.RelicSet.MINER);
+    public static ItemVaultRelicPart PICKAXE_TOOL_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_pickaxe_tool"), VaultSetsData.RelicSet.MINER);
+    public static ItemVaultRelicPart SWORD_BLADE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_sword_blade"), VaultSetsData.RelicSet.WARRIOR);
+    public static ItemVaultRelicPart SWORD_HANDLE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_sword_handle"), VaultSetsData.RelicSet.WARRIOR);
+    public static ItemVaultRelicPart SWORD_STICK_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_sword_stick"), VaultSetsData.RelicSet.WARRIOR);
+    public static ItemVaultRelicPart WARRIORS_ARMOUR_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_warriors_armour"), VaultSetsData.RelicSet.WARRIOR);
+    public static ItemVaultRelicPart WARRIORS_CHARM_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_warriors_charm"), VaultSetsData.RelicSet.WARRIOR);
+    public static ItemVaultRelicPart DIAMOND_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_diamond_essence"), VaultSetsData.RelicSet.RICHITY);
+    public static ItemVaultRelicPart GOLD_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_gold_essence"), VaultSetsData.RelicSet.RICHITY);
+    public static ItemVaultRelicPart MYSTIC_GEM_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_mystic_gem_essence"), VaultSetsData.RelicSet.RICHITY);
+    public static ItemVaultRelicPart NETHERITE_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_netherite_essence"), VaultSetsData.RelicSet.RICHITY);
+    public static ItemVaultRelicPart PLATINUM_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_platinum_essence"), VaultSetsData.RelicSet.RICHITY);
     public static ItemVaultRune VAULT_RUNE = new ItemVaultRune(VAULT_MOD_GROUP, Vault.id("vault_rune"));
     public static ObeliskInscriptionItem OBELISK_INSCRIPTION = new ObeliskInscriptionItem(VAULT_MOD_GROUP, Vault.id("obelisk_inscription"));
     public static ItemTraderCore TRADER_CORE = new ItemTraderCore(VAULT_MOD_GROUP, Vault.id("trader_core"));
@@ -89,6 +90,7 @@ public class ModItems {
     public static ItemGiftBomb SUPER_GIFT_BOMB = new ItemGiftBomb(VAULT_MOD_GROUP, ItemGiftBomb.Variant.SUPER, Vault.id("gift_bomb_super"));
     public static ItemGiftBomb MEGA_GIFT_BOMB = new ItemGiftBomb(VAULT_MOD_GROUP, ItemGiftBomb.Variant.MEGA, Vault.id("gift_bomb_mega"));
     public static ItemGiftBomb OMEGA_GIFT_BOMB = new ItemGiftBomb(VAULT_MOD_GROUP, ItemGiftBomb.Variant.OMEGA, Vault.id("gift_bomb_omega"));
+    public static ItemVaultRelic VAULT_RELIC = new ItemVaultRelic(VAULT_MOD_GROUP, Vault.id("vault_relic"));
 
     public static void registerItems(RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
@@ -158,6 +160,7 @@ public class ModItems {
         registry.register(SUPER_GIFT_BOMB);
         registry.register(MEGA_GIFT_BOMB);
         registry.register(OMEGA_GIFT_BOMB);
+        registry.register(VAULT_RELIC);
     }
 
 }

@@ -11,12 +11,16 @@ import iskallia.vault.init.ModSounds;
 import iskallia.vault.item.ItemGiftBomb;
 import iskallia.vault.item.ItemTraderCore;
 import iskallia.vault.util.EntityHelper;
+import iskallia.vault.util.MathUtilities;
+import iskallia.vault.world.data.PlayerVaultStatsData;
 import iskallia.vault.world.data.StreamData;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.vector.Vector3d;
 
 import static net.minecraft.command.Commands.argument;
@@ -61,6 +65,7 @@ public class InternalCommand extends Command {
     private int receivedSub(CommandContext<CommandSource> context, String name, int months) throws CommandSyntaxException {
         ServerPlayerEntity player = context.getSource().asPlayer();
         StreamData.get(player.getServerWorld()).onSub(player.getServer(), player.getUniqueID(), name, months);
+        PlayerVaultStatsData.get(player.getServerWorld()).addVaultExp(player, ModConfigs.STREAMER_EXP.getExpPerSub(player.getName().getString()));
         return 0;
     }
 
@@ -106,8 +111,9 @@ public class InternalCommand extends Command {
         int multiplier = ModConfigs.STREAMER_MULTIPLIERS.ofStreamer(mcNick).weightPerDonationUnit;
         StreamData.get(player.getServerWorld()).onDono(player.getServer(), player.getUniqueID(), donator, amount * multiplier);
         if (amount >= 25) {
-            ItemStack core = ItemTraderCore.generate(donator, amount, amount >= 100);
+            ItemStack core = ItemTraderCore.generate(donator, 100 * amount, amount >= 100);
             EntityHelper.giveItem(player, core);
+            traderCoreParticles(player);
         }
         GiveBitsCommand.dropBits(player, amount * 100);
         return 0;
@@ -119,11 +125,25 @@ public class InternalCommand extends Command {
         int multiplier = ModConfigs.STREAMER_MULTIPLIERS.ofStreamer(mcNick).weightPerHundredBits;
         StreamData.get(player.getServerWorld()).onDono(player.getServer(), player.getUniqueID(), donator, (amount / 100) * multiplier);
         if (amount >= 2500) {
-            ItemStack core = ItemTraderCore.generate(donator, 100 * amount, amount >= 10000);
+            ItemStack core = ItemTraderCore.generate(donator, amount, amount >= 10000);
             EntityHelper.giveItem(player, core);
+            traderCoreParticles(player);
         }
         GiveBitsCommand.dropBits(player, amount);
         return 0;
+    }
+
+    private void traderCoreParticles(ServerPlayerEntity player) {
+        Vector3d position = player.getPositionVec();
+
+        player.getServerWorld().spawnParticle(ParticleTypes.REVERSE_PORTAL,
+                position.x,
+                position.y,
+                position.z,
+                500,
+                1, 1, 1,
+                1f
+        );
     }
 
     @Override

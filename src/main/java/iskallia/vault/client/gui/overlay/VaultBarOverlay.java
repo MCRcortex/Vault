@@ -1,8 +1,10 @@
 package iskallia.vault.client.gui.overlay;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
+import iskallia.vault.client.gui.helper.AnimationTwoPhased;
 import iskallia.vault.client.gui.helper.FontHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -22,11 +24,16 @@ public class VaultBarOverlay {
     public static int vaultExp, tnl;
     public static int unspentSkillPoints;
 
+    public static AnimationTwoPhased expGainedAnimation = new AnimationTwoPhased(0f, 1f, 0f, 500);
+    public static long previousTick = System.currentTimeMillis();
+
     @SubscribeEvent
     public static void
     onPostRender(RenderGameOverlayEvent.Post event) {
         if (event.getType() != RenderGameOverlayEvent.ElementType.HOTBAR)
             return; // Render only on POTION_ICONS
+
+        long now = System.currentTimeMillis();
 
         MatrixStack matrixStack = event.getMatrixStack();
         Minecraft minecraft = Minecraft.getInstance();
@@ -39,7 +46,6 @@ public class VaultBarOverlay {
         int textY = bottom - 54;
         int barWidth = 85;
         float expPercentage = (float) vaultExp / tnl;
-
 
         if (VaultBarOverlay.unspentSkillPoints > 0) {
             ClientPlayerEntity player = minecraft.player;
@@ -64,15 +70,34 @@ public class VaultBarOverlay {
             );
         }
 
+        expGainedAnimation.tick((int) (now - previousTick));
+        previousTick = now;
+
         minecraft.getProfiler().startSection("vaultBar");
         minecraft.getTextureManager().bindTexture(RESOURCE);
         RenderSystem.enableBlend();
         minecraft.ingameGUI.blit(matrixStack,
                 midX + 9, bottom - 48,
                 1, 1, barWidth, 5);
+        if (expGainedAnimation.getValue() != 0) {
+            GlStateManager.color4f(1, 1, 1, expGainedAnimation.getValue());
+            minecraft.ingameGUI.blit(matrixStack,
+                    midX + 8, bottom - 49,
+                    62, 41, 84, 7);
+            GlStateManager.color4f(1, 1, 1, 1);
+        }
+
         minecraft.ingameGUI.blit(matrixStack,
                 midX + 9, bottom - 48,
                 1, 7, (int) (barWidth * expPercentage), 5);
+        if (expGainedAnimation.getValue() != 0) {
+            GlStateManager.color4f(1, 1, 1, expGainedAnimation.getValue());
+            minecraft.ingameGUI.blit(matrixStack,
+                    midX + 8, bottom - 49,
+                    62, 49, (int) (barWidth * expPercentage), 7);
+            GlStateManager.color4f(1, 1, 1, 1);
+        }
+
         FontHelper.drawStringWithBorder(matrixStack,
                 text,
                 textX, textY,

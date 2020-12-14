@@ -70,7 +70,7 @@ public class VaultSetsData extends WorldSavedData {
             if (item instanceof ItemVaultRelicPart) {
                 ItemVaultRelicPart relicPart = (ItemVaultRelicPart) item;
                 VaultSetsData vaultSetsData = VaultSetsData.get((ServerWorld) player.world);
-                vaultSetsData.markSetAsCrafted(player.getUniqueID(), relicPart.getRelicSet());
+                vaultSetsData.markSetAsCrafted(player.getUniqueID(), relicPart.getRelicSet().getName());
                 break;
             }
         }
@@ -97,6 +97,37 @@ public class VaultSetsData extends WorldSavedData {
     public static VaultSetsData get(ServerWorld world) {
         return world.getServer().func_241755_D_()
                 .getSavedData().getOrCreate(VaultSetsData::new, DATA_NAME);
+    }
+
+    public enum RelicSet {
+        DRAGON("Dragon Set"),
+        MINER("Miner's Set"),
+        WARRIOR("Warrior's Set"),
+        RICHITY("Richity Set"),
+        TWITCH("Twitch Set");
+
+        String name;
+
+        RelicSet(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+
+        public static RelicSet withName(String name) {
+            for (RelicSet relicSet : values()) {
+                if (relicSet.name.equals(name))
+                    return relicSet;
+            }
+            return null;
+        }
     }
 
 }

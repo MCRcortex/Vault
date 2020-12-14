@@ -55,7 +55,7 @@ public class ItemLegendaryTreasure extends Item {
             }
             playerIn.dropItem(toDrop, false);
             stack.shrink(1);
-            ItemRelicBoosterPack.postEffects(worldIn, playerIn.getPositionVec());
+            ItemRelicBoosterPack.successEffects(worldIn, playerIn.getPositionVec());
         }
 
         return super.onItemRightClick(worldIn, playerIn, handIn);

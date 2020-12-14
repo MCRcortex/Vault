@@ -50,6 +50,8 @@ public class VaultLevelMessage {
             VaultBarOverlay.tnl = message.tnl;
             VaultBarOverlay.unspentSkillPoints = message.unspentSkillPoints;
 
+            VaultBarOverlay.expGainedAnimation.play();
+
             Screen currentScreen = Minecraft.getInstance().currentScreen;
             if (currentScreen instanceof SkillTreeScreen) {
                 SkillTreeScreen skillTreeScreen = (SkillTreeScreen) currentScreen;

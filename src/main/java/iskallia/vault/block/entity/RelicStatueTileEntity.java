@@ -1,6 +1,7 @@
 package iskallia.vault.block.entity;
 
 import iskallia.vault.init.ModBlocks;
+import iskallia.vault.world.data.VaultSetsData;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
@@ -15,7 +16,7 @@ public class RelicStatueTileEntity extends TileEntity {
 
     public RelicStatueTileEntity() {
         super(ModBlocks.RELIC_STATUE_TILE_ENTITY);
-        relicSet = "Dragon Set";
+        relicSet = VaultSetsData.RelicSet.DRAGON.getName();
     }
 
     public String getRelicSet() {

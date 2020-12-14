@@ -74,6 +74,7 @@ public class ModBlocks {
     public static final LootStatueBlock GIFT_NORMAL_STATUE = new LootStatueBlock(StatueType.GIFT_NORMAL);
     public static final LootStatueBlock GIFT_MEGA_STATUE = new LootStatueBlock(StatueType.GIFT_MEGA);
     public static final BowHatBlock BOW_HAT = new BowHatBlock();
+    public static final StatueDragonHeadBlock STATUE_DRAGON_HEAD = new StatueDragonHeadBlock();
 
     public static final TileEntityType<VaultAltarTileEntity> VAULT_ALTAR_TILE_ENTITY =
             TileEntityType.Builder.create(VaultAltarTileEntity::new, VAULT_ALTAR).build(null);
@@ -149,6 +150,7 @@ public class ModBlocks {
         registerBlock(event, GIFT_NORMAL_STATUE, Vault.id("gift_normal_statue"));
         registerBlock(event, GIFT_MEGA_STATUE, Vault.id("gift_mega_statue"));
         registerBlock(event, BOW_HAT, Vault.id("bow_hat"));
+        registerBlock(event, STATUE_DRAGON_HEAD, Vault.id("statue_dragon"));
     }
 
     public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
@@ -223,6 +225,7 @@ public class ModBlocks {
         registerBlockItem(event, GIFT_NORMAL_STATUE, GIFT_NORMAL_STATUE_BLOCK_ITEM);
         registerBlockItem(event, GIFT_MEGA_STATUE, GIFT_MEGA_STATUE_BLOCK_ITEM);
         registerBlockItem(event, BOW_HAT, 1);
+        registerBlockItem(event, STATUE_DRAGON_HEAD, 1);
     }
 
     /* --------------------------------------------- */

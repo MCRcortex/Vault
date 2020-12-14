@@ -23,7 +23,8 @@ public class ModSounds {
     public static SoundEvent SKILL_TREE_UPGRADE_SFX;
     public static SoundEvent VENDING_MACHINE_SFX;
     public static SoundEvent ARENA_HORNS_SFX;
-    public static SoundEvent BOOSTER_PACK_SFX;
+    public static SoundEvent BOOSTER_PACK_SUCCESS_SFX;
+    public static SoundEvent BOOSTER_PACK_FAIL_SFX;
     public static SoundEvent GIFT_BOMB_SFX;
     public static SoundEvent GIFT_BOMB_GAIN_SFX;
     public static SoundEvent MEGA_GIFT_BOMB_GAIN_SFX;
@@ -48,7 +49,8 @@ public class ModSounds {
         SKILL_TREE_UPGRADE_SFX = registerSound(event, "skill_tree_upgrade");
         VENDING_MACHINE_SFX = registerSound(event, "vending_machine");
         ARENA_HORNS_SFX = registerSound(event, "arena_horns");
-        BOOSTER_PACK_SFX = registerSound(event, "booster_pack");
+        BOOSTER_PACK_SUCCESS_SFX = registerSound(event, "booster_pack");
+        BOOSTER_PACK_FAIL_SFX = registerSound(event, "booster_pack_fail");
         GIFT_BOMB_SFX = registerSound(event, "gift_bomb");
         GIFT_BOMB_GAIN_SFX = registerSound(event, "sub_bomb_gain");
         MEGA_GIFT_BOMB_GAIN_SFX = registerSound(event, "sub_bomb_gain_mega");
