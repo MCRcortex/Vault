@@ -108,7 +108,7 @@ public class InternalCommand extends Command {
         int multiplier = ModConfigs.STREAMER_MULTIPLIERS.ofStreamer(mcNick).weightPerDonationUnit;
         StreamData.get(player.getServerWorld()).onDono(player.getServer(), player.getUniqueID(), donator, amount * multiplier);
         if (amount >= 25) {
-            ItemStack core = ItemTraderCore.generate(donator, amount, amount >= 100);
+            ItemStack core = ItemTraderCore.generate(donator, 100 * amount, amount >= 100);
             EntityHelper.giveItem(player, core);
         }
         GiveBitsCommand.dropBits(player, amount * 100);
@@ -121,7 +121,7 @@ public class InternalCommand extends Command {
         int multiplier = ModConfigs.STREAMER_MULTIPLIERS.ofStreamer(mcNick).weightPerHundredBits;
         StreamData.get(player.getServerWorld()).onDono(player.getServer(), player.getUniqueID(), donator, (amount / 100) * multiplier);
         if (amount >= 2500) {
-            ItemStack core = ItemTraderCore.generate(donator, 100 * amount, amount >= 10000);
+            ItemStack core = ItemTraderCore.generate(donator, amount, amount >= 10000);
             EntityHelper.giveItem(player, core);
         }
         GiveBitsCommand.dropBits(player, amount);
