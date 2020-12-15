@@ -69,6 +69,7 @@ public class ModBlocks {
     public static final MVPCrownBlock MVP_CROWN = new MVPCrownBlock();
     public static final PlayerStatueBlock PLAYER_STATUE = new PlayerStatueBlock();
     public static final VendingMachineBlock VENDING_MACHINE = new VendingMachineBlock();
+    public static final AdvancedVendingBlock ADVANCED_VENDING_MACHINE = new AdvancedVendingBlock();
     public static final VaultBedrockBlock VAULT_BEDROCK = new VaultBedrockBlock();
     public static final RelicStatueBlock RELIC_STATUE = new RelicStatueBlock();
     public static final LootStatueBlock GIFT_NORMAL_STATUE = new LootStatueBlock(StatueType.GIFT_NORMAL);
@@ -88,6 +89,8 @@ public class ModBlocks {
             TileEntityType.Builder.create(PlayerStatueTileEntity::new, PLAYER_STATUE).build(null);
     public static final TileEntityType<VendingMachineTileEntity> VENDING_MACHINE_TILE_ENTITY =
             TileEntityType.Builder.create(VendingMachineTileEntity::new, VENDING_MACHINE).build(null);
+    public static final TileEntityType<AdvancedVendingTileEntity> ADVANCED_VENDING_MACHINE_TILE_ENTITY =
+            TileEntityType.Builder.create(AdvancedVendingTileEntity::new, ADVANCED_VENDING_MACHINE).build(null);
     public static final TileEntityType<RelicStatueTileEntity> RELIC_STATUE_TILE_ENTITY =
             TileEntityType.Builder.create(RelicStatueTileEntity::new, RELIC_STATUE).build(null);
     public static final TileEntityType<LootStatueTileEntity> LOOT_STATUE_TILE_ENTITY =
@@ -145,6 +148,7 @@ public class ModBlocks {
         registerBlock(event, MVP_CROWN, Vault.id("mvp_crown"));
         registerBlock(event, PLAYER_STATUE, Vault.id("player_statue"));
         registerBlock(event, VENDING_MACHINE, Vault.id("vending_machine"));
+        registerBlock(event, ADVANCED_VENDING_MACHINE, Vault.id("advanced_vending_machine"));
         registerBlock(event, VAULT_BEDROCK, Vault.id("vault_bedrock"));
         registerBlock(event, RELIC_STATUE, Vault.id("relic_statue"));
         registerBlock(event, GIFT_NORMAL_STATUE, Vault.id("gift_normal_statue"));
@@ -160,6 +164,7 @@ public class ModBlocks {
         registerTileEntity(event, VAULT_PORTAL_TILE_ENTITY, Vault.id("vault_portal_tile_entity"));
         registerTileEntity(event, PLAYER_STATUE_TILE_ENTITY, Vault.id("player_statue_tile_entity"));
         registerTileEntity(event, VENDING_MACHINE_TILE_ENTITY, Vault.id("vending_machine_tile_entity"));
+        registerTileEntity(event, ADVANCED_VENDING_MACHINE_TILE_ENTITY, Vault.id("advanced_vending_machine_tile_entity"));
         registerTileEntity(event, RELIC_STATUE_TILE_ENTITY, Vault.id("relic_statue_tile_entity"));
         registerTileEntity(event, LOOT_STATUE_TILE_ENTITY, Vault.id("loot_statue_tile_entity"));
     }
@@ -169,6 +174,7 @@ public class ModBlocks {
         ClientRegistry.bindTileEntityRenderer(ModBlocks.VAULT_RUNE_TILE_ENTITY, VaultRuneRenderer::new);
         ClientRegistry.bindTileEntityRenderer(ModBlocks.PLAYER_STATUE_TILE_ENTITY, PlayerStatueRenderer::new);
         ClientRegistry.bindTileEntityRenderer(ModBlocks.VENDING_MACHINE_TILE_ENTITY, VendingMachineRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(ModBlocks.ADVANCED_VENDING_MACHINE_TILE_ENTITY, AdvancedVendingRenderer::new);
         ClientRegistry.bindTileEntityRenderer(ModBlocks.RELIC_STATUE_TILE_ENTITY, RelicStatueRenderer::new);
         ClientRegistry.bindTileEntityRenderer(ModBlocks.LOOT_STATUE_TILE_ENTITY, LootStatueRenderer::new);
     }
@@ -220,6 +226,7 @@ public class ModBlocks {
         registerBlockItem(event, MVP_CROWN, 1);
         registerBlockItem(event, PLAYER_STATUE, PLAYER_STATUE_BLOCK_ITEM);
         registerBlockItem(event, VENDING_MACHINE, 64);
+        registerBlockItem(event, ADVANCED_VENDING_MACHINE, 64);
         registerBlockItem(event, VAULT_BEDROCK);
         registerBlockItem(event, RELIC_STATUE, RELIC_STATUE_BLOCK_ITEM);
         registerBlockItem(event, GIFT_NORMAL_STATUE, GIFT_NORMAL_STATUE_BLOCK_ITEM);

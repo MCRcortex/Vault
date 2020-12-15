@@ -112,6 +112,12 @@ public class ModNetwork {
                 VaultBeginMessage::encode,
                 VaultBeginMessage::decode,
                 VaultBeginMessage::handle);
+
+
+        CHANNEL.registerMessage(19, AdvancedVendingUIMessage.class,
+                AdvancedVendingUIMessage::encode,
+                AdvancedVendingUIMessage::decode,
+                AdvancedVendingUIMessage::handle);
     }
 
 }

@@ -1,6 +1,7 @@
 package iskallia.vault.init;
 
 import iskallia.vault.client.gui.overlay.*;
+import iskallia.vault.client.gui.screen.AdvancedVendingMachineScreen;
 import iskallia.vault.client.gui.screen.SkillTreeScreen;
 import iskallia.vault.client.gui.screen.VaultCrateScreen;
 import iskallia.vault.client.gui.screen.VendingMachineScreen;
@@ -14,6 +15,7 @@ public class ModScreens {
         ScreenManager.registerFactory(ModContainers.SKILL_TREE_CONTAINER, SkillTreeScreen::new);
         ScreenManager.registerFactory(ModContainers.VAULT_CRATE_CONTAINER, VaultCrateScreen::new);
         ScreenManager.registerFactory(ModContainers.VENDING_MACHINE_CONTAINER, VendingMachineScreen::new);
+        ScreenManager.registerFactory(ModContainers.ADVANCED_VENDING_MACHINE_CONTAINER, AdvancedVendingMachineScreen::new);
     }
 
     public static void registerOverlays() {

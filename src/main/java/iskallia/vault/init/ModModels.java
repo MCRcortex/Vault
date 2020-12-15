@@ -36,6 +36,7 @@ public class ModModels {
         RenderTypeLookup.setRenderLayer(ModBlocks.ARTIFACT_16, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.MVP_CROWN, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.VENDING_MACHINE, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.ADVANCED_VENDING_MACHINE, RenderType.getCutout());
     }
 
 }
