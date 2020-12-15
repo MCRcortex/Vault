@@ -23,9 +23,13 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 
+import java.util.List;
+
 public class AdvancedVendingRenderer extends TileEntityRenderer<AdvancedVendingTileEntity> {
 
     public static final StatuePlayerModel<PlayerEntity> PLAYER_MODEL = new StatuePlayerModel<>(0.1f, true);
+
+    public static final long CAROUSEL_CYCLE_TICKS = 5 * 1000L;
 
     public AdvancedVendingRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
         super(rendererDispatcherIn);
@@ -34,10 +38,16 @@ public class AdvancedVendingRenderer extends TileEntityRenderer<AdvancedVendingT
     @Override
     public void
     render(AdvancedVendingTileEntity tileEntity, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
-        TraderCore renderCore = tileEntity.getRenderCore();
+        List<TraderCore> cores = tileEntity.getCores();
+
+        if (cores.size() == 0) return;
+
+        TraderCore renderCore = cores.get((int) ((System.currentTimeMillis() / CAROUSEL_CYCLE_TICKS) % cores.size()));
 
         if (renderCore == null)
             return; // Woopsies, no core no render.
+
+        tileEntity.getSkin().updateSkin(renderCore.getName());
 
         float scale = renderCore.isMegahead() ? 0.8f : 0.9f;
         float headScale = renderCore.isMegahead() ? 1.75f : 1f;

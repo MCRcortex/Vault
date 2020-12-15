@@ -91,7 +91,7 @@ public class PlayerStatueRenderer extends TileEntityRenderer<PlayerStatueTileEnt
                     .getItemRenderer().getItemModelWithOverrides(itemStack, null, null);
             minecraft.getItemRenderer()
                     .renderItem(itemStack, ItemCameraTransforms.TransformType.GROUND, true,
-                            matrixStack, buffer, 0x00_f00000, 0x00_e00000, ibakedmodel);
+                            matrixStack, buffer, combinedLight, combinedOverlay, ibakedmodel);
             matrixStack.pop();
         }
 

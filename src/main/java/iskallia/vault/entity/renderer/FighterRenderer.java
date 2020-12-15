@@ -80,7 +80,7 @@ public class FighterRenderer extends LivingRenderer<FighterEntity, FighterModel>
                 .getItemRenderer().getItemModelWithOverrides(itemStack, null, null);
         Minecraft.getInstance().getItemRenderer()
                 .renderItem(itemStack, ItemCameraTransforms.TransformType.GROUND, true,
-                        matrixStack, buffer, 0x00_f00000, 0x00_e00000, ibakedmodel);
+                        matrixStack, buffer, 15728864, 655360, ibakedmodel);
         matrixStack.pop();
     }
 
