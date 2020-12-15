@@ -32,10 +32,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.Color;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
@@ -164,14 +162,17 @@ public class AdvancedVendingBlock extends Block {
         if (heldStack.getItem() == ModItems.TRADER_CORE) {
             TraderCore lastCore = machine.getLastCore();
             TraderCore coreToInsert = ItemTraderCore.toTraderCore(heldStack);
-            if (lastCore == null || lastCore.getName().equalsIgnoreCase(coreToInsert.getName())) {
-                machine.addCore(coreToInsert);
-                heldStack.shrink(1);
-            } else {
-                StringTextComponent text = new StringTextComponent("This vending machine is already occupied.");
-                text.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_ffd800)));
-                player.sendStatusMessage(text, true);
-            }
+
+            machine.addCore(coreToInsert);
+            heldStack.shrink(1);
+//            if (lastCore == null || lastCore.getName().equalsIgnoreCase(coreToInsert.getName())) {
+//                machine.addCore(coreToInsert);
+//                heldStack.shrink(1);
+//            } else {
+//                StringTextComponent text = new StringTextComponent("This vending machine is already occupied.");
+//                text.setStyle(Style.EMPTY.setColor(Color.fromInt(0xFF_ffd800)));
+//                player.sendStatusMessage(text, true);
+//            }
 
             return ActionResultType.SUCCESS;
 

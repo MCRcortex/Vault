@@ -80,6 +80,7 @@ public class AdvancedVendingContainer extends Container {
 
         vendingInventory.updateSelectedCore(tileEntity, traderCore);
         vendingInventory.updateRecipe();
+        getTileEntity().updateSkin(traderCore.getName());
 
         if (vendingInventory.getStackInSlot(AdvancedVendingInventory.BUY_SLOT) != ItemStack.EMPTY) {
             ItemStack buyStack = vendingInventory.removeStackFromSlot(AdvancedVendingInventory.BUY_SLOT);

@@ -164,17 +164,17 @@ public class AdvancedVendingMachineScreen extends ContainerScreen<AdvancedVendin
         tradesContainer.render(matrixStack, mouseX, mouseY, partialTicks);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
 
-        TraderCore lastCore = tileEntity.getLastCore();
-        if (lastCore != null) {
+        TraderCore coreToRender = container.getSelectedTrade();
+        if (coreToRender != null) {
 //            drawSkin((int) midX - 175, (int) midY - 10, 45, tileEntity.getSkin(), lastCore.isMegahead());
-            drawSkin((int) midX + 175, (int) midY - 10, -45, tileEntity.getSkin(), lastCore.isMegahead());
+            drawSkin((int) midX + 175, (int) midY - 10, -45, tileEntity.getSkin(), coreToRender.isMegahead());
         }
 
         minecraft.fontRenderer.drawString(matrixStack,
                 "Trades", midX - 108, midY - 77, 0xFF_3f3f3f);
 
-        if (lastCore != null) {
-            String name = "Vendor - " + lastCore.getName();
+        if (coreToRender != null) {
+            String name = "Vendor - " + coreToRender.getName();
             int nameWidth = minecraft.fontRenderer.getStringWidth(name);
             minecraft.fontRenderer.drawString(matrixStack,
                     name,

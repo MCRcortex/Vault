@@ -137,6 +137,9 @@ public class AdvancedVendingTileEntity extends TileEntity {
         if (lastCore == null) return;
         skin.updateSkin(lastCore.getName());
     }
+    public void updateSkin(String name) {
+        skin.updateSkin(name);
+    }
 
     public void printCores() {
         for (TraderCore core : cores) {
