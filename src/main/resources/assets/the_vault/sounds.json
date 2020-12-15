@@ -98,6 +98,12 @@
       "the_vault:vending_machine"
     ]
   },
+  "boss_tp": {
+    "category": "master",
+    "sounds": [
+      "the_vault:boss_tp"
+    ]
+  },
   "dash": {
     "category": "master",
     "sounds": [
@@ -148,6 +154,21 @@
     "category": "block",
     "sounds": [
       "the_vault:vault_gem_break"
+    ]
+  },
+  "robot_hurt": {
+    "category": "hostile",
+    "sounds": [
+      "the_vault:robot_hurt1",
+      "the_vault:robot_hurt2",
+      "the_vault:robot_hurt3",
+      "the_vault:robot_hurt4"
+    ]
+  },
+  "robot_death": {
+    "category": "hostile",
+    "sounds": [
+      "the_vault:robot_death"
     ]
   }
 }

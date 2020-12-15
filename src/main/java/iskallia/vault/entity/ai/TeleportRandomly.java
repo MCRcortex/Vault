@@ -1,5 +1,6 @@
 package iskallia.vault.entity.ai;
 
+import iskallia.vault.init.ModSounds;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
@@ -27,8 +28,9 @@ public class TeleportRandomly<T extends LivingEntity> implements INBTSerializabl
 			if(this.entity.world.rand.nextDouble() < chance) {
 				for(int i = 0; i < 64; ++i) {
 					if(this.teleportRandomly()) {
+						System.out.println("TP!");
 						this.entity.world.playSound(null, this.entity.prevPosX, this.entity.prevPosY, this.entity.prevPosZ,
-								SoundEvents.ENTITY_ENDERMAN_TELEPORT, this.entity.getSoundCategory(), 1.0F, 1.0F);
+								ModSounds.BOSS_TP_SFX, this.entity.getSoundCategory(), 1.0F, 1.0F);
 						return true;
 					}
 				}

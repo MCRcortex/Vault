@@ -2,6 +2,7 @@ package iskallia.vault.entity;
 
 import iskallia.vault.entity.ai.*;
 import iskallia.vault.init.ModConfigs;
+import iskallia.vault.init.ModSounds;
 import iskallia.vault.world.data.VaultRaidData;
 import iskallia.vault.world.raid.VaultRaid;
 import net.minecraft.entity.EntityType;
@@ -13,7 +14,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.IndirectEntityDamageSource;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.BossInfo;
@@ -26,10 +26,10 @@ import java.util.Random;
 public class BoogiemanEntity extends ZombieEntity implements VaultBoss {
 
     public TeleportRandomly<BoogiemanEntity> teleportTask = new TeleportRandomly<>(this, (entity, source, amount) -> {
-        if(!entity.world.isRemote && source instanceof IndirectEntityDamageSource) {
-            VaultRaid raid = VaultRaidData.get((ServerWorld)world).getAt(entity.getPosition());
+        if (!entity.world.isRemote && source instanceof IndirectEntityDamageSource) {
+            VaultRaid raid = VaultRaidData.get((ServerWorld) world).getAt(entity.getPosition());
 
-            if(raid != null) {
+            if (raid != null) {
                 return ModConfigs.VAULT_MOBS.getForLevel(raid.level).TP_CHANCE;
             }
 
@@ -38,7 +38,7 @@ public class BoogiemanEntity extends ZombieEntity implements VaultBoss {
 
         return 0.0D;
     }, (entity, source, amount) -> {
-        if(!(source.getTrueSource() instanceof LivingEntity)) {
+        if (!(source.getTrueSource() instanceof LivingEntity)) {
             return 0.1D;
         }
 
@@ -67,7 +67,7 @@ public class BoogiemanEntity extends ZombieEntity implements VaultBoss {
         }).to(entity -> {
             return entity.getAttackTarget().getPositionVec().add((entity.rand.nextDouble() - 0.5D) * 8.0D, entity.rand.nextInt(16) - 8, (entity.rand.nextDouble() - 0.5D) * 8.0D);
         }).then(entity -> {
-            entity.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            entity.playSound(ModSounds.BOSS_TP_SFX, 1.0F, 1.0F);
         }).build());
 
         this.goalSelector.addGoal(1, new SnowStormGoal<>(this, 96, 10));
@@ -101,15 +101,15 @@ public class BoogiemanEntity extends ZombieEntity implements VaultBoss {
 
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
-        if(!(source.getTrueSource() instanceof PlayerEntity)
+        if (!(source.getTrueSource() instanceof PlayerEntity)
                 && !(source.getTrueSource() instanceof ArenaFighterEntity) // Here for future Mini Subber thingy!
                 && source != DamageSource.OUT_OF_WORLD) {
             return false;
         }
 
-        if(this.isInvulnerableTo(source) || source == DamageSource.FALL) {
+        if (this.isInvulnerableTo(source) || source == DamageSource.FALL) {
             return false;
-        } else if(teleportTask.attackEntityFrom(source, amount)) {
+        } else if (teleportTask.attackEntityFrom(source, amount)) {
             return true;
         }
 

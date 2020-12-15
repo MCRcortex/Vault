@@ -5,6 +5,7 @@ import iskallia.vault.entity.ai.SnowStormGoal;
 import iskallia.vault.entity.ai.TeleportGoal;
 import iskallia.vault.entity.ai.TeleportRandomly;
 import iskallia.vault.init.ModConfigs;
+import iskallia.vault.init.ModSounds;
 import iskallia.vault.world.data.VaultRaidData;
 import iskallia.vault.world.raid.VaultRaid;
 import net.minecraft.entity.EntityType;
@@ -16,7 +17,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.IndirectEntityDamageSource;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.BossInfo;
@@ -70,7 +70,7 @@ public class BlueBlazeEntity extends BlazeEntity implements VaultBoss {
         }).to(entity -> {
             return entity.getAttackTarget().getPositionVec().add((entity.rand.nextDouble() - 0.5D) * 8.0D, entity.rand.nextInt(16) - 8, (entity.rand.nextDouble() - 0.5D) * 8.0D);
         }).then(entity -> {
-            entity.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            entity.playSound(ModSounds.BOSS_TP_SFX, 1.0F, 1.0F);
         }).build());
 
         this.goalSelector.addGoal(1, new SnowStormGoal<>(this, 96, 10));

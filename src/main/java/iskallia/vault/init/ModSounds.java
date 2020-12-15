@@ -28,8 +28,11 @@ public class ModSounds {
     public static SoundEvent GIFT_BOMB_SFX;
     public static SoundEvent GIFT_BOMB_GAIN_SFX;
     public static SoundEvent MEGA_GIFT_BOMB_GAIN_SFX;
+    public static SoundEvent BOSS_TP_SFX;
     public static SoundEvent VAULT_GEM_HIT;
     public static SoundEvent VAULT_GEM_BREAK;
+    public static SoundEvent ROBOT_HURT;
+    public static SoundEvent ROBOT_DEATH;
 
     public static LazySoundType VAULT_GEM = new LazySoundType();
 
@@ -54,8 +57,11 @@ public class ModSounds {
         GIFT_BOMB_SFX = registerSound(event, "gift_bomb");
         GIFT_BOMB_GAIN_SFX = registerSound(event, "sub_bomb_gain");
         MEGA_GIFT_BOMB_GAIN_SFX = registerSound(event, "sub_bomb_gain_mega");
+        BOSS_TP_SFX = registerSound(event, "boss_tp");
         VAULT_GEM_HIT = registerSound(event, "vault_gem_hit");
         VAULT_GEM_BREAK = registerSound(event, "vault_gem_break");
+        ROBOT_HURT = registerSound(event, "robot_hurt");
+        ROBOT_DEATH = registerSound(event, "robot_death");
     }
 
     public static void registerSoundTypes() {
