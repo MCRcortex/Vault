@@ -127,9 +127,15 @@ public class VaultRaidOverlay {
         matrixStack.pop();
 
         if (inVault) {
+            if (bossSummoned && ambientLoop != null && minecraft.getSoundHandler().isPlaying(ambientLoop)) {
+                minecraft.getSoundHandler().stop(ambientLoop);
+            }
+
             if (ambientLoop == null || !minecraft.getSoundHandler().isPlaying(ambientLoop)) {
-                ambientLoop = SimpleSound.music(ModSounds.VAULT_AMBIENT_LOOP);
-                minecraft.getSoundHandler().play(ambientLoop);
+                if (!bossSummoned) {
+                    ambientLoop = SimpleSound.music(ModSounds.VAULT_AMBIENT_LOOP);
+                    minecraft.getSoundHandler().play(ambientLoop);
+                }
             }
 
             if (ticksBeforeAmbientSound < 0) {
