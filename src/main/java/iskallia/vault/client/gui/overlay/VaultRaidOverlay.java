@@ -3,6 +3,8 @@ package iskallia.vault.client.gui.overlay;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import iskallia.vault.Vault;
+import iskallia.vault.client.gui.helper.AnimationTwoPhased;
+import iskallia.vault.client.gui.helper.Easing;
 import iskallia.vault.client.gui.helper.FontHelper;
 import iskallia.vault.init.ModSounds;
 import net.minecraft.client.Minecraft;
@@ -26,8 +28,25 @@ public class VaultRaidOverlay {
     public static SimpleSound ambientSound;
     public static SimpleSound bossLoop;
 
+    public static long previousAnimationTime;
+    public static boolean shouldRenderSign;
+    public static AnimationTwoPhased noVaultExitX;
+    public static AnimationTwoPhased noVaultExitY;
+    public static AnimationTwoPhased noVaultExitScale;
+
     public static boolean bossSummoned;
     private static int ticksBeforeAmbientSound;
+
+    public static void initNoVaultExitAnimation() {
+        noVaultExitX = new AnimationTwoPhased(0, 0, 0, 5000);
+        noVaultExitY = new AnimationTwoPhased(0, 0, 0, 5000);
+        noVaultExitScale = new AnimationTwoPhased(4.5f, 4.5f, 0.75f, 5000)
+                .withEasing(Easing.LINEAR_IN, Easing.EXPO_OUT);
+        previousAnimationTime = System.currentTimeMillis();
+        noVaultExitX.play();
+        noVaultExitY.play();
+        noVaultExitScale.play();
+    }
 
     public static void startBossLoop() {
         if (bossLoop != null) stopBossLoop();
@@ -124,6 +143,8 @@ public class VaultRaidOverlay {
             ticksBeforeAmbientSound--;
         }
 
+        renderNoExitSign(event);
+
         if (remainingTicks < panicTicks) {
             if (panicSound == null || !minecraft.getSoundHandler().isPlaying(panicSound)) {
                 panicSound = SimpleSound.master(
@@ -133,6 +154,51 @@ public class VaultRaidOverlay {
                 minecraft.getSoundHandler().play(panicSound);
             }
         }
+    }
+
+    public static void
+    renderNoExitSign(RenderGameOverlayEvent.Post event) {
+        if (!shouldRenderSign) return;
+
+        Minecraft minecraft = Minecraft.getInstance();
+        MatrixStack matrixStack = event.getMatrixStack();
+
+        int width = minecraft.getMainWindow().getScaledWidth();
+        int height = minecraft.getMainWindow().getScaledHeight();
+
+        int signWidth = 45;
+        int signHeight = 50;
+
+        minecraft.getTextureManager().bindTexture(RESOURCE);
+        long now = System.currentTimeMillis();
+        int deltaTime = (int) (now - previousAnimationTime);
+
+        matrixStack.push();
+
+        if (noVaultExitX != null) {
+            noVaultExitX.tick(deltaTime);
+            noVaultExitX.changeValues(width / 2f, width / 2f, width - 50);
+            matrixStack.translate(noVaultExitX.getValue(), 0, 0);
+        }
+
+        if (noVaultExitY != null) {
+            noVaultExitY.tick(deltaTime);
+            noVaultExitY.changeValues(height / 2f, height / 2f, height - 30);
+            matrixStack.translate(0, noVaultExitY.getValue(), 0);
+        }
+
+        if (noVaultExitScale != null) {
+            noVaultExitScale.tick(deltaTime);
+            matrixStack.scale(noVaultExitScale.getValue(), noVaultExitScale.getValue(), noVaultExitScale.getValue());
+        }
+
+        previousAnimationTime = now;
+
+        minecraft.ingameGUI.blit(matrixStack,
+                -signWidth / 2, -signHeight / 2,
+                1, 164, signWidth, signHeight);
+
+        matrixStack.pop();
     }
 
     public static String formatTimeString() {

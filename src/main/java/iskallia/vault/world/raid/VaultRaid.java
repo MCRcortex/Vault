@@ -5,6 +5,7 @@ import iskallia.vault.block.VaultPortalBlock;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModNetwork;
+import iskallia.vault.network.message.VaultBeginMessage;
 import iskallia.vault.network.message.VaultRaidTickMessage;
 import iskallia.vault.util.NetcodeUtils;
 import iskallia.vault.world.gen.PortalPlacer;
@@ -266,11 +267,14 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
             long seconds = (this.ticksLeft / 20) % 60;
             long minutes = ((this.ticksLeft / 20) / 60) % 60;
             String duration = String.format("%02d:%02d", minutes, seconds);
+            boolean cannotExit = playerBossName != null && !playerBossName.isEmpty();
 
             StringTextComponent title = new StringTextComponent("The Vault");
             title.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_ddd01e)));
 
-            IFormattableTextComponent subtitle = new StringTextComponent("Good luck, ").append(player.getName()).append(new StringTextComponent("!"));
+            IFormattableTextComponent subtitle = cannotExit
+                    ? new StringTextComponent("No exit this time, ").append(player.getName()).append(new StringTextComponent("!"))
+                    : new StringTextComponent("Good luck, ").append(player.getName()).append(new StringTextComponent("!"));
             subtitle.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_ddd01e)));
 
             StringTextComponent actionBar = new StringTextComponent("You have " + duration + " minutes to complete the raid.");
@@ -283,10 +287,18 @@ public class VaultRaid implements INBTSerializable<CompoundNBT> {
             playerEntity.connection.sendPacket(subtitlePacket);
             playerEntity.sendStatusMessage(actionBar, true);
 
+            ModNetwork.CHANNEL.sendTo(
+                    new VaultBeginMessage(cannotExit),
+                    playerEntity.connection.netManager,
+                    NetworkDirection.PLAY_TO_CLIENT
+            );
+
             IFormattableTextComponent playerName = player.getDisplayName().deepCopy();
             playerName.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_983198)));
 
-            StringTextComponent text = new StringTextComponent(" entered a Vault!");
+            StringTextComponent text = cannotExit
+                    ? new StringTextComponent(" entered a Raffle Vault!")
+                    : new StringTextComponent(" entered a Vault!");
             text.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_ffffff)));
 
             world.getServer().getPlayerList().func_232641_a_(

@@ -5,6 +5,7 @@ import iskallia.vault.block.entity.VaultPortalTileEntity;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.util.VaultRarity;
 import iskallia.vault.world.data.VaultRaidData;
+import iskallia.vault.world.raid.VaultRaid;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,6 +23,9 @@ import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.Color;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.world.GameType;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
@@ -144,6 +148,16 @@ public class VaultPortalBlock extends NetherPortalBlock {
             world.getServer().runAsync(() -> {
                 if (worldKey == World.OVERWORLD) {
                     ServerPlayerEntity playerEntity = (ServerPlayerEntity) entity;
+
+                    VaultRaid raid = VaultRaidData.get(destination).getActiveFor(playerEntity);
+
+                    if(raid.playerBossName != null && !raid.playerBossName.isEmpty()) {
+                        StringTextComponent text = new StringTextComponent("You cannot exit from this Vault instance!");
+                        text.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_FF0000)));
+                        playerEntity.sendStatusMessage(text, true);
+                        return;
+                    }
+
                     BlockPos blockPos = playerEntity.func_241140_K_();
                     Optional<Vector3d> spawn = blockPos == null ? Optional.empty() : PlayerEntity.func_242374_a(destination,
                             blockPos, playerEntity.func_242109_L(), playerEntity.func_241142_M_(), true);

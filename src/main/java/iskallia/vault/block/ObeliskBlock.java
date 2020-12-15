@@ -85,10 +85,11 @@ public class ObeliskBlock extends Block {
 
             if (raid != null && raid.playerBossName != null && !raid.playerBossName.isEmpty()) {
                 spawnSubscriberBoss(raid, (ServerWorld) world, pos);
+                world.setBlockState(pos, Blocks.AIR.getDefaultState());
+
             } else {
                 spawnRandomBoss(raid, (ServerWorld) world, pos);
                 world.setBlockState(pos, Blocks.AIR.getDefaultState());
-
             }
         }
 

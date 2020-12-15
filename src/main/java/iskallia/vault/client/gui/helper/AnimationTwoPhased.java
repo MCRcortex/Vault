@@ -38,7 +38,7 @@ public class AnimationTwoPhased {
 
         elapsedTime = Math.min(elapsedTime + deltaTime, animationTime);
 
-        float elapsedPercent = ((float) elapsedTime) / animationTime;
+        float elapsedPercent = getElapsedPercentage();
 
         if (elapsedTime < 0.5f * animationTime) {
             float value = initEasing.calc(2f * elapsedPercent);
@@ -50,9 +50,26 @@ public class AnimationTwoPhased {
         }
 
         if (elapsedTime >= animationTime) {
-            reset();
             pause();
         }
+    }
+
+    public void changeValues(float initValue, float midValue, float endValue) {
+        this.initValue = initValue;
+        this.midValue = midValue;
+        this.endValue = endValue;
+        float elapsedPercent = getElapsedPercentage();
+        if (elapsedTime < 0.5f * animationTime) {
+            float value = initEasing.calc(2f * elapsedPercent);
+            this.value = value * (midValue - initValue) + initValue;
+        } else {
+            float value = initEasing.calc(2f * elapsedPercent - 1f);
+            this.value = value * (endValue - midValue) + midValue;
+        }
+    }
+
+    public float getElapsedPercentage() {
+        return ((float) elapsedTime) / animationTime;
     }
 
     public void pause() {

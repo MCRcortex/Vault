@@ -50,6 +50,7 @@ public class VaultLevelMessage {
             VaultBarOverlay.tnl = message.tnl;
             VaultBarOverlay.unspentSkillPoints = message.unspentSkillPoints;
 
+            VaultBarOverlay.expGainedAnimation.reset();
             VaultBarOverlay.expGainedAnimation.play();
 
             Screen currentScreen = Minecraft.getInstance().currentScreen;
