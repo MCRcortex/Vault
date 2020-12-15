@@ -78,6 +78,11 @@ public class ModItems {
     public static ItemVaultRelicPart MYSTIC_GEM_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_mystic_gem_essence"), VaultSetsData.RelicSet.RICHITY);
     public static ItemVaultRelicPart NETHERITE_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_netherite_essence"), VaultSetsData.RelicSet.RICHITY);
     public static ItemVaultRelicPart PLATINUM_ESSENCE_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_platinum_essence"), VaultSetsData.RelicSet.RICHITY);
+    public static ItemVaultRelicPart TWITCH_EMOTE1_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_twitch_emote1"), VaultSetsData.RelicSet.TWITCH);
+    public static ItemVaultRelicPart TWITCH_EMOTE2_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_twitch_emote2"), VaultSetsData.RelicSet.TWITCH);
+    public static ItemVaultRelicPart TWITCH_EMOTE3_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_twitch_emote3"), VaultSetsData.RelicSet.TWITCH);
+    public static ItemVaultRelicPart TWITCH_EMOTE4_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_twitch_emote4"), VaultSetsData.RelicSet.TWITCH);
+    public static ItemVaultRelicPart TWITCH_EMOTE5_RELIC = new ItemVaultRelicPart(VAULT_MOD_GROUP, Vault.id("relic_twitch_emote5"), VaultSetsData.RelicSet.TWITCH);
     public static ItemVaultRune VAULT_RUNE = new ItemVaultRune(VAULT_MOD_GROUP, Vault.id("vault_rune"));
     public static ObeliskInscriptionItem OBELISK_INSCRIPTION = new ObeliskInscriptionItem(VAULT_MOD_GROUP, Vault.id("obelisk_inscription"));
     public static ItemTraderCore TRADER_CORE = new ItemTraderCore(VAULT_MOD_GROUP, Vault.id("trader_core"));
@@ -161,6 +166,11 @@ public class ModItems {
         registry.register(MEGA_GIFT_BOMB);
         registry.register(OMEGA_GIFT_BOMB);
         registry.register(VAULT_RELIC);
+        registry.register(TWITCH_EMOTE1_RELIC);
+        registry.register(TWITCH_EMOTE2_RELIC);
+        registry.register(TWITCH_EMOTE3_RELIC);
+        registry.register(TWITCH_EMOTE4_RELIC);
+        registry.register(TWITCH_EMOTE5_RELIC);
     }
 
 }

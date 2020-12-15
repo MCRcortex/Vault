@@ -43,6 +43,7 @@ public class AdvancedVendingMachineScreen extends ContainerScreen<AdvancedVendin
 
     public ScrollableContainer tradesContainer;
     public List<AdvancedTradeWidget> tradeWidgets;
+    public SkinProfile skin = new SkinProfile();
 
     public AdvancedVendingMachineScreen(AdvancedVendingContainer screenContainer, PlayerInventory inv, ITextComponent title) {
         super(screenContainer, inv, new StringTextComponent("Advanced Vending Machine"));
@@ -165,9 +166,12 @@ public class AdvancedVendingMachineScreen extends ContainerScreen<AdvancedVendin
         super.render(matrixStack, mouseX, mouseY, partialTicks);
 
         TraderCore coreToRender = container.getSelectedTrade();
+
+        if (coreToRender != null) skin.updateSkin(coreToRender.getName());
+
         if (coreToRender != null) {
-//            drawSkin((int) midX - 175, (int) midY - 10, 45, tileEntity.getSkin(), lastCore.isMegahead());
-            drawSkin((int) midX + 175, (int) midY - 10, -45, tileEntity.getSkin(), coreToRender.isMegahead());
+//            drawSkin((int) midX - 175, (int) midY - 10, 45, skin, lastCore.isMegahead());
+            drawSkin((int) midX + 175, (int) midY - 10, -45, skin, coreToRender.isMegahead());
         }
 
         minecraft.fontRenderer.drawString(matrixStack,
