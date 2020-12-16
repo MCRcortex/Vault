@@ -96,6 +96,8 @@ public class ModItems {
     public static ItemGiftBomb MEGA_GIFT_BOMB = new ItemGiftBomb(VAULT_MOD_GROUP, ItemGiftBomb.Variant.MEGA, Vault.id("gift_bomb_mega"));
     public static ItemGiftBomb OMEGA_GIFT_BOMB = new ItemGiftBomb(VAULT_MOD_GROUP, ItemGiftBomb.Variant.OMEGA, Vault.id("gift_bomb_omega"));
     public static ItemVaultRelic VAULT_RELIC = new ItemVaultRelic(VAULT_MOD_GROUP, Vault.id("vault_relic"));
+    public static ItemSkillOrbFrame SKILL_ORB_FRAME = new ItemSkillOrbFrame(VAULT_MOD_GROUP, Vault.id("orb_frame"));
+    public static ItemSkillShard SKILL_SHARD = new ItemSkillShard(VAULT_MOD_GROUP, Vault.id("skill_shard"));
 
     public static void registerItems(RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
@@ -171,6 +173,8 @@ public class ModItems {
         registry.register(TWITCH_EMOTE3_RELIC);
         registry.register(TWITCH_EMOTE4_RELIC);
         registry.register(TWITCH_EMOTE5_RELIC);
+        registry.register(SKILL_ORB_FRAME);
+        registry.register(SKILL_SHARD);
     }
 
 }
