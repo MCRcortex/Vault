@@ -1,20 +1,14 @@
 package iskallia.vault.item;
 
 import iskallia.vault.Vault;
-import iskallia.vault.container.RenamingContainer;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModItems;
-import iskallia.vault.util.RenameType;
 import iskallia.vault.util.nbt.NBTSerializer;
 import iskallia.vault.vending.Product;
 import iskallia.vault.vending.Trade;
 import iskallia.vault.vending.TraderCore;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -24,7 +18,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -154,28 +147,28 @@ public class ItemTraderCore extends Item {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity player, Hand handIn) {
-        if (worldIn.isRemote) return super.onItemRightClick(worldIn, player, handIn);
-
-        int slot = player.inventory.currentItem;
-        NetworkHooks.openGui(
-                (ServerPlayerEntity) player,
-                new INamedContainerProvider() {
-                    @Override
-                    public ITextComponent getDisplayName() {
-                        return new StringTextComponent("Player Statue");
-                    }
-
-                    @Nullable
-                    @Override
-                    public Container createMenu(int windowId, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-                        return new RenamingContainer(windowId, RenameType.TRADER_CORE, slot);
-                    }
-                },
-                (buffer) -> {
-                    buffer.writeInt(RenameType.TRADER_CORE.ordinal());
-                    buffer.writeInt(slot);
-                }
-        );
+//        if (worldIn.isRemote) return super.onItemRightClick(worldIn, player, handIn);
+//
+//        int slot = player.inventory.currentItem;
+//        NetworkHooks.openGui(
+//                (ServerPlayerEntity) player,
+//                new INamedContainerProvider() {
+//                    @Override
+//                    public ITextComponent getDisplayName() {
+//                        return new StringTextComponent("Player Statue");
+//                    }
+//
+//                    @Nullable
+//                    @Override
+//                    public Container createMenu(int windowId, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+//                        return new RenamingContainer(windowId, RenameType.TRADER_CORE, slot);
+//                    }
+//                },
+//                (buffer) -> {
+//                    buffer.writeInt(RenameType.TRADER_CORE.ordinal());
+//                    buffer.writeInt(slot);
+//                }
+//        );
         return super.onItemRightClick(worldIn, player, handIn);
     }
 }

@@ -30,44 +30,45 @@ public class Vault {
     public static final Logger LOGGER = LogManager.getLogger();
 
     public static RegistryKey<World> VAULT_KEY = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, Vault.id("vault"));
-	public static RegistryKey<World> ARENA_KEY = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, Vault.id("arena"));
+    public static RegistryKey<World> ARENA_KEY = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, Vault.id("arena"));
 
     public Vault() {
-	    MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, this::onCommandRegister);
-	    MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onBiomeLoad);
-	    MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, this::onPlayerLoggedIn);
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, this::onCommandRegister);
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onBiomeLoad);
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, this::onPlayerLoggedIn);
     }
 
-	public void onCommandRegister(RegisterCommandsEvent event) {
-		ModCommands.registerCommands(event.getDispatcher(), event.getEnvironment());
-	}
+    public void onCommandRegister(RegisterCommandsEvent event) {
+        ModCommands.registerCommands(event.getDispatcher(), event.getEnvironment());
+    }
 
-	public void onBiomeLoad(BiomeLoadingEvent event) {
-    	if(event.getName().equals(Vault.id("spoopy"))) {
-		    event.getGeneration()
-				    .withFeature(GenerationStage.Decoration.UNDERGROUND_DECORATION, ModFeatures.VAULT_ORE)
-				    .withFeature(GenerationStage.Decoration.UNDERGROUND_DECORATION, ModFeatures.BREADCRUMB_CHEST);
-	    }
+    public void onBiomeLoad(BiomeLoadingEvent event) {
+        if (event.getName().equals(Vault.id("spoopy"))) {
+            event.getGeneration()
+                    .withFeature(GenerationStage.Decoration.UNDERGROUND_DECORATION, ModFeatures.VAULT_ORE)
+                    .withFeature(GenerationStage.Decoration.UNDERGROUND_DECORATION, ModFeatures.BREADCRUMB_CHEST);
+        }
 
-    	event.getGeneration().withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, ModFeatures.VAULT_ROCK_ORE);
-	}
+        event.getGeneration().withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, ModFeatures.VAULT_ROCK_ORE);
+    }
 
-	public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
-		ServerWorld serverWorld = player.getServerWorld();
-		MinecraftServer server = player.getServer();
-		PlayerVaultStatsData.get(serverWorld).getVaultStats(player).sync(server);
-		PlayerResearchesData.get(serverWorld).getResearches(player).sync(server);
-		PlayerAbilitiesData.get(serverWorld).getAbilities(player).sync(server);
-		StreamData.get(serverWorld).syncHypebar(server, player.getUniqueID());
-	}
+    public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
+        ServerWorld serverWorld = player.getServerWorld();
+        MinecraftServer server = player.getServer();
+        PlayerVaultStatsData.get(serverWorld).getVaultStats(player).sync(server);
+        PlayerResearchesData.get(serverWorld).getResearches(player).sync(server);
+        PlayerAbilitiesData.get(serverWorld).getAbilities(player).sync(server);
+        StreamData.get(serverWorld).syncHypebar(server, player.getUniqueID());
+    }
 
-	public static String sId(String name) {
-		return MOD_ID + ":" + name;
-	}
 
-	public static ResourceLocation id(String name) {
-		return new ResourceLocation(MOD_ID, name);
-	}
+    public static String sId(String name) {
+        return MOD_ID + ":" + name;
+    }
+
+    public static ResourceLocation id(String name) {
+        return new ResourceLocation(MOD_ID, name);
+    }
 
 }

@@ -30,7 +30,8 @@ public class LootStatueBlock extends Block {
 
     public static final VoxelShape SHAPE_GIFT_NORMAL = Block.makeCuboidShape(1, 0, 1, 15, 5, 15);
     public static final VoxelShape SHAPE_GIFT_MEGA = Block.makeCuboidShape(1, 0, 1, 15, 13, 15);
-    public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public static final VoxelShape SHAPE_PLAYER_STATUE = Block.makeCuboidShape(1, 0, 1, 15, 5, 15);
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     public StatueType type;
 
@@ -59,6 +60,7 @@ public class LootStatueBlock extends Block {
                 lootStatue.setLootItem(ItemStack.read(blockEntityTag.getCompound("LootItem")));
                 lootStatue.setStatueType(StatueType.values()[blockEntityTag.getInt("StatueType")]);
                 lootStatue.setCurrentTick(blockEntityTag.getInt("CurrentTick"));
+                lootStatue.setHasCrown(blockEntityTag.getBoolean("HasCrown"));
                 lootStatue.getSkin().updateSkin(playerNickname);
             }
         }
@@ -124,6 +126,8 @@ public class LootStatueBlock extends Block {
                 return SHAPE_GIFT_NORMAL;
             case GIFT_MEGA:
                 return SHAPE_GIFT_MEGA;
+            case VAULT_BOSS:
+                return SHAPE_PLAYER_STATUE;
         }
         return Block.makeCuboidShape(0, 0, 0, 16, 16, 16);
     }

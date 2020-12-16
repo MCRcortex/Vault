@@ -51,8 +51,7 @@ public class ItemGiftBomb extends Item {
                 if (variant.ordinal != -1) {
                     CompoundNBT nbt = Optional.ofNullable(heldStack.getTag()).orElse(new CompoundNBT());
                     String gifter = nbt.getString("Gifter");
-                    System.out.println(variant.ordinal);
-                    ItemStack gifterStatue = LootStatueBlockItem.getStatueBlockItem(gifter, variant.ordinal);
+                    ItemStack gifterStatue = LootStatueBlockItem.forGift(gifter, variant.ordinal, false);
                     player.dropItem(gifterStatue, false, false);
                 }
 

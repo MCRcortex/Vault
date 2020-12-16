@@ -3,6 +3,7 @@ package iskallia.vault.config;
 import com.google.gson.annotations.Expose;
 import iskallia.vault.config.entry.SingleItemEntry;
 import iskallia.vault.util.StatueType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -20,8 +21,10 @@ public class StatueLootConfig extends Config {
     @Expose private int GIFT_NORMAL_STATUE_INTERVAL;
     @Expose private List<SingleItemEntry> GIFT_MEGA_STATUE_LOOT;
     @Expose private int GIFT_MEGA_STATUE_INTERVAL;
-    @Expose private List<SingleItemEntry> PLAYER_STATUE_LOOT;
-    @Expose private int PLAYER_STATUE_INTERVAL;
+    @Expose private List<SingleItemEntry> VAULT_BOSS_STATUE_LOOT;
+    @Expose private int VAULT_BOSS_STATUE_INTERVAL;
+    @Expose private List<SingleItemEntry> ARENA_CHAMPION_STATUE_LOOT;
+    @Expose private int ARENA_CHAMPION_STATUE_INTERVAL;
 
     @Override
     public String getName() {
@@ -39,8 +42,14 @@ public class StatueLootConfig extends Config {
         this.GIFT_MEGA_STATUE_LOOT.add(new SingleItemEntry("minecraft:golden_apple", "{display:{Name:'{\"text\":\"Fancier Apple\"}'}}"));
         this.GIFT_MEGA_STATUE_LOOT.add(new SingleItemEntry("minecraft:diamond_sword", "{Enchantments:[{id:\"minecraft:sharpness\",lvl:10s}]}"));
         this.GIFT_MEGA_STATUE_INTERVAL = 1000;
-        this.PLAYER_STATUE_LOOT = new LinkedList<>();
-        this.PLAYER_STATUE_INTERVAL = 500;
+        this.VAULT_BOSS_STATUE_LOOT = new LinkedList<>();
+        this.VAULT_BOSS_STATUE_LOOT.add(new SingleItemEntry("minecraft:enchanted_golden_apple", "{display:{Name:'{\"text\":\"Fanciest Apple\"}'}}"));
+        this.VAULT_BOSS_STATUE_LOOT.add(new SingleItemEntry("minecraft:netherite_sword", "{Enchantments:[{id:\"minecraft:sharpness\",lvl:10s}]}"));
+        this.VAULT_BOSS_STATUE_INTERVAL = 500;
+        this.ARENA_CHAMPION_STATUE_LOOT = new LinkedList<>();
+        this.ARENA_CHAMPION_STATUE_LOOT.add(new SingleItemEntry("minecraft:enchanted_golden_apple", "{display:{Name:'{\"text\":\"Fanciestest Apple\"}'}}"));
+        this.ARENA_CHAMPION_STATUE_LOOT.add(new SingleItemEntry("minecraft:netherite_sword", "{display:{Name:'{\"text\":\"Over 9000!\"}'},Enchantments:[{id:\"minecraft:sharpness\",lvl:9001s}]}"));
+        this.ARENA_CHAMPION_STATUE_INTERVAL = 500;
     }
 
     public ItemStack randomLoot(StatueType type) {
@@ -49,8 +58,10 @@ public class StatueLootConfig extends Config {
                 return getRandom(GIFT_NORMAL_STATUE_LOOT);
             case GIFT_MEGA:
                 return getRandom(GIFT_MEGA_STATUE_LOOT);
-            case PLAYER:
-                return getRandom(PLAYER_STATUE_LOOT);
+            case VAULT_BOSS:
+                return getRandom(VAULT_BOSS_STATUE_LOOT);
+            case ARENA_CHAMPION:
+                return getRandom(ARENA_CHAMPION_STATUE_LOOT);
         }
 
         throw new InternalError("Unknown Statue variant: " + type);
@@ -62,8 +73,10 @@ public class StatueLootConfig extends Config {
                 return GIFT_NORMAL_STATUE_INTERVAL;
             case GIFT_MEGA:
                 return GIFT_MEGA_STATUE_INTERVAL;
-            case PLAYER:
-                return PLAYER_STATUE_INTERVAL;
+            case VAULT_BOSS:
+                return VAULT_BOSS_STATUE_INTERVAL;
+            case ARENA_CHAMPION:
+                return ARENA_CHAMPION_STATUE_INTERVAL;
         }
 
         throw new InternalError("Unknown Statue variant: " + type);
@@ -81,13 +94,46 @@ public class StatueLootConfig extends Config {
         try {
             Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(randomEntry.ITEM));
             stack = new ItemStack(item);
-            CompoundNBT nbt = JsonToNBT.getTagFromJson(randomEntry.NBT);
-            stack.setTag(nbt);
+            if(randomEntry.NBT != null) {
+                CompoundNBT nbt = JsonToNBT.getTagFromJson(randomEntry.NBT);
+                stack.setTag(nbt);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        return stack;
+    }
+
+    public void dumpAll(PlayerEntity player) {
+        for(SingleItemEntry entry : GIFT_NORMAL_STATUE_LOOT) {
+            player.dropItem(getItem(entry), false);
+        }
+        for(SingleItemEntry entry : GIFT_MEGA_STATUE_LOOT) {
+            player.dropItem(getItem(entry), false);
+        }
+        for(SingleItemEntry entry : ARENA_CHAMPION_STATUE_LOOT) {
+            player.dropItem(getItem(entry), false);
+        }
+        for(SingleItemEntry entry : VAULT_BOSS_STATUE_LOOT) {
+            player.dropItem(getItem(entry), false);
+        }
+    }
+
+    private ItemStack getItem(SingleItemEntry entry) {
+        ItemStack stack = ItemStack.EMPTY;
+        try {
+            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(entry.ITEM));
+            stack = new ItemStack(item);
+            if(entry.NBT != null) {
+                CompoundNBT nbt = JsonToNBT.getTagFromJson(entry.NBT);
+                stack.setTag(nbt);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return stack;
     }
 

@@ -51,6 +51,7 @@ public class LootStatueRenderer extends TileEntityRenderer<LootStatueTileEntity>
         float scale = 0.4f;
         float headScale = 1.75f;
         float hatScale = 3f;
+        float crownScale = 1.5f;
 
         matrixStack.push();
         matrixStack.translate(0.5, 0.9, 0.5);
@@ -88,6 +89,21 @@ public class LootStatueRenderer extends TileEntityRenderer<LootStatueTileEntity>
             matrixStack.rotate(Vector3f.YN.rotationDegrees(direction.getHorizontalAngle() + 180));
 //            matrixStack.rotate(Vector3f.ZP.rotationDegrees(20f));
             ItemStack itemStack = new ItemStack(Registry.ITEM.getOrDefault(Vault.id("bow_hat")));
+            IBakedModel ibakedmodel = minecraft
+                    .getItemRenderer().getItemModelWithOverrides(itemStack, null, null);
+            minecraft.getItemRenderer()
+                    .renderItem(itemStack, ItemCameraTransforms.TransformType.GROUND, true,
+                            matrixStack, buffer, combinedLight, combinedOverlay, ibakedmodel);
+            matrixStack.pop();
+        }
+
+        if (tileEntity.hasCrown() && minecraft.player != null) {
+            matrixStack.push();
+            matrixStack.translate(0.5, 1.2, 0.5);
+            matrixStack.scale(crownScale, crownScale, crownScale);
+            matrixStack.rotate(Vector3f.YP.rotationDegrees(minecraft.player.ticksExisted));
+            //        matrixStack.rotate(Vector3f.ZP.rotationDegrees(20f));
+            ItemStack itemStack = new ItemStack(Registry.ITEM.getOrDefault(Vault.id("mvp_crown")));
             IBakedModel ibakedmodel = minecraft
                     .getItemRenderer().getItemModelWithOverrides(itemStack, null, null);
             minecraft.getItemRenderer()

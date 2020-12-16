@@ -27,6 +27,7 @@ public class LootStatueTileEntity extends TileEntity implements ITickableTileEnt
     private ItemStack lootItem;
     protected SkinProfile skin;
     private StatueType statueType;
+    private boolean hasCrown;
 
     public LootStatueTileEntity() {
         super(ModBlocks.LOOT_STATUE_TILE_ENTITY);
@@ -68,6 +69,10 @@ public class LootStatueTileEntity extends TileEntity implements ITickableTileEnt
     public void setStatueType(StatueType statueType) {
         this.statueType = statueType;
     }
+
+    public boolean hasCrown() { return hasCrown; }
+
+    public void setHasCrown(boolean hasCrown) { this.hasCrown = hasCrown; }
 
     @Override
     public void tick() {
@@ -119,6 +124,7 @@ public class LootStatueTileEntity extends TileEntity implements ITickableTileEnt
         nbt.putInt("CurrentTick", getCurrentTick());
         nbt.putInt("StatueType", getStatueType().ordinal());
         nbt.put("LootItem", getLootItem().serializeNBT());
+        nbt.putBoolean("HasCrown", hasCrown());
 
         return super.write(nbt);
     }
@@ -133,6 +139,7 @@ public class LootStatueTileEntity extends TileEntity implements ITickableTileEnt
         setCurrentTick(nbt.getInt("CurrentTick"));
         setInterval(nbt.getInt("Interval"));
         setStatueType(StatueType.values()[nbt.getInt("StatueType")]);
+        hasCrown = nbt.getBoolean("HasCrown");
 
         super.read(state, nbt);
     }
@@ -156,6 +163,7 @@ public class LootStatueTileEntity extends TileEntity implements ITickableTileEnt
         nbt.putInt("CurrentTick", getCurrentTick());
         nbt.putInt("StatueType", getStatueType().ordinal());
         nbt.put("LootItem", getLootItem().serializeNBT());
+        nbt.putBoolean("HasCrown", hasCrown());
 
         return nbt;
     }

@@ -4,6 +4,7 @@ public enum StatueType {
 
     GIFT_NORMAL,
     GIFT_MEGA,
-    PLAYER
+    VAULT_BOSS,
+    ARENA_CHAMPION
 
 }
