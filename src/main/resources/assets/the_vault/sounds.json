@@ -140,6 +140,18 @@
       "the_vault:sub_bomb_gain_mega"
     ]
   },
+  "vault_portal_open": {
+    "category": "master",
+    "sounds": [
+      "the_vault:vault_portal_open"
+    ]
+  },
+  "vault_portal_leave": {
+    "category": "master",
+    "sounds": [
+      "the_vault:vault_portal_leave"
+    ]
+  },
   "vault_gem_hit": {
     "category": "block",
     "sounds": [
@@ -169,6 +181,27 @@
     "category": "hostile",
     "sounds": [
       "the_vault:robot_death"
+    ]
+  },
+  "boogie_ambient": {
+    "category": "hostile",
+    "sounds": [
+      "the_vault:boogie_ambient1",
+      "the_vault:boogie_ambient2"
+    ]
+  },
+  "boogie_hurt": {
+    "category": "hostile",
+    "sounds": [
+      "the_vault:boogie_hurt1",
+      "the_vault:boogie_hurt2",
+      "the_vault:boogie_hurt3"
+    ]
+  },
+  "boogie_death": {
+    "category": "hostile",
+    "sounds": [
+      "the_vault:boogie_death"
     ]
   }
 }

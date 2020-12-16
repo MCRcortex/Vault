@@ -144,11 +144,6 @@ public class RobotEntity extends IronGolemEntity implements VaultBoss {
     }
 
     @Override
-    public boolean isSilent() {
-        return false;
-    }
-
-    @Override
     public SoundCategory getSoundCategory() {
         return SoundCategory.HOSTILE;
     }

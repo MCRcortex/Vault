@@ -3,6 +3,9 @@ package iskallia.vault.block;
 import iskallia.vault.Vault;
 import iskallia.vault.block.entity.VaultPortalTileEntity;
 import iskallia.vault.init.ModBlocks;
+import iskallia.vault.init.ModNetwork;
+import iskallia.vault.init.ModSounds;
+import iskallia.vault.network.message.VaultEscapeMessage;
 import iskallia.vault.util.VaultRarity;
 import iskallia.vault.world.data.VaultRaidData;
 import iskallia.vault.world.raid.VaultRaid;
@@ -17,6 +20,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.RegistryKey;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.shapes.IBooleanFunction;
@@ -36,6 +40,7 @@ import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.network.NetworkDirection;
 
 import java.util.Optional;
 import java.util.Random;
@@ -173,6 +178,13 @@ public class VaultPortalBlock extends NetherPortalBlock {
                             playerEntity.teleport(destination, vector3d.x, vector3d.y, vector3d.z,
                                     (float) MathHelper.wrapDegrees(MathHelper.atan2(vector3d1.z, vector3d1.x) * (double) (180F / (float) Math.PI) - 90.0D), 0.0F);
                         }
+
+                        ModNetwork.CHANNEL.sendTo(
+                                new VaultEscapeMessage(),
+                                playerEntity.connection.netManager,
+                                NetworkDirection.PLAY_TO_CLIENT
+                        );
+
                     } else {
                         this.moveToSpawn(destination, player);
                     }

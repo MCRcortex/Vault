@@ -2,6 +2,7 @@ package iskallia.vault.item;
 
 import iskallia.vault.block.VaultPortalSize;
 import iskallia.vault.init.ModItems;
+import iskallia.vault.init.ModSounds;
 import iskallia.vault.util.VaultRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -11,6 +12,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -70,7 +72,16 @@ public class ItemVaultCrystal extends Item {
                 playerBossName = tag.getString("playerBossName");
             }
 
-            if (tryCreatePortal(crystal, context.getWorld(), context.getPos(), context.getFace(), playerBossName)) {
+            BlockPos pos = context.getPos();
+            if (tryCreatePortal(crystal, context.getWorld(), pos, context.getFace(), playerBossName)) {
+                context.getWorld().playSound(null,
+                        pos.getX(),
+                        pos.getY(),
+                        pos.getZ(),
+                        ModSounds.VAULT_PORTAL_OPEN,
+                        SoundCategory.BLOCKS,
+                        1f, 1f
+                );
                 context.getItem().shrink(1);
                 return ActionResultType.SUCCESS;
             }

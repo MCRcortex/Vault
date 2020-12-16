@@ -8,7 +8,7 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class ModNetwork {
 
-    private static final String NETWORK_VERSION = "0.17.0";
+    private static final String NETWORK_VERSION = "0.18.0";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(Vault.MOD_ID, "network"),
@@ -113,11 +113,15 @@ public class ModNetwork {
                 VaultBeginMessage::decode,
                 VaultBeginMessage::handle);
 
-
         CHANNEL.registerMessage(19, AdvancedVendingUIMessage.class,
                 AdvancedVendingUIMessage::encode,
                 AdvancedVendingUIMessage::decode,
                 AdvancedVendingUIMessage::handle);
+
+        CHANNEL.registerMessage(20, VaultEscapeMessage.class,
+                VaultEscapeMessage::encode,
+                VaultEscapeMessage::decode,
+                VaultEscapeMessage::handle);
     }
 
 }

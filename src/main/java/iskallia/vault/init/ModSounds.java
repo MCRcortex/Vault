@@ -33,6 +33,11 @@ public class ModSounds {
     public static SoundEvent VAULT_GEM_BREAK;
     public static SoundEvent ROBOT_HURT;
     public static SoundEvent ROBOT_DEATH;
+    public static SoundEvent BOOGIE_AMBIENT;
+    public static SoundEvent BOOGIE_HURT;
+    public static SoundEvent BOOGIE_DEATH;
+    public static SoundEvent VAULT_PORTAL_OPEN;
+    public static SoundEvent VAULT_PORTAL_LEAVE;
 
     public static LazySoundType VAULT_GEM = new LazySoundType();
 
@@ -62,6 +67,11 @@ public class ModSounds {
         VAULT_GEM_BREAK = registerSound(event, "vault_gem_break");
         ROBOT_HURT = registerSound(event, "robot_hurt");
         ROBOT_DEATH = registerSound(event, "robot_death");
+        BOOGIE_AMBIENT = registerSound(event, "boogie_ambient");
+        BOOGIE_HURT = registerSound(event, "boogie_hurt");
+        BOOGIE_DEATH = registerSound(event, "boogie_death");
+        VAULT_PORTAL_OPEN = registerSound(event, "vault_portal_open");
+        VAULT_PORTAL_LEAVE = registerSound(event, "vault_portal_leave");
     }
 
     public static void registerSoundTypes() {
