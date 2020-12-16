@@ -2,13 +2,14 @@ package iskallia.vault.world.raid;
 
 import iskallia.vault.Vault;
 import iskallia.vault.block.VaultCrateBlock;
-import iskallia.vault.block.item.PlayerStatueBlockItem;
+import iskallia.vault.block.item.LootStatueBlockItem;
 import iskallia.vault.entity.ArenaBossEntity;
 import iskallia.vault.entity.ArenaFighterEntity;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModConfigs;
 import iskallia.vault.init.ModNetwork;
 import iskallia.vault.network.message.VaultRaidTickMessage;
+import iskallia.vault.util.StatueType;
 import iskallia.vault.world.data.StreamData;
 import iskallia.vault.world.gen.structure.ArenaStructure;
 import net.minecraft.block.Blocks;
@@ -190,9 +191,9 @@ public class ArenaRaid implements INBTSerializable<CompoundNBT> {
 
             NonNullList<ItemStack> stacks = NonNullList.create();
 
-            stacks.add(PlayerStatueBlockItem.forArenaChampion(this.scoreboard.get().entrySet().stream()
+            stacks.add(LootStatueBlockItem.forArenaChampion(this.scoreboard.get().entrySet().stream()
                     .sorted((o1, o2) -> Float.compare(o2.getValue(), o1.getValue()))
-                    .map(Map.Entry::getKey).findFirst().orElse("")));
+                    .map(Map.Entry::getKey).findFirst().orElse(""), StatueType.ARENA_CHAMPION.ordinal(), true));
 
             List<ItemStack> items = world.getServer().getLootTableManager().getLootTableFromLocation(Vault.id("chest/arena")).generate(ctx);
             stacks.addAll(items);

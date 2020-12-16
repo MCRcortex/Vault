@@ -3,12 +3,13 @@ package iskallia.vault.event;
 import iskallia.vault.Vault;
 import iskallia.vault.block.VaultCrateBlock;
 import iskallia.vault.block.VaultDoorBlock;
-import iskallia.vault.block.item.PlayerStatueBlockItem;
+import iskallia.vault.block.item.LootStatueBlockItem;
 import iskallia.vault.entity.EntityScaler;
 import iskallia.vault.entity.FighterEntity;
 import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModEntities;
 import iskallia.vault.init.ModSounds;
+import iskallia.vault.util.StatueType;
 import iskallia.vault.world.data.VaultRaidData;
 import iskallia.vault.world.gen.PortalPlacer;
 import iskallia.vault.world.raid.VaultRaid;
@@ -196,7 +197,7 @@ public class EntityEvents {
 				NonNullList<ItemStack> stacks = NonNullList.create();
 				stacks.addAll(world.getServer().getLootTableManager().getLootTableFromLocation(Vault.id("chest/boss")).generate(ctx));
 				if(raid.playerBossName!=null && !raid.playerBossName.isEmpty())
-					stacks.add(PlayerStatueBlockItem.forVaultBoss(event.getEntity().getCustomName().getString()));
+					stacks.add(LootStatueBlockItem.forVaultBoss(event.getEntity().getCustomName().getString(), StatueType.VAULT_BOSS.ordinal(), false));
 				ItemStack crate = VaultCrateBlock.getCrateWithLoot(ModBlocks.VAULT_CRATE, stacks);
 
 				event.getEntity().entityDropItem(crate);
