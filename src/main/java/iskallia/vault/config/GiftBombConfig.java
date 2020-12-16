@@ -64,8 +64,10 @@ public class GiftBombConfig extends Config {
         try {
             Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(randomEntry.ITEM));
             stack = new ItemStack(item, randomEntry.AMOUNT);
-            CompoundNBT nbt = JsonToNBT.getTagFromJson(randomEntry.NBT);
-            stack.setTag(nbt);
+            if(randomEntry.NBT != null) {
+                CompoundNBT nbt = JsonToNBT.getTagFromJson(randomEntry.NBT);
+                stack.setTag(nbt);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
