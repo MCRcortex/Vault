@@ -156,7 +156,7 @@ public class VaultPortalBlock extends NetherPortalBlock {
 
                     VaultRaid raid = VaultRaidData.get(destination).getActiveFor(playerEntity);
 
-                    if(raid.playerBossName != null && !raid.playerBossName.isEmpty()) {
+                    if(raid != null && raid.playerBossName != null && !raid.playerBossName.isEmpty()) {
                         StringTextComponent text = new StringTextComponent("You cannot exit from this Vault instance!");
                         text.setStyle(Style.EMPTY.setColor(Color.fromInt(0x00_FF0000)));
                         playerEntity.sendStatusMessage(text, true);

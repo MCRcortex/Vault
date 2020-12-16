@@ -136,6 +136,16 @@ public class InternalCommand extends Command {
     private void traderCoreParticles(ServerPlayerEntity player) {
         Vector3d position = player.getPositionVec();
 
+        player.getServerWorld().playSound(
+                null,
+                position.x,
+                position.y,
+                position.z,
+                SoundEvents.ENTITY_ITEM_PICKUP,
+                SoundCategory.PLAYERS,
+                0.75f, 1f
+        );
+
         player.getServerWorld().spawnParticle(ParticleTypes.REVERSE_PORTAL,
                 position.x,
                 position.y,

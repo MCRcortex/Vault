@@ -65,6 +65,11 @@ public class VaultRelicsConfig extends Config {
         this.relicDrops.add(new Relic(ModItems.MYSTIC_GEM_ESSENCE_RELIC.getRegistryName().toString(), 1));
         this.relicDrops.add(new Relic(ModItems.NETHERITE_ESSENCE_RELIC.getRegistryName().toString(), 1));
         this.relicDrops.add(new Relic(ModItems.PLATINUM_ESSENCE_RELIC.getRegistryName().toString(), 1));
+        this.relicDrops.add(new Relic(ModItems.TWITCH_EMOTE1_RELIC.getRegistryName().toString(), 1));
+        this.relicDrops.add(new Relic(ModItems.TWITCH_EMOTE2_RELIC.getRegistryName().toString(), 1));
+        this.relicDrops.add(new Relic(ModItems.TWITCH_EMOTE3_RELIC.getRegistryName().toString(), 1));
+        this.relicDrops.add(new Relic(ModItems.TWITCH_EMOTE4_RELIC.getRegistryName().toString(), 1));
+        this.relicDrops.add(new Relic(ModItems.TWITCH_EMOTE5_RELIC.getRegistryName().toString(), 1));
     }
 
     public static class Relic {

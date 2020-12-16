@@ -42,20 +42,20 @@ public class ItemRelicBoosterPack extends Item {
             ItemStack heldStack = player.getHeldItem(hand);
             ItemStack stackToDrop = null;
 
-            if (rand >= 98) {
+            if (rand >= 99) {
                 ItemVaultRelicPart randomPart = ModConfigs.VAULT_RELICS.getRandomPart();
                 stackToDrop = new ItemStack(randomPart);
                 successEffects(world, player.getPositionVec());
 
-            } else if (rand >= 96) {
-                stackToDrop = new ItemStack(ModItems.SKILL_ORB);
+            } else if (rand >= 98) {
+                stackToDrop = new ItemStack(ModItems.LEGENDARY_TREASURE_NORMAL);
                 successEffects(world, player.getPositionVec());
 
             } else {
                 ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
                 ServerWorld serverWorld = serverPlayer.getServerWorld();
                 int expPerSub = ModConfigs.STREAMER_EXP.getExpPerSub(player.getName().getString());
-                float coef = MathUtilities.randomFloat(0.5f, 1f);
+                float coef = MathUtilities.randomFloat(0.1f, 0.5f);
                 PlayerVaultStatsData.get(serverWorld).addVaultExp(serverPlayer, (int) (expPerSub * coef));
                 failureEffects(world, player.getPositionVec());
             }
