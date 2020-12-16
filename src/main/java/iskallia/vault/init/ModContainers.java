@@ -1,12 +1,10 @@
 package iskallia.vault.init;
 
-import iskallia.vault.container.AdvancedVendingContainer;
-import iskallia.vault.container.SkillTreeContainer;
-import iskallia.vault.container.VaultCrateContainer;
-import iskallia.vault.container.VendingMachineContainer;
+import iskallia.vault.container.*;
 import iskallia.vault.research.ResearchTree;
 import iskallia.vault.skill.ability.AbilityTree;
 import iskallia.vault.skill.talent.TalentTree;
+import iskallia.vault.util.RenameType;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.nbt.CompoundNBT;
@@ -24,6 +22,7 @@ public class ModContainers {
     public static ContainerType<VaultCrateContainer> VAULT_CRATE_CONTAINER;
     public static ContainerType<VendingMachineContainer> VENDING_MACHINE_CONTAINER;
     public static ContainerType<AdvancedVendingContainer> ADVANCED_VENDING_MACHINE_CONTAINER;
+    public static ContainerType<RenamingContainer> RENAMING_CONTAINER;
 
     public static void register(RegistryEvent.Register<ContainerType<?>> event) {
         SKILL_TREE_CONTAINER = createContainerType((windowId, inventory, buffer) -> {
@@ -55,11 +54,25 @@ public class ModContainers {
             return new AdvancedVendingContainer(windowId, world, pos, inventory, inventory.player);
         });
 
+        RENAMING_CONTAINER = createContainerType((windowId, inventory, buffer) -> {
+            RenameType type = RenameType.values()[buffer.readInt()];
+            switch (type) {
+                case PLAYER_STATUE:
+                    BlockPos pos = buffer.readBlockPos();
+                    return new RenamingContainer(windowId, type, pos);
+                case TRADER_CORE:
+                    int slot = buffer.readInt();
+                    return new RenamingContainer(windowId, type, slot);
+            }
+            return new RenamingContainer(windowId);
+        });
+
         event.getRegistry().registerAll(
                 SKILL_TREE_CONTAINER.setRegistryName("ability_tree"),
                 VAULT_CRATE_CONTAINER.setRegistryName("vault_crate"),
                 VENDING_MACHINE_CONTAINER.setRegistryName("vending_machine"),
-                ADVANCED_VENDING_MACHINE_CONTAINER.setRegistryName("advanced_vending_machine")
+                ADVANCED_VENDING_MACHINE_CONTAINER.setRegistryName("advanced_vending_machine"),
+                RENAMING_CONTAINER.setRegistryName("renaming_container")
         );
     }
 
