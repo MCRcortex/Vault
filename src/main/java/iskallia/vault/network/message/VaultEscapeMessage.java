@@ -5,6 +5,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -22,11 +24,16 @@ public class VaultEscapeMessage {
     public static void handle(VaultEscapeMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
-            Minecraft minecraft = Minecraft.getInstance();
-            SoundHandler soundHandler = minecraft.getSoundHandler();
-            soundHandler.play(SimpleSound.master(ModSounds.VAULT_PORTAL_LEAVE, 1f, 1f));
+            playEscapeSound();
         });
         context.setPacketHandled(true);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void playEscapeSound() {
+        Minecraft minecraft = Minecraft.getInstance();
+        SoundHandler soundHandler = minecraft.getSoundHandler();
+        soundHandler.play(SimpleSound.master(ModSounds.VAULT_PORTAL_LEAVE, 1f, 1f));
     }
 
 }
