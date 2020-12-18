@@ -1,21 +1,27 @@
 package iskallia.vault.block.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import iskallia.vault.block.PlayerStatueBlock;
 import iskallia.vault.block.VendingMachineBlock;
 import iskallia.vault.block.entity.VendingMachineTileEntity;
 import iskallia.vault.entity.model.StatuePlayerModel;
+import iskallia.vault.init.ModItems;
 import iskallia.vault.vending.TraderCore;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.entity.LivingRenderer;
+import net.minecraft.client.renderer.entity.model.CowModel;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -39,42 +45,32 @@ public class VendingMachineRenderer extends TileEntityRenderer<VendingMachineTil
         if (renderCore == null)
             return; // Woopsies, no core no render.
 
-        float scale = renderCore.isMegahead() ? 0.8f : 0.9f;
-        float headScale = renderCore.isMegahead() ? 1.75f : 1f;
-
-        ResourceLocation skinLocation = tileEntity.getSkin().getLocationSkin();
-        RenderType renderType = PLAYER_MODEL.getRenderType(skinLocation);
-        IVertexBuilder vertexBuilder = buffer.getBuffer(renderType);
+        Minecraft minecraft = Minecraft.getInstance();
+        boolean shouldOutline = false;
+        if (minecraft.player != null && minecraft.player.getHeldItemMainhand().getItem() == ModItems.TRADER_CORE) {
+            ItemStack heldStack = minecraft.player.getHeldItemMainhand();
+            if (heldStack.hasTag()) {
+                CompoundNBT nbt = heldStack.getTag();
+                CompoundNBT coreNBT = nbt.getCompound("core");
+                if (coreNBT.getString("NAME").equals(renderCore.getName())) {
+                    shouldOutline = true;
+                }
+            }
+        }
 
         BlockState blockState = tileEntity.getBlockState();
-        Direction direction = blockState.get(PlayerStatueBlock.FACING);
 
-        matrixStack.push();
-        matrixStack.translate(0.5, renderCore.isMegahead() ? 1.1 : 1.3, 0.5);
-        matrixStack.scale(scale, scale, scale);
-        matrixStack.rotate(Vector3f.YN.rotationDegrees(direction.getHorizontalAngle() + 180));
-        matrixStack.rotate(Vector3f.XP.rotationDegrees(180));
-        PLAYER_MODEL.bipedBody.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, 1);
-        PLAYER_MODEL.bipedLeftLeg.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, 1);
-        PLAYER_MODEL.bipedRightLeg.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, 1);
-        PLAYER_MODEL.bipedLeftArm.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, 1);
-        PLAYER_MODEL.bipedRightArm.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, 1);
+        ResourceLocation skinLocation = tileEntity.getSkin().getLocationSkin();
 
-        PLAYER_MODEL.bipedBodyWear.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, 1);
-        PLAYER_MODEL.bipedLeftLegwear.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, 1);
-        PLAYER_MODEL.bipedRightLegwear.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, 1);
-        PLAYER_MODEL.bipedLeftArmwear.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, 1);
+        if (shouldOutline) {
+            IVertexBuilder outlineBuffer = buffer.getBuffer(RenderType.getOutline(skinLocation));
 
-        matrixStack.push();
-        matrixStack.translate(0, 0, -0.62f);
-        PLAYER_MODEL.bipedRightArmwear.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, 1);
-        matrixStack.pop();
+            renderTrader(matrixStack, blockState, renderCore,
+                    outlineBuffer, combinedLight, combinedOverlay, 0.5f);
+        }
 
-        matrixStack.scale(headScale, headScale, headScale);
-        PLAYER_MODEL.bipedHeadwear.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, 1);
-        PLAYER_MODEL.bipedHead.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, 1);
-
-        matrixStack.pop();
+        renderTrader(matrixStack, blockState, renderCore,
+                buffer.getBuffer(PLAYER_MODEL.getRenderType(skinLocation)), combinedLight, combinedOverlay, 1f);
 
         BlockPos pos = tileEntity.getPos();
 
@@ -84,6 +80,40 @@ public class VendingMachineRenderer extends TileEntityRenderer<VendingMachineTil
                 tileEntity.getSkin().getLatestNickname(),
                 6f / 16f, pos.getX(), pos.getY(), pos.getZ(), 0.01f
         );
+    }
+
+    public void renderTrader(MatrixStack matrixStack, BlockState blockState, TraderCore renderCore, IVertexBuilder vertexBuilder, int combinedLight, int combinedOverlay, float alpha) {
+        Direction direction = blockState.get(PlayerStatueBlock.FACING);
+
+        float scale = renderCore.isMegahead() ? 0.8f : 0.9f;
+        float headScale = renderCore.isMegahead() ? 1.75f : 1f;
+
+        matrixStack.push();
+        matrixStack.translate(0.5, renderCore.isMegahead() ? 1.1 : 1.3, 0.5);
+        matrixStack.scale(scale, scale, scale);
+        matrixStack.rotate(Vector3f.YN.rotationDegrees(direction.getHorizontalAngle() + 180));
+        matrixStack.rotate(Vector3f.XP.rotationDegrees(180));
+        PLAYER_MODEL.bipedBody.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, alpha);
+        PLAYER_MODEL.bipedLeftLeg.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, alpha);
+        PLAYER_MODEL.bipedRightLeg.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, alpha);
+        PLAYER_MODEL.bipedLeftArm.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, alpha);
+        PLAYER_MODEL.bipedRightArm.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, alpha);
+
+        PLAYER_MODEL.bipedBodyWear.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, alpha);
+        PLAYER_MODEL.bipedLeftLegwear.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, alpha);
+        PLAYER_MODEL.bipedRightLegwear.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, alpha);
+        PLAYER_MODEL.bipedLeftArmwear.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, alpha);
+
+        matrixStack.push();
+        matrixStack.translate(0, 0, -0.62f);
+        PLAYER_MODEL.bipedRightArmwear.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, alpha);
+        matrixStack.pop();
+
+        matrixStack.scale(headScale, headScale, headScale);
+        PLAYER_MODEL.bipedHeadwear.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, alpha);
+        PLAYER_MODEL.bipedHead.render(matrixStack, vertexBuilder, combinedLight, combinedOverlay, 1, 1, 1, alpha);
+
+        matrixStack.pop();
     }
 
     public void drawString(MatrixStack matrixStack, Direction facing, String text, float yOffset, double x, double y, double z, float scale) {
