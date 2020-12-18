@@ -49,8 +49,10 @@ public class VendingMachineTileEntity extends TileEntity {
         if (cores == null || cores.size() == 0) return null;
         TraderCore renderCore = null;
         for (TraderCore core : cores) {
-            if (renderCore == null || renderCore.getValue() < core.getValue())
+            if (renderCore == null || renderCore.getValue() < core.getValue()) {
                 renderCore = core;
+                if (renderCore.isMegahead()) break;
+            }
         }
         return renderCore;
     }
