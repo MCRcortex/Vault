@@ -1,7 +1,7 @@
 name: build-jar
 on: [push]
 jobs:
-  check-bats-version:
+  build-jar:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -9,3 +9,7 @@ jobs:
         with:
           java-version: 1.8
       - run: ./gradlew build jar
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Package
+          path: build/libs
